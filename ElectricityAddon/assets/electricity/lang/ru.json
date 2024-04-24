@@ -1,0 +1,20 @@
+{
+  "game:tabname-electricity": "Электричество",
+  "block-accumulator": "Аккумулятор",
+  "block-cable-*": "Кабель",
+  "block-motor-*": "Двигатель",
+  "block-generator-*": "Генератор",
+  "block-switch-*": "Переключатель",
+  "block-lamp-*": "Электрическая лампа",
+  "block-lamp_small-*": "Электрическая лампа (маленькая)",
+  "block-forge": "Электрический горн",
+  "block-heater-*": "Электрический нагреватель",
+
+  "game:Electricity": "Электросеть",
+  "game:Storage": "Хранит: ",
+  "game:Temperature": "Температура: ",
+  "game:Consumption": "Потребляет: ",
+  "game:Production": "Производит: ",
+  "game:Overflow": "Избыток: ",
+  "game:Contents": "Содержимое: "
+}

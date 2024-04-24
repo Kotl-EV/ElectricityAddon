@@ -1,0 +1,23 @@
+{
+	"ingredientPattern": "WWW,WSW,WWW",
+	"width": 3,
+	"height": 3,
+	"ingredients": {
+		"W": {
+			"type": "block",
+			"code": "electricityaddon:cable-*",
+			"quantity": 1
+		},
+		"S": {
+			"type": "item",
+			"code": "game:hammer-*",
+			"isTool": true,
+			"toolDurabilityCost": 8
+		}
+	},
+	"output": {
+		"type": "item",
+		"code": "electricityaddon:coil",
+		"quantity": 8
+	}
+}

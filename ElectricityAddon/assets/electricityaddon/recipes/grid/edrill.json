@@ -1,0 +1,39 @@
+{
+  "ingredientPattern": "BC_,PEM,_ID",
+  "ingredients": {
+	"M": {
+      "type": "block",
+      "code": "game:metal-parts", "quantity": 2
+    },
+	"B": {
+      "type": "item",
+      "code": "game:gear-temporal", "quantity": 1
+    },
+	"C": {
+      "type": "item",
+      "code": "electricityaddon:coil", "quantity": 2
+    },
+	"P": {
+      "type": "item",
+      "code": "electricityaddon:coil", "quantity": 2
+    },
+	"E": {
+      "type": "item",
+      "code": "electricityaddon:engineshaft", "quantity": 1
+    },
+	"I": {
+      "type": "item",
+      "code": "game:ingot-iron", "quantity": 2
+    },
+	"D": {
+      "type": "item",
+      "code": "electricityaddon:drilltip", "quantity": 1
+    }
+  },
+  "width": 3,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "electricityaddon:edrill"
+  }
+}

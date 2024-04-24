@@ -1,0 +1,20 @@
+{
+  "block-charger": "Зарядная Станция",
+  "block-estove-*": "Электрическая Плита",
+  "block-efreezer-*": "Электрический Морозильник",
+  "block-largeaccumulator": "Аккумулятор (большой)",
+  
+  "item-edrill": "Элекрический Бур",
+  "item-echisel": "Электрическое Зубило",
+  "item-coil": "Медная Катушка",
+  "item-drilltip": "Наконечник Бура",
+  "item-engineshaft": "Ротор",
+  
+  "game:drill1": "Копает 1X1 блок",
+  "game:drill2": "Копает 3X3 блок",
+  
+  "game:BlockEStove": "Электрическая плита",
+  "game:freezer-title-gui": "Морозильник",
+  "game:freezer-over-sneak-help": "Откр/закр дверцу.",
+  "game:freezer-over-help": "Откройте дверцу и положите еду что бы сохранить ее."
+}

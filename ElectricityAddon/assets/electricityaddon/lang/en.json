@@ -1,0 +1,20 @@
+{
+  "block-charger": "Charging Station",
+  "block-estove-*": "Electric Stove",
+  "block-efreezer-*": "Electric Freezer",
+  "block-largeaccumulator": "Accumulator (large)",
+  
+  "item-edrill": "Electric Drill",
+  "item-echisel": "Electric Chisel",
+  "item-coil": "Copper Coil",
+  "item-drilltip": "Drill Tip",
+  "item-engineshaft": "Rotor",
+  
+  "game:drill1": "Digs 1X1 blocks",
+  "game:drill2": "Digs 3X3 blocks",
+
+  "game:BlockEStove": "Electric Stove",
+  "game:freezer-title-gui": "Freezer",
+  "game:freezer-over-sneak-help": "Open/close the door.",
+  "game:freezer-over-help": "Open the door and put the food in to save it."
+}

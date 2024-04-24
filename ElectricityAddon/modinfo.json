@@ -1,0 +1,15 @@
+{
+  "type": "code",
+  "modid": "electricityaddon",
+  "name": "ElectricityAddon",
+  "authors": [
+    "Anluin",
+    "Kotl"
+  ],
+  "description": "Brings electricity into the game!",
+  "Version": "0.0.1",
+  "dependencies": {
+    "game": "1.19.5",
+    "electricity": "0.0.11"
+  }
+}

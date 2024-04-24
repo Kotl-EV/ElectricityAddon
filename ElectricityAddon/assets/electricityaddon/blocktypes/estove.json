@@ -1,0 +1,88 @@
+{
+  "code": "estove",
+  "class": "BlockEStove",
+  "entityClass": "BlockEntityEStove",
+  "behaviors": [
+    { "name": "Container" },
+    {
+      "name": "HorizontalOrientable",
+      "properties": {
+        "dropBlockFace": "south"
+      }
+    }
+  ],
+  "entityBehaviors": [
+    {
+      "name": "BEBehaviorEStove"
+    },
+    {
+      "name": "Electricity"
+    }
+  ],
+  "creativeinventory": {
+    "general": [ "*-disabled-south" ],
+    "electricity": [ "*-disabled-south" ]
+  },
+  "variantgroups": [
+    {
+      "code": "state",
+      "states": [ "disabled", "enabled" ]
+    },
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "shapebytype": {
+    "*-enabled-north": {
+      "base": "block/electricstove-enabled",
+      "rotateY": 0
+    },
+    "*-enabled-east": {
+      "base": "block/electricstove-enabled",
+      "rotateY": 270
+    },
+    "*-enabled-south": {
+      "base": "block/electricstove-enabled",
+      "rotateY": 180
+    },
+    "*-enabled-west": {
+      "base": "block/electricstove-enabled",
+      "rotateY": 90
+    },
+    "*-disabled-north": {
+      "base": "block/electricstove-disabled",
+      "rotateY": 0
+    },
+    "*-disabled-east": {
+      "base": "block/electricstove-disabled",
+      "rotateY": 270
+    },
+    "*-disabled-south": {
+      "base": "block/electricstove-disabled",
+      "rotateY": 180
+    },
+    "*-disabled-west": {
+      "base": "block/electricstove-disabled",
+      "rotateY": 90
+    }
+  },
+  "blockmaterial": "Stone",
+  "sidesolid": {
+    "all": false
+  },
+  "sideopaque": {
+    "all": false
+  },
+  "resistance": 3.5,
+  "lightAbsorption": 0,
+  "lightHsvByType": {
+    "*-unlit-*": [ 0, 0, 0 ],
+    "*-lit-*": [ 7, 7, 11 ]
+  },
+  "sounds": {
+    "walk": "game:walk/stone"
+  },
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock"
+}

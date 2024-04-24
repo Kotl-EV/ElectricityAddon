@@ -1,0 +1,20 @@
+{
+  "game:tabname-electricity": "Electricity",
+  "block-accumulator": "Accumulator",
+  "block-cable-*": "Cable",
+  "block-motor-*": "Motor",
+  "block-generator-*": "Generator",
+  "block-switch-*": "Switch",
+  "block-lamp-*": "Electric Lamp",
+  "block-lamp_small-*": "Electric Lamp (Small)",
+  "block-forge": "Electric Forge",
+  "block-heater-*": "Electric Heater",
+
+  "game:Electricity": "Electricity",
+  "game:Storage": "Storage: ",
+  "game:Temperature": "Temperature: ",
+  "game:Consumption": "Consumption: ",
+  "game:Production": "Production: ",
+  "game:Overflow": "Overflow: ",
+  "game:Contents": "Contents: "
+}

@@ -6,7 +6,7 @@
     "maxcapacity": 20000,
     "consume": 20
   },
-  "shape": { "base": "item/miningdrill" },
+  "shape": { "base": "item/electricalgdrill" },
   "heldTpIdleAnimation": "holdbothhandslarge", "heldRightReadyAnimation": "holdbothhandslarge", "heldTpUseAnimation": "twohandplaceblock","heldTpHitAnimation": "twohandplaceblock",
   "creativeinventory": {
     "general": [ "*" ],

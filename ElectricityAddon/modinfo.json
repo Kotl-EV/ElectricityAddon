@@ -7,7 +7,7 @@
     "Kotl"
   ],
   "description": "Brings electricity into the game!",
-  "Version": "0.0.1",
+  "Version": "0.0.3",
   "dependencies": {
     "game": "1.19.5",
     "electricity": "0.0.11"

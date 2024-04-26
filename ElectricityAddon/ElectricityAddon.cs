@@ -6,14 +6,14 @@ using ElectricityAddon.Content.Block.EStove;
 using ElectricityAddon.Content.Item;
 using Vintagestory.API.Common;
 
-[assembly: ModDependency("game", "1.19.9")]
+[assembly: ModDependency("game", "1.19.5")]
 [assembly: ModDependency("electricity", "0.0.11")]
 [assembly: ModInfo(
     "ElectricityAddon",
     "electricityaddon",
     Website = "https://github.com/Kotl-EV/ElectricityAddon",
     Description = "Brings electricity into the game!",
-    Version = "0.0.1",
+    Version = "0.0.3",
     Authors = new[] {
         "Kotl"
     }

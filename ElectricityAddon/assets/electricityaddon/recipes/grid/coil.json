@@ -5,7 +5,7 @@
 	"ingredients": {
 		"W": {
 			"type": "block",
-			"code": "electricityaddon:cable-*",
+			"code": "electricity:cable-*",
 			"quantity": 1
 		},
 		"S": {

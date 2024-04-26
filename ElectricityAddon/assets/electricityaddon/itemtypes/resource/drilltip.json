@@ -1,5 +1,5 @@
 {
-	"code": "drilltip",
+	"code": "edrilltip",
 	"attributes": {
 		"handbook": {
 			"groupBy": ["drilltip"]
@@ -8,7 +8,7 @@
 	"heldTpIdleAnimation": "holdbothhands",
 	"shape": 
 	{
-		"base": "item/drilltip"
+		"base": "item/electricaldrilltip"
 	},
 	"creativeinventory": 
 	{

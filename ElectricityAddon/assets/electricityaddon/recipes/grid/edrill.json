@@ -27,7 +27,7 @@
     },
 	"D": {
       "type": "item",
-      "code": "electricityaddon:drilltip", "quantity": 1
+      "code": "electricityaddon:edrilltip", "quantity": 1
     }
   },
   "width": 3,

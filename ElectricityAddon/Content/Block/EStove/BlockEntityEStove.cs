@@ -324,7 +324,7 @@ public class BlockEntityEStove : BlockEntityOpenableContainer, IHeatSource, ITex
         // Furnace is burning: Heat furnace
         if (IsBurning)
         {
-            stoveTemperature = changeTemperature(stoveTemperature, GetBehavior<BEBehaviorEStove>().powerSetting * 13, dt);
+            stoveTemperature = changeTemperature(stoveTemperature, GetBehavior<BEBehaviorEStove>().powerSetting * 13.25F, dt);
         }
 
         // Ore follows furnace temperature

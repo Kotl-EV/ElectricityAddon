@@ -43,7 +43,7 @@
 	"name": "DrillTip",
 	"output": {
 		"type": "item",
-		"code": "drilltip",
+		"code": "edrilltip",
 		"stacksize": 1
 	}
 }

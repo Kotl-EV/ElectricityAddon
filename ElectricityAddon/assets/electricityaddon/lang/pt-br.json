@@ -1,0 +1,20 @@
+﻿{
+    "block-charger": "Estação de Carga",
+    "block-estove-*": "Fogão Elétrico",
+    "block-efreezer-*": "Geladeira",
+    "block-largeaccumulator": "Acumulador Avançado",
+
+    "item-edrill": "Furadeira elétrica",
+    "item-echisel": "Cinzel Elétrico",
+    "item-coil": "Bobina de cobre",
+    "item-edrilltip": "Ponta de perfuração",
+    "item-engineshaft": "Rotor",
+
+    "game:drill1": "Escava 1x1 blocos",
+    "game:drill2": "Escava 3x3 blocos",
+
+    "game:BlockEStove": "Fogão Elétrico",
+    "game:freezer-title-gui": "Geladeira",
+    "game:freezer-over-sneak-help": "Abra/feche a porta.",
+    "game:freezer-over-help": "Abra a porta e coloque a comida para guardá-la."
+}

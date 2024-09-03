@@ -53,6 +53,7 @@ public class FlyToggleEvent : ModSystem
             (FlyToggle)).RegisterMessageType(typeof(FlyResponse)).SetMessageHandler<FlyToggle>(new
             NetworkClientMessageHandler<FlyToggle>(this.OnClientSent));
         api.Event.RegisterGameTickListener(new Action<float>(this.onTickItem), 1000);
+        api.Event.RegisterGameTickListener(new Action<float>(this.onTickCheckFly), 400);
     }
     private void onTickItem(float dt)
     {
@@ -73,8 +74,36 @@ public class FlyToggleEvent : ModSystem
                     {
                         if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos))
                         {
-                            collectible.receiveEnergy(itemSlot.Itemstack, -20);
+                            collectible.receiveEnergy(itemSlot.Itemstack, -(int)(num * 2000));
                             itemSlot.MarkDirty();
+                        }
+                    }
+                    else
+                    {
+                        itemSlot.Itemstack.Attributes.SetInt("electricity:energy",20);
+                        itemSlot.MarkDirty();
+                    }
+                }
+            }
+        }
+        this.lastCheckTotalHours = totalHours;
+    }
+    
+        private void onTickCheckFly(float dt)
+    {
+        foreach (IPlayer allOnlinePlayer in this.sapi.World.AllOnlinePlayers)
+        {
+            IInventory ownInventory = allOnlinePlayer.InventoryManager.GetOwnInventory("character");
+            if (ownInventory != null)
+            {
+                ItemSlot itemSlot = ownInventory[13];
+                if (itemSlot.Itemstack?.Collectible is EArmor collectible)
+                {
+                    int energy = itemSlot.Itemstack.Attributes.GetInt("electricity:energy");
+                    if (energy >= 20)
+                    {
+                        if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos))
+                        {
                             if (allOnlinePlayer.WorldData.FreeMove != true)
                             {
                                 api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-active"),
@@ -137,7 +166,6 @@ public class FlyToggleEvent : ModSystem
                 }
             }
         }
-        this.lastCheckTotalHours = totalHours;
     }
     
     private void OnClientSent(IPlayer fromPlayer, FlyToggle bt)

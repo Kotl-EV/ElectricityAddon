@@ -22,6 +22,12 @@ class EArmor : ItemWearable,IEnergyStorageItem
         Durability = maxcapacity / consume;
     }
     
+    
+    public void AddEnergy(ItemStack stack, int energy)
+    {
+        stack.Attributes.SetInt("electricity:energy", energy + stack.Attributes.GetInt("electricity:energy"));
+    }
+    
     public override void DamageItem(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, int amount = 1)
     {
         int energy = itemslot.Itemstack.Attributes.GetInt("electricity:energy");
@@ -36,21 +42,6 @@ class EArmor : ItemWearable,IEnergyStorageItem
             itemslot.Itemstack.Attributes.SetInt("durability", 0);
         }
         itemslot.MarkDirty();
-    }
-    
-    public override void OnHeldIdle(ItemSlot slot, EntityAgent byEntity)
-    {
-        
-        if (!slot.Itemstack.Attributes.GetBool("flying"))
-        {
-            EntityPlayer entityPlayer = byEntity as EntityPlayer;
-            IPlayer player = (byEntity != null) ? entityPlayer.Player : null;
-            if (player == null)
-                return;
-            player.WorldData.FreeMove = false;
-            player.Entity.Properties.FallDamage = true;
-        }
-        base.OnHeldIdle(slot, byEntity);
     }
     
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)

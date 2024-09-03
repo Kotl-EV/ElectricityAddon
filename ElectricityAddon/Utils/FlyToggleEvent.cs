@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using ElectricityAddon.Content.Armor;
 using ElectricityAddon.Network;
 using Vintagestory.API.Common;
 using Vintagestory.API.Client;
-using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Server;
-using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
 
 
 namespace ElectricityAddon.Utils;
@@ -56,7 +52,7 @@ public class FlyToggleEvent : ModSystem
         serverChannel = sapi.Network.RegisterChannel("electrictyaddon").RegisterMessageType(typeof
             (FlyToggle)).RegisterMessageType(typeof(FlyResponse)).SetMessageHandler<FlyToggle>(new
             NetworkClientMessageHandler<FlyToggle>(this.OnClientSent));
-        api.Event.RegisterGameTickListener(new Action<float>(this.onTickItem), 1000, 200);
+        api.Event.RegisterGameTickListener(new Action<float>(this.onTickItem), 1000);
     }
     private void onTickItem(float dt)
     {
@@ -70,39 +66,77 @@ public class FlyToggleEvent : ModSystem
             if (ownInventory != null)
             {
                 ItemSlot itemSlot = ownInventory[13];
-                if (itemSlot.Itemstack != null)
+                if (itemSlot.Itemstack?.Collectible is EArmor collectible)
                 {
                     int energy = itemSlot.Itemstack.Attributes.GetInt("electricity:energy");
                     if (energy >= 20)
                     {
-                        if (itemSlot.Itemstack.Attributes.GetBool("flying", false))
-                            itemSlot.Itemstack.Attributes.SetInt("electricity:energy", energy - 20);
-                        itemSlot.Itemstack.Attributes.SetInt("durability", Math.Max(1, energy / 20));
+                        if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos))
+                        {
+                            collectible.receiveEnergy(itemSlot.Itemstack, -20);
+                            itemSlot.MarkDirty();
+                            if (allOnlinePlayer.WorldData.FreeMove != true)
+                            {
+                                api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-active"),
+                                    allOnlinePlayer);
+                                allOnlinePlayer.WorldData.FreeMove = true;
+                                allOnlinePlayer.Entity.Properties.FallDamageMultiplier = 0f;
+                                allOnlinePlayer.WorldData.MoveSpeedMultiplier = 2f;
+                                allOnlinePlayer.WorldData.EntityControls.MovespeedMultiplier = 2f;
+                                ((IServerPlayer)allOnlinePlayer).BroadcastPlayerData();
+                            }
+                        }
+                        else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
+                        {
+                            if (allOnlinePlayer.WorldData.FreeMove)
+                            {
+                                api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-breakdimension"), allOnlinePlayer);
+                                allOnlinePlayer.Entity.PositionBeforeFalling = allOnlinePlayer.Entity.Pos.XYZ;
+                                allOnlinePlayer.WorldData.FreeMove = false;
+                                allOnlinePlayer.Entity.Properties.FallDamageMultiplier = 1.0f;
+                                allOnlinePlayer.WorldData.MoveSpeedMultiplier = 1f;
+                                allOnlinePlayer.WorldData.EntityControls.MovespeedMultiplier = 1f;
+                                allOnlinePlayer.WorldData.FreeMovePlaneLock = EnumFreeMovAxisLock.None;
+                                ((IServerPlayer)allOnlinePlayer).BroadcastPlayerData();
+                            }
+                        }
                     }
                     else
                     {
-                        if (itemSlot.Itemstack.Attributes.GetBool("flying"))
+                        if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
                         {
                             itemSlot.Itemstack.Attributes.SetBool("flying", false);
-                            IPlayer player = api.World.PlayerByUid(itemSlot.Itemstack.Attributes.GetString("UUID"));
-                            player.Entity.PositionBeforeFalling = player.Entity.Pos.XYZ;
-                            player.WorldData.FreeMove = false;
-                            player.Entity.Properties.FallDamageMultiplier = 1.0f;
-                            api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-breakdimension"),
-                                player);
-                            player.WorldData.MoveSpeedMultiplier = 1f;
-                            player.WorldData.EntityControls.MovespeedMultiplier = 1f;
-                            player.WorldData.FreeMovePlaneLock = EnumFreeMovAxisLock.None;
-                            ((IServerPlayer)player).BroadcastPlayerData();
                             itemSlot.MarkDirty();
+                            if (allOnlinePlayer.WorldData.FreeMove)
+                            {
+                                api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-breakdimension"), allOnlinePlayer);
+                                allOnlinePlayer.Entity.PositionBeforeFalling = allOnlinePlayer.Entity.Pos.XYZ;
+                                allOnlinePlayer.WorldData.FreeMove = false;
+                                allOnlinePlayer.Entity.Properties.FallDamageMultiplier = 1.0f;
+                                allOnlinePlayer.WorldData.MoveSpeedMultiplier = 1f;
+                                allOnlinePlayer.WorldData.EntityControls.MovespeedMultiplier = 1f;
+                                allOnlinePlayer.WorldData.FreeMovePlaneLock = EnumFreeMovAxisLock.None;
+                                ((IServerPlayer)allOnlinePlayer).BroadcastPlayerData();
+                            }
                         }
 
                     }
-                    itemSlot.MarkDirty();
+                }else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
+                {
+                    if (allOnlinePlayer.WorldData.FreeMove)
+                    {
+                        api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-breakdimension"), allOnlinePlayer);
+                        allOnlinePlayer.Entity.PositionBeforeFalling = allOnlinePlayer.Entity.Pos.XYZ;
+                        allOnlinePlayer.WorldData.FreeMove = false;
+                        allOnlinePlayer.Entity.Properties.FallDamageMultiplier = 1.0f;
+                        allOnlinePlayer.WorldData.MoveSpeedMultiplier = 1f;
+                        allOnlinePlayer.WorldData.EntityControls.MovespeedMultiplier = 1f;
+                        allOnlinePlayer.WorldData.FreeMovePlaneLock = EnumFreeMovAxisLock.None;
+                        ((IServerPlayer)allOnlinePlayer).BroadcastPlayerData();
+                    }
                 }
             }
         }
-
         this.lastCheckTotalHours = totalHours;
     }
     
@@ -149,26 +183,22 @@ public class FlyToggleEvent : ModSystem
             itemSlot.Itemstack.Attributes.GetInt("electricity:energy") >= 20)
         {
             itemSlot.Itemstack.Attributes.SetBool("flying", true);
-            itemSlot.Itemstack.Attributes.SetString("UUID",player.PlayerUID);
             itemSlot.MarkDirty();
+            api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-active"), player);
             player.WorldData.FreeMove = true;
             player.Entity.Properties.FallDamageMultiplier = 0f;
-            api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-active"), player);
-            player.WorldData.MoveSpeedMultiplier = bt.savedspeed;
-            player.WorldData.EntityControls.MovespeedMultiplier = bt.savedspeed;
-            EnumFreeMovAxisLock axislock = EnumFreeMovAxisLock.None;
-            player.WorldData.FreeMovePlaneLock = axislock;
+            player.WorldData.MoveSpeedMultiplier = 2f;
+            player.WorldData.EntityControls.MovespeedMultiplier = 2f;
             ((IServerPlayer)player).BroadcastPlayerData();
-
         }
         else
         {
             itemSlot.Itemstack.Attributes.SetBool("flying", false);
             itemSlot.MarkDirty();
+            api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-breakdimension"), player);
             player.Entity.PositionBeforeFalling = player.Entity.Pos.XYZ;
             player.WorldData.FreeMove = false;
             player.Entity.Properties.FallDamageMultiplier = 1.0f;
-            api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-breakdimension"), player);
             player.WorldData.MoveSpeedMultiplier = 1f;
             player.WorldData.EntityControls.MovespeedMultiplier = 1f;
             player.WorldData.FreeMovePlaneLock = EnumFreeMovAxisLock.None;
@@ -202,9 +232,9 @@ public class FlyToggleEvent : ModSystem
     
     private void RegisterFlyKeys()
     {
-        base.Mod.Logger.VerboseDebug("AngelBelt: flight hotkey handler for R");
-        this.capi.Input.RegisterHotKey("angel", "Enable Angel Belt", GlKeys.R, HotkeyType.CharacterControls);
-        this.capi.Input.SetHotKeyHandler("angel", OnFlyKeyPressed);
+        base.Mod.Logger.VerboseDebug("FlyToggle: flight hotkey handler for R");
+        this.capi.Input.RegisterHotKey("FlyToggle", "Enable Fly mode Armorchest", GlKeys.R, HotkeyType.CharacterControls);
+        this.capi.Input.SetHotKeyHandler("FlyToggle", OnFlyKeyPressed);
     }
     
     private bool PlayerHasBelt()

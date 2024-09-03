@@ -43,14 +43,6 @@
   "sideOpaque": {
     "all": false
   },
-  "textures": {
-    "coal": {
-      "base": "block/coal-dust"
-    },
-    "ember": {
-      "base": "block/horn"
-    }
-  },
   "collisionBox": {
     "x1": 0.0625,
     "y1": 0,

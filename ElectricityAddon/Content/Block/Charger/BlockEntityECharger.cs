@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Cairo;
 using Electricity.Utils;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
@@ -102,6 +103,16 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
 
         tmpItem = stack.Collectible;
 
+        float scaleX = MyMiniLib.GetAttributeFloat(inventory[0].Itemstack.Item, "scaleX", 0.5F);
+        float scaleY = MyMiniLib.GetAttributeFloat(inventory[0].Itemstack.Item, "scaleY", 0.5F);
+        float scaleZ = MyMiniLib.GetAttributeFloat(inventory[0].Itemstack.Item, "scaleZ", 0.5F);
+        float translateX = MyMiniLib.GetAttributeFloat(inventory[0].Itemstack.Item, "translateX", 0F);
+        float translateY = MyMiniLib.GetAttributeFloat(inventory[0].Itemstack.Item, "translateY", 0.4F);
+        float translateZ = MyMiniLib.GetAttributeFloat(inventory[0].Itemstack.Item, "translateZ", 0F);
+        float rotateX = MyMiniLib.GetAttributeFloat(inventory[0].Itemstack.Item, "rotateX", 0F);
+        float rotateY = MyMiniLib.GetAttributeFloat(inventory[0].Itemstack.Item, "rotateY", 0F);
+        float rotateZ = MyMiniLib.GetAttributeFloat(inventory[0].Itemstack.Item, "rotateZ", 0F);
+
         if (stack.Class == EnumItemClass.Item)
         {
             clientApi.Tesselator.TesselateItem(stack.Item, out toolMeshes[0], this);
@@ -115,16 +126,10 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
 
         if (stack.Class == EnumItemClass.Item)
         {
-            if (stack.Item.Shape?.VoxelizeTexture == true)
-            {
-                toolMeshes[0].Scale(origin, 0.33f, 0.33f, 0.33f);
-            }
-            else
-            {
-                origin.Y = 1f/30f;
-                toolMeshes[0].Scale(origin, 0.5f, 0.5f, 0.5f);
-                toolMeshes[0].Translate(0, 0.4f, 0);
-            }
+            origin.Y = 1f/30f;
+            toolMeshes[0].Scale(origin, scaleX, scaleY, scaleZ);
+            toolMeshes[0].Translate(translateX, translateY, translateZ);
+            toolMeshes[0].Rotate(origin, rotateX, rotateY, rotateZ);
         }
         else
         {

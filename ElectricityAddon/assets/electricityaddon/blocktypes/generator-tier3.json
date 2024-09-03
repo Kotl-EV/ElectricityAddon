@@ -1,0 +1,73 @@
+{
+    "code": "Generatortier3",
+  "class": "BlockEGenerator",
+  "entityClass": "BlockEntityEGenerator",
+  "entityBehaviors": [
+    {
+      "name": "BEBehaviorEGenerator"
+    },
+    {
+      "name": "Electricity"
+    }
+  ],
+  "attributes": {
+    "maxProduction": 800 //максимальный выход энергии
+  },
+  "creativeInventory": {
+    "general": [
+      "*-stator"
+    ],
+    "mechanics": [
+      "*-stator"
+    ],
+    "electricity": [
+      "*-stator"
+    ]
+  },
+  "variantGroups": [
+    {
+      "code": "type",
+      "states": [
+        "rotor",
+        "stator"
+      ]
+    }
+  ],
+  "shapeInventory": {
+    "base": "electricity:block/motor"
+  },
+  "shapeByType": {
+    "*-rotor": {
+      "base": "electricity:block/motor-rotor"
+    },
+    "*-stator": {
+      "base": "electricity:block/motor-stator"
+    }
+  },
+  "textures": {
+    "copper": {
+      "base": "game:block/metal/ingot/gold"
+    }
+  },
+  "resistance": 1,
+  "drawType": "JSON",
+  "lightAbsorption": 0.0,
+  "faceCullMode": "NeverCull",
+  "renderPass": "OpaqueNoCull",
+  "emitSideAo": {
+    "all": false
+  },
+  "sideAo": {
+    "all": false
+  },
+  "sideOpaque": {
+    "all": false
+  },
+  "sideSolid": {
+    "all": false
+  },
+  "sounds": {
+    "place": "game:block/anvil",
+    "walk": "game:walk/stone"
+  }
+}

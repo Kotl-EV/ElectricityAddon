@@ -41,14 +41,14 @@ class BlockEFreezer : Vintagestory.API.Common.Block
         {
             be.isOpened = true;
             newCode = CodeWithVariant("state", "open");
-            world.PlaySoundAt(new AssetLocation("electricity:sounds/freezer_open.ogg"), byPlayer,
+            world.PlaySoundAt(new AssetLocation("electricityaddon:sounds/freezer_open.ogg"), byPlayer,
                 byPlayer, false);
         }
         else
         {
             be.isOpened = false;
             newCode = CodeWithVariant("state", "closed");
-            world.PlaySoundAt(new AssetLocation("electricity:sounds/freezer_close.ogg"), byPlayer,
+            world.PlaySoundAt(new AssetLocation("electricityaddon:sounds/freezer_close.ogg"), byPlayer,
                 byPlayer, false);
         }
 

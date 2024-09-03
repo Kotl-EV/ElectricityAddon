@@ -1,9 +1,13 @@
-﻿using ElectricityAddon.Content.Block.EAccumulator;
+﻿using ElectricityAddon.Content.Armor;
+using ElectricityAddon.Content.Block.EAccumulator;
 using ElectricityAddon.Content.Block.ECharger;
 using ElectricityAddon.Content.Block.EFreezer;
+using ElectricityAddon.Content.Block.EGenerator;
 using ElectricityAddon.Content.Block.EHorn;
+using ElectricityAddon.Content.Block.EMotor;
 using ElectricityAddon.Content.Block.EStove;
 using ElectricityAddon.Content.Item;
+using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 
 [assembly: ModDependency("game", "1.19.5")]
@@ -13,7 +17,7 @@ using Vintagestory.API.Common;
     "electricityaddon",
     Website = "https://github.com/Kotl-EV/ElectricityAddon",
     Description = "Brings electricity into the game!",
-    Version = "0.0.6",
+    Version = "0.0.8",
     Authors = new[] {
         "Kotl"
     }
@@ -43,8 +47,20 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockClass("BlockEFreezer", typeof(BlockEFreezer));
         api.RegisterBlockEntityClass("BlockEntityEFreezer", typeof(BlockEntityEFreezer));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEFreezer", typeof(BEBehaviorEFreezer));
+        
+        api.RegisterBlockClass("BlockEMotor", typeof(BlockEMotor));
+        api.RegisterBlockEntityClass("BlockEntityEMotor", typeof(BlockEntityEMotor));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEMotor", typeof(BEBehaviorEMotor));
+        
+        api.RegisterBlockClass("BlockEGenerator", typeof(BlockEGenerator));
+        api.RegisterBlockEntityClass("BlockEntityEGenerator", typeof(BlockEntityEGenerator));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEGenerator", typeof(BEBehaviorEGenerator));
 
         api.RegisterItemClass("EChisel", typeof(EChisel));
+        api.RegisterItemClass("EAxe", typeof(EAxe));
         api.RegisterItemClass("EDrill", typeof(EDrill));
+        api.RegisterItemClass("EArmor", typeof(EArmor));
+        api.RegisterItemClass("EWeapon", typeof(EWeapon));
+        api.RegisterItemClass("EShield", typeof(EShield));
     }
 }

@@ -1,0 +1,85 @@
+{
+	"code": "forcefield",
+	"class": "EArmor",
+	"shapeByType": {
+		"*": { "base": "entity/armor/forcefieldheavy" }
+	},
+	"heldTpIdleAnimation": "holdunderarm",
+	"storageFlags": 128,
+	"attributes": {
+		"rechargeable": true,
+		"maxcapacity": 20000,
+		"consume": 20,
+		"wearableAttachment": true,
+		"clothescategoryByType": {
+			"*": "armorbody"
+		},
+		"defaultProtLoss": {
+			"perTierRelativeProtectionLoss": [0.0, 0.0],
+			"perTierFlatDamageReductionLoss": [0.0, 0.0]
+		},
+		"protectionModifiersByType": {
+			"*": {
+				"relativeProtection": 0.97,
+				"flatDamageReduction": 1.8,
+				"highDamageTierResistant": true,
+				"protectionTier": 4
+			}
+		},
+		"statModifiersByType": {
+			"*": {
+				"walkSpeed": -0.2,
+				"healingeffectivness": 0.25,
+				"hungerrate": 0.12
+			}
+		},
+		"footStepSoundByType": {
+			"*": "locustmod:armor/brig*"
+		},
+		"scaleX": 0.5,
+		"scaleY": 0.5,
+		"scaleZ": 0.5,
+		"translateX": 0.18,
+		"translateY": 0.4,
+		"translateZ": 0.15,
+		"rotateX": 0,
+		"rotateY": 0,
+		"rotateZ": 0
+	},
+	"texturesByType": {
+		"*": {
+			"seraph": { "base": "game:block/transparent" }
+		}
+	},
+	"creativeinventory": {
+		"general": [ "*" ],
+		"electricity": [ "*" ]
+	},
+	"renderAlphaTest": 0.25,
+	"fpHandTransform": {
+		"translation": { "x": 0.4, "y": -1.2, "z": -0.5 },
+			"rotation": { "x": 163, "y": -111, "z": -180 },
+			"origin": { "x": 0.5, "y": 1.6, "z": 0.5 },
+			"scale": 2.15
+	},
+	"tpHandTransformByType": {
+		"*": {
+			"translation": { "x": -1, "y": -1.9, "z": -0.5 },
+			"rotation": { "x": 97, "y": -168, "z": 94 },
+			"origin": { "x": 0.5, "y": 1.5, "z": 0.5 },
+			"scale": 0.67
+		}
+	},
+	"guiTransform": {
+		"translation": { "x": 3, "y": 0, "z": 0 },
+			"rotation": { "x": -26, "y": -46, "z": -180 },
+			"origin": { "x": 0.5, "y": 1.11, "z": 0.5 },
+			"scale": 1.37
+	},
+	"groundTransform": {
+		"translation": { "x": 0, "y": 0, "z": 0 },
+			"rotation": { "x": 0, "y": 0, "z": 90 },
+			"origin": { "x": 0.34, "y": 1.12, "z": 0.5 },
+			"scale": 3.1
+	}
+}

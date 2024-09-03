@@ -28,7 +28,7 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
         ICoreClientAPI capi = api as ICoreClientAPI;
         if (capi == null)
             return;
-        toolModes = ObjectCacheUtil.GetOrCreate(api, "drillToolModes", (CreateCachableObjectDelegate<SkillItem[]>) (() => new SkillItem[2]
+        toolModes = ObjectCacheUtil.GetOrCreate(api, "drillToolModes", () => new SkillItem[2]
         {
             new SkillItem
             {
@@ -40,7 +40,7 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
                 Code = new AssetLocation("3size"),
                 Name = Lang.Get("drill2")
             }.WithIcon(capi, IconStorage.DrawTool3x3)
-        }));
+        });
     }
 
     public override SkillItem[] GetToolModes(ItemSlot slot, IClientPlayer forPlayer, BlockSelection blockSel)

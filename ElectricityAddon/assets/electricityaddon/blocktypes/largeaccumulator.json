@@ -1,70 +1,92 @@
 {
-  "code": "largeaccumulator",
-  "class": "BlockEAccumulator",
-  "entityClass": "Accumulator",
-  "entityBehaviors": [
-    {
-      "name": "BEBehaviorEAccumulator"
-    },
-    {
-      "name": "Electricity"
-    }
-  ],
-  "behaviors": [
-    {
-      "name": "Multiblock",
-      "properties": {
-          "sizex": 1,
-          "sizey": 2,
-          "sizez": 1,
-          "cposition": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-          }
-      }
-    }
-  ],
-  "creativeInventory": {
-    "general": [
-      "*"
+    "code": "largeaccumulator",
+    "class": "BlockEAccumulator",
+    "entityClass": "Accumulator",
+    "entityBehaviors": [
+        {
+            "name": "BEBehaviorEAccumulator"
+        },
+        {
+            "name": "Electricity"
+        }
     ],
-    "electricity": [
-      "*"
-    ]
-  },
-  "attributes": {
-    "rechargeable": true,
-    "maxcapacity": 512000
-  },
-  "shape": {
-    "base": "block/largeaccumulator"
-  },
-  "resistance": 1,
-  "drawType": "JSON",
-  "lightAbsorption": 0.0,
-  "faceCullMode": "NeverCull",
-  "renderPass": "OpaqueNoCull",
-  "emitSideAo": {
-    "all": false
-  },
-  "sideAo": {
-    "all": false
-  },
-  "sideOpaque": {
-    "all": false
-  },
-  "sideSolid": {
-    "all": false
-  },
-  "collisionbox": { "x1": 0, "y1": 0, "z1": 0, "x2": 1, "y2": 2, "z2": 1 },
-  "sounds": {
-    "place": "game:block/anvil",
-    "walk": "game:walk/stone"
-  },
-  "guiTransform": {
-    "rotation": { "x": -22.6, "y": -145, "z": 0 },
-    "origin": { "x": 0.5, "y": 0.9, "z": 0.5 },
-    "scale": 0.72
-  }
+    "behaviors": [
+        {
+            "name": "Multiblock",
+            "properties": {
+                "sizex": 1,
+                "sizey": 2,
+                "sizez": 1,
+                "cposition": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                }
+            }
+        }
+    ],
+    "creativeInventory": {
+        "general": [
+            "*"
+        ],
+        "electricity": [
+            "*"
+        ]
+    },
+    "attributes": {
+        "rechargeable": true,
+        "maxcapacity": 512000
+    },
+    "shape": {
+        "base": "block/largeaccumulator"
+    },
+    "textures": {
+        "brass": { "base": "block/brass" },
+        "copper": { "base": "block/copper" },
+        "iron": { "base": "block/iron" },
+        "steel": { "base": "block/steel" },
+        "zinc": { "base": "block/zinc" }
+    },
+    "resistance": 1,
+    "drawType": "JSON",
+    "lightAbsorption": 0.0,
+    "faceCullMode": "NeverCull",
+    "renderPass": "OpaqueNoCull",
+    "emitSideAo": {
+        "all": false
+    },
+    "sideAo": {
+        "all": false
+    },
+    "sideOpaque": {
+        "all": false
+    },
+    "sideSolid": {
+        "all": false
+    },
+    "collisionbox": {
+        "x1": 0,
+        "y1": 0,
+        "z1": 0,
+        "x2": 1,
+        "y2": 2,
+        "z2": 1
+    },
+    "sounds": {
+        "place": "game:block/anvil",
+        "walk": "game:walk/stone"
+    },
+    "guiTransform": {
+        "rotation": {
+            "x": -22.6,
+            "y": -145,
+            "z": 0
+        },
+        "origin": {
+            "x": 0.5,
+            "y": 0.9,
+            "z": 0.5
+        },
+        "scale": 0.72
+    }
 }

@@ -1,49 +1,56 @@
 {
-  "code": "accumulator",
-  "class": "BlockEAccumulator",
-  "entityClass": "Accumulator",
-  "entityBehaviors": [
-    {
-      "name": "BEBehaviorEAccumulator"
-    },
-    {
-      "name": "Electricity"
-    }
-  ],
-  "creativeInventory": {
-    "general": [
-      "*"
+    "code": "accumulator",
+    "class": "BlockEAccumulator",
+    "entityClass": "Accumulator",
+    "entityBehaviors": [
+        {
+            "name": "BEBehaviorEAccumulator"
+        },
+        {
+            "name": "Electricity"
+        }
     ],
-    "electricity": [
-      "*"
-    ]
-  },
-  "attributes": {
-    "rechargeable": true,
-    "maxcapacity": 16000
-  },
-  "shape": {
-    "base": "block/accumulator"
-  },
-  "resistance": 1,
-  "drawType": "JSON",
-  "lightAbsorption": 0.0,
-  "faceCullMode": "NeverCull",
-  "renderPass": "OpaqueNoCull",
-  "emitSideAo": {
-    "all": false
-  },
-  "sideAo": {
-    "all": false
-  },
-  "sideOpaque": {
-    "all": false
-  },
-  "sideSolid": {
-    "all": false
-  },
-  "sounds": {
-    "place": "game:block/anvil",
-    "walk": "game:walk/stone"
-  }
+    "creativeInventory": {
+        "general": [
+            "*"
+        ],
+        "electricity": [
+            "*"
+        ]
+    },
+    "attributes": {
+        "rechargeable": true,
+        "maxcapacity": 16000
+    },
+    "shape": {
+        "base": "block/accumulator"
+    },
+    "textures": {
+        "brass": { "base": "electricityaddon:block/brass" },
+        "copper": { "base": "electricityaddon:block/copper" },
+        "iron": { "base": "electricityaddon:block/iron" },
+        "steel": { "base": "electricityaddon:block/steel" },
+        "zinc": { "base": "electricityaddon:block/zinc" }
+    },
+    "resistance": 1,
+    "drawType": "JSON",
+    "lightAbsorption": 0.0,
+    "faceCullMode": "NeverCull",
+    "renderPass": "OpaqueNoCull",
+    "emitSideAo": {
+        "all": false
+    },
+    "sideAo": {
+        "all": false
+    },
+    "sideOpaque": {
+        "all": false
+    },
+    "sideSolid": {
+        "all": false
+    },
+    "sounds": {
+        "place": "game:block/anvil",
+        "walk": "game:walk/stone"
+    }
 }

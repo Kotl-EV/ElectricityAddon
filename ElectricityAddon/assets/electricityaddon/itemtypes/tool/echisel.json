@@ -1,96 +1,99 @@
 {
-  "code": "echisel",
-  "class": "EChisel",
-  "attributes": {
-    "rechargeable": true,
-    "maxcapacity": 20000,
-    "consume": 20
-  },
-  "shape": { "base": "item/echisel" },
-  "creativeinventory": {
-    "general": [ "*" ],
-    "electricity": [ "*" ]
-  },
-  "tool": "Chisel",
-  "enabled": true,
-  "heldRightReadyAnimation": "chiselready",
-  "heldTpHitAnimation": "chiselhit",
-  "heldTpUseAnimation": "chiselhit",
-  "textures": {
-    "iron": { "base": "game:block/metal/ingot/iron" },
-    "chromium": { "base": "game:block/metal/ingot/chromium" },
-    "temporalgear": { "base": "game:item/resource/temporalgear" }
-  },
-  "guiTransform": {
-    "translation": {
-      "x": 0,
-      "y": 0,
-      "z": 0
+    "code": "echisel",
+    "class": "EChisel",
+    "attributes": {
+        "rechargeable": true,
+        "maxcapacity": 20000,
+        "consume": 20
     },
-    "rotation": {
-      "x": 9,
-      "y": 137,
-      "z": -53
+    "shape": { "base": "item/echisel" },
+    "textures": {
+        "copper": { "base": "block/copper" },
+        "iron": { "base": "block/iron" },
+            "stainlesssteel": { "base": "block/stainlesssteel" },
+            "steel": { "base": "block/steel" },
+            "zinc": { "base": "block/zinc" }
     },
-    "origin": {
-      "x": 0.44,
-      "y": 0,
-      "z": 0.38
+    "creativeinventory": {
+        "general": [ "*" ],
+        "electricity": [ "*" ]
     },
-    "scale": 2.92
-  },
-  "fpHandTransform": {
-    "translation": {
-      "x": -0.1,
-      "y": 0.2,
-      "z": 0
+    "tool": "Chisel",
+    "enabled": true,
+    "heldRightReadyAnimation": "chiselready",
+    "heldTpHitAnimation": "chiselhit",
+    "heldTpUseAnimation": "chiselhit",
+
+    "guiTransform": {
+        "translation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "rotation": {
+            "x": 9,
+            "y": 137,
+            "z": -53
+        },
+        "origin": {
+            "x": 0.44,
+            "y": 0,
+            "z": 0.38
+        },
+        "scale": 2.92
     },
-    "rotation": {
-      "x": 90,
-      "y": 99,
-      "z": -42
+    "fpHandTransform": {
+        "translation": {
+            "x": -0.1,
+            "y": 0.2,
+            "z": 0
+        },
+        "rotation": {
+            "x": 90,
+            "y": 99,
+            "z": -42
+        },
+        "origin": {
+            "x": 0.5,
+            "y": 0,
+            "z": 0.5
+        },
+        "scale": 2.15
     },
-    "origin": {
-      "x": 0.5,
-      "y": 0,
-      "z": 0.5
+    "groundTransform": {
+        "translation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "origin": {
+            "x": 0.5,
+            "y": 0,
+            "z": 0.5
+        },
+        "scale": 4.31
     },
-    "scale": 2.15
-  },
-  "groundTransform": {
-    "translation": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "rotation": {
-      "x": 0,
-      "y": 0,
-      "z": 0
-    },
-    "origin": {
-      "x": 0.5,
-      "y": 0,
-      "z": 0.5
-    },
-    "scale": 4.31
-  },
-  "tpHandTransform": {
-    "translation": {
-      "x": -0.5599,
-      "y": 0.04,
-      "z": -0.65
-    },
-    "rotation": {
-      "x": -3,
-      "y": 0,
-      "z": -170
-    },
-    "origin": {
-      "x": 0.5,
-      "y": 0,
-      "z": 0.5
-    },
-    "scale": 0.76
-  }
+    "tpHandTransform": {
+        "translation": {
+            "x": -0.5599,
+            "y": 0.04,
+            "z": -0.65
+        },
+        "rotation": {
+            "x": -3,
+            "y": 0,
+            "z": -170
+        },
+        "origin": {
+            "x": 0.5,
+            "y": 0,
+            "z": 0.5
+        },
+        "scale": 0.76
+    }
 }

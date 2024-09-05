@@ -4,17 +4,6 @@
 	"shapeByType": {
 		"*": { "base": "entity/armor/static-boots" }
 	},
-	"textures": {
-		"bismuthbronze": { "base": "block/bismuthbronze" },
-		"blackbronze": { "base": "block/blackbronze" },
-		"brass": { "base": "block/brass" },
-		"chain-iron": { "base": "block/chain-iron" },
-		"copper": { "base": "block/copper" },
-		"plain":{ "base":  "block/plain" },
-		"scale-iron": { "base": "block/scale-iron" },
-		"steel": { "base": "block/steel" },
-		"zinc": { "base": "block/zinc" }
-	},
 	"heldTpIdleAnimation": "holdunderarm",
 	"storageFlags": 128,
 	"attributes": {
@@ -55,7 +44,16 @@
 	},
 	"texturesByType": {
 		"*": {
-			"seraph": { "base": "game:block/transparent" }
+			"seraph": { "base": "game:block/transparent" },
+			"bismuthbronze": { "base": "block/bismuthbronze" },
+			"blackbronze": { "base": "block/blackbronze" },
+			"brass": { "base": "block/brass" },
+			"chain-iron": { "base": "block/chain-iron" },
+			"copper": { "base": "block/copper" },
+			"plain":{ "base":  "block/plain" },
+			"scale-iron": { "base": "block/scale-iron" },
+			"steel": { "base": "block/steel" },
+			"zinc": { "base": "block/zinc" }
 		}
 	},
 	"creativeinventory": {

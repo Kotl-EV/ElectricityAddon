@@ -34,27 +34,13 @@
 	"shape": { "base": "item/static-shield" },
 	"textures": {
 		"bismuthbronze": { "base": "block/bismuthbronze" },
-		"copper": {
-			"base": "block/copper"
-		},
-		"iron": {
-			"base": "block/iron"
-		},
-		"steel": {
-			"base": "block/steel"
-		},
-		"zinc": {
-			"base": "block/zinc"
-		},
-		"quartzglass": {
-			"base": "block/quartzglass"
-		},
-		"coke": {
-			"base": "block/coke"
-		},
-		"tin": {
-			"base": "block/tin"
-		}
+		"copper": {"base": "block/copper"},
+		"iron": {"base": "block/iron"},
+		"steel": {"base": "block/steel"},
+		"zinc": {"base": "block/zinc"},
+		"quartzglass": {"base": "block/quartzglass"},
+		"coke": {"base": "block/coke"},
+		"tin": {"base": "block/tin"}
 		},
 	"fpHandTransform": {
 		"translation": {

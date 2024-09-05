@@ -1,5 +1,5 @@
 ﻿{
-    "block-charger": "Estação de Carga",
+    "block-charger-*": "Estação de Carga",
     "block-estove-*": "Fogão Elétrico",
     "block-efreezer-*": "Geladeira",
     "block-largeaccumulator": "Acumulador Avançado",

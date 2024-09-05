@@ -1,7 +1,7 @@
 {
     "code": "forge",
-    "class": "ElectricForge",
-    "entityClass": "ElectricForge",
+    "class": "BlockEHorn",
+    "entityClass": "BlockEntityEHorn",
     "shape": {
         "base": "block/forge"
     },
@@ -19,6 +19,12 @@
     "behaviors": [
         {
             "name": "HeatSource"
+        },
+        {
+            "name": "HorizontalOrientable",
+            "properties": {
+                "dropBlockFace": "south"
+            }
         }
     ],
     "entityBehaviors": [
@@ -29,20 +35,62 @@
             "name": "Electricity"
         }
     ],
+    
+    "variantgroups": [
+        {
+            "code": "state",
+            "states": [ "disabled", "enabled" ]
+        },
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "shapebytype": {
+        "*-enabled-north": {
+            "base": "block/forge-enabled",
+            "rotateY": 0
+        },
+        "*-enabled-east": {
+            "base": "block/forge-enabled",
+            "rotateY": 270
+        },
+        "*-enabled-south": {
+            "base": "block/forge-enabled",
+            "rotateY": 180
+        },
+        "*-enabled-west": {
+            "base": "block/forge-enabled",
+            "rotateY": 90
+        },
+        "*-disabled-north": {
+            "base": "block/forge-disabled",
+            "rotateY": 0
+        },
+        "*-disabled-east": {
+            "base": "block/forge-disabled",
+            "rotateY": 270
+        },
+        "*-disabled-south": {
+            "base": "block/forge-disabled",
+            "rotateY": 180
+        },
+        "*-disabled-west": {
+            "base": "block/forge-disabled",
+            "rotateY": 90
+        }
+    },
     "blockMaterial": "Stone",
-    "creativeInventory": {
-        "general": [
-            "*"
-        ],
-        "decorative": [
-            "*"
-        ],
-        "electricity": [
-            "*"
-        ]
+    "creativeinventory": {
+        "general": [ "*-disabled-south" ],
+        "electricity": [ "*-disabled-south" ]
     },
     "replaceable": 500,
     "lightAbsorption": 0,
+    "lightHsvByType": {
+        "*-disabled-*": [ 0, 0, 0 ],
+        "*-enabled-*": [ 7, 7, 11 ]
+    },
     "resistance": 3.5,
     "sounds": {
         "walk": "game:walk/stone",
@@ -58,14 +106,6 @@
     },
     "sideOpaque": {
         "all": false
-    },
-    "textures": {
-        "coal": {
-            "base": "block/coal-dust"
-        },
-        "ember": {
-            "base": "block/forge"
-        }
     },
     "collisionBox": {
         "x1": 0.0625,

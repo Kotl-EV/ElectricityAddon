@@ -19,6 +19,6 @@
   "height": 2,
   "output": {
     "type": "block",
-    "code": "electricityaddon:charger"
+    "code": "electricityaddon:charger-disabled-south"
   }
 }

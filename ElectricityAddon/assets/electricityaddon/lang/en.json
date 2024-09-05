@@ -1,5 +1,5 @@
 {
-  "block-charger": "Charging Station",
+  "block-charger-*": "Charging Station",
   "block-estove-*": "Electric Stove",
   "block-efreezer-*": "Electric Freezer",
   "block-largeaccumulator": "Accumulator (large)",

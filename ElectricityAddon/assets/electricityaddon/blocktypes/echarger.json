@@ -18,6 +18,15 @@
         "emeral": { "base": "block/emeral" },
         "topaz": { "base": "block/topaz" }
     },
+    "behaviors": [
+        { "name": "Container" },
+        {
+            "name": "HorizontalOrientable",
+            "properties": {
+                "dropBlockFace": "south"
+            }
+        }
+    ],
     "entityBehaviors": [
         {
             "name": "BEBehaviorECharger"
@@ -27,19 +36,60 @@
         }
     ],
     "blockMaterial": "Stone",
-    "creativeInventory": {
-        "general": [
-            "*"
-        ],
-        "decorative": [
-            "*"
-        ],
-        "electricity": [
-            "*"
-        ]
+    "creativeinventory": {
+        "general": [ "*-disabled-south" ],
+        "electricity": [ "*-disabled-south" ]
+    },
+    "variantgroups": [
+        {
+            "code": "state",
+            "states": [ "disabled", "enabled" ]
+        },
+        {
+            "code": "side",
+            "loadFromProperties": "abstract/horizontalorientation"
+        }
+    ],
+    "shapebytype": {
+        "*-enabled-north": {
+            "base": "block/charger-enabled",
+            "rotateY": 0
+        },
+        "*-enabled-east": {
+            "base": "block/charger-enabled",
+            "rotateY": 270
+        },
+        "*-enabled-south": {
+            "base": "block/charger-enabled",
+            "rotateY": 180
+        },
+        "*-enabled-west": {
+            "base": "block/charger-enabled",
+            "rotateY": 90
+        },
+        "*-disabled-north": {
+            "base": "block/charger-disabled",
+            "rotateY": 0
+        },
+        "*-disabled-east": {
+            "base": "block/charger-disabled",
+            "rotateY": 270
+        },
+        "*-disabled-south": {
+            "base": "block/charger-disabled",
+            "rotateY": 180
+        },
+        "*-disabled-west": {
+            "base": "block/charger-disabled",
+            "rotateY": 90
+        }
     },
     "replaceable": 500,
     "lightAbsorption": 0,
+    "lightHsvByType": {
+        "*-disabled-*": [ 0, 0, 0 ],
+        "*-enabled-*": [ 7, 7, 11 ]
+    },
     "resistance": 3.5,
     "sounds": {
         "walk": "game:walk/stone",

@@ -70,6 +70,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
     {
         if (inventory[0]?.Itemstack?.Item is IEnergyStorageItem)
         {
+            Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
             var storageEnergyItem = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
             var maxStorageItem = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Item,"maxcapacity");
             if (storageEnergyItem < maxStorageItem && GetBehavior<BEBehaviorECharger>().powerSetting > 0)
@@ -78,8 +79,9 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
                 inventory[0].MarkDirty();
             }
         }
-        if (inventory[0]?.Itemstack?.Block is IEnergyStorageItem)
+        else if (inventory[0]?.Itemstack?.Block is IEnergyStorageItem)
         {
+            Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
             var storageEnergyBlock = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
             var maxStorageBlock = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Block,"maxcapacity");
             if (storageEnergyBlock < maxStorageBlock && GetBehavior<BEBehaviorECharger>().powerSetting > 0)
@@ -87,8 +89,8 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
                 ((IEnergyStorageItem)inventory[0].Itemstack.Block).receiveEnergy(inventory[0].Itemstack,GetBehavior<BEBehaviorECharger>().powerSetting );
                 inventory[0].MarkDirty();
             } 
-        }
-        MarkDirty();
+        }else Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
+        MarkDirty(true);
     }
 
     void loadToolMeshes()

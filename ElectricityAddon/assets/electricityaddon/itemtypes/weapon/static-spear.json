@@ -8,24 +8,12 @@
 		"bismuthbronze": { "base": "block/bismuthbronze" },
 		"copper":  { "base": "block/copper" },
 		"iron": { "base": "block/iron" },
-		"platinum": {
-			"base": "block/platinum"
-		},
-		"steel": {
-			"base": "block/steel"
-		},
-		"zinc": {
-			"base": "block/zinc"
-		},
-		"quartzglass": {
-			"base": "block/quartzglass"
-		},
-		"coke": {
-			"base": "block/coke"
-		},
-		"tin": {
-			"base": "block/tin"
-		}
+		"platinum": {"base": "block/platinum"},
+		"steel": {"base": "block/steel"},
+		"zinc": {"base": "block/zinc"},
+		"quartzglass": {"base": "block/quartzglass"},
+		"coke": {"base": "block/coke"},
+		"tin": {"base": "block/tin"}
 	},
 	"heldTpHitAnimation": "spearhit",
 	"attackRange": 4.0,

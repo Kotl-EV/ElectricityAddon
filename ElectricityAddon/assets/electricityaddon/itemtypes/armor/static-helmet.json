@@ -4,27 +4,6 @@
 	"shapeByType": {
 		"*": { "base": "entity/armor/static-helmet" }
 	},
-	"textures": {
-		"copper": { "base": "block/copper" },
-		"gold": {
-			"base": "block/gold"
-		},
-		"iron": {
-			"base": "block/iron"
-		},
-		"cheap": {
-			"base": "block/cheap"
-		},
-		"steel": {
-			"base": "block/steel"
-		},
-		"uranium": {
-			"base": "block/uranium"
-		},
-		"zinc": {
-			"base": "block/zinc"
-		}
-							},
 	"heldTpIdleAnimation": "holdunderarm",
 	"storageFlags": 128,
 	"attributes": {
@@ -70,7 +49,14 @@
 	},
 	"texturesByType": {
 		"*": {
-			"seraph": { "base": "game:block/transparent" }
+			"seraph": { "base": "game:block/transparent" },
+			"copper": { "base": "block/copper" },
+			"gold": {"base": "block/gold"},
+			"iron": {"base": "block/iron"},
+			"cheap": {"base": "block/cheap"},
+			"steel": {"base": "block/steel"},
+			"uranium": {"base": "block/uranium"},
+			"zinc": {"base": "block/zinc"}
 		}
 	},
 	"creativeinventory": {

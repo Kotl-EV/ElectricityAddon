@@ -8,15 +8,6 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"bismuthbronze": "block/bismuthbronze",
-		"blackbronze": "block/blackbronze",
-		"brass": "block/brass",
-		"chain-iron": "block/chain-iron",
-		"copper": "block/copper",
-		"plain": "block/plain",
-		"scale-iron": "block/scale-iron",
-		"steel": "block/steel",
-		"zinc": "block/zinc"
 	},
 	"elements": [
 		{

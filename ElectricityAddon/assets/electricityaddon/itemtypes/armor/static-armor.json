@@ -4,18 +4,6 @@
 	"shapeByType": {
 		"*": { "base": "entity/armor/static-armor" }
 	},
-	"textures": {
-		"bismuthbronze": { "base": "block/bismuthbronze" },
-		"chain-iron": { "base": "block/chain-iron" },
-		"cheap": { "base": "block/cheap" },
-		"coke": { "base": "block/coke" },
-		"copper": { "base": "block/copper" },
-		"iron": { "base": "block/iron" },
-		"plain": { "base": "block/plain" },
-		"scale-iron": { "base": "block/scale-iron" },
-		"steel": { "base": "block/steel" },
-		"zinc": { "base": "block/zinc" }
-	},
 	"heldTpIdleAnimation": "holdunderarm",
 	"storageFlags": 128,
 	"attributes": {
@@ -60,7 +48,17 @@
 	},
 	"texturesByType": {
 		"*": {
-			"seraph": { "base": "game:block/transparent" }
+			"seraph": { "base": "game:block/transparent" },
+			"bismuthbronze": { "base": "block/bismuthbronze" },
+			"chain-iron": { "base": "block/chain-iron" },
+			"cheap": { "base": "block/cheap" },
+			"coke": { "base": "block/coke" },
+			"copper": { "base": "block/copper" },
+			"iron": { "base": "block/iron" },
+			"plain": { "base": "block/plain" },
+			"scale-iron": { "base": "block/scale-iron" },
+			"steel": { "base": "block/steel" },
+			"zinc": { "base": "block/zinc" }
 		}
 	},
 	"creativeinventory": {

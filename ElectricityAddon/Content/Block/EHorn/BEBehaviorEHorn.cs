@@ -15,8 +15,8 @@ public class BEBehaviorEHorn : BlockEntityBehavior, IElectricConsumer {
     }
     public ConsumptionRange ConsumptionRange => hasItems ? new ConsumptionRange(10, 100) : new ConsumptionRange(0, 0);
     public void Consume(int amount) {
-        ElectricForge? entity = null;
-        if (Blockentity is ElectricForge temp)
+        BlockEntityEHorn? entity = null;
+        if (Blockentity is BlockEntityEHorn temp)
         {
             entity = temp;
             hasItems = entity?.Contents?.StackSize > 0;

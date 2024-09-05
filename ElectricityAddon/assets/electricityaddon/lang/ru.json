@@ -1,5 +1,5 @@
 {
-  "block-charger": "Зарядная Станция",
+  "block-charger-*": "Зарядная Станция",
   "block-estove-*": "Электрическая Плита",
   "block-efreezer-*": "Электрический Морозильник",
   "block-largeaccumulator": "Аккумулятор (большой)",

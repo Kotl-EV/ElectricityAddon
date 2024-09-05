@@ -31,7 +31,9 @@ public class ElectricityAddon : ModSystem
     {
         base.Start(api);
         
+        api.RegisterBlockClass("BlockEHorn", typeof(BlockEHorn));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEHorn", typeof(BEBehaviorEHorn));
+        api.RegisterBlockEntityClass("BlockEntityEHorn", typeof(BlockEntityEHorn));
 
         api.RegisterBlockClass("BlockEAccumulator", typeof(BlockEAccumulator));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEAccumulator", typeof(BEBehaviorEAccumulator));

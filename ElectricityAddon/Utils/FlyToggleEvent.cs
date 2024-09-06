@@ -302,7 +302,7 @@ public class FlyToggleEvent : ModSystem
             }
 
             if (ownInventory[(int)EnumCharacterDressType.ArmorBody].Itemstack.Item.FirstCodePart()
-                .Contains("forcefield"))
+                .Contains("static"))
             {
                 return true;
             }

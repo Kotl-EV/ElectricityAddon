@@ -1,10 +1,10 @@
 {
     "code": "Generatortier3",
-  "class": "BlockEGenerator",
+  "class": "BlockEGeneratorTier3",
   "entityClass": "BlockEntityEGenerator",
   "entityBehaviors": [
     {
-      "name": "BEBehaviorEGenerator"
+      "name": "BEBehaviorEGeneratorTier3"
     },
     {
       "name": "Electricity"
@@ -34,19 +34,14 @@
     }
   ],
   "shapeInventory": {
-    "base": "electricity:block/motor"
+    "base": "block/generatortier3"
   },
   "shapeByType": {
-    "*-rotor": {
-      "base": "electricity:block/motor-rotor"
+    "Generatortier3-rotor": {
+      "base": "block/generatortier3-rotor"
     },
-    "*-stator": {
-      "base": "electricity:block/motor-stator"
-    }
-  },
-  "textures": {
-    "copper": {
-      "base": "game:block/metal/ingot/gold"
+    "Generatortier3-stator": {
+      "base": "block/generatortier3-stator"
     }
   },
   "resistance": 1,

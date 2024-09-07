@@ -1,10 +1,10 @@
 {
   "code": "Motortier3",
-  "class": "BlockEMotor",
+  "class": "BlockEMotorTier3",
   "entityClass": "BlockEntityEMotor",
   "entityBehaviors": [
     {
-      "name": "BEBehaviorEMotor"
+      "name": "BEBehaviorEMotorTier3"
     },
     {
       "name": "Electricity"
@@ -34,14 +34,14 @@
     }
   ],
   "shapeInventory": {
-    "base": "electricity:block/motor"
+    "base": "block/motortier3"
   },
   "shapeByType": {
     "*-rotor": {
-      "base": "electricity:block/motor-rotor"
+      "base": "block/motortier3-rotor"
     },
     "*-stator": {
-      "base": "electricity:block/motor-stator"
+      "base": "block/motortier3-stator"
     }
   },
   "textures": {

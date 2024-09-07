@@ -7,6 +7,17 @@
 	"textureHeight": 16,
 	"textureSizes": {
 	},
+	"textures": {
+		"brass": "block/brass",
+		"copper": "block/copper",
+		"gold": "block/gold",
+		"iron": "block/iron",
+		"oak": "block/oak",
+		"stainlesssteel": "block/stainlesssteel",
+		"steel": "block/steel",
+		"zinc": "block/zinc",
+		"steel1": "block/plate/steel1"
+	},
 	"elements": [
 		{
 			"name": "rotor",

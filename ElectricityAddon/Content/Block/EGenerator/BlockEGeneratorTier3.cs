@@ -8,14 +8,14 @@ using Vintagestory.GameContent.Mechanics;
 
 namespace ElectricityAddon.Content.Block.EGenerator;
 
-public class BlockEGenerator : Vintagestory.API.Common.Block, IMechanicalPowerBlock
+public class BlockEGeneratorTier3 : Vintagestory.API.Common.Block, IMechanicalPowerBlock
 {
     private readonly static Dictionary<Facing, MeshData> MeshData = new();
 
     public override void OnUnloaded(ICoreAPI api)
     {
         base.OnUnloaded(api);
-        BlockEGenerator.MeshData.Clear();
+        BlockEGeneratorTier3.MeshData.Clear();
     }
 
     public MechanicalNetwork? GetNetwork(IWorldAccessor world, BlockPos pos)
@@ -127,10 +127,10 @@ public class BlockEGenerator : Vintagestory.API.Common.Block, IMechanicalPowerBl
         {
             var facing = entity.Facing;
 
-            if (!BlockEGenerator.MeshData.TryGetValue(facing, out var meshData))
+            if (!BlockEGeneratorTier3.MeshData.TryGetValue(facing, out var meshData))
             {
                 var origin = new Vec3f(0.5f, 0.5f, 0.5f);
-                var block = clientApi.World.GetBlock(new AssetLocation("electricity:generator-stator"));
+                var block = clientApi.World.BlockAccessor.GetBlockEntity(pos).Block;
 
                 clientApi.Tesselator.TesselateBlock(block, out meshData);
 
@@ -258,7 +258,7 @@ public class BlockEGenerator : Vintagestory.API.Common.Block, IMechanicalPowerBl
                     meshData.Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f);
                 }
 
-                BlockEGenerator.MeshData.Add(facing, meshData);
+                BlockEGeneratorTier3.MeshData.Add(facing, meshData);
             }
 
             sourceMesh = meshData;

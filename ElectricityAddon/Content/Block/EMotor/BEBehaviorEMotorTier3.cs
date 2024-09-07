@@ -14,7 +14,7 @@ using Vintagestory.GameContent.Mechanics;
 
 namespace ElectricityAddon.Content.Block.EMotor;
 
-public class BEBehaviorEMotor : BEBehaviorMPBase, IElectricConsumer
+public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
 {
     private const float AccelerationFactor = 1.0f;
     private static CompositeShape? compositeShape;
@@ -23,7 +23,7 @@ public class BEBehaviorEMotor : BEBehaviorMPBase, IElectricConsumer
     private int powerSetting;
     private float resistance = 0.03f;
 
-    public BEBehaviorEMotor(BlockEntity blockEntity) : base(blockEntity)
+    public BEBehaviorEMotorTier3(BlockEntity blockEntity) : base(blockEntity)
     {
     }
 
@@ -104,7 +104,9 @@ public class BEBehaviorEMotor : BEBehaviorMPBase, IElectricConsumer
         if (this.Api is ICoreServerAPI api && this.network is not null && (
                 from mechanicalPowerNode in this.network.nodes
                 let block = api.World.BlockAccessor.GetBlockEntity(mechanicalPowerNode.Key)
-                where block?.GetBehavior<BEBehaviorEGenerator>() is not null
+                where block?.GetBehavior<BEBehaviorEGeneratorTier1>() is not null
+                where block?.GetBehavior<BEBehaviorEGeneratorTier2>() is not null
+                where block?.GetBehavior<BEBehaviorEGeneratorTier3>() is not null
                 select mechanicalPowerNode).Any()) {
             api.Event.EnqueueMainThreadTask(() => api.World.BlockAccessor.BreakBlock(this.Position, null), "break-motor");
         }
@@ -120,7 +122,7 @@ public class BEBehaviorEMotor : BEBehaviorMPBase, IElectricConsumer
     public override float GetTorque(long tick, float speed, out float resistance)
     {
         this.resistance = this.GetResistance();
-        this.capableSpeed += (this.TargetSpeed - this.capableSpeed) * BEBehaviorEMotor.AccelerationFactor;
+        this.capableSpeed += (this.TargetSpeed - this.capableSpeed) * BEBehaviorEMotorTier3.AccelerationFactor;
         var csFloat = (float)this.capableSpeed;
 
         var dir = this.propagationDir == this.OutFacingForNetworkDiscovery
@@ -154,13 +156,13 @@ public class BEBehaviorEMotor : BEBehaviorMPBase, IElectricConsumer
         {
             var direction = this.OutFacingForNetworkDiscovery;
 
-            if (BEBehaviorEMotor.compositeShape == null)
+            if (BEBehaviorEMotorTier3.compositeShape == null)
             {
                 var location = this.Block.CodeWithVariant("type", "rotor");
-                BEBehaviorEMotor.compositeShape = api.World.BlockAccessor.GetBlock(location).Shape.Clone();
+                BEBehaviorEMotorTier3.compositeShape = api.World.BlockAccessor.GetBlock(location).Shape.Clone();
             }
 
-            var shape = BEBehaviorEMotor.compositeShape.Clone();
+            var shape = BEBehaviorEMotorTier3.compositeShape.Clone();
 
             if (direction == BlockFacing.NORTH)
             {

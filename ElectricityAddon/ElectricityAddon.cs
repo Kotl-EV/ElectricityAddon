@@ -1,5 +1,6 @@
 ﻿using ElectricityAddon.Content.Armor;
 using ElectricityAddon.Content.Block.EAccumulator;
+using ElectricityAddon.Content.Block.ECentrifuge;
 using ElectricityAddon.Content.Block.ECharger;
 using ElectricityAddon.Content.Block.EFreezer;
 using ElectricityAddon.Content.Block.EGenerator;
@@ -49,6 +50,10 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockClass("BlockEFreezer", typeof(BlockEFreezer));
         api.RegisterBlockEntityClass("BlockEntityEFreezer", typeof(BlockEntityEFreezer));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEFreezer", typeof(BEBehaviorEFreezer));
+        
+        api.RegisterBlockClass("BlockECentrifuge", typeof(BlockECentrifuge));
+        api.RegisterBlockEntityClass("BlockEntityECentrifuge", typeof(BlockEntityECentrifuge));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorECentrifuge", typeof(BEBehaviorECentrifuge));
         
         api.RegisterBlockClass("BlockEMotorTier1", typeof(BlockEMotorTier1));
         api.RegisterBlockClass("BlockEMotorTier2", typeof(BlockEMotorTier2));

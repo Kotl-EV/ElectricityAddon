@@ -12,6 +12,7 @@
 		"copper": "block/copper",
 		"iron": "block/iron",
 		"steel": "block/steel",
+		"stainlesssteel": "block/steel",
 		"zinc": "block/zinc"
 	},
 	"elements": [

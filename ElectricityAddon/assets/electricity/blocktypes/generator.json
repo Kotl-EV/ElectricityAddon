@@ -1,10 +1,10 @@
 {
   "code": "Generator",
-  "class": "BlockEGenerator",
+  "class": "BlockEGeneratorTier1",
   "entityClass": "BlockEntityEGenerator",
   "entityBehaviors": [
     {
-      "name": "BEBehaviorEGenerator"
+      "name": "BEBehaviorEGeneratorTier1"
     },
     {
       "name": "Electricity"
@@ -34,14 +34,14 @@
     }
   ],
   "shapeInventory": {
-    "base": "block/motor"
+    "base": "electricityaddon:block/generatortier1"
   },
   "shapeByType": {
-    "*-rotor": {
-      "base": "block/motor-rotor"
+    "Generator-rotor": {
+      "base": "electricityaddon:block/generatortier1-rotor"
     },
-    "*-stator": {
-      "base": "block/motor-stator"
+    "Generator-stator": {
+      "base": "electricityaddon:block/generatortier1-stator"
     }
   },
   "resistance": 1,

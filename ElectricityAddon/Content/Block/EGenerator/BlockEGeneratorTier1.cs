@@ -1,21 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using Electricity.Utils;
-using ElectricityAddon.Content.Block.EMotor;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent.Mechanics;
 
-namespace ElectricityAddon.Content.Block.EMotor;
-public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
+namespace ElectricityAddon.Content.Block.EGenerator;
+
+public class BlockEGeneratorTier1 : Vintagestory.API.Common.Block, IMechanicalPowerBlock
 {
     private readonly static Dictionary<Facing, MeshData> MeshData = new();
 
     public override void OnUnloaded(ICoreAPI api)
     {
         base.OnUnloaded(api);
-        BlockEMotor.MeshData.Clear();
+        BlockEGeneratorTier1.MeshData.Clear();
     }
 
     public MechanicalNetwork? GetNetwork(IWorldAccessor world, BlockPos pos)
@@ -30,7 +30,8 @@ public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
 
     public bool HasMechPowerConnectorAt(IWorldAccessor world, BlockPos pos, BlockFacing face)
     {
-        if (world.BlockAccessor.GetBlockEntity(pos) is BlockEntityEMotor entity && entity.Facing != Facing.None)
+        if (world.BlockAccessor.GetBlockEntity(pos) is BlockEntityEGenerator entity &&
+            entity.Facing != Facing.None)
         {
             return FacingHelper.Directions(entity.Facing).First() == face;
         }
@@ -74,7 +75,7 @@ public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
 
         if (
             base.DoPlaceBlock(world, byPlayer, blockSel, byItemStack) &&
-            world.BlockAccessor.GetBlockEntity(blockSel.Position) is BlockEntityEMotor entity
+            world.BlockAccessor.GetBlockEntity(blockSel.Position) is BlockEntityEGenerator entity
         )
         {
             entity.Facing = facing;
@@ -105,7 +106,7 @@ public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
         base.OnNeighbourBlockChange(world, pos, neibpos);
 
         if (
-            world.BlockAccessor.GetBlockEntity(pos) is BlockEntityEMotor entity &&
+            world.BlockAccessor.GetBlockEntity(pos) is BlockEntityEGenerator entity &&
             FacingHelper.Faces(entity.Facing).First() is { } blockFacing &&
             !world.BlockAccessor.GetBlock(pos.AddCopy(blockFacing)).SideSolid[blockFacing.Opposite.Index]
         )
@@ -120,16 +121,16 @@ public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
         base.OnJsonTesselation(ref sourceMesh, ref lightRgbsByCorner, pos, chunkExtBlocks, extIndex3d);
 
         if (this.api is ICoreClientAPI clientApi &&
-            this.api.World.BlockAccessor.GetBlockEntity(pos) is BlockEntityEMotor entity &&
+            this.api.World.BlockAccessor.GetBlockEntity(pos) is BlockEntityEGenerator entity &&
             entity.Facing != Facing.None
            )
         {
             var facing = entity.Facing;
 
-            if (!BlockEMotor.MeshData.TryGetValue(facing, out var meshData))
+            if (!BlockEGeneratorTier1.MeshData.TryGetValue(facing, out var meshData))
             {
                 var origin = new Vec3f(0.5f, 0.5f, 0.5f);
-                var block = clientApi.World.GetBlock(new AssetLocation("electricity:motor-stator"));
+                var block = clientApi.World.BlockAccessor.GetBlockEntity(pos).Block;
 
                 clientApi.Tesselator.TesselateBlock(block, out meshData);
 
@@ -257,7 +258,7 @@ public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
                     meshData.Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f);
                 }
 
-                BlockEMotor.MeshData.Add(facing, meshData);
+                BlockEGeneratorTier1.MeshData.Add(facing, meshData);
             }
 
             sourceMesh = meshData;

@@ -1,10 +1,10 @@
 {
   "code": "Motortier2",
-  "class": "BlockEMotor",
+  "class": "BlockEMotorTier2",
   "entityClass": "BlockEntityEMotor",
   "entityBehaviors": [
     {
-      "name": "BEBehaviorEMotor"
+      "name": "BEBehaviorEMotorTier2"
     },
     {
       "name": "Electricity"
@@ -34,14 +34,14 @@
     }
   ],
   "shapeInventory": {
-    "base": "electricity:block/motor"
+    "base": "block/motortier2"
   },
   "shapeByType": {
     "*-rotor": {
-      "base": "electricity:block/motor-rotor"
+      "base": "block/motortier2-rotor"
     },
     "*-stator": {
-      "base": "electricity:block/motor-stator"
+      "base": "block/motortier2-stator"
     }
   },
   "textures": {

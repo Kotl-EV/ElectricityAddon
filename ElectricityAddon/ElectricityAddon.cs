@@ -50,13 +50,21 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockEntityClass("BlockEntityEFreezer", typeof(BlockEntityEFreezer));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEFreezer", typeof(BEBehaviorEFreezer));
         
-        api.RegisterBlockClass("BlockEMotor", typeof(BlockEMotor));
+        api.RegisterBlockClass("BlockEMotorTier1", typeof(BlockEMotorTier1));
+        api.RegisterBlockClass("BlockEMotorTier2", typeof(BlockEMotorTier2));
+        api.RegisterBlockClass("BlockEMotorTier3", typeof(BlockEMotorTier3));
         api.RegisterBlockEntityClass("BlockEntityEMotor", typeof(BlockEntityEMotor));
-        api.RegisterBlockEntityBehaviorClass("BEBehaviorEMotor", typeof(BEBehaviorEMotor));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEMotorTier1", typeof(BEBehaviorEMotorTier1));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEMotorTier2", typeof(BEBehaviorEMotorTier2));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEMotorTier3", typeof(BEBehaviorEMotorTier3));
         
-        api.RegisterBlockClass("BlockEGenerator", typeof(BlockEGenerator));
+        api.RegisterBlockClass("BlockEGeneratorTier1", typeof(BlockEGeneratorTier1));
+        api.RegisterBlockClass("BlockEGeneratorTier2", typeof(BlockEGeneratorTier2));
+        api.RegisterBlockClass("BlockEGeneratorTier3", typeof(BlockEGeneratorTier3));
         api.RegisterBlockEntityClass("BlockEntityEGenerator", typeof(BlockEntityEGenerator));
-        api.RegisterBlockEntityBehaviorClass("BEBehaviorEGenerator", typeof(BEBehaviorEGenerator));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier1", typeof(BEBehaviorEGeneratorTier1));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier2", typeof(BEBehaviorEGeneratorTier2));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier3", typeof(BEBehaviorEGeneratorTier3));
 
         api.RegisterItemClass("EChisel", typeof(EChisel));
         api.RegisterItemClass("EAxe", typeof(EAxe));

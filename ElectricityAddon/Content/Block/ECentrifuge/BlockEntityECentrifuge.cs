@@ -91,8 +91,6 @@ public class BlockEntityECentrifuge : BlockEntityOpenableContainer
     if (!FindMatchingRecipe())
       return;
     RecipeProgress = (float)(RecipeProgress + GetBehavior<BEBehaviorECentrifuge>().PowerSetting/CurrentRecipe.EnergyOperation);
-    Console.WriteLine("Необходимо энергии на 1 операцию " + CurrentRecipe.EnergyOperation);
-    Console.WriteLine("Прогресс " + RecipeProgress);
     UpdateState(RecipeProgress);
     if (RecipeProgress >= 1)
     {

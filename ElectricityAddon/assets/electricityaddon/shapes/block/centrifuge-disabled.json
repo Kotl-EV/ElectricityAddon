@@ -7,6 +7,8 @@
 	"textureHeight": 16,
 	"textureSizes": {
 	},
+	"textures": {
+	},
 	"elements": [
 		{
 			"name": "Cube2",
@@ -6725,7 +6727,7 @@
 			]
 		},
 		{
-			"name": "Cube4",
+			"name": "lamp132",
 			"from": [ 26.65, 15.68, -8.45 ],
 			"to": [ 31.55, 16.59, -2.15 ],
 			"rotationOrigin": [ 26.65, 15.68, -8.45 ],
@@ -6739,7 +6741,7 @@
 			},
 			"children": [
 				{
-					"name": "Cube2",
+					"name": "lamp1532",
 					"from": [ 0.35, 0.07, 0.35 ],
 					"to": [ 4.55, 1.4, 5.95 ],
 					"rotationOrigin": [ 0.35, 0.07, 0.35 ],
@@ -6753,7 +6755,7 @@
 					},
 					"children": [
 						{
-							"name": "Cube5",
+							"name": "lamp163",
 							"from": [ 0.7, 0.84, 0.7 ],
 							"to": [ 3.5, 1.54, 4.9 ],
 							"rotationOrigin": [ 0.7, 0.84, 0.7 ],
@@ -6767,7 +6769,7 @@
 							},
 							"children": [
 								{
-									"name": "Cube7",
+									"name": "lamp112",
 									"from": [ 1.05, 0.0, 0.7 ],
 									"to": [ 1.75, 2.8, 0.84 ],
 									"rotationOrigin": [ 1.05, 0.0, 0.7 ],
@@ -6781,7 +6783,7 @@
 									}
 								},
 								{
-									"name": "Cube8",
+									"name": "lamp141",
 									"from": [ 1.05, 0.0, 3.36 ],
 									"to": [ 1.75, 2.8, 3.5 ],
 									"rotationOrigin": [ 1.05, 0.0, 3.36 ],
@@ -6795,7 +6797,7 @@
 									},
 									"children": [
 										{
-											"name": "Cube9",
+											"name": "lamp122",
 											"from": [ 0.28, 2.45, -2.541 ],
 											"to": [ 0.42, 2.59, -1.841 ],
 											"rotationOrigin": [ 0.28, 2.45, -2.541 ],
@@ -6810,7 +6812,7 @@
 											},
 											"children": [
 												{
-													"name": "Cube10",
+													"name": "lamp1263",
 													"from": [ 0.0, 0.0, 0.7 ],
 													"to": [ 0.14, 0.14, 1.4 ],
 													"rotationOrigin": [ 0.0, 0.0, 0.7 ],
@@ -6825,7 +6827,7 @@
 													},
 													"children": [
 														{
-															"name": "Cube11",
+															"name": "lamp14",
 															"from": [ 0.0, 0.1407, 0.5593 ],
 															"to": [ 0.14, 0.2807, 1.2593 ],
 															"rotationOrigin": [ 0.0, 0.1407, 0.5593 ],
@@ -6840,7 +6842,7 @@
 															},
 															"children": [
 																{
-																	"name": "Cube12",
+																	"name": "lamp13",
 																	"from": [ 0.0, 0.0, 0.7 ],
 																	"to": [ 0.14, 0.14, 1.4 ],
 																	"rotationOrigin": [ 0.0, 0.0, 0.7 ],
@@ -6855,7 +6857,7 @@
 																	},
 																	"children": [
 																		{
-																			"name": "Cube13",
+																			"name": "lamp1285",
 																			"from": [ 0.0, 0.1407, 0.5593 ],
 																			"to": [ 0.14, 0.2807, 1.2593 ],
 																			"rotationOrigin": [ 0.0, 0.1407, 0.5593 ],
@@ -6870,7 +6872,7 @@
 																			},
 																			"children": [
 																				{
-																					"name": "Cube14",
+																					"name": "lamp111",
 																					"from": [ 0.0, 0.0, 0.7 ],
 																					"to": [ 0.14, 0.14, 1.4 ],
 																					"rotationOrigin": [ 0.0, 0.0, 0.7 ],
@@ -6885,7 +6887,7 @@
 																					}
 																				},
 																				{
-																					"name": "Cube15",
+																					"name": "lamp11",
 																					"from": [ 0.0, 0.56, 0.63 ],
 																					"to": [ 0.14, 0.7, 0.84 ],
 																					"rotationOrigin": [ 0.0, 0.56, 0.63 ],
@@ -6899,7 +6901,7 @@
 																					}
 																				},
 																				{
-																					"name": "Cube16",
+																					"name": "lamp12",
 																					"from": [ 0.0, -1.05, -1.113 ],
 																					"to": [ 0.14, -0.91, -0.903 ],
 																					"rotationOrigin": [ 0.0, -1.05, -1.113 ],
@@ -6926,7 +6928,7 @@
 									]
 								},
 								{
-									"name": "Cube6",
+									"name": "lamp1",
 									"from": [ 0.14, 0.49, 0.14 ],
 									"to": [ 2.66, 3.29, 4.06 ],
 									"renderPass": 3,
@@ -6941,6 +6943,66 @@
 									}
 								}
 							]
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "connector",
+			"from": [ -0.2, 0.0, 7.0 ],
+			"to": [ 7.0, 1.3, 9.0 ],
+			"rotationOrigin": [ -0.2, 0.0, 7.0 ],
+			"faces": {
+				"north": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 7.0, 1.0 ] },
+				"east": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"south": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 7.0, 1.0 ] },
+				"west": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"up": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 7.0, 2.0 ] },
+				"down": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 7.0, 2.0 ] }
+			},
+			"children": [
+				{
+					"name": "connector1",
+					"from": [ 7.2, 0.0, 0.0 ],
+					"to": [ 9.2, 1.3, 9.2 ],
+					"rotationOrigin": [ 7.2, 0.0, 0.0 ],
+					"faces": {
+						"north": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+						"east": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 9.0, 1.0 ] },
+						"south": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+						"west": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 9.0, 1.0 ] },
+						"up": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 9.0 ] },
+						"down": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 9.0 ] }
+					},
+					"children": [
+						{
+							"name": "connector2",
+							"from": [ -7.5, 0.0, 0.5 ],
+							"to": [ -6.5, 1.0, 1.5 ],
+							"rotationOrigin": [ -7.5, 0.0, 0.5 ],
+							"faces": {
+								"north": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"east": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"south": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"west": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"up": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"down": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
+							}
+						},
+						{
+							"name": "connector3",
+							"from": [ 0.5, 0.0, 8.5 ],
+							"to": [ 1.5, 1.0, 9.5 ],
+							"rotationOrigin": [ 0.5, 0.0, 8.5 ],
+							"faces": {
+								"north": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"east": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"south": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"west": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"up": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"down": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
+							}
 						}
 					]
 				}

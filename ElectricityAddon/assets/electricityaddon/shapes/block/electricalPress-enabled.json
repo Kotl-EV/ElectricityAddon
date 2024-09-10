@@ -6181,7 +6181,7 @@
 			},
 			"children": [
 				{
-					"name": "Cube5",
+					"name": "Lamp-Base1",
 					"from": [ 1.215, 1.053, 1.215 ],
 					"to": [ 4.455, 1.863, 6.075 ],
 					"rotationOrigin": [ 1.215, 1.053, 1.215 ],
@@ -6195,7 +6195,7 @@
 					},
 					"children": [
 						{
-							"name": "Cube7",
+							"name": "Lamp-Base2",
 							"from": [ 1.215, 0.0, 0.81 ],
 							"to": [ 2.025, 3.24, 0.972 ],
 							"rotationOrigin": [ 1.215, 0.0, 0.81 ],
@@ -6209,7 +6209,7 @@
 							}
 						},
 						{
-							"name": "Cube8",
+							"name": "Lamp-Base3",
 							"from": [ 1.215, 0.0, 3.888 ],
 							"to": [ 2.025, 3.24, 4.05 ],
 							"rotationOrigin": [ 1.215, 0.0, 3.888 ],
@@ -6223,7 +6223,7 @@
 							},
 							"children": [
 								{
-									"name": "Cube9",
+									"name": "Lamp-Base4",
 									"from": [ 0.324, 2.835, -2.9403 ],
 									"to": [ 0.486, 2.997, -2.1303 ],
 									"rotationOrigin": [ 0.324, 2.835, -2.9403 ],
@@ -6238,7 +6238,7 @@
 									},
 									"children": [
 										{
-											"name": "Cube10",
+											"name": "Lamp-Base5",
 											"from": [ 0.0, 0.0, 0.81 ],
 											"to": [ 0.162, 0.162, 1.62 ],
 											"rotationOrigin": [ 0.0, 0.0, 0.81 ],
@@ -6253,7 +6253,7 @@
 											},
 											"children": [
 												{
-													"name": "Cube11",
+													"name": "Lamp-Base6",
 													"from": [ 0.0, 0.1628, 0.6472 ],
 													"to": [ 0.162, 0.3248, 1.4572 ],
 													"rotationOrigin": [ 0.0, 0.1628, 0.6472 ],
@@ -6268,7 +6268,7 @@
 													},
 													"children": [
 														{
-															"name": "Cube12",
+															"name": "Lamp-Base7",
 															"from": [ 0.0, 0.0, 0.81 ],
 															"to": [ 0.162, 0.162, 1.62 ],
 															"rotationOrigin": [ 0.0, 0.0, 0.81 ],
@@ -6283,7 +6283,7 @@
 															},
 															"children": [
 																{
-																	"name": "Cube13",
+																	"name": "Lamp-Base8",
 																	"from": [ 0.0, 0.1628, 0.6472 ],
 																	"to": [ 0.162, 0.3248, 1.4572 ],
 																	"rotationOrigin": [ 0.0, 0.1628, 0.6472 ],
@@ -6298,7 +6298,7 @@
 																	},
 																	"children": [
 																		{
-																			"name": "Cube14",
+																			"name": "Lamp-Base9",
 																			"from": [ 0.0, 0.0, 0.81 ],
 																			"to": [ 0.162, 0.162, 1.62 ],
 																			"rotationOrigin": [ 0.0, 0.0, 0.81 ],
@@ -6313,7 +6313,7 @@
 																			}
 																		},
 																		{
-																			"name": "Cube15",
+																			"name": "Lamp-Base10",
 																			"from": [ 0.0, 0.648, 0.729 ],
 																			"to": [ 0.162, 0.81, 0.972 ],
 																			"rotationOrigin": [ 0.0, 0.648, 0.729 ],
@@ -6327,7 +6327,7 @@
 																			}
 																		},
 																		{
-																			"name": "Cube16",
+																			"name": "Lamp-Base11",
 																			"from": [ 0.0, -1.215, -1.2879 ],
 																			"to": [ 0.162, -1.053, -1.0449 ],
 																			"rotationOrigin": [ 0.0, -1.215, -1.2879 ],
@@ -6356,7 +6356,7 @@
 					]
 				},
 				{
-					"name": "Cube6",
+					"name": "Lamp-Base12",
 					"from": [ 1.377, 1.62, 1.377 ],
 					"to": [ 4.293, 4.86, 5.913 ],
 					"renderPass": 3,
@@ -6371,7 +6371,7 @@
 					}
 				},
 				{
-					"name": "Cube2",
+					"name": "Lamp-Base13",
 					"from": [ 0.405, 0.081, 0.405 ],
 					"to": [ 5.265, 1.62, 6.885 ],
 					"rotationOrigin": [ 0.405, 0.081, 0.405 ],
@@ -6383,6 +6383,66 @@
 						"up": { "texture": "#steel", "uv": [ 0.0, 0.0, 12.96, 12.96 ], "autoUv": false },
 						"down": { "texture": "#steel", "uv": [ 0.0, 0.0, 12.96, 12.96 ], "autoUv": false }
 					}
+				}
+			]
+		},
+		{
+			"name": "connector",
+			"from": [ -0.2, 0.0, 7.0 ],
+			"to": [ 7.0, 1.3, 9.0 ],
+			"rotationOrigin": [ -0.2, 0.0, 7.0 ],
+			"faces": {
+				"north": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 7.0, 1.0 ] },
+				"east": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"south": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 7.0, 1.0 ] },
+				"west": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+				"up": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 7.0, 2.0 ] },
+				"down": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 7.0, 2.0 ] }
+			},
+			"children": [
+				{
+					"name": "connector1",
+					"from": [ 7.2, 0.0, 0.0 ],
+					"to": [ 9.2, 1.3, 9.2 ],
+					"rotationOrigin": [ 7.2, 0.0, 0.0 ],
+					"faces": {
+						"north": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+						"east": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 9.0, 1.0 ] },
+						"south": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 1.0 ] },
+						"west": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 9.0, 1.0 ] },
+						"up": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 9.0 ] },
+						"down": { "texture": "#bismuthbronze", "uv": [ 0.0, 0.0, 2.0, 9.0 ] }
+					},
+					"children": [
+						{
+							"name": "connector2",
+							"from": [ -7.5, 0.0, 0.5 ],
+							"to": [ -6.5, 1.0, 1.5 ],
+							"rotationOrigin": [ -7.5, 0.0, 0.5 ],
+							"faces": {
+								"north": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"east": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"south": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"west": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"up": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"down": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
+							}
+						},
+						{
+							"name": "connector3",
+							"from": [ 0.5, 0.0, 8.5 ],
+							"to": [ 1.5, 1.0, 9.5 ],
+							"rotationOrigin": [ 0.5, 0.0, 8.5 ],
+							"faces": {
+								"north": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"east": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"south": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"west": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"up": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] },
+								"down": { "texture": "#copper", "uv": [ 0.0, 0.0, 1.0, 1.0 ] }
+							}
+						}
+					]
 				}
 			]
 		}

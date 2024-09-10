@@ -1,0 +1,18 @@
+[
+  {
+    "op": "add",
+    "path": "/textures/invar",
+    "value": {
+      "base": "block/metal/ingot/invar"
+    },
+    "file": "blocktypes/metal/platepile.json"
+  },
+  {
+    "op": "add",
+    "path": "/textures/invar",
+    "value": {
+      "base": "block/metal/ingot/invar"
+    },
+    "file": "blocktypes/metal/platepile.json"
+  }
+]

@@ -8,15 +8,15 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"brass": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/brass",
-		"copper": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/copper",
-		"iron": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/iron",
-		"stainlesssteel1": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/plate/stainlesssteel1",
-		"steel1": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/plate/steel1",
-		"quartzglass": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/quartzglass",
-		"stainlesssteel": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/stainlesssteel",
-		"steel": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/steel",
-		"zinc": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/zinc"
+		"brass": "block/brass",
+		"copper": "block/copper",
+		"iron": "block/iron",
+		"stainlesssteel1": "block/plate/stainlesssteel1",
+		"steel1": "block/plate/steel1",
+		"quartzglass": "block/quartzglass",
+		"stainlesssteel": "block/stainlesssteel",
+		"steel": "block/steel",
+		"zinc": "block/zinc"
 	},
 	"elements": [
 		{

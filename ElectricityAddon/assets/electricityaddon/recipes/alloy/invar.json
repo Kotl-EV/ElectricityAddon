@@ -1,9 +1,9 @@
 {
-	ingredients: [
-		{ type: "item", code: "game:ingot-iron", minratio: 0.65, maxratio: 0.75  },
-		{ type: "item", code: "game:ingot-nickel", minratio: 0.25, maxratio: 0.35  },
+	"ingredients": [
+		{ "type": "item", "code": "game:ingot-iron", "minratio": 0.65, "maxratio": 0.75  },
+		{ "type": "item", "code": "game:ingot-nickel", "minratio": 0.25, "maxratio": 0.35  }
 	],
-	output: {
+	"output": {
 		"type": "item",
 		"code": "game:ingot-invar"
 	}

@@ -67,8 +67,28 @@
 	],
 	"drawtype": "json",
 	"texturesByType": {
-		"*-frozen-*": { "normal2": { "base": "game:block/liquid/snow/normal2" }},
-		"*-melted-*": { "normal2": { "base": "block/copper" }}
+		"*-frozen-*": { "brass": { "base": "block/brass" },
+			"copper": { "base": "block/copper" },
+			"iron": { "base": "block/iron" },
+			"stainlesssteel1": { "base": "block/plate/stainlesssteel1" },
+			"steel1": { "base": "block/plate/steel1" },
+			"quartzglass": { "base": "block/quartzglass" },
+			"stainlesssteel": { "base": "block/stainlesssteel" },
+			"steel": { "base": "block/steel" },
+			"zinc": { "base": "block/zinc" },
+			"insideFridge": { "base": "game:block/liquid/snow/normal2" }
+		},
+		"*-melted-*": {	"brass": { "base": "block/brass" },
+			"copper": { "base": "block/copper" },
+			"iron": { "base": "block/iron" },
+			"stainlesssteel1": { "base": "block/plate/stainlesssteel1" },
+			"steel1": { "base": "block/plate/steel1" },
+			"quartzglass": { "base": "block/quartzglass" },
+			"stainlesssteel": { "base": "block/stainlesssteel" },
+			"steel": { "base": "block/steel" },
+			"zinc": { "base": "block/zinc" },
+			"insideFridge": { "base": "block/zinc" }
+		}
 	},
 	"shapeByType": { 
 		"*-closed-north": {

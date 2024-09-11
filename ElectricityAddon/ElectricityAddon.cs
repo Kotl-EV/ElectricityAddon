@@ -6,6 +6,7 @@ using ElectricityAddon.Content.Block.EFreezer;
 using ElectricityAddon.Content.Block.EGenerator;
 using ElectricityAddon.Content.Block.EHorn;
 using ElectricityAddon.Content.Block.EMotor;
+using ElectricityAddon.Content.Block.EPress;
 using ElectricityAddon.Content.Block.EStove;
 using ElectricityAddon.Content.Item;
 using ElectricityAddon.Utils;
@@ -54,6 +55,10 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockClass("BlockECentrifuge", typeof(BlockECentrifuge));
         api.RegisterBlockEntityClass("BlockEntityECentrifuge", typeof(BlockEntityECentrifuge));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorECentrifuge", typeof(BEBehaviorECentrifuge));
+        
+        api.RegisterBlockClass("BlockEPress", typeof(BlockEPress));
+        api.RegisterBlockEntityClass("BlockEntityEPress", typeof(BlockEntityEPress));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEPress", typeof(BEBehaviorEPress));
         
         api.RegisterBlockClass("BlockEMotorTier1", typeof(BlockEMotorTier1));
         api.RegisterBlockClass("BlockEMotorTier2", typeof(BlockEMotorTier2));

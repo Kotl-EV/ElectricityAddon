@@ -1,8 +1,18 @@
 ﻿[
     {
         "code": "compost",
-        "EnergyOperation": 10000,
+        "EnergyOperation": 5000,
         "ingredients": [
+            {
+                "type": "item",
+                "code": "game:vegetable-carrot",
+                "quantity": 8
+            },
+            {
+                "type": "item",
+                "code": "game:vegetable-carrot",
+                "quantity": 8
+            },
             {
                 "type": "item",
                 "code": "game:vegetable-carrot",
@@ -17,7 +27,7 @@
     },
     {
         "code": "compost",
-        "EnergyOperation": 10000,
+        "EnergyOperation": 5000,
         "ingredients": [
             {
                 "type": "item",

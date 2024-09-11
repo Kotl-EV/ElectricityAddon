@@ -3,23 +3,30 @@ using Electricity.Interface;
 using Electricity.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.GameContent;
 
 namespace ElectricityAddon.Content.Block.ECentrifuge;
 
 public class BEBehaviorECentrifuge : BlockEntityBehavior, IElectricConsumer
 {
+    public bool working;
     public int PowerSetting;
-
     public BEBehaviorECentrifuge(BlockEntity blockEntity) : base(blockEntity)
     {
     }
 
-    public ConsumptionRange ConsumptionRange => new(10, 100);
-
-    public void Consume(int amount)
-    {
-        if (PowerSetting != amount)
+    public ConsumptionRange ConsumptionRange => working ? new ConsumptionRange(600, 1000) : new ConsumptionRange(0, 0);
+    public void Consume(int amount) {
+        BlockEntityECentrifuge? entity = null;
+        if (Blockentity is BlockEntityECentrifuge temp)
         {
+            entity = temp;
+            working = entity.FindMatchingRecipe();
+        }
+        if (!working) {
+            amount = 0;
+        }
+        if (PowerSetting != amount) {
             PowerSetting = amount;
         }
     }
@@ -28,7 +35,7 @@ public class BEBehaviorECentrifuge : BlockEntityBehavior, IElectricConsumer
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
         stringBuilder.AppendLine(StringHelper.Progressbar(PowerSetting));
-        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + PowerSetting + "/" + 100 + "Eu");
+        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + PowerSetting + "/" + 1000 + "Eu");
         stringBuilder.AppendLine();
     }
 }

@@ -8,11 +8,12 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
 namespace ElectricityAddon.Content.Block.ECentrifuge;
 
-public class BlockEntityECentrifuge : BlockEntityOpenableContainer
+public class BlockEntityECentrifuge : BlockEntityGenericTypedContainer
 {
   
   internal InventoryCentrifuge inventory;
@@ -23,11 +24,11 @@ public class BlockEntityECentrifuge : BlockEntityOpenableContainer
   public string CurrentRecipeName;
   public float RecipeProgress;
 
-
   public virtual string DialogTitle => Lang.Get("ecentrifuge");
 
   public override InventoryBase Inventory => (InventoryBase)this.inventory;
   private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
+  private BlockEntityAnimationUtil animUtil => this.GetBehavior<BEBehaviorAnimatable>()?.animUtil;
 
   public BlockEntityECentrifuge()
   {
@@ -41,6 +42,22 @@ public class BlockEntityECentrifuge : BlockEntityOpenableContainer
     this.inventory.LateInitialize(
       "ecentrifuge-" + this.Pos.X.ToString() + "/" + this.Pos.Y.ToString() + "/" + this.Pos.Z.ToString(), api);
     this.RegisterGameTickListener(new Action<float>(this.Every500ms), 500);
+    if (api.Side == EnumAppSide.Client)
+    {
+      if (animUtil != null)
+      {
+        animUtil.InitializeAnimator("ecentrifuge", null, null, new Vec3f(0, GetRotation(), 0f));
+      }
+    }
+  }
+  
+  public int GetRotation()
+  {
+    string side = Block.Variant["side"];
+    // The BlockFacing horiztonal index goes counter-clockwise from east. That needs to be converted so that
+    // it goes counter-clockwise from north instead.
+    int adjustedIndex = ((BlockFacing.FromCode(side)?.HorizontalAngleIndex ?? 1) + 3) & 3;
+    return adjustedIndex * 90;
   }
   
   private void OnSlotModifid(int slotid)
@@ -62,7 +79,7 @@ public class BlockEntityECentrifuge : BlockEntityOpenableContainer
     }
   }
   
-  private bool FindMatchingRecipe()
+  public bool FindMatchingRecipe()
   {
     ItemSlot[] inputSlots = new ItemSlot[] { inventory[0] };
     CurrentRecipe = null;
@@ -118,6 +135,21 @@ public class BlockEntityECentrifuge : BlockEntityOpenableContainer
     if (Api != null && Api.Side == EnumAppSide.Client && clientDialog != null && clientDialog.IsOpened())
     {
       clientDialog.Update(RecipeProgress);
+    }
+    if (Api != null && Api.Side == EnumAppSide.Client)
+    {
+      BlockEntityAnimationUtil animUtil = this.animUtil;
+      if (animUtil != null)
+      {
+        animUtil.StartAnimation(new AnimationMetaData()
+        {
+          Animation = "work-on",
+          Code = "work-on",
+          AnimationSpeed = (float)(GetBehavior<BEBehaviorECentrifuge>().PowerSetting/CurrentRecipe.EnergyOperation)*23.5F,
+          EaseOutSpeed = 4f,
+          EaseInSpeed = 1f
+        });
+      }
     }
     MarkDirty(true);
   }

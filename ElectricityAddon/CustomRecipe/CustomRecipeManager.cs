@@ -11,6 +11,7 @@ namespace ElectricityAddon.CustomRecipe;
 public class CustomRecipeManager : ModSystem
 {
     public static List<CentrifugeRecipe> CentrifugeRecipes;
+    public static List<PressRecipe> PressRecipes;
 
     private ICoreServerAPI api;
 
@@ -18,6 +19,7 @@ public class CustomRecipeManager : ModSystem
     {
         this.api = api;
         api.Event.SaveGameLoaded += CentrifugeRecipe;
+        api.Event.SaveGameLoaded += PressRecipe;
     }
 
     public void CentrifugeRecipe()
@@ -25,6 +27,14 @@ public class CustomRecipeManager : ModSystem
         CentrifugeRecipes = new List<CentrifugeRecipe>();
         RecipeLoader recipeLoader = api.ModLoader.GetModSystem<RecipeLoader>();
         recipeLoader.LoadRecipes<CentrifugeRecipe>("Centrifuge Recipe", "recipes/electric/centrifugerecipe", (r) => CentrifugeRecipes.Add(r));
+        api.World.Logger.StoryEvent(Lang.Get("electricityaddon:recipeloading"));
+    }
+    
+    public void PressRecipe()
+    {
+        PressRecipes = new List<PressRecipe>();
+        RecipeLoader recipeLoader = api.ModLoader.GetModSystem<RecipeLoader>();
+        recipeLoader.LoadRecipes<PressRecipe>("Press Recipe", "recipes/electric/pressrecipe", (r) => PressRecipes.Add(r));
         api.World.Logger.StoryEvent(Lang.Get("electricityaddon:recipeloading"));
     }
 }

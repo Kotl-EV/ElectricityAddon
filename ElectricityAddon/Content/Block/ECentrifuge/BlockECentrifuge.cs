@@ -2,7 +2,7 @@
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace ElectricityAddon.Content.Block.EStove;
+namespace ElectricityAddon.Content.Block.ECentrifuge;
 
 public class BlockECentrifuge : Vintagestory.API.Common.Block
 {

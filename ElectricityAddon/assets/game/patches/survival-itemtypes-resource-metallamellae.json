@@ -1,0 +1,14 @@
+[
+    {
+        "op": "add",
+        "path": "attributes/handbook/excludeByType",
+        "value": "*-invar": true,
+        "file": "itemtypes/resource/metallamellae.json"
+    },
+    {
+        "op": "add",
+        "path": "attributes/handbook/excludeByType",
+        "value": "*-spacealloy": true,
+        "file": "itemtypes/resource/metallamellae.json"
+    }
+]

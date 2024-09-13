@@ -18,6 +18,9 @@
   "game:drill2": "Копает 3X3 блок",
   
   "game:BlockEStove": "Электрическая плита",
+  "game:BlockEInducFurnance": "Индукционная печь",
+  "game:ecentrifuge": "Электро-Центрифуга",
+  "game:epress": "Элетро-Пресс",
   "game:freezer-title-gui": "Морозильник",
   "game:freezer-over-sneak-help": "Откр/закр дверцу.",
   "game:freezer-over-help": "Откройте дверцу и положите еду что бы сохранить ее."

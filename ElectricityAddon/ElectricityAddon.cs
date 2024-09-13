@@ -5,11 +5,11 @@ using ElectricityAddon.Content.Block.ECharger;
 using ElectricityAddon.Content.Block.EFreezer;
 using ElectricityAddon.Content.Block.EGenerator;
 using ElectricityAddon.Content.Block.EHorn;
+using ElectricityAddon.Content.Block.EInductFurnance;
 using ElectricityAddon.Content.Block.EMotor;
 using ElectricityAddon.Content.Block.EPress;
 using ElectricityAddon.Content.Block.EStove;
 using ElectricityAddon.Content.Item;
-using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 
 [assembly: ModDependency("game", "1.19.5")]
@@ -47,6 +47,10 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockClass("BlockEStove", typeof(BlockEStove));
         api.RegisterBlockEntityClass("BlockEntityEStove", typeof(BlockEntityEStove));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEStove", typeof(BEBehaviorEStove));
+        
+        api.RegisterBlockClass("BlockEInductFurnance", typeof(BlockEInductFurnance));
+        api.RegisterBlockEntityClass("BlockEntityEInductFurnance", typeof(BlockEntityEInductFurnance));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEInductFurnance", typeof(BEBehaviorEInductFurnance));
 
         api.RegisterBlockClass("BlockEFreezer", typeof(BlockEFreezer));
         api.RegisterBlockEntityClass("BlockEntityEFreezer", typeof(BlockEntityEFreezer));

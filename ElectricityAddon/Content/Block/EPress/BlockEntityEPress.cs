@@ -227,27 +227,6 @@ public class BlockEntityEPress : BlockEntityGenericTypedContainer
   public ItemSlot InputSlot2 => this.inventory[2];
 
   public ItemSlot OutputSlot => this.inventory[3];
-
-  public ItemStack InputStack
-  {
-    get => this.inventory[0].Itemstack;
-    set
-    {
-      this.inventory[0].Itemstack = value;
-      this.inventory[0].MarkDirty();
-    }
-  }
-
-  public ItemStack OutputStack
-  {
-    get => this.inventory[1].Itemstack;
-    set
-    {
-      this.inventory[1].Itemstack = value;
-      this.inventory[1].MarkDirty();
-    }
-  }
-  
   
   public override void OnBlockUnloaded()
   {

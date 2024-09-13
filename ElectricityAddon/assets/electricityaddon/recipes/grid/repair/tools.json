@@ -1,0 +1,107 @@
+[
+{
+	ingredientPattern: "HS,LK---",
+	requiresTrait: "blackblacksmith",
+	ingredients: {
+		"H": { type: "item", code: "game:hammerhead-copper", quantity: 1 },
+		"S": { type: "item", code: "game:stick", quantity: 2 },
+		"L": { type: "block", code: "game:log-placed-*-ud", quantity: 1 },
+		"K": { type: "item", code: "game:knifeblade-copper", quantity: 1 }
+	},
+	width: 2,
+	height: 2,
+	recipeGroup: 3,
+	"shapeless": true,
+	output: { type: "item", code: "tools-basic", quantity: 1  }
+},
+{
+	ingredientPattern: "HS,LK---",
+	requiresTrait: "blacksmith",
+	ingredients: {
+		"H": { type: "item", code: "game:hammerhead-bismuthbronze", quantity: 1 },
+		"S": { type: "item", code: "game:stick", quantity: 2 },
+		"L": { type: "item", code: "game:plank-*", quantity: 4 },
+		"K": { type: "item", code: "game:knifeblade-bismuthbronze", quantity: 1 }
+	},
+	width: 2,
+	height: 2,
+	recipeGroup: 3,
+	"shapeless": true,
+	output: { type: "item", code: "tools-simple", quantity: 1  }
+},
+{
+	ingredientPattern: "HS,LK---",
+	requiresTrait: "blacksmith",
+	ingredients: {
+		"H": { type: "item", code: "game:hammerhead-tinbronze", quantity: 1 },
+		"S": { type: "item", code: "game:stick", quantity: 2 },
+		"L": { type: "item", code: "game:plank-*", quantity: 4 },
+		"K": { type: "item", code: "game:knifeblade-tinbronze", quantity: 1 }
+	},
+	width: 2,
+	height: 2,
+	recipeGroup: 3,
+	"shapeless": true,
+	output: { type: "item", code: "tools-simple", quantity: 1  }
+},
+{
+	ingredientPattern: "HS,LK---",
+	requiresTrait: "blacksmith",
+	ingredients: {
+		"H": { type: "item", code: "game:hammerhead-blackbronze", quantity: 1 },
+		"S": { type: "item", code: "game:stick", quantity: 2 },
+		"L": { type: "item", code: "game:plank-*", quantity: 4 },
+		"K": { type: "item", code: "game:knifeblade-blackbronze", quantity: 1 }
+	},
+	width: 2,
+	height: 2,
+	recipeGroup: 3,
+	"shapeless": true,
+	output: { type: "item", code: "tools-simple", quantity: 1  }
+},
+{
+	ingredientPattern: "HS,LK---",
+	requiresTrait: "blacksmith",
+	ingredients: {
+		"H": { type: "item", code: "game:hammerhead-iron", quantity: 1 },
+		"S": { type: "item", code: "game:stick", quantity: 2 },
+		"L": { type: "item", code: "game:plank-*", quantity: 4 },
+		"K": { type: "item", code: "game:knifeblade-iron", quantity: 1 }
+	},
+	width: 2,
+	height: 2,
+	recipeGroup: 3,
+	"shapeless": true,
+	output: { type: "item", code: "tools-standard", quantity: 1  }
+},
+{
+	ingredientPattern: "HS,LK---",
+	requiresTrait: "blacksmith",
+	ingredients: {
+		"H": { type: "item", code: "game:hammerhead-meteoriciron", quantity: 1 },
+		"S": { type: "item", code: "game:stick", quantity: 2 },
+		"L": { type: "item", code: "game:plank-*", quantity: 4 },
+		"K": { type: "item", code: "game:knifeblade-meteoriciron", quantity: 1 }
+	},
+	width: 2,
+	height: 2,
+	recipeGroup: 3,
+	"shapeless": true,
+	output: { type: "item", code: "tools-standard", quantity: 1  }
+},
+{
+	ingredientPattern: "HS,LK---",
+	requiresTrait: "blacksmith",
+	ingredients: {
+		"H": { type: "item", code: "game:hammerhead-steel", quantity: 1 },
+		"S": { type: "item", code: "game:stick", quantity: 2 },
+		"L": { type: "item", code: "game:plank-*", quantity: 4 },
+		"K": { type: "item", code: "game:knifeblade-steel", quantity: 1 }
+	},
+	width: 2,
+	height: 2,
+	recipeGroup: 3,
+	"shapeless": true,
+	output: { type: "item", code: "tools-advanced", quantity: 1  }
+}
+]

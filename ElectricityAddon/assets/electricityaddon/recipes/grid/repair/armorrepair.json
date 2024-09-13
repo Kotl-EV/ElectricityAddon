@@ -1,0 +1,877 @@
+[
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-antique-forlorn-broken",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-antique-forlorn-broken",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-antique-forlorn-broken",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-antique-forlorn-broken",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-antique-forlorn-broken",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-antique-forlorn-broken",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-antique-forlorn-damaged",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-antique-forlorn-damaged",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-antique-forlorn-damaged",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-antique-forlorn-damaged",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-antique-forlorn-damaged",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-antique-forlorn-damaged",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-antique-forlorn-pristine",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-antique-forlorn-pristine",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-antique-forlorn-pristine",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-antique-forlorn-pristine",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-antique-forlorn-pristine",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-antique-forlorn-pristine",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-antique-blackguard-broken",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-antique-blackguard-broken",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-antique-blackguard-broken",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-antique-blackguard-broken",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-antique-blackguard-broken",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-antique-blackguard-broken",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-antique-blackguard-damaged",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-antique-blackguard-damaged",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-antique-blackguard-damaged",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-antique-blackguard-damaged",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-antique-blackguard-damaged",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-antique-blackguard-damaged",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-antique-blackguard-pristine",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-antique-blackguard-pristine",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-antique-blackguard-pristine",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-antique-blackguard-pristine",
+			"quantity": 1
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-antique-blackguard-pristine",
+				"quantity": 1
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-antique-blackguard-pristine",
+			"quantity": 1
+		}
+	},
+
+
+
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-lamellar-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-lamellar-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-lamellar-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-lamellar-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-lamellar-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-lamellar-{metal}"
+		}
+	},
+
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-brigandine-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-brigandine-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-brigandine-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-brigandine-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-brigandine-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-brigandine-{metal}"
+		}
+	},
+
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-chain-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-chain-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-chain-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-chain-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-chain-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-chain-{metal}"
+		}
+	},
+
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-scale-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-scale-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-scale-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-scale-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-scale-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-scale-{metal}"
+		}
+	},
+
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-head-plate-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-head-plate-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-body-plate-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-body-plate-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:armor-legs-plate-*",
+				"name": "metal"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:armor-legs-plate-{metal}"
+		}
+	},
+	{
+		"ingredientPattern": "AR",
+		"ingredients": {
+			"A": {
+				"type": "item",
+				"code": "game:shield-*",
+				"name": "type"
+			},
+			"R": {
+				"type": "item",
+				"code": "electricityaddon:toolkit",
+				"isTool": true,
+				"toolDurabilityCost": 1
+			}
+		},
+		"width": 2,
+		"height": 1,
+		"recipeGroup": 2,
+		"shapeless": true,
+		"averageDurability": false,
+		"output": {
+			"type": "item",
+			"code": "game:shield-{type}"
+		}
+	}
+]

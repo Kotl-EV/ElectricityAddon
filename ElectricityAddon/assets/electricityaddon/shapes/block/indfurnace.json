@@ -8,23 +8,6 @@
 	"textureSizes": {
 	},
 	"textures": {
-		"bismuthbronze": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/bismuthbronze",
-		"brass": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/brass",
-		"chromium": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/chromium",
-		"copper": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/copper",
-		"copper-hot": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/copper-hot",
-		"emeral": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/emeral",
-		"gold": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/gold",
-		"iron": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/iron",
-		"iron96x96": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/iron96x96",
-		"stainlesssteel3": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/plate/stainlesssteel3",
-		"steel4": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/plate/steel4",
-		"steel4-96x96": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/plate/steel4-96x96",
-		"stainlesssteel96x96": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/stainlesssteel96x96",
-		"steel": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/steel",
-		"titanium": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/titanium",
-		"topaz": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/topaz",
-		"zinc": "C:/Users/YobaMegaDrive/Desktop/GitH/ElectricityAddon/ElectricityAddon/assets/electricityaddon/textures/block/zinc"
 	},
 	"elements": [
 		{
@@ -4408,8 +4391,8 @@
 			"name": "work-on",
 			"code": "work-on",
 			"quantityframes": 100,
-			"onActivityStopped": "EaseOut",
-			"onAnimationEnd": "EaseOut",
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Stop",
 			"keyframes": [
 				{
 					"frame": 0,

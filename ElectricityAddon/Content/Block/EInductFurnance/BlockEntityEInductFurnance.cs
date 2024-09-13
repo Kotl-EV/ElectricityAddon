@@ -273,14 +273,24 @@ public class BlockEntityEInductFurnance : BlockEntityOpenableContainer, IHeatSou
         
         public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)
         {
-            for (int i = 0; i < meshes.Length; i++)
+            base.OnTesselation(mesher, tessThreadTesselator); // renders an ACTIVE animation
+
+            if (meshes != null)
             {
-                if (meshes[i] != null)
+                for (int i = 0; i < meshes.Length; i++)
                 {
-                    mesher.AddMeshData(meshes[i]);
+                    if (meshes[i] != null)
+                    {
+                        mesher.AddMeshData(meshes[i]);
+                    }
                 }
             }
-            return false;
+            if (animUtil.activeAnimationsByAnimCode.Count == 0 &&
+                (animUtil.animator != null && animUtil.animator.ActiveAnimationCount == 0))
+            {
+                return false; // add base-machine mesh if we're NOT animating
+            }
+            return true; // do not add base mesh if we're animating
         }
 
     public void UpdateMeshes()
@@ -345,6 +355,17 @@ public class BlockEntityEInductFurnance : BlockEntityOpenableContainer, IHeatSou
                 }
             }
         }
+        else
+        {
+            if (Api is ICoreClientAPI)
+            {
+                if (animUtil != null && animUtil.activeAnimationsByAnimCode.Count > 0)
+                {
+                    animUtil.StopAnimation("work-on");
+                }
+            }
+        }
+            
         // Ore follows furnace temperature
         if (canHeatInput())
         {

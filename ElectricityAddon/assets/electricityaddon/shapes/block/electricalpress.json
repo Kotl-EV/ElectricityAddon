@@ -6512,8 +6512,8 @@
 			"name": "work-on",
 			"code": "work-on",
 			"quantityframes": 600,
-			"onActivityStopped": "PlayTillEnd",
-			"onAnimationEnd": "Repeat",
+			"onActivityStopped": "Rewind",
+			"onAnimationEnd": "Stop",
 			"keyframes": [
 				{
 					"frame": 0,

@@ -1,44 +1,11 @@
 ﻿[
     {
-        "code": "compost",
+        "code": "hummerhead",
         "EnergyOperation": 5000,
         "ingredients": [
-            {
-                "type": "item",
-                "code": "game:vegetable-carrot",
-                "quantity": 8
-            },
-            {
-                "type": "item",
-                "code": "game:vegetable-carrot",
-                "quantity": 8
-            },
-            {
-                "type": "item",
-                "code": "game:vegetable-carrot",
-                "quantity": 8
-            }
+            { "type": "item", "code": "game:ingot-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "brass", "tinbronze", "gold"] },
+            {"type": "block", "code": "electricityaddon:pressforms-hammer", "quantity": 1}
         ],
-        "output": {
-            "type": "item",
-            "code": "game:compost",
-            "stackSize": 1
-        }
-    },
-    {
-        "code": "compost",
-        "EnergyOperation": 5000,
-        "ingredients": [
-            {
-                "type": "item",
-                "code": "game:vegetable-turnip",
-                "quantity": 8
-            }
-        ],
-        "output": {
-            "type": "item",
-            "code": "game:compost",
-            "stackSize": 1
-        }
+        "output": { "type": "item", "code": "game:hammerhead-{metal}", "stacksize": 1 }
     }
 ]

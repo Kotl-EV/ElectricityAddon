@@ -124,10 +124,22 @@ public class BlockEntityEPress : BlockEntityGenericTypedContainer
           Api.World.SpawnItemEntity(outputItem, Pos.UpCopy(1).ToVec3d());
         }
       }
-      InputSlot0.TakeOut(CurrentRecipe.Ingredients[0].Quantity);
-      InputSlot1.TakeOut(CurrentRecipe.Ingredients[0].Quantity);
-      InputSlot2.TakeOut(CurrentRecipe.Ingredients[0].Quantity);
-      RecipeProgress = 0;
+
+      if (CurrentRecipe.Ingredients[0].Quantity != 0)
+      {
+        InputSlot0.TakeOut(CurrentRecipe.Ingredients[0].Quantity);
+        RecipeProgress = 0;
+      }
+      if (CurrentRecipe.Ingredients[1].Quantity != 0)
+      {
+        InputSlot1.TakeOut(CurrentRecipe.Ingredients[0].Quantity);
+        RecipeProgress = 0;
+      }
+      if (CurrentRecipe.Ingredients[2].Quantity != 0)
+      {
+        InputSlot2.TakeOut(CurrentRecipe.Ingredients[0].Quantity);
+        RecipeProgress = 0;
+      }
     }
   }
   

@@ -151,7 +151,7 @@ namespace ElectricityAddon.CustomRecipe.Recipe;
       List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched = PairInput(inputSlots);
       if (matched == null) return false;
 
-      outputStackSize = GetOutputSize(matched);
+      outputStackSize = Output.StackSize;
 
       return outputStackSize >= 0;
     }
@@ -204,43 +204,5 @@ namespace ElectricityAddon.CustomRecipe.Recipe;
       }
 
       return matched;
-    }
-
-    int GetOutputSize(List<KeyValuePair<ItemSlot, CraftingRecipeIngredient>> matched)
-    {
-      int outQuantityMul = -1;
-
-      foreach (KeyValuePair<ItemSlot, CraftingRecipeIngredient> val in matched)
-      {
-        ItemSlot inputSlot = val.Key;
-        CraftingRecipeIngredient ingred = val.Value;
-        outQuantityMul = inputSlot.StackSize / ingred.Quantity;
-      }
-
-      if (outQuantityMul == -1)
-      {
-        return -1;
-      }
-
-
-      foreach (KeyValuePair<ItemSlot, CraftingRecipeIngredient> val in matched)
-      {
-        ItemSlot inputSlot = val.Key;
-        CraftingRecipeIngredient ingred = val.Value;
-
-        // Input stack size must be equal or a multiple of the ingredient stack size
-        if ((inputSlot.StackSize % ingred.Quantity) != 0)
-        {
-          return -1;
-        }
-
-        // Ingredients must be at the same ratio
-        if (outQuantityMul != inputSlot.StackSize / ingred.Quantity)
-        {
-          return -1;
-        }
-      }
-
-      return Output.StackSize * outQuantityMul;
     }
   }

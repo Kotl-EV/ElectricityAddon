@@ -4,7 +4,7 @@
         "EnergyOperation": 5000,
         "ingredients": [
             { "type": "item", "code": "game:ingot-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "brass", "tinbronze", "gold"] },
-            {"type": "block", "code": "electricityaddon:pressforms-hammer", "quantity": 1}
+            {"type": "block", "code": "electricityaddon:pressforms-hammer", "quantity": 0}
         ],
         "output": { "type": "item", "code": "game:hammerhead-{metal}", "stacksize": 1 }
     }

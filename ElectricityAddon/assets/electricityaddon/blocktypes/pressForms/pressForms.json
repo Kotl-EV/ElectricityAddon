@@ -1,0 +1,191 @@
+{
+	"code": "pressForms",
+	"classByType": {
+		"pressForms-*": "BlockToolMold"
+	},
+	"behaviorsByType": {
+		"*": [ { "name": "UnstableFalling" } ]
+	},
+	"variantgroups": [
+		{
+			"code": "tooltype",
+			"states": [ "axe", "pickaxe", "shovel", "blade-falx", "hammer", "hoe", "prospectingpick", "lamellae" ]
+		}
+	],
+	"attributesByType": {
+		"pressForms-lamellae": {
+			"requiredUnits": 100,
+			"fillHeight": 1,
+			"moldrackable": true,
+			"onmoldrackTransform": { "rotation": { "z": 90 } },
+			"drop": {
+				"type": "item",
+				"code": "game:metallamellae-{metal}"
+			}
+		},
+		"pressForms-blade-falx": {
+			"requiredUnits": 100,
+			"fillHeight": 1,
+			"moldrackable": true,
+			"onmoldrackTransform": { "rotation": { "z": 90 } },
+			"drop": {
+				"type": "item",
+				"code": "game:bladehead-falx-{metal}"
+			}
+		},
+		"pressForms-*": {
+			"requiredUnits": 100,
+			"fillHeight": 1,
+			"moldrackable": true,
+			"onmoldrackTransform": { "rotation": { "z": 90 } },
+			"drop": {
+				"type": "item",
+				"code": "game:{tooltype}head-{metal}"
+			}
+		}
+	},
+	"entityClassByType": {
+		"pressForms-*": "ToolMold"
+	},
+	"blockmaterial": "Metal",
+	"creativeinventory": {
+		"general": [ "*" ],
+		"construction": [ "*" ],
+		"electricity": [ "*" ]
+	},
+	"replaceable": 700,
+	"resistance": 1.5,
+	"maxStackSize": 8,
+	"lightAbsorption": 0,
+	"texturesByType": {
+		"pressForms-*": { "all": { "base": "block/chromium" } }
+	},
+	"shape": {
+		"base": "game:block/clay/mold/{tooltype}",
+		"rotateYByType": {
+			"*-axe": 0,
+			"*-pickaxe": 180,
+			"*": 90
+		}
+	},
+	"sounds": {
+		"place": "game:block/anvil",
+		"break": "game:block/anvil",
+		"hit": "game:block/anvil",
+		"walk": "game:walk/stone*"
+	},
+	"collisionboxByType": {
+		"*-anvil": {
+			"x1": 0.0625,
+			"y1": 0,
+			"z1": 0.0625,
+			"x2": 0.9375,
+			"y2": 0.6875,
+			"z2": 0.9375
+		},
+		"*": {
+			"x1": 0,
+			"y1": 0,
+			"z1": 0,
+			"x2": 1,
+			"y2": 0.1875,
+			"z2": 1
+		}
+	},
+	"selectionboxByType": {
+		"*-anvil": {
+			"x1": 0,
+			"y1": 0,
+			"z1": 0,
+			"x2": 1,
+			"y2": 0.6875,
+			"z2": 1
+		},
+		"*": {
+			"x1": 0,
+			"y1": 0,
+			"z1": 0,
+			"x2": 1,
+			"y2": 0.1875,
+			"z2": 1
+		}
+	},
+	"sideopaque": {
+		"all": false
+	},
+	"sidesolid": {
+		"all": false
+	},
+	"guiTransformByType": {
+		"*": {
+			"translation": {
+				"x": 0,
+				"y": 3,
+				"z": 0
+			},
+			"origin": {
+				"x": 0.5,
+				"y": 0.0625,
+				"z": 0.5
+			},
+			"scale": 1.33
+		}
+	},
+	"tpHandTransformByType": {
+		"*": {
+			"translation": {
+				"x": -1,
+				"y": 0.2,
+				"z": -0.9
+			},
+			"rotation": {
+				"x": -87,
+				"y": 9,
+				"z": 4
+			},
+			"origin": {
+				"x": 0.5,
+				"y": 0.125,
+				"z": 0.5
+			},
+			"scale": 0.5
+		}
+	},
+	"fpHandTransformByType": {
+		"*": {
+			"translation": {
+				"x": -0.3,
+				"y": 0,
+				"z": 0.5
+			},
+			"rotation": {
+				"x": 16,
+				"y": -51,
+				"z": 91
+			},
+			"origin": {
+				"x": 0.5,
+				"y": 0.125,
+				"z": 0.5
+			}
+		}
+	},
+	"groundTransform": {
+		"translation": {
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"rotation": {
+			"x": 0,
+			"y": -45,
+			"z": 0
+		},
+		"origin": {
+			"x": 0.5,
+			"y": 0,
+			"z": 0.5
+		},
+		"scale": 2.2
+	}
+}

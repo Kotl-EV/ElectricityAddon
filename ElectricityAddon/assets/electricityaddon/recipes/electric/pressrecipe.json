@@ -1,11 +1,106 @@
 ﻿[
     {
-        "code": "hummerhead",
-        "EnergyOperation": 5000,
+        "code": "toolsPressing",
+        "EnergyOperation": 16000,
         "ingredients": [
-            { "type": "item", "code": "game:ingot-*", "quantity": 1, "name": "metal", "allowedVariants": ["copper", "brass", "tinbronze", "gold"] },
-            {"type": "block", "code": "electricityaddon:pressforms-hammer", "quantity": 0}
+            {
+                "type": "item",
+                "code": "game:ingot-{metal}",
+                "quantity": 1
+            },
+            {
+                "type": "block",
+                "code": "electricityaddon:pressforms-{tooltype}",
+                "quantity": 0
+            }
         ],
-        "output": { "type": "item", "code": "game:hammerhead-{metal}", "stacksize": 1 }
+        "output": {
+            "type": "item",
+            "code": "game:{tooltype}-{metal}",
+            "stacksize": 1
+        }
+    },
+    {
+        "code": "12arrowheadPressForming",
+        "EnergyOperation": 16000,
+        "ingredients": [
+            {
+                "type": "item",
+                "code": "game:ingot-{metal}",
+                "quantity": 1
+            },
+            {
+                "type": "block",
+                "code": "electricityaddon:12arrowheadPressForm",
+                "quantity": 0
+            }
+        ],
+        "output": {
+            "type": "item",
+            "code": "game:arrowhead-{metal}",
+            "quantity": 12,
+            "stacksize": 1
+        }
+    },
+    {
+        "code": "pressFormingFirearmsAmmoSlug",
+        "EnergyOperation": 16000,
+        "ingredients": [
+            {
+                "type": "item",
+                "code": "game:ingot-{metal}",
+                "quantity": 1
+            },
+            {
+                "type": "block",
+                "code": "electricityaddon:pressFormsFirearmsAmmo-slug",
+                "quantity": 0
+            }
+        ],
+        "output": {
+            "type": "item",
+            "code": "game:slug-{metal}",
+            "quantity": 8,
+            "stacksize": 1
+        }
+    },
+    {
+        "code": "pressFormingFirearmsAmmoBullet",
+        "EnergyOperation": 16000,
+        "ingredients": [
+            {
+                "type": "item",
+                "code": "game:ingot-{metal}",
+                "quantity": 1
+            },
+            {
+                "type": "block",
+                "code": "electricityaddon:pressFormsFirearmsAmmo-bullet",
+                "quantity": 0
+            }
+        ],
+        "output": {
+            "type": "item",
+            "code": "game:bullet-{metal}",
+            "quantity": 16,
+            "stacksize": 1
+        }
+    },
+    {
+        "code": "dielectricPlate",
+        "EnergyOperation": 16000,
+        "ingredients": [
+            {
+                "type": "item",
+                "code": "electricityaddon:dielectricMaterial",
+                "quantity": 4
+            }
+        ],
+        "output": {
+            "type": "item",
+            "code": "electricityaddon:dielectricPlate",
+            "quantity": 1,
+            "stacksize": 1
+        }
     }
 ]

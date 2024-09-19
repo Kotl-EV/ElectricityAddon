@@ -7,7 +7,7 @@
 	},
 	"materialDensity": 8960,
 	"storageFlags": 5,
-	"shape": { "base": "electricityaddon:item/mechanismbody" },
+	"shape": { "base": "item/mechanismbody" },
 	"textures": {
 		"iron": { "base": "block/iron" },
 		"nickel": { "base": "block/nickel" },

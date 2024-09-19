@@ -7,7 +7,7 @@
 	},
 	"materialDensity": 8960,
 	"storageFlags": 5,
-	"shape": { "base": "electricityaddon:item/metalbolts" },
+	"shape": { "base": "item/metalbolts" },
 	"textures": {
 		"material": { "base": "block/steel" }
 	},

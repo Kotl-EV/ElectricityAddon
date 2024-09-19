@@ -1,0 +1,31 @@
+{
+  "ingredientPattern": "ICI,SRS,CRC",
+    "ingredients": {
+        "I": {
+            "type": "item",
+            "code": "game:ore-quartz",
+            "quantity": 3
+        },
+        "R": {
+            "type": "item",
+            "code": "game:metalbit-brass",
+            "quantity": 5
+        },
+        "C": {
+            "type": "item",
+            "code": "electricity:cable-dot"
+        },
+        "S": {
+            "type": "item",
+            "code": "game:metalbit-steel",
+            "quantity": 5
+        }
+    }
+  "width": 3,
+  "height": 3,
+    "output": {
+        "type": "item",
+        "code": "electricityaddon:eAnods",
+        "quantity": 1
+    }
+}

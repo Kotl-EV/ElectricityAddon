@@ -11,7 +11,7 @@
     }
   ],
   "attributes": {
-    "maxProduction": 400 //максимальный выход энергии
+    "maxProduction": 200 //максимальный выход энергии
   },
   "creativeInventory": {
     "general": [

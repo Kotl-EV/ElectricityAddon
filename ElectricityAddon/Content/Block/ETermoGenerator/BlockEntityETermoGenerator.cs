@@ -114,7 +114,7 @@ public class BlockEntityETermoGenerator : BlockEntityGenericTypedContainer
                     {
                         Animation = "work-on",
                         Code = "work-on",
-                        AnimationSpeed = 1F,
+                        AnimationSpeed = 3F,
                         EaseOutSpeed = 4f,
                         EaseInSpeed = 1f
                     });

@@ -20,7 +20,7 @@
     },
     "attributes": {
         "rechargeable": true,
-        "maxcapacity": 16000
+        "maxcapacity": 64000
     },
     "shape": {
         "base": "block/accumulator"

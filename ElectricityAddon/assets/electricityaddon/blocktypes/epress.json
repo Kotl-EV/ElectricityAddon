@@ -131,7 +131,6 @@
     "sounds": {
         "walk": "game:walk/stone"
     },
-    "collisionbox": { "x1": 0, "y1": 0, "z1": 0, "x2": 3, "y2": 3, "z2": 3 },
     "heldTpIdleAnimation": "holdbothhandslarge",
     "heldTpUseAnimation": "twohandplaceblock"
 }

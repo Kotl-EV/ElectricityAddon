@@ -110,7 +110,6 @@ public class BlockEntityETermoGenerator : BlockEntityGenericTypedContainer
                 BlockEntityAnimationUtil animUtil = this.animUtil;
                 if (animUtil != null)
                 {
-                    Console.WriteLine("анимация");
                     animUtil.StartAnimation(new AnimationMetaData()
                     {
                         Animation = "work-on",

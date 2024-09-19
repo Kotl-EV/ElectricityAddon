@@ -9,95 +9,60 @@ namespace ElectricityUnofficial.Content.Block.ETermoGenerator;
 
 public class InventoryTermoGenerator : InventoryBase, ISlotProvider
 {
-        ICoreClientAPI capi;
-        ICoreServerAPI sapi;
-        private ItemSlot[] _slots;
-        public IPlayer genuser;
+    private ItemSlot[] slots;
 
-        public override float GetSuitability(ItemSlot sourceSlot, ItemSlot targetSlot, bool isMerge)
+    public ItemSlot[] Slots => this.slots;
+
+    public InventoryTermoGenerator(string inventoryID, ICoreAPI api)
+        : base(inventoryID, api)
+    {
+        this.slots = this.GenEmptySlots(4);
+    }
+
+    public InventoryTermoGenerator(string className, string instanceID, ICoreAPI api)
+        : base(className, instanceID, api)
+    {
+        this.slots = this.GenEmptySlots(1);
+    }
+
+    public override int Count => 1;
+
+    public override ItemSlot this[int slotId]
+    {
+        get => slotId < 0 || slotId >= this.Count ? (ItemSlot)null : this.slots[slotId];
+        set
         {
-            if (targetSlot == _slots[0] && sourceSlot.Itemstack.Collectible.CombustibleProps != null)
-            {
-                return 4f;
-            }
-            return base.GetSuitability(sourceSlot, targetSlot, isMerge);
+            if (slotId < 0 || slotId >= this.Count)
+                throw new ArgumentOutOfRangeException(nameof(slotId));
+            this.slots[slotId] = value != null ? value : throw new ArgumentNullException(nameof(value));
         }
+    }
 
-        public override bool CanContain(ItemSlot sinkSlot, ItemSlot sourceSlot)
-        {
-            return sourceSlot.Itemstack.Collectible.CombustibleProps != null;
-        }
+    public override void FromTreeAttributes(ITreeAttribute tree)
+    {
+        this.slots = this.SlotsFromTreeAttributes(tree, this.slots);
+    }
 
-        public override bool HasOpened(IPlayer player)
-        {
-            return (genuser != null && genuser.PlayerUID == player.PlayerUID);
-        }
+    public override void ToTreeAttributes(ITreeAttribute tree)
+    {
+        this.SlotsToTreeAttributes(this.slots, tree);
+    }
 
-        public override bool RemoveOnClose { get { return true; } }
+    protected override ItemSlot NewSlot(int i)
+    {
+        return (ItemSlot)new ItemSlotSurvival((InventoryBase)this);
+    }
 
-        public ItemSlot[] Slots
-        {
-            get { return this._slots; }
-        }
+    public override float GetSuitability(ItemSlot sourceSlot, ItemSlot targetSlot, bool isMerge)
+    {
+        return targetSlot == this.slots[0] && sourceSlot.Itemstack.Collectible.GrindingProps != null
+            ? 4f
+            : base.GetSuitability(sourceSlot, targetSlot, isMerge);
+    }
 
-        public override int Count
-        {
-            get { return _slots.Length; }
-        }
-
-        public override ItemSlot this[int slotId] 
-        { 
-            get 
-            {
-                if (slotId > 0 || slotId < 0) return null;
-
-                return _slots[slotId]; 
-            } 
-            set 
-            {
-                if (slotId > 0 || slotId < 0) throw new ArgumentOutOfRangeException("slotId");
-                if (value == null) throw new ArgumentNullException("value");
-                _slots[slotId] = value; 
-            } 
-        }
-
-        public InventoryTermoGenerator(string inventoryID, ICoreAPI api) : base(inventoryID, api)
-        {
-            _slots = base.GenEmptySlots(1);
-        }
-
-        public override void LateInitialize(string inventoryID, ICoreAPI api)
-        {
-            base.LateInitialize(inventoryID, api);            
-            if (api.Side == EnumAppSide.Server)
-            {
-                sapi = api as ICoreServerAPI;
-            }
-            else
-            {
-                capi = api as ICoreClientAPI;
-            }
-
-        }
-
-        public override ItemSlot GetAutoPushIntoSlot(BlockFacing atBlockFace, ItemSlot fromSlot)
-        {
-            return _slots[0];
-        }
-        protected override ItemSlot NewSlot(int i)
-        {
-            return new ItemSlotSurvival(this);
-        }
-
-        public override void FromTreeAttributes(ITreeAttribute tree)
-        {
-            this._slots = this.SlotsFromTreeAttributes(tree, this._slots, null);           
-        }
-
-        public override void ToTreeAttributes(ITreeAttribute tree)
-        {
-            base.SlotsToTreeAttributes(_slots, tree);
-            this.ResolveBlocksOrItems();
-        }
+    public override ItemSlot GetAutoPushIntoSlot(BlockFacing atBlockFace, ItemSlot fromSlot)
+    {
+        return this.slots[0];
+    }
 }
 

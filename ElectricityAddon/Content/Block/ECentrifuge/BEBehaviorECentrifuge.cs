@@ -34,7 +34,7 @@ public class BEBehaviorECentrifuge : BlockEntityBehavior, IElectricConsumer
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(PowerSetting));
+        stringBuilder.AppendLine(StringHelper.Progressbar(PowerSetting*100f/1000));
         stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + PowerSetting + "/" + 1000 + "Eu");
         stringBuilder.AppendLine();
     }

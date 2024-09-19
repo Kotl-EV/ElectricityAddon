@@ -33,8 +33,8 @@ public class BEBehaviorTermoEGenerator : BlockEntityBehavior, IElectricProducer
     
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting));
-        stringBuilder.AppendLine("└ "+ Lang.Get("Production") + this.powerSetting + "/" + MyMiniLib.GetAttributeFloat(this.Block, "maxProduction",10000) + "Eu");
+        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting*100f/1000));
+        stringBuilder.AppendLine("└ "+ Lang.Get("Production") + this.powerSetting + "/" + 1000 + "Eu");
         stringBuilder.AppendLine();
     }
 }

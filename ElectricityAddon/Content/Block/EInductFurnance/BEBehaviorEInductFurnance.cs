@@ -30,7 +30,7 @@ public class BEBehaviorEInductFurnance : BlockEntityBehavior, IElectricConsumer 
     }
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting));
+        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting*100f / 3000));
         stringBuilder.AppendLine("├ " + Lang.Get("Consumption") + powerSetting + "/" + 3000 + "Eu");
         stringBuilder.AppendLine("└ " + Lang.Get("Temperature") + stoveTemperature + "°");
         stringBuilder.AppendLine();

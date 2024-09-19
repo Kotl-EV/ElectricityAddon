@@ -70,7 +70,7 @@ public class GuiBlockEntityETermoGenerator : GuiDialogBlockEntity
 
             .AddDynamicCustomDraw(stoveBounds, OnBgDraw, "symbolDrawer")
 
-            .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 1, new int[1], fuelGrid, "fuelSlot")
+            .AddItemSlotGrid(Inventory, new Action<object>(SendInvPacket), 1, new int[1], fuelGrid, "inputSlot")
             .AddDynamicText("", outputText, textBounds, "outputText")
             .EndChildElements()
             .Compose(true);
@@ -130,7 +130,7 @@ public class GuiBlockEntityETermoGenerator : GuiDialogBlockEntity
     public override void OnGuiClosed()
     {
         base.Inventory.SlotModified -= this.OnSlotModified;
-        base.SingleComposer.GetSlotGrid("fuelSlot").OnGuiClosed(this.capi);
+        base.SingleComposer.GetSlotGrid("inputSlot").OnGuiClosed(this.capi);
         base.OnGuiClosed();
     }
 }

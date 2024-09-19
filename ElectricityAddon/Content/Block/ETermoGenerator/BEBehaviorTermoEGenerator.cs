@@ -1,16 +1,9 @@
-using System;
-using System.Linq;
 using System.Text;
 using Electricity.Interface;
 using Electricity.Utils;
-using ElectricityAddon.Content.Block.EMotor;
 using ElectricityAddon.Utils;
-using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
-using Vintagestory.API.MathTools;
-using Vintagestory.API.Server;
-using Vintagestory.GameContent.Mechanics;
 
 namespace ElectricityAddon.Content.Block.ETermoGenerator;
 

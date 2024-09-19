@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Electricity.Utils;
-using ElectricityAddon.Content.Block.ECentrifuge;
-using ElectricityAddon.CustomRecipe.Recipe;
 using ElectricityUnofficial.Content.Block.ETermoGenerator;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;

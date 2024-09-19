@@ -1,0 +1,37 @@
+{
+	"ingredientPattern": "AB_",
+	"ingredients": {
+		"B": {
+			"type": "item",
+			"code": "game:metalplate-steel",
+			"quantity": 1
+		},
+		"S": {
+			"type": "item",
+			"code": "game:resin",
+			"quantity": 8
+		},
+		"A": {
+			"type": "item",
+			"code": "game:crushed-olivine",
+			"quantity": 8
+		},
+		"D": {
+			"type": "item",
+			"code": "game:powderedsulfur",
+			"quantity": 8
+		},
+		"X": {
+			"type": "item",
+			"code": "game:quicklime",
+			"quantity": 8
+		}
+	},
+	"width": 3,
+	"height": 1,
+	"output": {
+		"type": "item",
+		"code": "metalRod",
+		"quantity": 1
+	}
+}

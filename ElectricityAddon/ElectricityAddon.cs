@@ -9,6 +9,7 @@ using ElectricityAddon.Content.Block.EInductFurnance;
 using ElectricityAddon.Content.Block.EMotor;
 using ElectricityAddon.Content.Block.EPress;
 using ElectricityAddon.Content.Block.EStove;
+using ElectricityAddon.Content.Block.ETermoGenerator;
 using ElectricityAddon.Content.Item;
 using Vintagestory.API.Common;
 
@@ -79,6 +80,10 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier1", typeof(BEBehaviorEGeneratorTier1));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier2", typeof(BEBehaviorEGeneratorTier2));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier3", typeof(BEBehaviorEGeneratorTier3));
+        
+        api.RegisterBlockClass("BlockETermoGenerator", typeof(BlockETermoGenerator));
+        api.RegisterBlockEntityClass("BlockEntityETermoGenerator", typeof(BlockEntityETermoGenerator));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorTermoEGenerator", typeof(BEBehaviorTermoEGenerator));
 
         api.RegisterItemClass("EChisel", typeof(EChisel));
         api.RegisterItemClass("EAxe", typeof(EAxe));

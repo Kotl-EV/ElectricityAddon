@@ -21,7 +21,9 @@
   "game:BlockEInducFurnance": "Индукционная печь",
   "game:ecentrifuge": "Электро-Центрифуга",
   "game:epress": "Элетро-Пресс",
+  "game:termogen": "Термогенератор",
   "game:freezer-title-gui": "Морозильник",
   "game:freezer-over-sneak-help": "Откр/закр дверцу.",
-  "game:freezer-over-help": "Откройте дверцу и положите еду что бы сохранить ее."
+  "game:freezer-over-help": "Откройте дверцу и положите еду что бы сохранить ее.",
+  "game:gui-word-seconds": "сек."
 }

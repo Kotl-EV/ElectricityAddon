@@ -164,7 +164,6 @@ public class BlockEntityEInductFurnance : BlockEntityOpenableContainer, IHeatSou
                 break;
             }
         }
-        Console.WriteLine(Block.Shape.rotateY);
 
         if (!Inventory[slotId].Empty)
         {

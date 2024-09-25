@@ -2374,12 +2374,12 @@
 									"rotationY": 45.0,
 									"rotationZ": -180.0,
 									"faces": {
-										"north": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 17.0 ], "autoUv": false },
+										"north": { "texture": "#steel4-96x96", "uv": [ 0.0, 0.0, 1.0, 17.0 ], "autoUv": false },
 										"east": { "texture": "#steel4-96x96", "uv": [ 0.0, 0.0, 5.0, 17.0 ], "autoUv": false },
-										"south": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 17.0 ], "autoUv": false },
-										"west": { "texture": "#null", "uv": [ 0.0, 0.0, 5.0, 24.0 ] },
-										"up": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 5.0 ] },
-										"down": { "texture": "#null", "uv": [ 0.0, 0.0, 1.0, 5.0 ] }
+										"south": { "texture": "#steel4-96x96", "uv": [ 0.0, 0.0, 1.0, 17.0 ], "autoUv": false },
+										"west": { "texture": "#steel4-96x96", "uv": [ 0.0, 0.0, 5.0, 24.0 ] },
+										"up": { "texture": "#steel4-96x96", "uv": [ 0.0, 0.0, 1.0, 5.0 ] },
+										"down": { "texture": "#steel4-96x96", "uv": [ 0.0, 0.0, 1.0, 5.0 ] }
 									}
 								},
 								{

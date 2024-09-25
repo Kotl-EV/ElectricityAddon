@@ -91,5 +91,6 @@ public class ElectricityAddon : ModSystem
         api.RegisterItemClass("EArmor", typeof(EArmor));
         api.RegisterItemClass("EWeapon", typeof(EWeapon));
         api.RegisterItemClass("EShield", typeof(EShield));
+        
     }
 }

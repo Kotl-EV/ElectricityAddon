@@ -10,6 +10,15 @@
             "name": "Electricity"
         }
     ],
+	"attributes": {
+	"handbook": {
+            "groupBy": ["lamp-*"],
+            "extraSections": [{
+                 "title": "electricity:block-handbooktitle-lamp",
+                 "text": "electricity:block-handbooktext-lamp"}]
+		}
+    },
+	
     "creativeInventory": {
         "general": [
             "*-disabled"

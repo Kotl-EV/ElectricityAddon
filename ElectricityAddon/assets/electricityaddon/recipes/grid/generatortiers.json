@@ -45,7 +45,7 @@
 },
     {
         "ingredientPattern": "HSH,XMC,HGH",
-        "requiresTrait": "clockmaker",
+        "requiresTrait": "tinkerer",
         "width": 3,
         "height": 3,
         "ingredients": {
@@ -90,7 +90,7 @@
     },
     {
         "ingredientPattern": "HSH,XGC",
-        "requiresTrait": "clockmaker",
+        "requiresTrait": "tinkerer",
         "width": 3,
         "height": 2,
         "ingredients": {

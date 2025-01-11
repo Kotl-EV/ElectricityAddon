@@ -39,7 +39,7 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
             {
                 Code = new AssetLocation("3size"),
                 Name = Lang.Get("drill2")
-            }.WithIcon(capi, IconStorage.DrawTool3x3)
+            }.WithIcon(capi, IconStorage.DrawTool1x3)
         });
     }
 
@@ -73,7 +73,7 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
             slot.Itemstack.Attributes.SetInt(nameof(toolMode), toolMode);
     }
 
-    public override void DamageItem(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, int amount = 1)
+    public override void DamageItem(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, int amount)
     {
         int energy = itemslot.Itemstack.Attributes.GetInt("electricity:energy");
         if (energy >= consume * amount)
@@ -109,7 +109,7 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
         int energy = slot.Itemstack.Attributes.GetInt("electricity:energy");
         if (energy >= consume)
         {
-            DamageItem(world,byEntity,slot);
+            DamageItem(world,byEntity,slot,1);
             if (base.OnBlockBrokenWith(world, byEntity, slot, blockSel, dropQuantityMultiplier))
             {
                 if (byEntity is EntityPlayer)
@@ -121,16 +121,16 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
                             switch (blockSel.Face.Axis)
                             {
                                 case EnumAxis.X:
-                                    destroyBlocks(world, blockSel.Position.AddCopy(0, -1, -1),
-                                        blockSel.Position.AddCopy(0, 1, 1), player, blockSel, slot);
+                                    destroyBlocks(world, blockSel.Position.AddCopy(0, -1, 0),
+                                        blockSel.Position.AddCopy(0, 1, 0), player, blockSel, slot);
                                     break;
                                 case EnumAxis.Y:
-                                    destroyBlocks(world, blockSel.Position.AddCopy(-1, 0, -1),
-                                        blockSel.Position.AddCopy(1, 0, 1), player, blockSel, slot);
+                                    destroyBlocks(world, blockSel.Position.AddCopy(0, -1, 0),
+                                        blockSel.Position.AddCopy(0, 1, 0), player, blockSel, slot);
                                     break;
                                 case EnumAxis.Z:
-                                    destroyBlocks(world, blockSel.Position.AddCopy(-1, -1, 0),
-                                        blockSel.Position.AddCopy(1, 1, 0), player, blockSel, slot);
+                                    destroyBlocks(world, blockSel.Position.AddCopy(0, -1, 0),
+                                        blockSel.Position.AddCopy(0, 1, 0), player, blockSel, slot);
                                     break;
                             }
                         }

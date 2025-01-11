@@ -9,6 +9,7 @@
 	},
 	"textures": {
 		"brass": "block/brass",
+		"oak": "block/oak",
 		"copper": "block/copper",
 		"iron": "block/iron",
 		"steel": "block/steel",

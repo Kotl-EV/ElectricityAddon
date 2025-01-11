@@ -24,17 +24,17 @@
       "I": {
         "type": "item",
         "code": "game:metalplate-iron",
-        "quantity": 8
+        "quantity": 4
       },
       "O": {
         "type": "item",
         "code": "game:metalplate-copper",
-        "quantity": 8
+        "quantity": 4
       },
       "Z": {
         "type": "item",
         "code": "game:metalplate-zinc",
-        "quantity": 8
+        "quantity": 4
       },
       "C": {
         "type": "block",

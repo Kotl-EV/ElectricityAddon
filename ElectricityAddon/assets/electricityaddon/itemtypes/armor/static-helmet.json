@@ -11,11 +11,18 @@
 		"maxcapacity": 20000,
 		"consume": 20,
 		"wearableAttachment": true,
+		"handbook": {
+			"groupBy": [ "static-helmet-*" ],
+			"extraSections": [{
+				"title": "electricityaddon:item-handbooktitle-static-helmet",
+				"text": "electricityaddon:item-handbooktext-static-helmet"
+            }]
+		},
 		"clothescategoryByType": {
 			"*": "armorhead"
 		},
 		"disableElementsByType": {
-			"*": [ "*" ]
+			"*": ["hidehat", "Hood", "hoodupperover", "Hair tile upper part", "ponytailhigh", "ponytaillow", "Hair", "hair-uncovered", "hidefacialhair", "sidehigh", "sidelow", "bangs"]
 		},
 		"defaultProtLoss": {
 			"perTierRelativeProtectionLoss": [ 0.025, 0.15 ],

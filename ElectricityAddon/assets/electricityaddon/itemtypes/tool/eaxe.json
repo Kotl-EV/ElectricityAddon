@@ -5,7 +5,40 @@
     "attributes": {
         "rechargeable": true,
         "maxcapacity": 20000,
-        "consume": 20
+        "consume": 20,
+		"handbook": {
+			"groupBy": [ "eaxe-*" ],
+			"extraSections": [{
+				"title": "electricityaddon:item-handbooktitle-eaxe",
+				"text": "electricityaddon:item-handbooktext-eaxe"
+            }]
+		},
+		"toolrackTransform": {
+			"translation": {
+				"x": -0.35,
+				"y": 0.65,
+				"z": 0.2
+			},
+			"rotation": {
+				"x": 0,
+				"y": 0,
+				"z": 0
+			},
+			"scale": 1.35
+		},
+		"groundStorageTransform": {
+			"translation": {
+				"x": 0.08,
+				"y": 0.19,
+				"z": -0.1
+			},
+			"rotation": {
+				"x": 30,
+				"y": 90,
+				"z": 270
+			},
+			"scale": 0.8
+		}
     },
     "shape": { "base": "item/eaxe" },
     "textures": {
@@ -32,6 +65,17 @@
         "plant": 5,
         "leaves": 3.2
     },
+	"behaviors": [
+	    { 
+		"name": "GroundStorable",
+		"properties":
+		    {
+			"layout": "WallHalves",
+			"wallOffY": 1,
+			"ctrlKey": true
+		    }
+		}
+	],
     "attackpower": 3,
     "fpHandTransform": {
         "translation": {
@@ -41,7 +85,7 @@
         },
         "rotation": {
             "x": -29,
-            "y": 1,
+            "y": 100,
             "z": 88
         },
         "origin": {

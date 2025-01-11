@@ -2,8 +2,8 @@
   "ingredientPattern": "BC_,PEM,_ID",
   "ingredients": {
 	"M": {
-      "type": "block",
-      "code": "game:metal-parts", "quantity": 2
+      "type": "item",
+      "code": "game:gem-diamond-rough", "quantity": 2
     },
 	"B": {
       "type": "item",
@@ -23,7 +23,7 @@
     },
 	"I": {
       "type": "item",
-      "code": "game:ingot-iron", "quantity": 2
+      "code": "game:ingot-cupronickel", "quantity": 2
     },
 	"D": {
       "type": "item",

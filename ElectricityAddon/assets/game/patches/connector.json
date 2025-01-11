@@ -1,0 +1,20 @@
+﻿[
+  {
+    "file": "game:blocktypes/metal/metalblock",
+    "path": "/entityBehaviors",
+    "op": "add",
+    "value": [{"name":  "Electricity"}]
+  },
+  {
+    "file": "game:blocktypes/metal/metalblock",
+    "path": "/entityClass",
+    "op": "add",
+    "value": "BlockEntityConnector"
+  },
+  {
+    "file": "game:blocktypes/metal/metalblock",
+    "path": "/class",
+    "op": "add",
+    "value": "BlockConnector"
+  }
+]

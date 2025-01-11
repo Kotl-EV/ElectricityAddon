@@ -11,6 +11,13 @@
 		"maxcapacity": 20000,
 		"consume": 20,
 		"wearableAttachment": true,
+		"handbook": {
+			"groupBy": [ "static-armor-*" ],
+			"extraSections": [{
+				"title": "electricityaddon:item-handbooktitle-static-armor",
+				"text": "electricityaddon:item-handbooktext-static-armor"
+            }]
+		},
 		"clothescategoryByType": {
 			"*": "armorbody"
 		},

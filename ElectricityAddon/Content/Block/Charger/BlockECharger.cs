@@ -147,6 +147,25 @@ public class BlockECharger : Vintagestory.API.Common.Block
         }
     }
     
+    public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
+    {
+        AssetLocation blockCode = CodeWithVariants(new Dictionary<string, string>
+        {
+            { "state", "disabled" },
+            { "horizontalorientation", "south" }
+        });
+
+        Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockCode);
+
+        return new ItemStack(block);
+    }
+    
+    public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer,
+        float dropQuantityMultiplier = 1)
+    {
+        return new[] { OnPickBlock(world, pos) };
+    }
+    
 }
  
  

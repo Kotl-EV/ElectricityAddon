@@ -11,7 +11,13 @@
     }
   ],
   "attributes": {
-    "maxProduction": 200 //максимальный выход энергии
+    "maxProduction": 200, //максимальный выход энергии
+  	"handbook": {
+            "groupBy": ["generatortier2-*"],
+            "extraSections": [{
+                 "title": "electricityaddon:block-handbooktitle-generatortier2",
+                 "text": "electricityaddon:block-handbooktext-generatortier2"}]
+		}
   },
   "creativeInventory": {
     "general": [

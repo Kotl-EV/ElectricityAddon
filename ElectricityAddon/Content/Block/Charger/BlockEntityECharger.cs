@@ -70,13 +70,11 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
     {
         if (inventory[0]?.Itemstack?.Item is IEnergyStorageItem)
         {
-            Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
             var storageEnergyItem = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
             var maxStorageItem = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Item,"maxcapacity");
             if (storageEnergyItem < maxStorageItem && GetBehavior<BEBehaviorECharger>().powerSetting > 0)
             {
                 ((IEnergyStorageItem)inventory[0].Itemstack.Item).receiveEnergy(inventory[0].Itemstack,GetBehavior<BEBehaviorECharger>().powerSetting );
-                inventory[0].MarkDirty();
             }
         }
         else if (inventory[0]?.Itemstack?.Block is IEnergyStorageItem)
@@ -87,10 +85,9 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
             if (storageEnergyBlock < maxStorageBlock && GetBehavior<BEBehaviorECharger>().powerSetting > 0)
             {
                 ((IEnergyStorageItem)inventory[0].Itemstack.Block).receiveEnergy(inventory[0].Itemstack,GetBehavior<BEBehaviorECharger>().powerSetting );
-                inventory[0].MarkDirty();
             } 
-        }else Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
-        MarkDirty(true);
+        }
+        MarkDirty();
     }
 
     void loadToolMeshes()
@@ -154,7 +151,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
     {
         IItemStack stack = player.InventoryManager.ActiveHotbarSlot.Itemstack;
         if (stack == null || !(stack.Class == EnumItemClass.Block ? stack.Block is IEnergyStorageItem : stack.Item is IEnergyStorageItem)) return false;
-
+        Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
         player.InventoryManager.ActiveHotbarSlot.TryPutInto(Api.World, inventory[slot]);
 
         didInteract(player);
@@ -169,7 +166,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
         {
             Api.World.SpawnItemEntity(stack, Pos.ToVec3d().Add(0.5, 0.5, 0.5));
         }
-
+        Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
         didInteract(player);
         return true;
     }

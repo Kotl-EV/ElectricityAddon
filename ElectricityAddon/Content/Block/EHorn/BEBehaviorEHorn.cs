@@ -9,7 +9,7 @@ namespace ElectricityAddon.Content.Block.EHorn;
 
 public class BEBehaviorEHorn : BlockEntityBehavior, IElectricConsumer {
     private int maxTemp;
-    private int powerSetting;
+    public int powerSetting;
     private bool hasItems;
     public BEBehaviorEHorn(BlockEntity blockEntity) : base(blockEntity) {
     }
@@ -28,7 +28,6 @@ public class BEBehaviorEHorn : BlockEntityBehavior, IElectricConsumer {
             powerSetting = amount;
             maxTemp = amount * 1100 / 100;
             if (entity != null) {
-                entity.MaxTemp = maxTemp;
                 entity.IsBurning = amount > 0;
             }
         }

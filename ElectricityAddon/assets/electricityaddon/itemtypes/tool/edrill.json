@@ -4,8 +4,46 @@
     "attributes": {
         "rechargeable": true,
         "maxcapacity": 20000,
-        "consume": 20
-    },
+        "consume": 20,
+		"handbook": {
+			"groupBy": [ "edrill-*" ],
+			"extraSections": [{
+				"title": "electricityaddon:item-handbooktitle-edrill",
+				"text": "electricityaddon:item-handbooktext-edrill"
+            }]
+		},
+		"toolrackTransform": {
+			"translation": {
+				"x": 0.1,
+				"y": -0.66,
+				"z": 0
+			},
+			"rotation": {
+				"x": 180,
+				"y": 90,
+				"z": 0
+			},
+			"scale": 1.3
+		},
+		"groundStorageTransform": {			
+			"translation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": -180,
+                "y": -180,
+                "z": -180
+            },
+            "origin": {
+                "x": 0.5,
+				"y": 0.2,
+                "z": 0.5299
+                },
+            "scale": 0.9
+			}
+    },	
     "shape": { "base": "item/electricalgdrill" },
     "textures": {
         "bismuthbronze": { "base": "block/bismuthbronze" },
@@ -33,16 +71,25 @@
     "miningtierbytype": {
         "*": 5
     },
+	"behaviors": [{ 
+		"name": "GroundStorable",
+		"properties": {
+			"layout": "WallHalves",
+     		"wallOffY": 0,
+			"ctrlKey": true			
+		}
+	}],
     "miningspeedbytype": {
         "*": {
-            "stone": 10,
-            "ore": 10,
-            "metal": 10,
-            "ice": 4,
             "soil": 5,
             "sand": 5,
             "gravel": 5,
-            "snow": 5
+            "snow": 5,
+            "ceramic": 3.25,
+            "stone": 9,
+            "ore": 9,
+            "metal": 9,
+            "ice": 4.25
         }
     },
     "attacktierbytype": {
@@ -112,6 +159,7 @@
             "y": 0.1,
             "z": 0.5299
         },
-        "scale": 6
+        "scale": 4.5
     }
+	
 }

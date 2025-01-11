@@ -2,7 +2,11 @@
 	"code": "edrilltip",
 	"attributes": {
 		"handbook": {
-			"groupBy": [ "drilltip" ]
+			"groupBy": [ "edrilltip-*" ],
+			"extraSections": [{
+				"title": "electricityaddon:item-handbooktitle-edrilltip",
+				"text": "electricityaddon:item-handbooktext-edrilltip"
+            }]
 		}
 	},
 	"heldTpIdleAnimation": "holdbothhands",

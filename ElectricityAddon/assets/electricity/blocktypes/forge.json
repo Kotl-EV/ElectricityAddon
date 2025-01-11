@@ -2,6 +2,14 @@
     "code": "forge",
     "class": "BlockEHorn",
     "entityClass": "BlockEntityEHorn",
+	"attributes": {
+	"handbook": {
+            "groupBy": ["forge-*"],
+            "extraSections": [{
+                 "title": "electricity:block-handbooktitle-forge",
+                 "text": "electricity:block-handbooktext-forge"}]
+		}
+    },
     "shape": {
         "base": "block/forge"
     },

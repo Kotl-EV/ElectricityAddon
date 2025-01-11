@@ -1,0 +1,38 @@
+{
+  "game:tabname-electricity": "Eletricidade",
+  "block-accumulator": "Acumulador",
+  "block-cable-*": "Cabo",
+  "block-motor-*": "Motor",
+  "block-generator-*": "Gerador",
+  "block-switch-*": "Chave",
+  "block-lamp-*": "Lâmpada elétrica",
+  "block-lamp_small-*": "Lâmpada elétrica (pequena)",
+  "block-forge-*": "Forja elétrica",
+  "block-heater-*": "Aquecedor elétrico",
+  
+  "block-handbooktitle-accumulator": "Usado",
+  "block-handbooktext-accumulator": "Permite armazenar energia elétrica.<br>Um acumulador carregado pode ser transportado, se necessário.",
+  
+  "block-handbooktitle-motor": "Usado",
+  "block-handbooktext-motor": "O motor converte energia elétrica em energia mecânica. Tem baixa potência e velocidade de rotação.<br><br>Consumo máximo: 100 Eu/s.",
+  
+  "block-handbooktitle-generator": "Usado",
+  "block-handbooktext-generator": "O gerador converte energia mecânica em energia elétrica. Tem baixa potência e velocidade de rotação.<br><br>Produção máxima: 100 Eu/s.",
+  
+  "block-handbooktitle-lamp": "Usado",
+  "block-handbooktext-lamp": "Uma boa fonte de luz que consome energia elétrica.<br><br>Nível de luz máximo: 21.<br>Consumo máximo: 8 Eu/s.",
+  
+  "block-handbooktitle-lamp_small": "Usado",
+  "block-handbooktext-lamp_small": "Uma fonte de luz fraca que consome energia elétrica.<br><br>Nível de luz máximo: 10.<br>Consumo máximo: 4 Eu/s.",
+  
+  "block-handbooktitle-forge": "Usado",
+  "block-handbooktext-forge": "A forja elétrica permite substituir completamente a forja tradicional.<br><br>Temperatura máxima de aquecimento: 1100 °C.<br>Consumo máximo: 100 Eu/s.",
+  
+  "game:Electricity": "Rede elétrica",
+  "game:Storage": "Armazena: ",
+  "game:Temperature": "Temperatura: ",
+  "game:Consumption": "Consome: ",
+  "game:Production": "Produz: ",
+  "game:Overflow": "Excesso: ",
+  "game:Contents": "Conteúdo: "
+}

@@ -2,6 +2,7 @@
     "code": "largeaccumulator",
     "class": "BlockEAccumulator",
     "entityClass": "Accumulator",
+    "storageFlags": 2,
     "entityBehaviors": [
         {
             "name": "BEBehaviorEAccumulator"
@@ -35,8 +36,15 @@
     },
     "attributes": {
         "rechargeable": true,
-        "maxcapacity": 256000
+        "maxcapacity": 256000,
+		"handbook": {
+            "groupBy": ["largeaccumulator-*"],
+            "extraSections": [{
+                 "title": "electricityaddon:block-handbooktitle-largeaccumulator",
+                 "text": "electricityaddon:block-handbooktext-largeaccumulator"}]
+		}
     },
+	
     "shape": {
         "base": "block/largeaccumulator"
     },

@@ -2,6 +2,14 @@
     "code": "lamp_small",
     "class": "SmallLamp",
     "entityClass": "SmallLamp",
+    "attributes": {
+	"handbook": {
+            "groupBy": ["lamp_small-*"],
+            "extraSections": [{
+                 "title": "electricity:block-handbooktitle-lamp_small",
+                 "text": "electricity:block-handbooktext-lamp_small"}]
+		}
+    },
     "entityBehaviors": [
         {
             "name": "SmallLamp"

@@ -25,7 +25,7 @@ class BlockEFreezer : Vintagestory.API.Common.Block
             if (be != null)
             {
                 if (Variant["state"] == "open")
-                    be.OnBlockInteract(byPlayer, false);
+                    be.OnBlockInteract(byPlayer, false, blockSel);
                 else
                     return false;
             }

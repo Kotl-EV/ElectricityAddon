@@ -105,10 +105,22 @@ public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
                 from mechanicalPowerNode in this.network.nodes
                 let block = api.World.BlockAccessor.GetBlockEntity(mechanicalPowerNode.Key)
                 where block?.GetBehavior<BEBehaviorEGeneratorTier1>() is not null
-                where block?.GetBehavior<BEBehaviorEGeneratorTier2>() is not null
-                where block?.GetBehavior<BEBehaviorEGeneratorTier3>() is not null
                 select mechanicalPowerNode).Any()) {
             api.Event.EnqueueMainThreadTask(() => api.World.BlockAccessor.BreakBlock(this.Position, null), "break-motor");
+        }
+        if (this.Api is ICoreServerAPI api2 && this.network is not null && (
+                from mechanicalPowerNode in this.network.nodes
+                let block = api2.World.BlockAccessor.GetBlockEntity(mechanicalPowerNode.Key)
+                where block?.GetBehavior<BEBehaviorEGeneratorTier2>() is not null
+                select mechanicalPowerNode).Any()) {
+            api2.Event.EnqueueMainThreadTask(() => api2.World.BlockAccessor.BreakBlock(this.Position, null), "break-motor");
+        }
+        if (this.Api is ICoreServerAPI api3 && this.network is not null && (
+                from mechanicalPowerNode in this.network.nodes
+                let block = api3.World.BlockAccessor.GetBlockEntity(mechanicalPowerNode.Key)
+                where block?.GetBehavior<BEBehaviorEGeneratorTier3>() is not null
+                select mechanicalPowerNode).Any()) {
+            api3.Event.EnqueueMainThreadTask(() => api3.World.BlockAccessor.BreakBlock(this.Position, null), "break-motor");
         }
     }
 
@@ -212,7 +224,7 @@ public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
     
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting));
+        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting/MyMiniLib.GetAttributeFloat(this.Block, "maxConsumption",100F)*100));
         stringBuilder.AppendLine("└ "+ Lang.Get("Consumption") + this.powerSetting + "/" + MyMiniLib.GetAttributeInt(this.Block, "maxConsumption",100) + "Eu");
         stringBuilder.AppendLine();
     }

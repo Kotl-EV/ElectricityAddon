@@ -11,6 +11,13 @@
 		"maxcapacity": 20000,
 		"consume": 20,
 		"wearableAttachment": true,
+		"handbook": {
+			"groupBy": [ "static-boots-*" ],
+			"extraSections": [{
+				"title": "electricityaddon:item-handbooktitle-static-boots",
+				"text": "electricityaddon:item-handbooktext-static-boots"
+            }]
+		},
 		"clothescategoryByType": {
 			"*": "armorlegs"
 		},

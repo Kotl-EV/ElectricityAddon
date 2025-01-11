@@ -2,19 +2,93 @@
   "block-charger-*": "Charging Station",
   "block-estove-*": "Electric Stove",
   "block-efreezer-*": "Electric Freezer",
-  "block-largeaccumulator": "Accumulator (large)",
+  "block-largeaccumulator": "Accumulator (Large)",
+  "block-motortier2-*": "Upgraded Engine",
+  "block-motortier3-*": "High-Performance Engine",
+  "block-generatortier2-*": "Upgraded Generator",
+  "block-generatortier3-*": "High-Performance Generator",
   
   "item-edrill": "Electric Drill",
   "item-echisel": "Electric Chisel",
   "item-coil": "Copper Coil",
   "item-edrilltip": "Drill Tip",
   "item-engineshaft": "Rotor",
+  "item-eaxe": "Electric Axe",
+  "item-static-saber": "Electric Saber",
+  "item-static-spear": "Electric Spear",
+  "item-static-shield": "Electric Shield",
+  "item-static-helmet": "Electric Helmet",
+  "item-static-armor": "Electric Chestplate",
+  "item-static-boots": "Electric Leggings",
   
-  "game:drill1": "Digs 1X1 blocks",
-  "game:drill2": "Digs 3X3 blocks",
+  "game:drill1": "Mines 1X1 block",
+  "game:drill2": "Mines 1X3 blocks",
+  
+  "game:gamemechanicinfo-electricityaddon-title": "Electricity: ElectricityAddon/Electricity Mod",
+  "game:gamemechanicinfo-electricityaddon-text": "<strong>Description</strong><br>The mod adds electricity, electrical appliances, devices, weapons, and armor to the game. All of this helps to make (or not) survival in the game world easier, reduce the amount of routine, and diversify the gameplay experience.<br><br><strong>Basics</strong><br>The law of conservation of energy states that energy cannot be created or destroyed. Energy only transforms from one form to another or from one body to another. So it is in the game.<br><br>The main source of mechanical energy is windmills. Generators can be used to convert mechanical energy into electrical energy. To do this, you need to use a shaft and/or gear to transfer the torque from the windmill to the generator shaft. After that, the generator will start generating electricity.<br><br>Electrical energy can be transmitted through cables to consumers. Simply place the cable on the blocks in the desired direction. Up to 4 cables can be placed on each face of the block, which will be directed in different directions. This allows you to lay cables in any direction and branch the electrical circuit. The cable must be connected to the iron plate of the electrical appliance, then it will start its work. Electrical appliances and metal blocks can also be conductors of electricity.<br><br>Since the wind does not always blow and not at full strength, the energy output of generators may not be enough to power all electrical appliances. To avoid this, you need to connect your electrical circuit to the accumulator(-s). They will constantly accumulate electrical energy and give it to the circuit to power the devices, at any time, even in the absence of wind.<br><br>To save energy, some devices need to be disconnected from the circuit when not in use. The switch is used for this. Install it on the section of the circuit where you need to disconnect the power.<br><br>For some devices, where mechanical energy is still needed for operation, an engine will be needed. It converts electrical energy into mechanical energy. It needs to be connected to the device with a shaft. When turned on, the engine will try to deliver maximum power to the shaft, so make sure that there is enough energy in the circuit.",
+  
+  "block-handbooktitle-charger": "Uses",
+  "block-handbooktext-charger": "The charging station allows you to charge accumulators and devices with a built-in accumulator.<br><br>Maximum consumption: 200 Eu/s.",
+  
+  "block-handbooktitle-estove": "Uses",
+  "block-handbooktext-estove": "The electric stove allows you to completely replace the usual campfire.<br><br>Maximum stove heating temperature: 1325 °C.<br>Maximum consumption: 100 Eu/s.",
+  
+  "block-handbooktitle-efreezer": "Uses",
+  "block-handbooktext-efreezer": "The electric freezer allows you to store food longer. <br><br>Storage slots: 6.<br>Food spoilage rate: 0.05x<br>Maximum consumption: 100 Eu/s.",
+  
+  "block-handbooktitle-largeaccumulator": "Uses",
+  "block-handbooktext-largeaccumulator": "Allows you to store electrical energy. A more capacious version of the usual <a href=\"handbooksearch:\/\/аккумулятор\">accumulator<\/a>.<br>A charged (large) accumulator can be carried with you if necessary, but only in a bag slot.",
+  
+  "block-handbooktitle-motortier2": "Uses",
+  "block-handbooktext-motortier2": "The upgraded engine converts electrical energy into mechanical energy. It has increased output power and speed of rotation compared to the <a href=\"handbooksearch:\/\/Двигатель\">engine<\/a>.<br><br>Maximum consumption: 400 Eu/s.",
+  
+  "block-handbooktitle-motortier3": "Uses",
+  "block-handbooktext-motortier3": "The high-performance engine converts electrical energy into mechanical energy. Due to the use of better materials, it has higher output power and speed of rotation compared to the <a href=\"handbooksearch:\/\/Модернизированный двигатель\">upgraded engine<\/a>.<br><br>Maximum consumption: 800 Eu/s.",
+  
+  "block-handbooktitle-generatortier2": "Uses",
+  "block-handbooktext-generatortier2": "The upgraded generator converts mechanical energy into electrical energy. It has increased power compared to the <a href=\"handbooksearch:\/\/Генератор\">generator<\/a>.<br><br>Maximum output: 200 Eu/s.",
+  
+  "block-handbooktitle-generatortier3": "Uses",
+  "block-handbooktext-generatortier3": "The high-performance generator converts mechanical energy into electrical energy. Due to the use of better materials, it has higher power compared to the <a href=\"handbooksearch:\/\/Модернизированный генератор\">upgraded generator<\/a>.<br><br>Maximum output: 400 Eu/s.",
+  
+  "item-handbooktitle-static-saber": "Uses",
+  "item-handbooktext-static-saber": "A good choice for effectively cutting opponents.<br>Attack power: -8 hp<br>When discharged, it will stop dealing damage. Don't forget to charge!",
 
+  "item-handbooktitle-static-spear": "Uses",
+  "item-handbooktext-static-spear": "A good choice for creating holes in opponents.<br>Attack power: -8 hp<br>When discharged, it will stop dealing damage. Don't forget to charge!",
+  
+  "item-handbooktitle-static-shield": "Uses",
+  "item-handbooktext-static-shield": "Excellent protection with a built-in flashlight.<br>When discharged, it will stop absorbing damage. Don't forget to charge!",
+  
+  "item-handbooktitle-static-helmet": "Uses",
+  "item-handbooktext-static-helmet": "Excellent protection and capabilities.<br>When discharged, it will stop absorbing damage. Don't forget to charge!",
+  
+  "item-handbooktitle-static-armor": "Uses",
+  "item-handbooktext-static-armor": "Excellent protection and capabilities. Allows you to fly by pressing the R button.<br>When discharged, it will stop absorbing damage and flight mode will turn off. Don't forget to charge!",
+  
+  "item-handbooktitle-static-boots": "Uses",
+  "item-handbooktext-static-boots": "Excellent protection and capabilities.<br>When discharged, it will stop absorbing damage. Don't forget to charge!",
+  
+  "item-handbooktitle-edrill": "Uses",
+  "item-handbooktext-edrill": "Mining takes on a new level. Allows you to work in two modes: 1x1 and 1x3.<br>When discharged, it will stop working. Don't forget to charge!",
+  
+  "item-handbooktitle-echisel": "Uses",
+  "item-handbooktext-echisel": "Chisel, but on batteries!. Not used in recipes.<br>When discharged, it will stop working. Don't forget to charge!",
+  
+  "item-handbooktitle-coil": "Uses",
+  "item-handbooktext-coil": "And where would we be without copper coils in electrical appliances?",
+  
+  "item-handbooktitle-edrilltip": "Uses",
+  "item-handbooktext-edrilltip": "The basis for an electric drill.",
+  
+  "item-handbooktitle-engineshaft": "Uses",
+  "item-handbooktext-engineshaft": "Usually a rotor is needed in engines/generators, but not only.",
+  
+  "item-handbooktitle-eaxe": "Uses",
+  "item-handbooktext-eaxe": "Does a great job of chopping. Not used in recipes.<br>When discharged, it will stop working. Don't forget to charge!",
+  
   "game:BlockEStove": "Electric Stove",
   "game:freezer-title-gui": "Freezer",
   "game:freezer-over-sneak-help": "Open/close the door.",
-  "game:freezer-over-help": "Open the door and put the food in to save it."
+  "game:freezer-over-help": "Open the door and put food in to preserve it."
 }

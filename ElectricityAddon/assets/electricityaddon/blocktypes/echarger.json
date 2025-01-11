@@ -2,6 +2,15 @@
     "code": "charger",
     "class": "BlockECharger",
     "entityClass": "BlockEntityECharger",
+	"attributes": {
+        "handbook": {
+			"groupBy": ["charger-*"],
+			"extraSections": [{
+				"title": "electricityaddon:block-handbooktitle-charger",
+				"text": "electricityaddon:block-handbooktext-charger"
+            }]
+        }
+    },
     "shape": {
         "base": "block/charger"
     },

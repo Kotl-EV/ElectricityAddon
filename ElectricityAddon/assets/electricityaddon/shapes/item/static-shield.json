@@ -14,9 +14,9 @@
 	"elements": [
 		{
 			"name": "Cube7",
-			"from": [ 2.5, -8.7, 3.1 ],
-			"to": [ 7.5, 12.3, 3.5 ],
-			"rotationOrigin": [ 5.0, 2.3, 3.1 ],
+			"from": [ 3.5, -7.7, 4.8 ],
+			"to": [ 8.5, 13.3, 5.2 ],
+			"rotationOrigin": [ 6.0, 3.3, 4.1 ],
 			"rotationZ": 90.0,
 			"faces": {
 				"north": { "texture": "#copper", "uv": [ 0.0, 0.0, 5.0, 15.0 ], "glow": 170, "autoUv": false },

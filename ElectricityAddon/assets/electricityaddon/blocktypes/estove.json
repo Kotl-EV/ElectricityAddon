@@ -2,6 +2,15 @@
     "code": "estove",
     "class": "BlockEStove",
     "entityClass": "BlockEntityEStove",
+	"attributes": {
+        "handbook": {
+        "groupBy": ["estove-*"],
+        "extraSections": [{
+              "title": "electricityaddon:block-handbooktitle-estove",
+              "text": "electricityaddon:block-handbooktext-estove"
+            }]
+        }
+    },
     "behaviors": [
         { "name": "Container" },
         {

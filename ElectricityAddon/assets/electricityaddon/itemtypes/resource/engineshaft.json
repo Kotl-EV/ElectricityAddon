@@ -3,7 +3,14 @@
     "maxstacksize": 16,
     "attributes": {
         "displaycaseable": true,
-        "shelvable": true
+        "shelvable": true,
+		"handbook": {
+			"groupBy": [ "engineshaft-*" ],
+			"extraSections": [{
+				"title": "electricityaddon:item-handbooktitle-engineshaft",
+				"text": "electricityaddon:item-handbooktext-engineshaft"
+            }]
+		}
     },
     "materialDensity": 3000,
     "storageFlags": 1,

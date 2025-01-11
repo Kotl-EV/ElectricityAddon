@@ -6,6 +6,7 @@ namespace ElectricityAddon.Content.Block.EStove;
 
 public class BlockEStove : Vintagestory.API.Common.Block
 {
+    private BlockEntityEStove be;
     public override bool CanAttachBlockAt(IBlockAccessor blockAccessor, Vintagestory.API.Common.Block block, BlockPos pos,
         BlockFacing blockFace, Cuboidi attachmentArea = null)
     {
@@ -23,6 +24,29 @@ public class BlockEStove : Vintagestory.API.Common.Block
         Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockCode);
 
         return new ItemStack(block);
+    }
+    
+    public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
+    {
+        be = null;
+        if (blockSel.Position != null)
+        {
+            be = world.BlockAccessor.GetBlockEntity(blockSel.Position) as BlockEntityEStove;
+        }
+
+        bool handled = base.OnBlockInteractStart(world, byPlayer, blockSel);
+
+        if (!handled && !byPlayer.WorldData.EntityControls.Sneak && blockSel.Position != null)
+        {
+            if (be != null)
+            {
+                be.OnBlockInteract(byPlayer, false, blockSel);
+            }
+
+            return true;
+        }
+
+        return true;
     }
 
     public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer,

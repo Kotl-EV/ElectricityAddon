@@ -20,8 +20,7 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
     private bool burning;
     private bool clientSidePrevBurning;
     private double lastTickTotalHours;
-
-    public int MaxTemp = 0;
+    
     private ForgeContentsRenderer? renderer;
     private WeatherSystemBase? weatherSystem;
 
@@ -78,43 +77,34 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
 
     private void OnClientTick(float dt)
     {
-        if (this.Api?.Side == EnumAppSide.Client && this.clientSidePrevBurning != this.burning)
+        ICoreAPI api = this.Api;
+        if ((api != null ? (api.Side == EnumAppSide.Client ? 1 : 0) : 0) != 0 && this.clientSidePrevBurning != this.burning)
         {
-            this.ToggleAmbientSounds(this.burning);
-            this.clientSidePrevBurning = this.burning;
+            this.ToggleAmbientSounds(this.IsBurning);
+            this.clientSidePrevBurning = this.IsBurning;
         }
-
-        if (this.burning && this.Api?.World.Rand.NextDouble() < 0.13)
-        {
-            BlockEntityCoalPile.SpawnBurningCoalParticles(this.Api, this.Pos.ToVec3d().Add(4 / 16f, 14 / 16f, 4 / 16f),
-                8 / 16f, 8 / 16f);
-        }
-
-        this.renderer?.SetContents(this.Contents, 0, this.burning, false);
+        if (this.burning && this.Api.World.Rand.NextDouble() < 0.13)
+            BlockEntityCoalPile.SpawnBurningCoalParticles(this.Api, this.Pos.ToVec3d().Add(0.25, 0.875, 0.25), 0.5f, 0.5f);
+        if (this.renderer == null)
+            return;
+        this.renderer.SetContents(this.Contents, 0, this.burning, false);
     }
 
     private void OnCommonTick(float dt)
     {
         if (this.burning)
         {
-            Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
-            var hoursPassed = this.Api.World.Calendar.TotalHours - this.lastTickTotalHours;
-
+            double num1 = this.Api.World.Calendar.TotalHours - this.lastTickTotalHours;
             if (this.Contents != null)
             {
-                var temp = this.Contents.Collectible.GetTemperature(this.Api.World, this.Contents);
-
-                if (temp < this.MaxTemp)
+                float temperature = this.Contents.Collectible.GetTemperature(this.Api.World, this.Contents);
+                if ((double) temperature < 1100.0)
                 {
-                    var tempGain = (float)(hoursPassed * 1500);
-
-                    this.Contents.Collectible.SetTemperature(this.Api.World, this.Contents,
-                        Math.Min(this.MaxTemp, temp + tempGain));
-                    this.MarkDirty();
+                    float num2 = (float) (num1 * 1500.0);
+                    this.Contents.Collectible.SetTemperature(this.Api.World, this.Contents, Math.Min(GetBehavior<BEBehaviorEHorn>().powerSetting * 11F, temperature + num2));
                 }
             }
-        }else Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
-
+        }
         this.tmpPos.Set(this.Pos.X + 0.5, this.Pos.Y + 0.5, this.Pos.Z + 0.5);
 
         double rainLevel = 0;
@@ -124,12 +114,10 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
                         && this.Api.World.BlockAccessor.GetRainMapHeightAt(this.Pos.X, this.Pos.Z) <= this.Pos.Y
                         && (rainLevel = this.weatherSystem!.GetPrecipitation(this.tmpPos)) > 0.1;
 
-        if (rainCheck && this.Api.World.Rand.NextDouble() < rainLevel * 5)
-        {
+        if (rainCheck && this.Api.World.Rand.NextDouble() < rainLevel * 5) {
             var playSound = false;
 
-            if (this.burning)
-            {
+            if (this.burning) {
                 playSound = true;
 
                 this.MarkDirty();
@@ -139,21 +127,16 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
                 ? 0
                 : this.Contents.Collectible.GetTemperature(this.Api.World, this.Contents);
 
-            if (temp > 20)
-            {
+            if (temp > 20) {
                 playSound = temp > 100;
-                this.Contents?.Collectible.SetTemperature(this.Api.World, this.Contents,
-                    Math.Min(this.MaxTemp, temp - 8), false);
+                this.Contents?.Collectible.SetTemperature(this.Api.World, this.Contents, Math.Min(GetBehavior<BEBehaviorEHorn>().powerSetting * 11F, temp - 8), false);
                 this.MarkDirty();
             }
 
-            if (playSound)
-            {
-                this.Api.World.PlaySoundAt(new AssetLocation("sounds/effect/extinguish"), this.Pos.X + 0.5,
-                    this.Pos.Y + 0.75, this.Pos.Z + 0.5, null, false, 16);
+            if (playSound) {
+                this.Api.World.PlaySoundAt(new AssetLocation("sounds/effect/extinguish"), this.Pos.X + 0.5, this.Pos.Y + 0.75, this.Pos.Z + 0.5, null, false, 16);
             }
         }
-
         this.lastTickTotalHours = this.Api.World.Calendar.TotalHours;
     }
 
@@ -180,6 +163,8 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
                 );
 
                 this.ambientSound.Start();
+                Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
+                
             }
         }
         else
@@ -187,6 +172,7 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
             this.ambientSound?.Stop();
             this.ambientSound?.Dispose();
             this.ambientSound = null;
+            Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
         }
     }
 
@@ -343,21 +329,18 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
 
         tree.SetDouble("lastTickTotalHours", this.lastTickTotalHours);
     }
-
-    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+    
+    
+    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder dsc)
     {
-        base.GetBlockInfo(forPlayer, stringBuilder);
-
-        if (this.Contents != null)
-        {
-            var temp = (int)this.Contents.Collectible.GetTemperature(this.Api.World, this.Contents);
-
-            stringBuilder.AppendLine(
-                temp <= 25
-                    ? $"\nContents: {this.Contents.StackSize}x {this.Contents.GetName()}\nTemperature: {Lang.Get("Cold")}"
-                    : $"\nContents: {this.Contents.StackSize}x {this.Contents.GetName()}\nTemperature: {temp}°C"
-            );
-        }
+        base.GetBlockInfo(forPlayer, dsc);
+        if (this.Contents == null)
+            return;
+        int temperature = (int) this.Contents.Collectible.GetTemperature(this.Api.World, this.Contents);
+        if (temperature <= 25)
+            dsc.AppendLine(Lang.Get("forge-contentsandtemp-cold", (object) this.Contents.StackSize, (object) this.Contents.GetName()));
+        else
+            dsc.AppendLine(Lang.Get("forge-contentsandtemp", (object) this.Contents.StackSize, (object) this.Contents.GetName(), (object) temperature));
     }
 
     public override void OnLoadCollectibleMappings(IWorldAccessor worldForResolve,

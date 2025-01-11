@@ -70,17 +70,17 @@ public class FlyToggleEvent : ModSystem
                 if (itemSlot.Itemstack?.Collectible is EArmor collectible)
                 {
                     int energy = itemSlot.Itemstack.Attributes.GetInt("electricity:energy");
-                    if (energy >= 20)
+                    if (energy > 40)
                     {
                         if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos))
                         {
-                            collectible.receiveEnergy(itemSlot.Itemstack, -(int)(num * 2000));
+                            collectible.receiveEnergy(itemSlot.Itemstack, -(int)(num * 4000));
                             itemSlot.MarkDirty();
                         }
                     }
                     else
                     {
-                        itemSlot.Itemstack.Attributes.SetInt("electricity:energy",20);
+                        itemSlot.Itemstack.Attributes.SetInt("electricity:energy",1);
                         itemSlot.MarkDirty();
                     }
                 }
@@ -100,7 +100,7 @@ public class FlyToggleEvent : ModSystem
                 if (itemSlot.Itemstack?.Collectible is EArmor collectible)
                 {
                     int energy = itemSlot.Itemstack.Attributes.GetInt("electricity:energy");
-                    if (energy >= 20)
+                    if (energy > 40)
                     {
                         if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos))
                         {
@@ -208,7 +208,7 @@ public class FlyToggleEvent : ModSystem
         if (itemSlot == null) return false;
         
         if (!itemSlot.Itemstack.Attributes.GetBool("flying") &&
-            itemSlot.Itemstack.Attributes.GetInt("electricity:energy") >= 20)
+            itemSlot.Itemstack.Attributes.GetInt("electricity:energy") > 40)
         {
             itemSlot.Itemstack.Attributes.SetBool("flying", true);
             itemSlot.MarkDirty();

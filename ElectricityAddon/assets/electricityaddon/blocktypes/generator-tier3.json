@@ -1,5 +1,5 @@
 {
-    "code": "Generatortier3",
+  "code": "Generatortier3",
   "class": "BlockEGeneratorTier3",
   "entityClass": "BlockEntityEGenerator",
   "entityBehaviors": [
@@ -11,7 +11,13 @@
     }
   ],
   "attributes": {
-    "maxProduction": 400 //максимальный выход энергии
+    "maxProduction": 400, //максимальный выход энергии
+    	"handbook": {
+            "groupBy": ["generatortier3-*"],
+            "extraSections": [{
+                 "title": "electricityaddon:block-handbooktitle-generatortier3",
+                 "text": "electricityaddon:block-handbooktext-generatortier3"}]
+		}
   },
   "creativeInventory": {
     "general": [

@@ -1,0 +1,31 @@
+﻿{
+  "ingredientPattern": "_BZ,KEM,EK_",
+  "ingredients": {
+    "M": {
+      "type": "block",
+      "code": "electricity:cable-dot", "quantity": 3
+    },
+    "B": {
+      "type": "item",
+      "code": "game:gear-temporal", "quantity": 1
+    },
+    "E": {
+      "type": "item",
+      "code": "game:stick", "quantity": 1
+    },
+    "Z": {
+      "type": "item",
+      "code": "game:spearhead-blackbronze", "quantity": 1
+    },
+    "K": {
+      "type": "item",
+      "code": "game:leather-normal-plain", "quantity": 8
+    }
+  },
+  "width": 3,
+  "height": 3,
+  "output": {
+    "type": "item",
+    "code": "electricityaddon:static-spear"
+  }
+}

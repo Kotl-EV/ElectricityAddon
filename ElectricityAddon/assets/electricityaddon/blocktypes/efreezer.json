@@ -2,6 +2,15 @@
 	"code": "efreezer",
 	"class": "BlockEFreezer",
 	"entityClass": "BlockEntityEFreezer",
+	"attributes": {
+        "handbook": {
+        "groupBy": ["efreezer-*"],
+        "extraSections": [{
+              "title": "electricityaddon:block-handbooktitle-efreezer",
+              "text": "electricityaddon:block-handbooktext-efreezer"
+            }]
+        }
+    },
 	"entityBehaviors": [
 		{
 			"name": "BEBehaviorEFreezer"

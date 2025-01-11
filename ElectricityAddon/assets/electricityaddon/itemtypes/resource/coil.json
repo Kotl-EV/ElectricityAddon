@@ -3,7 +3,14 @@
 	"maxstacksize": 64,
 	"attributes": {
 		"displaycaseable": true,
-		"shelvable": true
+		"shelvable": true,
+		"handbook": {
+			"groupBy": [ "coil-*" ],
+			"extraSections": [{
+				"title": "electricityaddon:item-handbooktitle-coil",
+				"text": "electricityaddon:item-handbooktext-coil"
+            }]
+		}
 	},
 	"materialDensity": 8960,
 	"storageFlags": 5,
@@ -21,7 +28,7 @@
 		"smeltedRatio": 1,
 		"smeltedStack": {
 			"type": "item",
-			"code": "game:ingot-copper",
+			"code": "game:metalbit-copper",
 			"stacksize": 2
 		}
 	},

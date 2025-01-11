@@ -11,7 +11,13 @@
     }
   ],
   "attributes": {
-    "maxConsumption": 100 //максимальное энергопотребление
+    "maxConsumption": 100, //максимальное энергопотребление
+	"handbook": {
+            "groupBy": ["motor-*"],
+            "extraSections": [{
+                 "title": "electricity:block-handbooktitle-motor",
+                 "text": "electricity:block-handbooktext-motor"}]
+		}
   },
   "creativeInventory": {
     "general": [

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Electricity.Utils;
 using Vintagestory.API.Client;
@@ -9,10 +10,11 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
+using PositionProviderDelegate = Vintagestory.GameContent.PositionProviderDelegate;
 
 namespace ElectricityAddon.Content.Block.EFreezer;
 
-class BlockEntityEFreezer : BlockEntityContainer, ITexPositionSource
+class BlockEntityEFreezer : BlockEntityContainerFreezer, ITexPositionSource
 {
     private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
     private static readonly Vec3f center = new Vec3f(0.5f, 0.25f, 0.5f);
@@ -300,7 +302,7 @@ class BlockEntityEFreezer : BlockEntityContainer, ITexPositionSource
 
     }
 
-    public void OnBlockInteract(IPlayer byPlayer, bool isOwner)
+    public void OnBlockInteract(IPlayer byPlayer, bool isOwner, BlockSelection blockSel)
     {
         if (Api.Side == EnumAppSide.Client)
         {
@@ -321,7 +323,7 @@ class BlockEntityEFreezer : BlockEntityContainer, ITexPositionSource
 
             ((ICoreServerAPI)Api).Network.SendBlockEntityPacket(
                 (IServerPlayer)byPlayer,
-                Pos.X, Pos.Y, Pos.Z,
+                blockSel.Position,
                 (int)EnumBlockStovePacket.OpenGUI,
                 data
             );

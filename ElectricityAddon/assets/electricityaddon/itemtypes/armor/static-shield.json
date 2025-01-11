@@ -1,4 +1,4 @@
-{
+﻿{
 	"code": "static-shield",
 	"class": "EShield",
 	"storageFlags": 257,
@@ -10,16 +10,52 @@
 		"rechargeable": true,
 		"maxcapacity": 20000,
 		"consume": 20,
+		"handbook": {
+			"groupBy": [ "static-shield-*" ],
+			"extraSections": [{
+				"title": "electricityaddon:item-handbooktitle-static-shield",
+				"text": "electricityaddon:item-handbooktext-static-shield"
+            }]
+		},
+		"groundStorageTransform": {
+			"translation": {
+				"x": -0.3,
+				"y": 0.15,
+				"z": -0.04
+			},
+			"rotation": {
+				"x": 20,
+				"y": 180,
+				"z": 270
+			},
+			"scale": 1
+		},
 		"eshield": {
-			"blockSound": "game:held/shieldblock",
+			"blockSoundLight": "game:held/shieldblock-metal-light",
+			"blockSoundHeavy": "game:held/shieldblock-metal-heavy",
 			"protectionChance": {
-				"passive": 0.15,
+				"passive-projectile": 0.2,
+				"active-projectile": 1,
+				"passive": 0.5,
 				"active": 0.9
 			},
-			"damageAbsorption": {
-				"passive": 3,
-				"active": 5
-			}
+			"projectileDamageAbsorption":10,
+			"damageAbsorption": 8
+		},
+		"rackable": true,
+		"moldrackable": true,
+		"toolrackTransform": {
+			"translation": {
+				"x": -0.6,
+				"y": -0.66,
+				"z": -0.45
+			},
+			"rotation": {
+				"x": 270,
+				"y": 171,
+				"z": 0
+			},
+			"scale": 1.6
 		},
 		"scaleX": 0.5,
 		"scaleY": 0.5,
@@ -42,6 +78,17 @@
 		"coke": {"base": "block/coke"},
 		"tin": {"base": "block/tin"}
 		},
+	"behaviors": [
+	    { 
+		"name": "GroundStorable",
+		"properties":
+		    {
+			"layout": "WallHalves",
+			"wallOffY": 2,
+			"ctrlKey": true
+		    }
+		}
+	],
 	"fpHandTransform": {
 		"translation": {
 			"x": 0,
@@ -98,9 +145,9 @@
 	},
 	"tpHandTransform": {
 		"translation": {
-			"x": -0.1,
+			"x": -0.17,
 			"y": 0.3,
-			"z": -1
+			"z": -0.91
 		},
 		"rotation": {
 			"x": 176,

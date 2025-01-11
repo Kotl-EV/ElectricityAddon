@@ -185,7 +185,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting));
+        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting/MyMiniLib.GetAttributeFloat(this.Block, "maxProduction",100F)*100));
         stringBuilder.AppendLine("└ "+ Lang.Get("Production") + this.powerSetting + "/" + MyMiniLib.GetAttributeFloat(this.Block, "maxProduction",100F) + "Eu");
         stringBuilder.AppendLine();
     }

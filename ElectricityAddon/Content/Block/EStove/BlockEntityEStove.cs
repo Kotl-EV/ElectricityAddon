@@ -14,7 +14,7 @@ using Vintagestory.GameContent;
 
 namespace ElectricityAddon.Content.Block.EStove;
 
-public class BlockEntityEStove : BlockEntityOpenableContainer, IHeatSource, ITexPositionSource
+public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPositionSource
 {
     protected Shape nowTesselatingShape;
     protected CollectibleObject nowTesselatingObj;
@@ -56,20 +56,14 @@ public class BlockEntityEStove : BlockEntityOpenableContainer, IHeatSource, ITex
     {
         return inputSlot.Itemstack == null ? 30f : inputSlot.Itemstack.Collectible.GetMeltingDuration(Api.World, inventory, inputSlot);
     }
+    
+    public override InventoryBase Inventory => inventory;
 
-    public override string InventoryClassName
-    {
-        get { return "blockestove"; }
-    }
+    public override string InventoryClassName => "blockestove";
 
     public virtual string DialogTitle
     {
         get { return Lang.Get("BlockEStove"); }
-    }
-
-    public override InventoryBase Inventory
-    {
-        get { return inventory; }
     }
 
     #endregion
@@ -595,10 +589,14 @@ public class BlockEntityEStove : BlockEntityOpenableContainer, IHeatSource, ITex
 
 
     #region Events
-
-    public override bool OnPlayerRightClick(IPlayer byPlayer, BlockSelection blockSel)
+    
+    public void OnBlockInteract(IPlayer byPlayer, bool isOwner, BlockSelection blockSel)
     {
-        if (Api.World is IServerWorldAccessor)
+        if (Api.Side == EnumAppSide.Client)
+        {
+
+        }
+        else
         {
             byte[] data;
 
@@ -615,15 +613,13 @@ public class BlockEntityEStove : BlockEntityOpenableContainer, IHeatSource, ITex
 
             ((ICoreServerAPI)Api).Network.SendBlockEntityPacket(
                 (IServerPlayer)byPlayer,
-                Pos.X, Pos.Y, Pos.Z,
+                blockSel.Position,
                 (int)EnumBlockStovePacket.OpenGUI,
                 data
             );
 
             byPlayer.InventoryManager.OpenInventory(inventory);
         }
-
-        return true;
     }
 
 

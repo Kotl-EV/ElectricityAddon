@@ -16,9 +16,9 @@ class EShield : Vintagestory.API.Common.Item,IEnergyStorageItem
     
     protected byte[] lightHsv = new byte[3]
     {
-        (byte) 4,
-        (byte) 4,
-        (byte) 15
+        (byte) 10,
+        (byte) 5,
+        (byte) 10
     };
     
     public override void OnLoaded(ICoreAPI api)
@@ -50,7 +50,7 @@ class EShield : Vintagestory.API.Common.Item,IEnergyStorageItem
         int energy = slot.Itemstack.Attributes.GetInt("electricity:energy");
         string str1 = byEntity.LeftHandItemSlot == slot ? "left" : "right";
         string str2 = byEntity.LeftHandItemSlot == slot ? "right" : "left";
-        if (byEntity.Controls.Sneak)
+        if (byEntity.Controls.Sneak && !byEntity.Controls.RightMouseDown)
         {
             if (!byEntity.AnimManager.IsAnimationActive("raiseshield-" + str1))
                 byEntity.AnimManager.StartAnimation("raiseshield-" + str1);
@@ -60,9 +60,9 @@ class EShield : Vintagestory.API.Common.Item,IEnergyStorageItem
         if (byEntity.AnimManager.IsAnimationActive("raiseshield-" + str2))
             byEntity.AnimManager.StopAnimation("raiseshield-" + str2);
         if (energy > consume)
-            slot.Itemstack.Item.LightHsv = lightHsv;
-        else slot.Itemstack.Item.LightHsv = null;
-        
+            slot.Itemstack.Item.LightHsv = new byte[] {7,3,20};
+        else if (energy <= consume)
+            slot.Itemstack.Item.LightHsv = null;
         base.OnHeldIdle(slot, byEntity);
     }
     
@@ -72,11 +72,21 @@ class EShield : Vintagestory.API.Common.Item,IEnergyStorageItem
         JsonObject itemAttribute = inSlot.Itemstack?.ItemAttributes?["eshield"];
         if (itemAttribute == null || !itemAttribute.Exists)
             return;
-        float num1 = itemAttribute["damageAbsorption"]["active"].AsFloat();
-        float num2 = itemAttribute["protectionChance"]["active"].AsFloat();
-        float num3 = itemAttribute["damageAbsorption"]["passive"].AsFloat();
-        float num4 = itemAttribute["protectionChance"]["passive"].AsFloat();
-        dsc.AppendLine(Lang.Get("shield-stats", (int) (100.0 * num2), (int) (100.0 * num4), num1, num3));
+        if (itemAttribute["protectionChance"]["active-projectile"].Exists)
+        {
+            float num1 = itemAttribute["protectionChance"]["active-projectile"].AsFloat();
+            float num2 = itemAttribute["protectionChance"]["passive-projectile"].AsFloat();
+            float num3 = itemAttribute["projectileDamageAbsorption"].AsFloat();
+            dsc.AppendLine("<strong>" + Lang.Get("Projectile protection") + "</strong>");
+            dsc.AppendLine(Lang.Get("shield-stats", (object) (int) (100.0 * (double) num1), (object) (int) (100.0 * (double) num2), (object) num3));
+            dsc.AppendLine();
+        }
+        float num4 = itemAttribute["damageAbsorption"].AsFloat();
+        float num5 = itemAttribute["protectionChance"]["active"].AsFloat();
+        float num6 = itemAttribute["protectionChance"]["passive"].AsFloat();
+        dsc.AppendLine("<strong>" + Lang.Get("Melee attack protection") + "</strong>");
+        dsc.AppendLine(Lang.Get("shield-stats", (object) (int) (100.0 * (double) num5), (object) (int) (100.0 * (double) num6), (object) num4));
+        dsc.AppendLine();
         dsc.AppendLine(inSlot.Itemstack.Attributes.GetInt("electricity:energy") + "/" + maxcapacity + " Eu");
     }
 

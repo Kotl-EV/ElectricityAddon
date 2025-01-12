@@ -30,7 +30,7 @@ namespace ElectricityAddon.Content.Item;
     public SkillItem[] toolModes;
     int consume;
     int maxcapacity;
-    int speed = 0;
+    //int speed = 0;
 
     public override void OnLoaded(ICoreAPI api)
     {

@@ -21,7 +21,7 @@
     "attributes": {
         "rechargeable": true,
         "maxcapacity": 64000,
-		"handbook": {
+		    "handbook": {
             "groupBy": ["accumulator-*"],
             "extraSections": [{
                  "title": "electricity:block-handbooktitle-accumulator",

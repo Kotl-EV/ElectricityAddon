@@ -27,10 +27,6 @@
             <HintPath>$(VINTAGE_STORY)/Electricity.dll</HintPath>
             <Private>False</Private>
         </Reference>
-		<Reference Include="Electricity">
-            <HintPath>$(VINTAGE_STORY)/Viconomy.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
 		<Reference Include="cairo-sharp">
             <HintPath>$(VINTAGE_STORY)/Lib/cairo-sharp.dll</HintPath>
             <Private>False</Private>

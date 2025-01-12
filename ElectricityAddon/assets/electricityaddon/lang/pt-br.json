@@ -7,7 +7,15 @@
   "block-motortier3-*": "Motor de alto desempenho",
   "block-generatortier2-*": "Gerador modernizado",
   "block-generatortier3-*": "Gerador de alto desempenho",
-  
+
+  "block-elamp-3000 -*": "lâmpada elétrica: laranja-quente (3000K)",
+  "block-elamp-4000 -*": "lâmpada elétrica: amarela-quente (4000K)",
+  "block-elamp-5000 -*": "lâmpada elétrica: branca quente (5000K)",
+  "block-elamp-6000 -*": "lâmpada elétrica: branco neutro (6000K)",
+  "block-elamp-7000 -*": "lâmpada elétrica: branco azulado (7000K)",
+  "block-elamp-8000 -*": "lâmpada elétrica: branca fria (8000K)",
+  "block-elamp-9000 -*": "lâmpada elétrica: azul-fria (9000K)",
+
   "item-edrill": "Furadeira elétrica",
   "item-echisel": "Cinzel elétrico",
   "item-coil": "Bobina de cobre",
@@ -20,73 +28,73 @@
   "item-static-helmet": "Capacete elétrico",
   "item-static-armor": "Peitoral elétrico",
   "item-static-boots": "Perneiras elétricas",
-  
+
   "game:drill1": "Escava 1X1 bloco",
   "game:drill2": "Escava 1X3 blocos",
-  
+
   "game:gamemechanicinfo-electricityaddon-title": "Eletricidade: modificação ElectricityAddon/Electricity",
   "game:gamemechanicinfo-electricityaddon-text": "<strong>Descrição</strong><br>A modificação adiciona eletricidade, eletrodomésticos, dispositivos, armas e armaduras ao jogo. Tudo isso ajuda a facilitar (ou não) a sobrevivência no mundo do jogo, reduzir a quantidade de rotina e também diversificar a experiência de jogo.<br><br><strong>Fundamentos</strong><br>A lei de conservação de energia afirma que a energia não surge do nada e não desaparece. A energia apenas passa de um tipo para outro ou de um corpo para outro. Assim é no jogo.<br><br>A principal fonte de energia mecânica são os moinhos de vento. Com a ajuda de geradores, você pode converter energia mecânica em energia elétrica. Para isso, você precisa usar um eixo e/ou engrenagem para transferir o torque do moinho para o eixo do gerador. Depois disso, o gerador começará a gerar eletricidade.<br><br>A energia elétrica pode ser transmitida por cabos para os consumidores. Basta colocar o cabo nos blocos na direção desejada. Em cada face do bloco, você pode colocar até 4 cabos, que serão direcionados para diferentes direções. Isso permite que você coloque cabos em qualquer direção e ramifique o circuito elétrico. O cabo deve ser conectado à placa de ferro do eletrodoméstico, então ele começará a funcionar. Eletrodomésticos e blocos de metal também podem ser condutores de corrente.<br><br>Como o vento não sopra sempre e não com toda a força, a produção de energia pelos geradores pode não ser suficiente para alimentar todos os eletrodomésticos. Para evitar isso, você precisa conectar seu circuito elétrico a uma ou mais baterias. Eles acumularão energia elétrica constantemente e a fornecerão ao circuito para alimentar os dispositivos, a qualquer momento, mesmo na ausência de vento.<br><br>Para economizar energia, alguns dispositivos precisam ser desconectados do circuito quando não estão em uso. Para isso, serve o interruptor. Instale-o no trecho do circuito onde você precisa desligar a energia.<br><br>Para alguns dispositivos que ainda precisam de energia mecânica para funcionar, você precisará de um motor. Ele converte energia elétrica em energia mecânica. Você precisa conectá-lo ao dispositivo com um eixo. Quando ligado, o motor tentará fornecer a potência máxima no eixo, portanto, certifique-se de que haja energia suficiente no circuito.",
-  
+
   "block-handbooktitle-charger": "Usado",
   "block-handbooktext-charger": "A estação de carregamento permite carregar baterias e dispositivos com bateria integrada.<br><br>Consumo máximo: 200 Eu/s.",
-  
+
   "block-handbooktitle-estove": "Usado",
   "block-handbooktext-estove": "O fogão elétrico permite substituir completamente a fogueira comum.<br><br>Temperatura máxima de aquecimento da placa: 1325 °C.<br>Consumo máximo: 100 Eu/s.",
-  
+
   "block-handbooktitle-efreezer": "Usado",
   "block-handbooktext-efreezer": "O congelador elétrico permite armazenar alimentos por mais tempo. <br><br>Slots de armazenamento: 6.<br>Taxa de deterioração dos alimentos: 0,05x<br>Consumo máximo: 100 Eu/s.",
-  
+
   "block-handbooktitle-largeaccumulator": "Usado",
   "block-handbooktext-largeaccumulator": "Permite armazenar energia elétrica. Uma versão mais espaçosa da bateria comum <a href=\"handbooksearch:\/\/аккумулятор\">bateria<\/a>.<br>A bateria carregada (grande), se necessário, pode ser carregada, mas apenas no slot para bolsas.",
-  
+
   "block-handbooktitle-motortier2": "Usado",
   "block-handbooktext-motortier2": "O motor modernizado converte energia elétrica em energia mecânica. Tem maior potência de saída e velocidade de rotação em comparação com o <a href=\"handbooksearch:\/\/Двигатель\">motor<\/a>.<br><br>Consumo máximo: 400 Eu/s.",
-  
+
   "block-handbooktitle-motortier3": "Usado",
   "block-handbooktext-motortier3": "O motor de alto desempenho converte energia elétrica em energia mecânica. Graças ao uso de melhores materiais, tem maior potência de saída e velocidade de rotação em comparação com o <a href=\"handbooksearch:\/\/Модернизированный двигатель\">motor modernizado<\/a>.<br><br>Consumo máximo: 800 Eu/s.",
-  
+
   "block-handbooktitle-generatortier2": "Usado",
   "block-handbooktext-generatortier2": "O gerador modernizado converte energia mecânica em energia elétrica. Tem maior potência em comparação com o <a href=\"handbooksearch:\/\/Генератор\">gerador<\/a>.<br><br>Produção máxima: 200 Eu/s.",
-  
+
   "block-handbooktitle-generatortier3": "Usado",
   "block-handbooktext-generatortier3": "O gerador de alto desempenho converte energia mecânica em energia elétrica. Graças ao uso de melhores materiais, tem maior potência em comparação com o <a href=\"handbooksearch:\/\/Модернизированный генератор\">gerador modernizado<\/a>.<br><br>Produção máxima: 400 Eu/s.",
-  
+
   "item-handbooktitle-static-saber": "Usado",
-  "item-handbooktext-static-saber": "Uma boa escolha para cortar inimigos de forma eficaz.<br>Força de ataque: -8 hp<br>Quando descarregado, ele para de causar dano. Não se esqueça de carregar!",
+  "item-handbooktext-static-saber": "Uma boa escolha para cortar inimigos de forma eficaz.<br>Quando descarregado, ele para de causar dano. Não se esqueça de carregar!",
 
   "item-handbooktitle-static-spear": "Usado",
-  "item-handbooktext-static-spear": "Uma boa escolha para criar buracos nos inimigos.<br>Força de ataque: -8 hp<br>Quando descarregado, ele para de causar dano. Não se esqueça de carregar!",
-  
+  "item-handbooktext-static-spear": "Uma boa escolha para criar buracos nos inimigos.<br>Quando descarregado, ele para de causar dano. Não se esqueça de carregar!",
+
   "item-handbooktitle-static-shield": "Usado",
   "item-handbooktext-static-shield": "Proteção excelente com lanterna integrada.<br>Quando descarregado, ele para de absorver dano. Não se esqueça de carregar!",
-  
+
   "item-handbooktitle-static-helmet": "Usado",
   "item-handbooktext-static-helmet": "Proteção e recursos excelentes.<br>Quando descarregado, ele para de absorver dano. Não se esqueça de carregar!",
-  
+
   "item-handbooktitle-static-armor": "Usado",
   "item-handbooktext-static-armor": "Proteção e recursos excelentes. Permite voar pressionando o botão R.<br>Quando descarregado, ele para de absorver dano e o modo de voo é desativado. Não se esqueça de carregar!",
-  
+
   "item-handbooktitle-static-boots": "Usado",
   "item-handbooktext-static-boots": "Proteção e recursos excelentes.<br>Quando descarregado, ele para de absorver dano. Não se esqueça de carregar!",
-  
+
   "item-handbooktitle-edrill": "Usado",
   "item-handbooktext-edrill": "A mineração está indo para um novo nível. Permite trabalhar em dois modos: 1x1 e 1x3.<br>Quando descarregado, ele para de funcionar. Não se esqueça de carregar!",
-  
+
   "item-handbooktitle-echisel": "Usado",
   "item-handbooktext-echisel": "Cinzel, mas com bateria!. Não é usado em receitas.<br>Quando descarregado, ele para de funcionar. Não se esqueça de carregar!",
-  
+
   "item-handbooktitle-coil": "Usado",
   "item-handbooktext-coil": "E onde estão as bobinas de cobre em eletrodomésticos?",
-  
+
   "item-handbooktitle-edrilltip": "Usado",
   "item-handbooktext-edrilltip": "Base para a furadeira elétrica.",
-  
+
   "item-handbooktitle-engineshaft": "Usado",
   "item-handbooktext-engineshaft": "Normalmente, o rotor é necessário em motores/geradores, mas não apenas.",
-  
+
   "item-handbooktitle-eaxe": "Usado",
   "item-handbooktext-eaxe": "Excelente para cortar madeira. Não é usado em receitas.<br>Quando descarregado, ele para de funcionar. Não se esqueça de carregar!",
-  
+
   "game:BlockEStove": "Fogão elétrico",
   "game:freezer-title-gui": "Congelador",
   "game:freezer-over-sneak-help": "Abra/feche a porta.",

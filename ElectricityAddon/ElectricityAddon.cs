@@ -7,6 +7,7 @@ using ElectricityAddon.Content.Block.EGenerator;
 using ElectricityAddon.Content.Block.EHorn;
 using ElectricityAddon.Content.Block.EMotor;
 using ElectricityAddon.Content.Block.EStove;
+using ElectricityAddon.Content.Block.ELamp;
 using ElectricityAddon.Content.Item;
 using Vintagestory.API.Common;
 
@@ -17,7 +18,7 @@ using Vintagestory.API.Common;
     "electricityaddon",
     Website = "https://github.com/Kotl-EV/ElectricityAddon",
     Description = "Brings electricity into the game!",
-    Version = "0.0.12",
+    Version = "0.0.13",
     Authors = new[] {
         "Kotl"
     }
@@ -37,7 +38,11 @@ public class ElectricityAddon : ModSystem
 
         api.RegisterBlockClass("BlockEAccumulator", typeof(BlockEAccumulator));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEAccumulator", typeof(BEBehaviorEAccumulator));
-        
+
+        api.RegisterBlockClass("BlockELamp", typeof(BlockELamp));
+        api.RegisterBlockEntityClass("BlockEntityELamp", typeof(BlockEntityELamp));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorELamp", typeof(BEBehaviorELamp));
+
         api.RegisterBlockClass("BlockConnector", typeof(BlockConnector));
         api.RegisterBlockEntityClass("BlockEntityConnector", typeof(BlockEntityConnector));
 

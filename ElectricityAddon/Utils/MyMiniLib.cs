@@ -1,4 +1,5 @@
-﻿using Vintagestory.API.Common;
+﻿using System;
+using Vintagestory.API.Common;
 
 namespace ElectricityAddon.Utils;
 
@@ -27,6 +28,15 @@ public static class MyMiniLib
         if (block != null && block.Attributes != null && block.Attributes[attrname] != null)
         {
             return block.Attributes[attrname].AsString(def);
+        }
+        return def;
+    }
+
+    public static int[] GetAttributeArray(CollectibleObject block, string attrname, int[] def)
+    {
+        if (block != null && block.Attributes != null && block.Attributes[attrname] != null)
+        {
+            return block.Attributes[attrname].AsArray<int>(def,"int");
         }
         return def;
     }

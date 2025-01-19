@@ -18,7 +18,7 @@ using Vintagestory.API.Common;
     "electricityaddon",
     Website = "https://github.com/Kotl-EV/ElectricityAddon",
     Description = "Brings electricity into the game!",
-    Version = "0.0.13",
+    Version = "0.0.14",
     Authors = new[] {
         "Kotl"
     }
@@ -40,6 +40,8 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEAccumulator", typeof(BEBehaviorEAccumulator));
 
         api.RegisterBlockClass("BlockELamp", typeof(BlockELamp));
+        api.RegisterBlockClass("BlockESmallLamp", typeof(BlockESmallLamp));
+        
         api.RegisterBlockEntityClass("BlockEntityELamp", typeof(BlockEntityELamp));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorELamp", typeof(BEBehaviorELamp));
 

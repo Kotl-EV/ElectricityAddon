@@ -11,13 +11,16 @@
     }
   ],
   "attributes": {
-    "maxProduction": 400, //максимальный выход энергии
-    	"handbook": {
-            "groupBy": ["generatortier3-*"],
-            "extraSections": [{
-                 "title": "electricityaddon:block-handbooktitle-generatortier3",
-                 "text": "electricityaddon:block-handbooktext-generatortier3"}]
-		}
+    "params": [ 400.0, 1.0, 0.1, 0.81 ], //параметры генератора, менять на свой страх и риск
+    "handbook": {
+      "groupBy": [ "generatortier3-*" ],
+      "extraSections": [
+        {
+          "title": "electricityaddon:block-handbooktitle-generatortier3",
+          "text": "electricityaddon:block-handbooktext-generatortier3"
+        }
+      ]
+    }
   },
   "creativeInventory": {
     "general": [

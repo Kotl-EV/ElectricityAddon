@@ -9,25 +9,25 @@
   "block-lamp_small-*": "Electric Lamp (Small)",
   "block-forge-*": "Electric Forge",
   "block-heater-*": "Electric Heater",
-  
+
   "block-handbooktitle-accumulator": "Uses",
   "block-handbooktext-accumulator": "Allows you to store electrical energy.<br>A charged accumulator can be carried with you if needed.",
-  
+
   "block-handbooktitle-motor": "Uses",
-  "block-handbooktext-motor": "The motor converts electrical energy into mechanical energy. It has low power and rotation speed <br><br>Maximum consumption: 100 Eu/s.",
-  
+  "block-handbooktext-motor": "The motor converts electrical energy into mechanical energy. It has low power and rotation speed <br><br>Additional parameters: <br><i>I_min</i> : 10; <br><i>I_max</i> : 100; <br><i>torque_max</i> : 0.5; <br><i>kpd_max</i> : 0.75; <br><i>speed_max</i> : 0.5; <br><i>resistance_factor</i> : 0.1. <br> <br>Read about the features in the <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">manual<\/a>.",
+
   "block-handbooktitle-generator": "Uses",
-  "block-handbooktext-generator": "The generator converts mechanical energy into electrical energy. It has low power and rotation speed <br><br>Maximum output: 100 Eu/s.",
-  
+  "block-handbooktext-generator": "The generator converts mechanical energy into electrical energy. It has low power and rotation speed <br><br>Additional parameters: <br><i>I_max</i>: 100;<br><i>speed_max</i>: 0.5;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.25. <br>Read about the features in the <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">manual<\/a>.",
+
   "block-handbooktitle-lamp": "Uses",
   "block-handbooktext-lamp": "A good source of light that consumes electrical energy.<br><br>Maximum light level: 21.<br>Maximum consumption: 8 Eu/s.",
-  
+
   "block-handbooktitle-lamp_small": "Uses",
   "block-handbooktext-lamp_small": "A weak source of light that consumes electrical energy.<br><br>Maximum light level: 10.<br>Maximum consumption: 4 Eu/s.",
-  
+
   "block-handbooktitle-forge": "Uses",
   "block-handbooktext-forge": "The electric forge allows you to completely replace the ordinary blacksmith's forge.<br><br>Maximum heating temperature: 1100 °C.<br>Maximum consumption: 100 Eu/s.",
-  
+
   "game:Electricity": "Power Grid",
   "game:Storage": "Stores: ",
   "game:Temperature": "Temperature: ",

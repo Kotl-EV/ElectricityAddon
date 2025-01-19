@@ -52,7 +52,16 @@ public class BlockEGeneratorTier3 : Vintagestory.API.Common.Block, IMechanicalPo
         BlockSelection blockSel, ref string failureCode)
     {
         var selection = new Selection(blockSel);
-        var facing = FacingHelper.From(selection.Face, selection.Direction);
+        Facing facing = Facing.None;
+
+        try
+        {
+            facing = FacingHelper.From(selection.Face, selection.Direction);
+        }
+        catch
+        {
+            return false;
+        }
 
         if (
             FacingHelper.Faces(facing).First() is { } blockFacing &&

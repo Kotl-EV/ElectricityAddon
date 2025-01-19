@@ -11,13 +11,16 @@
     }
   ],
   "attributes": {
-    "maxConsumption": 100, //максимальное энергопотребление
-	"handbook": {
-            "groupBy": ["motor-*"],
-            "extraSections": [{
-                 "title": "electricity:block-handbooktitle-motor",
-                 "text": "electricity:block-handbooktext-motor"}]
-		}
+    "params": [ 10.0, 100.0, 0.5, 0.75, 0.5, 0.1 ],  //параметры двигателя, менять на свой страх и риск
+    "handbook": {
+      "groupBy": [ "motor-*" ],
+      "extraSections": [
+        {
+          "title": "electricity:block-handbooktitle-motor",
+          "text": "electricity:block-handbooktext-motor"
+        }
+      ]
+    }
   },
   "creativeInventory": {
     "general": [

@@ -39,6 +39,31 @@
     }
   },
   {
+    "ingredientPattern": "L_,AB",
+    "width": 2,
+    "height": 2,
+    "ingredients": {
+      "L": {
+        "type": "block",
+        "code": "electricityaddon:elamp-6000-disabled",
+        "quantity": 4
+      },
+      "A": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:metalplate-copper"
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:elamp-3000-disabled",
+      "quantity": 4
+    }
+  },
+  {
     "ingredientPattern": "GS,MC,AB",
     "width": 2,
     "height": 3,
@@ -61,6 +86,31 @@
         "type": "block",
         "code": "electricity:cable-*",
         "quantity": 16
+      },
+      "A": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze"
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:elamp-4000-disabled",
+      "quantity": 4
+    }
+  },
+  {
+    "ingredientPattern": "L_,AB",
+    "width": 2,
+    "height": 2,
+    "ingredients": {
+      "L": {
+        "type": "block",
+        "code": "electricityaddon:elamp-6000-disabled",
+        "quantity": 4
       },
       "A": {
         "type": "item",
@@ -117,6 +167,31 @@
     }
   },
   {
+    "ingredientPattern": "L_,AB",
+    "width": 2,
+    "height": 2,
+    "ingredients": {
+      "L": {
+        "type": "block",
+        "code": "electricityaddon:elamp-6000-disabled",
+        "quantity": 4
+      },
+      "A": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron"
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:elamp-5000-disabled",
+      "quantity": 4
+    }
+  },
+  {
     "ingredientPattern": "GS,MC,AB",
     "width": 2,
     "height": 3,
@@ -139,6 +214,31 @@
         "type": "block",
         "code": "electricity:cable-*",
         "quantity": 16
+      },
+      "A": {
+        "type": "item",
+        "code": "game:metalplate-tinbronze"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:metalplate-silver"
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:elamp-5000-disabled",
+      "quantity": 4
+    }
+  },
+  {
+    "ingredientPattern": "L_,AB",
+    "width": 2,
+    "height": 2,
+    "ingredients": {
+      "L": {
+        "type": "block",
+        "code": "electricityaddon:elamp-6000-disabled",
+        "quantity": 4
       },
       "A": {
         "type": "item",
@@ -187,19 +287,18 @@
     }
   },
   {
-    "ingredientPattern": "G",
+    "ingredientPattern": "L",
     "width": 1,
     "height": 1,
     "ingredients": {
-      "G": {
+      "L": {
         "type": "block",
         "code": "electricity:lamp-disabled"
       }
     },
     "output": {
       "type": "block",
-      "code": "electricityaddon:elamp-6000-disabled",
-      "quantity": 1
+      "code": "electricityaddon:elamp-6000-disabled"
     }
   },
   {
@@ -225,6 +324,31 @@
         "type": "block",
         "code": "electricity:cable-*",
         "quantity": 16
+      },
+      "A": {
+        "type": "item",
+        "code": "game:metalplate-bismuth"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:metalplate-meteoriciron"
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:elamp-7000-disabled",
+      "quantity": 4
+    }
+  },
+  {
+    "ingredientPattern": "L_,AB",
+    "width": 2,
+    "height": 2,
+    "ingredients": {
+      "L": {
+        "type": "block",
+        "code": "electricityaddon:elamp-6000-disabled",
+        "quantity": 4
       },
       "A": {
         "type": "item",
@@ -281,6 +405,31 @@
     }
   },
   {
+    "ingredientPattern": "L_,AB",
+    "width": 2,
+    "height": 2,
+    "ingredients": {
+      "L": {
+        "type": "block",
+        "code": "electricityaddon:elamp-6000-disabled",
+        "quantity": 4
+      },
+      "A": {
+        "type": "item",
+        "code": "game:metalplate-bismuth"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:metalplate-silver"
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:elamp-8000-disabled",
+      "quantity": 4
+    }
+  },
+  {
     "ingredientPattern": "GS,MC,AB",
     "width": 2,
     "height": 3,
@@ -303,6 +452,31 @@
         "type": "block",
         "code": "electricity:cable-*",
         "quantity": 16
+      },
+      "A": {
+        "type": "item",
+        "code": "game:metalplate-bismuth"
+      },
+      "B": {
+        "type": "item",
+        "code": "game:metalplate-zinc"
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:elamp-9000-disabled",
+      "quantity": 4
+    }
+  },
+  {
+    "ingredientPattern": "L_,AB",
+    "width": 2,
+    "height": 2,
+    "ingredients": {
+      "L": {
+        "type": "block",
+        "code": "electricityaddon:elamp-6000-disabled",
+        "quantity": 4
       },
       "A": {
         "type": "item",

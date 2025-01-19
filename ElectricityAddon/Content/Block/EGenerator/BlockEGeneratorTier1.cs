@@ -11,7 +11,7 @@ namespace ElectricityAddon.Content.Block.EGenerator;
 public class BlockEGeneratorTier1 : Vintagestory.API.Common.Block, IMechanicalPowerBlock
 {
     private readonly static Dictionary<Facing, MeshData> MeshData = new();
-
+    
     public override void OnUnloaded(ICoreAPI api)
     {
         base.OnUnloaded(api);
@@ -52,7 +52,16 @@ public class BlockEGeneratorTier1 : Vintagestory.API.Common.Block, IMechanicalPo
         BlockSelection blockSel, ref string failureCode)
     {
         var selection = new Selection(blockSel);
-        var facing = FacingHelper.From(selection.Face, selection.Direction);
+        Facing facing=Facing.None;
+
+        try
+        {
+            facing = FacingHelper.From(selection.Face, selection.Direction);
+        }
+        catch 
+        {
+            return false;
+        }
 
         if (
             FacingHelper.Faces(facing).First() is { } blockFacing &&

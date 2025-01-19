@@ -9,7 +9,7 @@ namespace ElectricityAddon.Content.Block.EMotor;
 public class BlockEntityEMotor : BlockEntity
 {
     private Facing facing = Facing.None;
-
+    public float kpds { get; set; }
     private Electricity.Content.Block.Entity.Behavior.Electricity Electricity => this.GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
 
     public Facing Facing

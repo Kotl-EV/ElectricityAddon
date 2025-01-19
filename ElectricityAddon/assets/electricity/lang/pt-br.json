@@ -9,25 +9,25 @@
   "block-lamp_small-*": "Lâmpada elétrica (pequena)",
   "block-forge-*": "Forja elétrica",
   "block-heater-*": "Aquecedor elétrico",
-  
+
   "block-handbooktitle-accumulator": "Usado",
   "block-handbooktext-accumulator": "Permite armazenar energia elétrica.<br>Um acumulador carregado pode ser transportado, se necessário.",
-  
+
   "block-handbooktitle-motor": "Usado",
-  "block-handbooktext-motor": "O motor converte energia elétrica em energia mecânica. Tem baixa potência e velocidade de rotação.<br><br>Consumo máximo: 100 Eu/s.",
-  
+  "block-handbooktext-motor": "O motor converte energia elétrica em energia mecânica. Possui baixa potência e velocidade de rotação <br><br>parâmetros adicionais: <br><i>I_min</i> : 10; <br><i>I_max</i> : 100; <br><i>torque_max</i> : 0,5; <br><i>kpd_max</i> : 0,75; <br><I>speed_max</i> : 0,5; <br><I>resistance_factor</i> : 0.1. <br> < br>leia sobre os recursos no <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\" >manual<\/a>.",
+
   "block-handbooktitle-generator": "Usado",
-  "block-handbooktext-generator": "O gerador converte energia mecânica em energia elétrica. Tem baixa potência e velocidade de rotação.<br><br>Produção máxima: 100 Eu/s.",
-  
+  "block-handbooktext-generator": "o gerador converte energia mecânica em energia elétrica. Possui baixa potência e velocidade de rotação<br><br>parâmetros adicionais:<br><i>I_max</i>: 100;<br><I>speed_max</i>: 0,5;<br><I>resistance_factor</i> : 0,1;<br><I>resistance_load < /i>: 0,25. <br>leia sobre as funcionalidades no <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\" >manual<\/a>.",
+
   "block-handbooktitle-lamp": "Usado",
   "block-handbooktext-lamp": "Uma boa fonte de luz que consome energia elétrica.<br><br>Nível de luz máximo: 21.<br>Consumo máximo: 8 Eu/s.",
-  
+
   "block-handbooktitle-lamp_small": "Usado",
   "block-handbooktext-lamp_small": "Uma fonte de luz fraca que consome energia elétrica.<br><br>Nível de luz máximo: 10.<br>Consumo máximo: 4 Eu/s.",
-  
+
   "block-handbooktitle-forge": "Usado",
   "block-handbooktext-forge": "A forja elétrica permite substituir completamente a forja tradicional.<br><br>Temperatura máxima de aquecimento: 1100 °C.<br>Consumo máximo: 100 Eu/s.",
-  
+
   "game:Electricity": "Rede elétrica",
   "game:Storage": "Armazena: ",
   "game:Temperature": "Temperatura: ",

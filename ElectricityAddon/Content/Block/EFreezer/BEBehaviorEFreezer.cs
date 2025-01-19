@@ -28,7 +28,7 @@ public class BEBehaviorEFreezer : BlockEntityBehavior, IElectricConsumer
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
         stringBuilder.AppendLine(StringHelper.Progressbar(PowerSetting));
-        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + PowerSetting + "/" + 100 + "Eu");
+        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + PowerSetting + "/" + 100 + " Eu");
         stringBuilder.AppendLine();
     }
 }

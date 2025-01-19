@@ -11,13 +11,16 @@
     }
   ],
   "attributes": {
-    "maxConsumption": 400, //максимальное энергопотребление
-	"handbook": {
-            "groupBy": ["motortier2-*"],
-            "extraSections": [{
-                 "title": "electricityaddon:block-handbooktitle-motortier2",
-                 "text": "electricityaddon:block-handbooktext-motortier2"}]
-		}
+    "params": [ 10.0, 400.0, 1.0, 0.85, 1.0, 0.1 ], //параметры двигателя, менять на свой страх и риск
+    "handbook": {
+      "groupBy": [ "motortier2-*" ],
+      "extraSections": [
+        {
+          "title": "electricityaddon:block-handbooktitle-motortier2",
+          "text": "electricityaddon:block-handbooktext-motortier2"
+        }
+      ]
+    }
   },
   "creativeInventory": {
     "general": [

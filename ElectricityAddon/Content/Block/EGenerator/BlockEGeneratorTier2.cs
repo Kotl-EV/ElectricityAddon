@@ -49,10 +49,19 @@ public class BlockEGeneratorTier2 : Vintagestory.API.Common.Block, IMechanicalPo
     }
 
     public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack,
-        BlockSelection blockSel, ref string failureCode)
+           BlockSelection blockSel, ref string failureCode)
     {
         var selection = new Selection(blockSel);
-        var facing = FacingHelper.From(selection.Face, selection.Direction);
+        Facing facing = Facing.None;
+
+        try
+        {
+            facing = FacingHelper.From(selection.Face, selection.Direction);
+        }
+        catch
+        {
+            return false;
+        }
 
         if (
             FacingHelper.Faces(facing).First() is { } blockFacing &&

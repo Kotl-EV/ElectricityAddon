@@ -1,15 +1,19 @@
-﻿
+﻿using Electricity.Interface;
 using Electricity.Utils;
+using ElectricityAddon.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Vintagestory.API.Client;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
 namespace ElectricityAddon.Content.Block.ELamp
 {
-    internal class BlockELamp : Vintagestory.API.Common.Block
+    internal class BlockESmallLamp : Vintagestory.API.Common.Block
     {
         private readonly static Dictionary<CacheDataKey, MeshData> MeshDataCache = new();
         private readonly static Dictionary<CacheDataKey, Cuboidf[]> SelectionBoxesCache = new();
@@ -25,9 +29,9 @@ namespace ElectricityAddon.Content.Block.ELamp
         public override void OnUnloaded(ICoreAPI api)
         {
             base.OnUnloaded(api);
-            BlockELamp.MeshDataCache.Clear();
-            BlockELamp.SelectionBoxesCache.Clear();
-            BlockELamp.CollisionBoxesCache.Clear();
+            BlockESmallLamp.MeshDataCache.Clear();
+            BlockESmallLamp.SelectionBoxesCache.Clear();
+            BlockESmallLamp.CollisionBoxesCache.Clear();
         }
 
         public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack, BlockSelection blockSel, ref string failureCode)
@@ -59,6 +63,7 @@ namespace ElectricityAddon.Content.Block.ELamp
             )
             {
                 entity.Facing = facing;
+
                 return true;
             }
 
@@ -103,7 +108,7 @@ namespace ElectricityAddon.Content.Block.ELamp
             {
                 var key = CacheDataKey.FromEntity(entity);
 
-                if (!BlockELamp.CollisionBoxesCache.TryGetValue(key, out var boxes))
+                if (!BlockESmallLamp.CollisionBoxesCache.TryGetValue(key, out var boxes))
                 {
                     if ((key.Facing & Facing.NorthEast) != 0)
                     {
@@ -202,7 +207,7 @@ namespace ElectricityAddon.Content.Block.ELamp
                         boxes = this.CollisionBoxes.Select(collisionBox => collisionBox.RotatedCopy(0.0f, 90.0f, 0.0f, origin)).ToArray();
                     }
 
-                    if (boxes != null) BlockELamp.CollisionBoxesCache.Add(key, boxes);
+                    if (boxes != null) BlockESmallLamp.CollisionBoxesCache.Add(key, boxes);
                 }
 
                 if (boxes != null)
@@ -225,7 +230,7 @@ namespace ElectricityAddon.Content.Block.ELamp
             {
                 var key = CacheDataKey.FromEntity(entity);
 
-                if (!BlockELamp.SelectionBoxesCache.TryGetValue(key, out var boxes))
+                if (!BlockESmallLamp.SelectionBoxesCache.TryGetValue(key, out var boxes))
                 {
                     if ((key.Facing & Facing.NorthEast) != 0)
                     {
@@ -324,7 +329,7 @@ namespace ElectricityAddon.Content.Block.ELamp
                         boxes = this.SelectionBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 90.0f, 0.0f, origin)).ToArray();
                     }
 
-                    if (boxes != null) BlockELamp.SelectionBoxesCache.Add(key, boxes);
+                    if (boxes != null) BlockESmallLamp.SelectionBoxesCache.Add(key, boxes);
                 }
 
                 if (boxes != null)
@@ -346,7 +351,7 @@ namespace ElectricityAddon.Content.Block.ELamp
             {
                 var key = CacheDataKey.FromEntity(entity);
 
-                if (!BlockELamp.MeshDataCache.TryGetValue(key, out var meshData))
+                if (!BlockESmallLamp.MeshDataCache.TryGetValue(key, out var meshData))
                 {
                     var origin = new Vec3f(0.5f, 0.5f, 0.5f);
 
@@ -479,7 +484,7 @@ namespace ElectricityAddon.Content.Block.ELamp
                         meshData.Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f);
                     }
 
-                    BlockELamp.MeshDataCache.Add(key, meshData);
+                    BlockESmallLamp.MeshDataCache.Add(key, meshData);
                 }
 
                 sourceMesh = meshData;

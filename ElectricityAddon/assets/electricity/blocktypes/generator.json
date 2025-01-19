@@ -11,13 +11,16 @@
     }
   ],
   "attributes": {
-    "maxProduction": 100, //максимальный выход энергии
-	"handbook": {
-            "groupBy": ["generator-*"],
-            "extraSections": [{
-                 "title": "electricity:block-handbooktitle-generator",
-                 "text": "electricity:block-handbooktext-generator"}]
-		}
+    "params": [ 100.0, 0.5, 0.1, 0.25 ],    //параметры генератора, менять на свой страх и риск
+    "handbook": {
+      "groupBy": [ "generator-*" ],
+      "extraSections": [
+        {
+          "title": "electricity:block-handbooktitle-generator",
+          "text": "electricity:block-handbooktext-generator"
+        }
+      ]
+    }
   },
   "creativeInventory": {
     "general": [

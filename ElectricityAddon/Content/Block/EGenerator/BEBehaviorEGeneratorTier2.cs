@@ -16,12 +16,34 @@ namespace ElectricityAddon.Content.Block.EGenerator;
 
 public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
 {
-    private static CompositeShape? compositeShape;
 
+    private static CompositeShape? compositeShape;
     private int powerSetting;
+
+    // Константы генератора
+    private static float I_max;              // Максимальный ток
+    private static float speed_max;            // Максимальная скорость вращения
+    private static float resistance_factor;    // множитель сопротивления
+    private static float resistance_load;     // сопротивление нагрузки генератора
+
+    private float[] def_Params = { 200.0F, 1.0F, 0.1F, 0.32F };                //заглушка
+    public float[] Params = { 0, 0, 0, 0 };                              //сюда берем параметры
+
+
+    //извлекаем параметры
+    public void GetParams()
+    {
+        Params = MyMiniLib.GetAttributeArrayFloat(this.Block, "params", def_Params);
+
+        I_max = Params[0];
+        speed_max = Params[1];
+        resistance_factor = Params[2];
+        resistance_load = Params[3];
+    }
 
     public BEBehaviorEGeneratorTier2(BlockEntity blockEntity) : base(blockEntity)
     {
+        GetParams();
     }
 
     public override BlockFacing OutFacingForNetworkDiscovery
@@ -78,45 +100,41 @@ public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
         _ => this.AxisSign
     };
 
+
+
+
+    //выработка энергии
     public int Produce()
     {
-        var speed = GameMath.Clamp(Math.Abs(this.network?.Speed ?? 0.0f), 0.0f, 1.0f);
-        var powerSetting = (int)(speed * MyMiniLib.GetAttributeFloat(this.Block, "maxProduction",100F));
+        float speed = this.network?.Speed ?? 0.0F;
 
-        if (powerSetting != this.powerSetting)
+        float b = 1f;                                                                     // Положение вершины кривой
+        float a = 1F;
+        int power = (Math.Abs(speed) <= speed_max) ?                                      // задаем форму кривых тока(мощности)
+            (int)((1 - a * (float)Math.Pow(Math.Abs(speed) / speed_max - b, 4F)) * I_max) //степенная с резким падением ближе к 0
+            : (int)(I_max);                                                               //линейная горизонтальная
+
+        power = Math.Max(0, power);                   //чтобы уж точно не ниже нуля
+
+        if (power != this.powerSetting)
         {
-            this.powerSetting = powerSetting;
-
+            this.powerSetting = power;
             this.Blockentity.MarkDirty(true);
         }
 
-        return (int)(speed * MyMiniLib.GetAttributeFloat(this.Block, "maxProduction",100F));
+        return power;
     }
 
-    public override void JoinNetwork(MechanicalNetwork network) {
-        base.JoinNetwork(network);
 
-        if (this.Api is ICoreServerAPI api && this.network is not null) {
-            foreach (var block in this.network.nodes.Select(mechanicalPowerNode => api.World.BlockAccessor.GetBlockEntity(mechanicalPowerNode.Key))) {
-                if (block?.GetBehavior<BEBehaviorEMotorTier1>() is { } motor1) {
-                    api.Event.EnqueueMainThreadTask(() => api.World.BlockAccessor.BreakBlock(motor1.Position, null), "break-motor");
-                }
-                if (block?.GetBehavior<BEBehaviorEMotorTier2>() is { } motor2) {
-                    api.Event.EnqueueMainThreadTask(() => api.World.BlockAccessor.BreakBlock(motor2.Position, null), "break-motor");
-                }
-                if (block?.GetBehavior<BEBehaviorEMotorTier3>() is { } motor3) {
-                    api.Event.EnqueueMainThreadTask(() => api.World.BlockAccessor.BreakBlock(motor3.Position, null), "break-motor");
-                }
-            }
-        }
-    }
-
+    //сеть берет отсюда сопротивление этого генератора
     public override float GetResistance()
     {
-        return this.powerSetting != 0
-            ? FloatHelper.Remap(this.powerSetting / 100.0f, 0.0f, 1.0f, 0.01f, 0.075f)
-            : 0.05f;
+        float spd = this.Network.Speed;
+        return (Math.Abs(spd) > speed_max)                                      // Если скорость превышает максимальную, рассчитываем сопротивление как квадратичную
+            ? resistance_load + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
+            : resistance_load + (resistance_factor * Math.Abs(spd) / speed_max);                       // Линейное сопротивление для обычных скоростей
     }
+
 
     public override void WasPlaced(BlockFacing connectedOnFacing)
     {
@@ -182,11 +200,12 @@ public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
     {
         return false;
     }
-    
-    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
+
+    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+    {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting/MyMiniLib.GetAttributeFloat(this.Block, "maxProduction",100F)*100));
-        stringBuilder.AppendLine("└ "+ Lang.Get("Production") + this.powerSetting + "/" + MyMiniLib.GetAttributeFloat(this.Block, "maxProduction",100F) + "Eu");
+        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting / I_max * 100));
+        stringBuilder.AppendLine("└ " + Lang.Get("Production") + this.powerSetting + "/" + I_max + " Eu");
         stringBuilder.AppendLine();
     }
 }

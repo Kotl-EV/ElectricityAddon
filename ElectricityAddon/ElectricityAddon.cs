@@ -1,4 +1,5 @@
-﻿using ElectricityAddon.Content.Armor;
+﻿using System.Diagnostics;
+using ElectricityAddon.Content.Armor;
 using ElectricityAddon.Content.Block.EAccumulator;
 using ElectricityAddon.Content.Block.ECharger;
 using ElectricityAddon.Content.Block.EConnector;
@@ -11,7 +12,7 @@ using ElectricityAddon.Content.Block.ELamp;
 using ElectricityAddon.Content.Item;
 using Vintagestory.API.Common;
 
-[assembly: ModDependency("game", "1.20.0-rc.1")]
+[assembly: ModDependency("game", "1.20.0")]
 [assembly: ModDependency("electricity", "0.0.11")]
 [assembly: ModInfo(
     "ElectricityAddon",
@@ -28,6 +29,7 @@ namespace ElectricityAddon;
 
 public class ElectricityAddon : ModSystem
 {
+    public static bool combatoverhaul = false;
     public override void Start(ICoreAPI api)
     {
         base.Start(api);
@@ -82,5 +84,8 @@ public class ElectricityAddon : ModSystem
         api.RegisterItemClass("EArmor", typeof(EArmor));
         api.RegisterItemClass("EWeapon", typeof(EWeapon));
         api.RegisterItemClass("EShield", typeof(EShield));
+        
+        if(api.ModLoader.IsModEnabled("combatoverhaul"))
+            combatoverhaul = true;
     }
 }

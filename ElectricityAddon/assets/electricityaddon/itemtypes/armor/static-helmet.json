@@ -1,6 +1,16 @@
 {
 	"code": "static-helmet",
 	"class": "EArmor",
+	"behaviors": [{
+		"name": "CombatOverhaul:Armor",
+		"properties": {
+			"Layers": ["Outer"],
+			"Zones": ["Head", "Face", "Neck"],
+			"Resists": {"PiercingAttack": 2, "SlashingAttack": 4, "BluntAttack": 1},
+			"FlatReduction": {},
+			"PlayerStats": {"walkspeed": 0, "manipulationSpeed": 0, "steadyAim": -0.05, "healingeffectivness": -0.05, "hungerrate": 0.05}
+		}
+	}],
 	"shapeByType": {
 		"*": { "base": "entity/armor/static-helmet" }
 	},

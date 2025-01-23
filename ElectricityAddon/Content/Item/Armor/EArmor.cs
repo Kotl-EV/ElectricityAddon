@@ -23,11 +23,6 @@ class EArmor : ItemWearable,IEnergyStorageItem
     }
     
     
-    public void AddEnergy(ItemStack stack, int energy)
-    {
-        stack.Attributes.SetInt("electricity:energy", energy + stack.Attributes.GetInt("electricity:energy"));
-    }
-    
     public override void DamageItem(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, int amount = 1)
     {
         int energy = itemslot.Itemstack.Attributes.GetInt("electricity:energy");

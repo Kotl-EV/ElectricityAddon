@@ -22,7 +22,7 @@ public class FlyToggleEvent : ModSystem
     private ICoreClientAPI capi;
     
     private ICoreServerAPI sapi;
-
+    
     public override bool ShouldLoad(EnumAppSide forSide)
     {
         return true;
@@ -66,7 +66,7 @@ public class FlyToggleEvent : ModSystem
             IInventory ownInventory = allOnlinePlayer.InventoryManager.GetOwnInventory("character");
             if (ownInventory != null)
             {
-                ItemSlot itemSlot = ownInventory[13];
+                ItemSlot itemSlot = ownInventory[ElectricityAddon.combatoverhaul ? 34:13];
                 if (itemSlot.Itemstack?.Collectible is EArmor collectible)
                 {
                     int energy = itemSlot.Itemstack.Attributes.GetInt("electricity:energy");
@@ -96,7 +96,7 @@ public class FlyToggleEvent : ModSystem
             IInventory ownInventory = allOnlinePlayer.InventoryManager.GetOwnInventory("character");
             if (ownInventory != null)
             {
-                ItemSlot itemSlot = ownInventory[13];
+                ItemSlot itemSlot = ownInventory[ElectricityAddon.combatoverhaul ? 34:13];
                 if (itemSlot.Itemstack?.Collectible is EArmor collectible)
                 {
                     int energy = itemSlot.Itemstack.Attributes.GetInt("electricity:energy");
@@ -204,7 +204,7 @@ public class FlyToggleEvent : ModSystem
     
     public bool Toggle(IPlayer player, FlyToggle bt)
     {
-        ItemSlot itemSlot = player.InventoryManager.GetOwnInventory("character")[(int)EnumCharacterDressType.ArmorBody];
+        ItemSlot itemSlot = player.InventoryManager.GetOwnInventory("character")[ElectricityAddon.combatoverhaul ? 34:13];
         if (itemSlot == null) return false;
         
         if (!itemSlot.Itemstack.Attributes.GetBool("flying") &&
@@ -290,7 +290,7 @@ public class FlyToggleEvent : ModSystem
                 return false;
             }
 
-            ItemSlot beltslot = ownInventory[(int)EnumCharacterDressType.ArmorBody];
+            ItemSlot beltslot = ownInventory[ElectricityAddon.combatoverhaul ? 34:13];
             if (beltslot == null)
             {
                 return false;
@@ -301,7 +301,7 @@ public class FlyToggleEvent : ModSystem
                 return false;
             }
 
-            if (ownInventory[(int)EnumCharacterDressType.ArmorBody].Itemstack.Item.FirstCodePart()
+            if (beltslot.Itemstack.Item.FirstCodePart()
                 .Contains("static"))
             {
                 return true;

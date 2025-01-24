@@ -6,9 +6,9 @@
 		"properties": {
 			"Layers": ["Outer"],
 			"Zones": ["Legs", "Feet"],
-			"Resists": {"PiercingAttack": 8, "SlashingAttack": 8, "BluntAttack": 2},
-			"FlatReduction": {"PiercingAttack": 1, "SlashingAttack": 0, "BluntAttack": 0},
-			"PlayerStats": {"walkspeed": -0.1, "manipulationSpeed": 0, "steadyAim": 0, "healingeffectivness": -0.05, "hungerrate": 0.05}
+			"Resists": {"PiercingAttack": 10, "SlashingAttack": 10, "BluntAttack": 5},
+			"FlatReduction": {"PiercingAttack": 1, "SlashingAttack": 1, "BluntAttack": 1},
+			"PlayerStats": {"walkspeed": 0.2, "manipulationSpeed": 0, "steadyAim": 0, "healingeffectivness": -0.03, "hungerrate": 0.03}
 		}
 	}],
 	"shapeByType": {

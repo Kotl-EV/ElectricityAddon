@@ -8,13 +8,18 @@ using Vintagestory.API.Config;
 
 namespace ElectricityAddon.Content.Block.ECharger;
 
-public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer {
+public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
+{
     public int powerSetting;
     public bool working;
-    public BEBehaviorECharger(BlockEntity blockEntity) : base(blockEntity) {
+    public int maxConsumption;
+    public BEBehaviorECharger(BlockEntity blockEntity) : base(blockEntity)
+    {
+        maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 200);
     }
-    public ConsumptionRange ConsumptionRange => working ? new ConsumptionRange(1, 200) : new ConsumptionRange(0, 0);
-    public void Consume(int amount) {
+    public ConsumptionRange ConsumptionRange => working ? new ConsumptionRange(1, maxConsumption) : new ConsumptionRange(0, 0);
+    public void Consume(int amount)
+    {
         BlockEntityECharger? entity = null;
         if (Blockentity is BlockEntityECharger temp)
         {
@@ -24,7 +29,7 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer {
                 if (entity.inventory[0]?.Itemstack?.Item is IEnergyStorageItem)
                 {
                     var storageEnergyItem = entity.inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
-                    var maxStorageItem = MyMiniLib.GetAttributeInt(entity.inventory[0].Itemstack.Item,"maxcapacity");
+                    var maxStorageItem = MyMiniLib.GetAttributeInt(entity.inventory[0].Itemstack.Item, "maxcapacity");
                     if (storageEnergyItem < maxStorageItem)
                     {
                         working = true;
@@ -34,14 +39,15 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer {
                 else if (entity.inventory[0]?.Itemstack?.Block is IEnergyStorageItem)
                 {
                     var storageEnergyBlock = entity.inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
-                    var maxStorageBlock = MyMiniLib.GetAttributeInt(entity.inventory[0].Itemstack.Block,"maxcapacity");
+                    var maxStorageBlock = MyMiniLib.GetAttributeInt(entity.inventory[0].Itemstack.Block, "maxcapacity");
                     if (storageEnergyBlock < maxStorageBlock)
                     {
                         working = true;
                     }
                     else working = false;
                 }
-            }else working = false;
+            }
+            else working = false;
 
 
         }
@@ -50,18 +56,19 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer {
         {
             amount = 0;
         }
-        
+
         if (powerSetting != amount)
         {
             powerSetting = amount;
         }
-        
+
     }
-    
-    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
+
+    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+    {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / 200));
-        stringBuilder.AppendLine("└ "+ Lang.Get("Consumption") + powerSetting + "/" + 200 + "Eu");
+        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
+        stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Eu");
         stringBuilder.AppendLine();
     }
 }

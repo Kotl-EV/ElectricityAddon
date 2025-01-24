@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Electricity.Utils;
@@ -20,6 +18,7 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
     private bool burning;
     private bool clientSidePrevBurning;
     private double lastTickTotalHours;
+    private double lastPlaySoundDin=0;
     
     private ForgeContentsRenderer? renderer;
     private WeatherSystemBase? weatherSystem;
@@ -103,6 +102,16 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
                     float num2 = (float) (num1 * 1500.0);
                     this.Contents.Collectible.SetTemperature(this.Api.World, this.Contents, Math.Min(GetBehavior<BEBehaviorEHorn>().powerSetting * 11F, temperature + num2));
                 }
+                else
+                {
+
+                    if (this.Api.Side != EnumAppSide.Client &&  this.Api.World.Calendar.TotalHours - this.lastPlaySoundDin > 1)  //если нагрелось до максимума, то какждый раз в час звоним, чтобы игрок не забыл за горн
+                    {
+                        Api.World.PlaySoundAt(new AssetLocation("electricityaddon:sounds/din_din_din"), Pos.X, Pos.Y, Pos.Z, null, false, 8.0F, 0.4F);
+                        this.lastPlaySoundDin = this.Api.World.Calendar.TotalHours;
+                    }
+                }
+
             }
         }
         this.tmpPos.Set(this.Pos.X + 0.5, this.Pos.Y + 0.5, this.Pos.Z + 0.5);
@@ -173,6 +182,7 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
             this.ambientSound?.Dispose();
             this.ambientSound = null;
             Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
+
         }
     }
 

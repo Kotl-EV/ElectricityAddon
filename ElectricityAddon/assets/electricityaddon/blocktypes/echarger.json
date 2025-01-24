@@ -1,149 +1,152 @@
 {
-    "code": "charger",
-    "class": "BlockECharger",
-    "entityClass": "BlockEntityECharger",
-	"attributes": {
-        "handbook": {
-			"groupBy": ["charger-*"],
-			"extraSections": [{
-				"title": "electricityaddon:block-handbooktitle-charger",
-				"text": "electricityaddon:block-handbooktext-charger"
-            }]
-        }
-    },
-    "shape": {
-        "base": "block/charger"
-    },
-    "textures": {
-        "bismuthbronze": { "base": "block/bismuthbronze" },
-        "copper": { "base": "block/copper" },
-        "iron": { "base": "block/iron" },
-        "quartzglass": { "base": "block/quartzglass" },
-        "stainlesssteel": { "base": "block/stainlesssteel" },
-        "steel": { "base": "block/steel" },
-        "zinc": { "base": "block/zinc" },
-        "brass": { "base": "block/brass" },
-        "copper-hot": { "base": "block/copper-hot" },
-        "emeral": { "base": "block/emeral" },
-        "topaz": { "base": "block/topaz" }
-    },
-    "behaviors": [
-        { "name": "Container" },
+  "code": "charger",
+  "class": "BlockECharger",
+  "entityClass": "BlockEntityECharger",
+  "attributes": {
+    "maxConsumption": 200,
+    "handbook": {
+      "groupBy": [ "charger-*" ],
+      "extraSections": [
         {
-            "name": "HorizontalOrientable",
-            "properties": {
-                "dropBlockFace": "south"
-            }
+          "title": "electricityaddon:block-handbooktitle-charger",
+          "text": "electricityaddon:block-handbooktext-charger"
         }
-    ],
-    "entityBehaviors": [
-        {
-            "name": "BEBehaviorECharger"
-        },
-        {
-            "name": "Electricity"
-        }
-    ],
-    "blockMaterial": "Stone",
-    "creativeinventory": {
-        "general": [ "*-disabled-south" ],
-        "electricity": [ "*-disabled-south" ]
-    },
-    "variantgroups": [
-        {
-            "code": "state",
-            "states": [ "disabled", "enabled" ]
-        },
-        {
-            "code": "side",
-            "loadFromProperties": "abstract/horizontalorientation"
-        }
-    ],
-    "shapebytype": {
-        "*-enabled-north": {
-            "base": "block/charger-enabled",
-            "rotateY": 0
-        },
-        "*-enabled-east": {
-            "base": "block/charger-enabled",
-            "rotateY": 270
-        },
-        "*-enabled-south": {
-            "base": "block/charger-enabled",
-            "rotateY": 180
-        },
-        "*-enabled-west": {
-            "base": "block/charger-enabled",
-            "rotateY": 90
-        },
-        "*-disabled-north": {
-            "base": "block/charger-disabled",
-            "rotateY": 0
-        },
-        "*-disabled-east": {
-            "base": "block/charger-disabled",
-            "rotateY": 270
-        },
-        "*-disabled-south": {
-            "base": "block/charger-disabled",
-            "rotateY": 180
-        },
-        "*-disabled-west": {
-            "base": "block/charger-disabled",
-            "rotateY": 90
-        }
-    },
-    "replaceable": 500,
-    "lightAbsorption": 0,
-    "lightHsvByType": {
-        "*-disabled-*": [ 0, 0, 0 ],
-        "*-enabled-*": [ 7, 7, 11 ]
-    },
-    "resistance": 3.5,
-    "sounds": {
-        "walk": "game:walk/stone",
-        "byTool": {
-            "Pickaxe": {
-                "hit": "game:block/rock-hit-pickaxe",
-                "break": "game:block/rock-break-pickaxe"
-            }
-        }
-    },
-    "sideSolid": {
-        "all": false
-    },
-    "sideOpaque": {
-        "all": false
-    },
-    "collisionBox": {
-        "x1": 0.0625,
-        "y1": 0,
-        "z1": 0.0625,
-        "x2": 0.9375,
-        "y2": 0.875,
-        "z2": 0.9375
-    },
-    "selectionBox": {
-        "x1": 0.0625,
-        "y1": 0,
-        "z1": 0.0625,
-        "x2": 0.9375,
-        "y2": 0.875,
-        "z2": 0.9375
-    },
-    "heldTpIdleAnimation": "game:holdbothhandslarge",
-    "heldTpUseAnimation": "game:twohandplaceblock",
-    "tpHandTransform": {
-        "translation": {
-            "x": -1.23,
-            "y": -0.91,
-            "z": -0.8
-        },
-        "rotation": {
-            "x": -2,
-            "y": 25,
-            "z": -78
-        },
-        "scale": 0.4
+      ]
     }
+  },
+  "shape": {
+    "base": "block/charger"
+  },
+  "textures": {
+    "bismuthbronze": { "base": "block/bismuthbronze" },
+    "copper": { "base": "block/copper" },
+    "iron": { "base": "block/iron" },
+    "quartzglass": { "base": "block/quartzglass" },
+    "stainlesssteel": { "base": "block/stainlesssteel" },
+    "steel": { "base": "block/steel" },
+    "zinc": { "base": "block/zinc" },
+    "brass": { "base": "block/brass" },
+    "copper-hot": { "base": "block/copper-hot" },
+    "emeral": { "base": "block/emeral" },
+    "topaz": { "base": "block/topaz" }
+  },
+  "behaviors": [
+    { "name": "Container" },
+    {
+      "name": "HorizontalOrientable",
+      "properties": {
+        "dropBlockFace": "south"
+      }
+    }
+  ],
+  "entityBehaviors": [
+    {
+      "name": "BEBehaviorECharger"
+    },
+    {
+      "name": "Electricity"
+    }
+  ],
+  "blockMaterial": "Stone",
+  "creativeinventory": {
+    "general": [ "*-disabled-south" ],
+    "electricity": [ "*-disabled-south" ]
+  },
+  "variantgroups": [
+    {
+      "code": "state",
+      "states": [ "disabled", "enabled" ]
+    },
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "shapebytype": {
+    "*-enabled-north": {
+      "base": "block/charger-enabled",
+      "rotateY": 0
+    },
+    "*-enabled-east": {
+      "base": "block/charger-enabled",
+      "rotateY": 270
+    },
+    "*-enabled-south": {
+      "base": "block/charger-enabled",
+      "rotateY": 180
+    },
+    "*-enabled-west": {
+      "base": "block/charger-enabled",
+      "rotateY": 90
+    },
+    "*-disabled-north": {
+      "base": "block/charger-disabled",
+      "rotateY": 0
+    },
+    "*-disabled-east": {
+      "base": "block/charger-disabled",
+      "rotateY": 270
+    },
+    "*-disabled-south": {
+      "base": "block/charger-disabled",
+      "rotateY": 180
+    },
+    "*-disabled-west": {
+      "base": "block/charger-disabled",
+      "rotateY": 90
+    }
+  },
+  "replaceable": 500,
+  "lightAbsorption": 0,
+  "lightHsvByType": {
+    "*-disabled-*": [ 0, 0, 0 ],
+    "*-enabled-*": [ 7, 7, 11 ]
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "walk": "game:walk/stone",
+    "byTool": {
+      "Pickaxe": {
+        "hit": "game:block/rock-hit-pickaxe",
+        "break": "game:block/rock-break-pickaxe"
+      }
+    }
+  },
+  "sideSolid": {
+    "all": false
+  },
+  "sideOpaque": {
+    "all": false
+  },
+  "collisionBox": {
+    "x1": 0.0625,
+    "y1": 0,
+    "z1": 0.0625,
+    "x2": 0.9375,
+    "y2": 0.875,
+    "z2": 0.9375
+  },
+  "selectionBox": {
+    "x1": 0.0625,
+    "y1": 0,
+    "z1": 0.0625,
+    "x2": 0.9375,
+    "y2": 0.875,
+    "z2": 0.9375
+  },
+  "heldTpIdleAnimation": "game:holdbothhandslarge",
+  "heldTpUseAnimation": "game:twohandplaceblock",
+  "tpHandTransform": {
+    "translation": {
+      "x": -1.23,
+      "y": -0.91,
+      "z": -0.8
+    },
+    "rotation": {
+      "x": -2,
+      "y": 25,
+      "z": -78
+    },
+    "scale": 0.4
+  }
 }

@@ -9,6 +9,7 @@ using ElectricityAddon.Content.Block.EHorn;
 using ElectricityAddon.Content.Block.EMotor;
 using ElectricityAddon.Content.Block.EStove;
 using ElectricityAddon.Content.Block.ELamp;
+using ElectricityAddon.Content.Block.EOven;
 using ElectricityAddon.Content.Item;
 using Vintagestory.API.Common;
 
@@ -61,6 +62,10 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockClass("BlockEFreezer", typeof(BlockEFreezer));
         api.RegisterBlockEntityClass("BlockEntityEFreezer", typeof(BlockEntityEFreezer));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEFreezer", typeof(BEBehaviorEFreezer));
+        
+        api.RegisterBlockClass("BlockEOven", typeof(BlockEOven));
+        api.RegisterBlockEntityClass("BlockEntityEOven", typeof(BlockEntityEOven));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEOven", typeof(BEBehaviorEOven));
         
         api.RegisterBlockClass("BlockEMotorTier1", typeof(BlockEMotorTier1));
         api.RegisterBlockClass("BlockEMotorTier2", typeof(BlockEMotorTier2));

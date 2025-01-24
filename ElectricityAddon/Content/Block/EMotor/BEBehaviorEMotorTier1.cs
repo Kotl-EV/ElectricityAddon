@@ -153,6 +153,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     }
 
 
+    private static float constanta = (I_max - I_min) / torque_max ;
 
     /// <summary>
     /// Основной метод поведения двигателя
@@ -181,7 +182,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         torque = torque_max * (I_value - I_min) / (I_max - I_min); //берем максимум момента из всей энергии, что нам дают
 
         // Ток потребления с учетом КПД
-        I_value = torque / torque_max * (I_max - I_min) / KPD(torque) + I_min;
+        I_value = torque * constanta / KPD(torque) + I_min;
 
         // Проверка, чтобы ток не превышал максимальное значение I_max и I_amount
         float torque_down = 0;  //понижаем 
@@ -198,9 +199,10 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
                 break;
             }
             // Ток потребления с учетом КПД
-            I_value = torque_down / torque_max * (I_max - I_min) / KPD(torque_down) + I_min;
+            I_value = torque_down * constanta / KPD(torque_down) + I_min;
 
         }
+        //var storageEnergyBlock = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
 
         if (k > 0)
             torque = torque_down;

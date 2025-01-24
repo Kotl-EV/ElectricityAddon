@@ -7,6 +7,7 @@ using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -42,7 +43,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
             return null;
         }
     }
-    
+
     private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
 
     public BlockEntityECharger()
@@ -66,26 +67,57 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
         }
     }
 
+    //проверка, нужно ли заряжать
     private void OnTick(float dt)
     {
         if (inventory[0]?.Itemstack?.Item is IEnergyStorageItem)
         {
-            var storageEnergyItem = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
-            var maxStorageItem = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Item,"maxcapacity");
+            int storageEnergyItem = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
+            int maxStorageItem = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Item, "maxcapacity");
             if (storageEnergyItem < maxStorageItem && GetBehavior<BEBehaviorECharger>().powerSetting > 0)
             {
-                ((IEnergyStorageItem)inventory[0].Itemstack.Item).receiveEnergy(inventory[0].Itemstack,GetBehavior<BEBehaviorECharger>().powerSetting );
+                if (!this.Block.Code.ToString().Contains("enabled"))     //чтобы лишний раз не обновлять модель
+                {
+                    Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
+                    MarkDirty(true);
+                }
+
+
+                ((IEnergyStorageItem)inventory[0].Itemstack.Item).receiveEnergy(inventory[0].Itemstack, GetBehavior<BEBehaviorECharger>().powerSetting);
+            }
+            else
+            {
+                if (!this.Block.Code.ToString().Contains("disabled"))    //чтобы лишний раз не обновлять модель
+                {
+                    Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
+                    Api.World.PlaySoundAt(new AssetLocation("electricityaddon:sounds/din_din_din"), Pos.X, Pos.Y, Pos.Z, null, false, 8.0F, 0.4F); //звоним если зарядилось таки
+                    MarkDirty(true);
+                }
             }
         }
         else if (inventory[0]?.Itemstack?.Block is IEnergyStorageItem)
         {
-            Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
-            var storageEnergyBlock = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
-            var maxStorageBlock = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Block,"maxcapacity");
+            int storageEnergyBlock = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
+            int maxStorageBlock = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Block, "maxcapacity");
             if (storageEnergyBlock < maxStorageBlock && GetBehavior<BEBehaviorECharger>().powerSetting > 0)
             {
-                ((IEnergyStorageItem)inventory[0].Itemstack.Block).receiveEnergy(inventory[0].Itemstack,GetBehavior<BEBehaviorECharger>().powerSetting );
-            } 
+                if (!this.Block.Code.ToString().Contains("enabled"))    //чтобы лишний раз не обновлять модель
+                {
+                    Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
+                    MarkDirty(true);
+                }
+
+                ((IEnergyStorageItem)inventory[0].Itemstack.Block).receiveEnergy(inventory[0].Itemstack, GetBehavior<BEBehaviorECharger>().powerSetting);
+            }
+            else
+            {
+                if (!this.Block.Code.ToString().Contains("disabled"))   //чтобы лишний раз не обновлять модель
+                {
+                    Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
+                    Api.World.PlaySoundAt(new AssetLocation("electricityaddon:sounds/din_din_din"), Pos.X, Pos.Y, Pos.Z, null, false, 8.0F, 0.4F); //звоним если зарядилось таки
+                    MarkDirty(true);
+                }
+            }
         }
         MarkDirty();
     }
@@ -121,11 +153,11 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
             clientApi.Tesselator.TesselateBlock(stack.Block, out toolMeshes[0]);
         }
 
-        
+
 
         if (stack.Class == EnumItemClass.Item)
         {
-            origin.Y = 1f/30f;
+            origin.Y = 1f / 30f;
             toolMeshes[0].Scale(origin, scaleX, scaleY, scaleZ);
             toolMeshes[0].Translate(translateX, translateY, translateZ);
             toolMeshes[0].Rotate(origin, rotateX, rotateY, rotateZ);
@@ -136,7 +168,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
             toolMeshes[0].Scale(origin, 0.3f, 0.3f, 0.3f);
         }
     }
-    
+
     internal bool OnPlayerInteract(IPlayer byPlayer, Vec3d hit)
     {
         if (inventory[0].Itemstack != null)
@@ -150,14 +182,14 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
     bool PutInSlot(IPlayer player, int slot)
     {
         IItemStack stack = player.InventoryManager.ActiveHotbarSlot.Itemstack;
-        if (stack == null || !(stack.Class == EnumItemClass.Block ? stack.Block is IEnergyStorageItem : stack.Item is IEnergyStorageItem)) return false;
-        Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
+        if (stack == null || !(stack.Class == EnumItemClass.Block ? stack.Block is IEnergyStorageItem : stack.Item is IEnergyStorageItem))
+            return false;
         player.InventoryManager.ActiveHotbarSlot.TryPutInto(Api.World, inventory[slot]);
 
         didInteract(player);
         return true;
     }
-    
+
     bool TakeFromSlot(IPlayer player, int slot)
     {
         ItemStack stack = inventory[slot].TakeOutWhole();
@@ -170,7 +202,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
         didInteract(player);
         return true;
     }
-    
+
     void didInteract(IPlayer player)
     {
         Api.World.PlaySoundAt(new AssetLocation("sounds/player/buildhigh"), Pos.X, Pos.Y, Pos.Z, player, false);
@@ -178,10 +210,12 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
         MarkDirty(true);
     }
 
-    public override void OnBlockPlaced(ItemStack? byItemStack = null) {
+    public override void OnBlockPlaced(ItemStack? byItemStack = null)
+    {
         base.OnBlockPlaced(byItemStack);
         var electricity = Electricity;
-        if (electricity != null) {
+        if (electricity != null)
+        {
             electricity.Connection = Facing.DownAll;
         }
     }
@@ -269,12 +303,13 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
         }
     }
 
-    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
+    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+    {
         base.GetBlockInfo(forPlayer, stringBuilder);
         if (inventory[0]?.Itemstack?.Item is IEnergyStorageItem)
         {
             var storageEnergyItem = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
-            var maxStorageItem = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Item,"maxcapacity");
+            var maxStorageItem = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Item, "maxcapacity");
             stringBuilder.AppendLine();
             stringBuilder.AppendLine(inventory[0].Itemstack.GetName());
             stringBuilder.AppendLine(StringHelper.Progressbar(storageEnergyItem * 100.0f / maxStorageItem));
@@ -283,19 +318,19 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
         else if (inventory[0]?.Itemstack?.Block is IEnergyStorageItem)
         {
             var storageEnergyBlock = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
-            var maxStorageBlock = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Block,"maxcapacity");
+            var maxStorageBlock = MyMiniLib.GetAttributeInt(inventory[0].Itemstack.Block, "maxcapacity");
             stringBuilder.AppendLine();
             stringBuilder.AppendLine(inventory[0].Itemstack.GetName());
             stringBuilder.AppendLine(StringHelper.Progressbar(storageEnergyBlock * 100.0f / maxStorageBlock));
             stringBuilder.AppendLine("└ " + Lang.Get("Storage") + storageEnergyBlock + "/" + maxStorageBlock + "Eu");
         }
     }
-    
+
 }
-    
-    
-    
-    
+
+
+
+
 public class ToolTextures
 {
     public Dictionary<string, int> TextureSubIdsByCode = new Dictionary<string, int>();

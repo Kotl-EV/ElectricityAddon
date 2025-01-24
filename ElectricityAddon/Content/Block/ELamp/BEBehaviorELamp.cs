@@ -8,22 +8,23 @@ using Vintagestory.API.Config;
 
 namespace ElectricityAddon.Content.Block.ELamp
 {
-    public class BEBehaviorELamp :BlockEntityBehavior, IElectricConsumer {
+    public class BEBehaviorELamp : BlockEntityBehavior, IElectricConsumer
+    {
         public BEBehaviorELamp(BlockEntity blockEntity) : base(blockEntity)
         {
             HSV = GetHSV();
-            maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 0);
+            maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 4);
         }
 
 
         private int[] null_HSV = { 0, 0, 0 };   //заглушка
         public int[] HSV = { 0, 0, 0 };         //сюда берем цвет
-        public int maxConsumption=0;            //максимальное потребление
+        public int maxConsumption;            //максимальное потребление
 
         //извлекаем цвет
         public int[] GetHSV()
         {
-            int[] bufHSV= MyMiniLib.GetAttributeArrayInt(this.Block, "HSV", null_HSV);
+            int[] bufHSV = MyMiniLib.GetAttributeArrayInt(this.Block, "HSV", null_HSV);
             //теперь нужно поделить H и S на 6, чтобы в игре правильно считало цвет
             bufHSV[0] = (int)Math.Round((bufHSV[0] / 6.0), MidpointRounding.AwayFromZero);
             bufHSV[1] = (int)Math.Round((bufHSV[1] / 6.0), MidpointRounding.AwayFromZero);
@@ -34,8 +35,8 @@ namespace ElectricityAddon.Content.Block.ELamp
 
         public ConsumptionRange ConsumptionRange => new(1, maxConsumption);
 
-        
-        
+
+
         public void Consume(int lightLevel)
         {
             if (this.Api is { } api)
@@ -46,21 +47,17 @@ namespace ElectricityAddon.Content.Block.ELamp
                     {
                         case 0 when lightLevel > 0:
                             {
-                            var assetLocation = this.Blockentity.Block.CodeWithVariant("state", "enabled");
-                            var block = api.World.BlockAccessor.GetBlock(assetLocation);
-                            api.World.BlockAccessor.ExchangeBlock(block.Id, this.Blockentity.Pos);
-                            break;
+                                api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
+                                break;
                             }
                         case > 0 when lightLevel == 0:
                             {
-                            var assetLocation = this.Blockentity.Block.CodeWithVariant("state", "disabled");
-                            var block = api.World.BlockAccessor.GetBlock(assetLocation);
-                            api.World.BlockAccessor.ExchangeBlock(block.Id, this.Blockentity.Pos);
-                            break;
+                                api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
+                                break;
                             }
                     }
 
-                    //применяем цвет
+                    //применяем цвет и яркость
                     this.Blockentity.Block.LightHsv = new[] {
                             (byte)this.HSV[0],
                             (byte)this.HSV[1],
@@ -82,6 +79,6 @@ namespace ElectricityAddon.Content.Block.ELamp
             stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.LightLevel + "/" + maxConsumption + " Eu");
             stringBuilder.AppendLine();
         }
-    
+
     }
 }

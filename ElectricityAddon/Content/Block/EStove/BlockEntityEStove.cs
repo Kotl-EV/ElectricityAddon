@@ -357,12 +357,13 @@ public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPosition
         }
         else
         {
-            if (IsBurning)
+            if (IsBurning)                     //готовка закончилась
             {
                 IsBurning = false;
 
                 Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
                 MarkDirty(true);
+                Api.World.PlaySoundAt(new AssetLocation("electricityaddon:sounds/din_din_din"), Pos.X, Pos.Y, Pos.Z, null, false, 8.0F, 0.4F);
             }
         }
 
@@ -901,7 +902,7 @@ public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPosition
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
         base.GetBlockInfo(forPlayer, stringBuilder);
         if (inputStack != null) {
-            var temp = (int)inputStack.Collectible.GetTemperature(Api.World, inputStack);
+            var temp = (int)inputStack.Collectible.GetTemperature(Api.World, inputStack);  //беда с отобраением температуры, иногда забывает
             stringBuilder.AppendLine();
                 if (temp <= 25)
                 {
@@ -912,7 +913,7 @@ public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPosition
                 else
                     stringBuilder.AppendLine(Lang.Get("Contents") + inputStack.StackSize + "×" +
                                              inputStack.GetName() +
-                                             "\n└ " + Lang.Get("Temperature") + temp + "°C");  
+                                             "\n└ " + Lang.Get("Temperature") + temp + " °C");  
             
         }
     }

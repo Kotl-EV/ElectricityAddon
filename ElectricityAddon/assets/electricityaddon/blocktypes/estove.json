@@ -1,108 +1,111 @@
 {
-    "code": "estove",
-    "class": "BlockEStove",
-    "entityClass": "BlockEntityEStove",
-	"attributes": {
-        "handbook": {
-        "groupBy": ["estove-*"],
-        "extraSections": [{
-              "title": "electricityaddon:block-handbooktitle-estove",
-              "text": "electricityaddon:block-handbooktext-estove"
-            }]
-        }
-    },
-    "behaviors": [
-        { "name": "Container" },
+  "code": "estove",
+  "class": "BlockEStove",
+  "entityClass": "BlockEntityEStove",
+  "attributes": {
+    "maxConsumption": 100,
+    "handbook": {
+      "groupBy": [ "estove-*" ],
+      "extraSections": [
         {
-            "name": "HorizontalOrientable",
-            "properties": {
-                "dropBlockFace": "south"
-            }
+          "title": "electricityaddon:block-handbooktitle-estove",
+          "text": "electricityaddon:block-handbooktext-estove"
         }
-    ],
-    "entityBehaviors": [
-        {
-            "name": "BEBehaviorEStove"
-        },
-        {
-            "name": "Electricity"
-        }
-    ],
-    "creativeinventory": {
-        "general": [ "*-disabled-south" ],
-        "electricity": [ "*-disabled-south" ]
+      ]
+    }
+  },
+  "behaviors": [
+    { "name": "Container" },
+    {
+      "name": "HorizontalOrientable",
+      "properties": {
+        "dropBlockFace": "south"
+      }
+    }
+  ],
+  "entityBehaviors": [
+    {
+      "name": "BEBehaviorEStove"
     },
-    "variantgroups": [
-        {
-            "code": "state",
-            "states": [ "disabled", "enabled" ]
-        },
-        {
-            "code": "side",
-            "loadFromProperties": "abstract/horizontalorientation"
-        }
-    ],
-    "shapebytype": {
-        "*-enabled-north": {
-            "base": "block/electricstove-enabled",
-            "rotateY": 0
-        },
-        "*-enabled-east": {
-            "base": "block/electricstove-enabled",
-            "rotateY": 270
-        },
-        "*-enabled-south": {
-            "base": "block/electricstove-enabled",
-            "rotateY": 180
-        },
-        "*-enabled-west": {
-            "base": "block/electricstove-enabled",
-            "rotateY": 90
-        },
-        "*-disabled-north": {
-            "base": "block/electricstove-disabled",
-            "rotateY": 0
-        },
-        "*-disabled-east": {
-            "base": "block/electricstove-disabled",
-            "rotateY": 270
-        },
-        "*-disabled-south": {
-            "base": "block/electricstove-disabled",
-            "rotateY": 180
-        },
-        "*-disabled-west": {
-            "base": "block/electricstove-disabled",
-            "rotateY": 90
-        }
+    {
+      "name": "Electricity"
+    }
+  ],
+  "creativeinventory": {
+    "general": [ "*-disabled-south" ],
+    "electricity": [ "*-disabled-south" ]
+  },
+  "variantgroups": [
+    {
+      "code": "state",
+      "states": [ "disabled", "enabled" ]
     },
-    "textures": {
-        "brass": { "base": "block/brass" },
-        "copper": { "base": "block/copper" },
-        "copper-hot": { "base": "block/copper-hot" },
-        "emeral": { "base": "block/emeral" },
-        "iron": { "base": "block/iron" },
-        "stainlesssteel": { "base": "block/stainlesssteel" },
-        "steel": { "base": "block/steel" },
-        "topaz": { "base": "block/topaz" },
-        "zinc": { "base": "block/zinc" }
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "shapebytype": {
+    "*-enabled-north": {
+      "base": "block/electricstove-enabled",
+      "rotateY": 0
     },
-    "blockmaterial": "Stone",
-    "sidesolid": {
-        "all": false
+    "*-enabled-east": {
+      "base": "block/electricstove-enabled",
+      "rotateY": 270
     },
-    "sideopaque": {
-        "all": false
+    "*-enabled-south": {
+      "base": "block/electricstove-enabled",
+      "rotateY": 180
     },
-    "resistance": 3.5,
-    "lightAbsorption": 0,
-    "lightHsvByType": {
-        "*-disabled-*": [ 0, 0, 0 ],
-        "*-enabled-*": [ 7, 7, 11 ]
+    "*-enabled-west": {
+      "base": "block/electricstove-enabled",
+      "rotateY": 90
     },
-    "sounds": {
-        "walk": "game:walk/stone"
+    "*-disabled-north": {
+      "base": "block/electricstove-disabled",
+      "rotateY": 0
     },
-    "heldTpIdleAnimation": "holdbothhandslarge",
-    "heldTpUseAnimation": "twohandplaceblock"
+    "*-disabled-east": {
+      "base": "block/electricstove-disabled",
+      "rotateY": 270
+    },
+    "*-disabled-south": {
+      "base": "block/electricstove-disabled",
+      "rotateY": 180
+    },
+    "*-disabled-west": {
+      "base": "block/electricstove-disabled",
+      "rotateY": 90
+    }
+  },
+  "textures": {
+    "brass": { "base": "block/brass" },
+    "copper": { "base": "block/copper" },
+    "copper-hot": { "base": "block/copper-hot" },
+    "emeral": { "base": "block/emeral" },
+    "iron": { "base": "block/iron" },
+    "stainlesssteel": { "base": "block/stainlesssteel" },
+    "steel": { "base": "block/steel" },
+    "topaz": { "base": "block/topaz" },
+    "zinc": { "base": "block/zinc" }
+  },
+  "blockmaterial": "Stone",
+  "sidesolid": {
+    "all": false
+  },
+  "sideopaque": {
+    "all": false
+  },
+  "resistance": 3.5,
+  "lightAbsorption": 0,
+  "lightHsvByType": {
+    "*-disabled-*": [ 0, 0, 0 ],
+    "*-enabled-*": [ 7, 7, 11 ]
+  },
+  "sounds": {
+    "walk": "game:walk/stone"
+  },
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldTpUseAnimation": "twohandplaceblock"
 }

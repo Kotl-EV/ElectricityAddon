@@ -278,7 +278,7 @@ class BlockEntityEFreezer : BlockEntityContainerFreezer, ITexPositionSource
         if (Api.Side == EnumAppSide.Server)
         {
             TryRefuel();
-            if (GetBehavior<BEBehaviorEFreezer>().PowerSetting < 10)
+            if (GetBehavior<BEBehaviorEFreezer>().powerSetting < 10)
             {
                 Vintagestory.API.Common.Block originalBlock = Api.World.BlockAccessor.GetBlock(Pos);
                 AssetLocation newBlockAL = originalBlock.CodeWithVariant("status", "melted");
@@ -291,7 +291,7 @@ class BlockEntityEFreezer : BlockEntityContainerFreezer, ITexPositionSource
 
     private void TryRefuel()
     {
-        if (GetBehavior<BEBehaviorEFreezer>().PowerSetting > 10)
+        if (GetBehavior<BEBehaviorEFreezer>().powerSetting > 10)
         {
             Vintagestory.API.Common.Block originalBlock = Api.World.BlockAccessor.GetBlock(Pos);
             AssetLocation newBlockAL = originalBlock.CodeWithVariant("status", "frozen");
@@ -413,9 +413,9 @@ class BlockEntityEFreezer : BlockEntityContainerFreezer, ITexPositionSource
     {
         float initial = base.GetPerishRate();
         EnumAppSide side = Api.Side;
-        if (GetBehavior<BEBehaviorEFreezer>().PowerSetting < 10)
+        if (GetBehavior<BEBehaviorEFreezer>().powerSetting < 10)
             return initial;
-        return 5.0f / GetBehavior<BEBehaviorEFreezer>().PowerSetting;
+        return 5.0f / GetBehavior<BEBehaviorEFreezer>().powerSetting;
     }
 
     public override void OnBlockPlaced(ItemStack? byItemStack = null)

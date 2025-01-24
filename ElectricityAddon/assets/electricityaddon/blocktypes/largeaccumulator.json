@@ -35,7 +35,7 @@
     ]
   },
   "attributes": {
-    "rechargeable": true,
+    "rechargeable": false,
     "maxcapacity": 256000,
     "handbook": {
       "groupBy": [ "largeaccumulator-*" ],
@@ -80,7 +80,7 @@
     "y1": 0,
     "z1": 0,
     "x2": 1,
-    "y2": 2,
+    "y2": 1.95,
     "z2": 1
   },
   "sounds": {

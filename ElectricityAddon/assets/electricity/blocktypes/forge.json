@@ -1,149 +1,153 @@
 {
-    "code": "forge",
-    "class": "BlockEHorn",
-    "entityClass": "BlockEntityEHorn",
-	"attributes": {
-	"handbook": {
-            "groupBy": ["forge-*"],
-            "extraSections": [{
-                 "title": "electricity:block-handbooktitle-forge",
-                 "text": "electricity:block-handbooktext-forge"}]
-		}
-    },
-    "shape": {
-        "base": "block/forge"
-    },
-    "textures": {
-        "bismuthbronze": { "base": "electricityaddon:block/bismuthbronze" },
-        "brass": { "base": "electricityaddon:block/brass" },
-        "copper": { "base": "electricityaddon:block/copper" },
-        "copper-hot": { "base": "electricityaddon:block/copper-hot" },
-        "emeral": { "base": "electricityaddon:block/emeral" },
-        "iron": { "base": "electricityaddon:block/iron" },
-        "steel": { "base": "electricityaddon:block/steel" },
-        "topaz": { "base": "electricityaddon:block/topaz" },
-        "zinc": { "base": "electricityaddon:block/zinc" }
-    },
-    "behaviors": [
+  "code": "forge",
+  "class": "BlockEHorn",
+  "entityClass": "BlockEntityEHorn",
+  "attributes": {
+    "maxConsumption": 100,
+    "handbook": {
+      "groupBy": [ "forge-*" ],
+      "extraSections": [
         {
-            "name": "HeatSource"
-        },
-        {
-            "name": "HorizontalOrientable",
-            "properties": {
-                "dropBlockFace": "south"
-            }
+          "title": "electricity:block-handbooktitle-forge",
+          "text": "electricity:block-handbooktext-forge"
         }
-    ],
-    "entityBehaviors": [
-        {
-            "name": "BEBehaviorEHorn"
-        },
-        {
-            "name": "Electricity"
-        }
-    ],
-    
-    "variantgroups": [
-        {
-            "code": "state",
-            "states": [ "disabled", "enabled" ]
-        },
-        {
-            "code": "side",
-            "loadFromProperties": "abstract/horizontalorientation"
-        }
-    ],
-    "shapebytype": {
-        "*-enabled-north": {
-            "base": "block/forge-enabled",
-            "rotateY": 0
-        },
-        "*-enabled-east": {
-            "base": "block/forge-enabled",
-            "rotateY": 270
-        },
-        "*-enabled-south": {
-            "base": "block/forge-enabled",
-            "rotateY": 180
-        },
-        "*-enabled-west": {
-            "base": "block/forge-enabled",
-            "rotateY": 90
-        },
-        "*-disabled-north": {
-            "base": "block/forge-disabled",
-            "rotateY": 0
-        },
-        "*-disabled-east": {
-            "base": "block/forge-disabled",
-            "rotateY": 270
-        },
-        "*-disabled-south": {
-            "base": "block/forge-disabled",
-            "rotateY": 180
-        },
-        "*-disabled-west": {
-            "base": "block/forge-disabled",
-            "rotateY": 90
-        }
-    },
-    "blockMaterial": "Stone",
-    "creativeinventory": {
-        "general": [ "*-disabled-south" ],
-        "electricity": [ "*-disabled-south" ]
-    },
-    "replaceable": 500,
-    "lightAbsorption": 0,
-    "lightHsvByType": {
-        "*-disabled-*": [ 0, 0, 0 ],
-        "*-enabled-*": [ 7, 7, 11 ]
-    },
-    "resistance": 3.5,
-    "sounds": {
-        "walk": "game:walk/stone",
-        "byTool": {
-            "Pickaxe": {
-                "hit": "game:block/rock-hit-pickaxe",
-                "break": "game:block/rock-break-pickaxe"
-            }
-        }
-    },
-    "sideSolid": {
-        "all": false
-    },
-    "sideOpaque": {
-        "all": false
-    },
-    "collisionBox": {
-        "x1": 0.0625,
-        "y1": 0,
-        "z1": 0.0625,
-        "x2": 0.9375,
-        "y2": 0.875,
-        "z2": 0.9375
-    },
-    "selectionBox": {
-        "x1": 0.0625,
-        "y1": 0,
-        "z1": 0.0625,
-        "x2": 0.9375,
-        "y2": 0.875,
-        "z2": 0.9375
-    },
-    "heldTpIdleAnimation": "game:holdbothhandslarge",
-    "heldTpUseAnimation": "game:twohandplaceblock",
-    "tpHandTransform": {
-        "translation": {
-            "x": -1.23,
-            "y": -0.91,
-            "z": -0.8
-        },
-        "rotation": {
-            "x": -2,
-            "y": 25,
-            "z": -78
-        },
-        "scale": 0.4
+      ]
     }
+  },
+  "shape": {
+    "base": "block/forge"
+  },
+  "textures": {
+    "bismuthbronze": { "base": "electricityaddon:block/bismuthbronze" },
+    "brass": { "base": "electricityaddon:block/brass" },
+    "copper": { "base": "electricityaddon:block/copper" },
+    "copper-hot": { "base": "electricityaddon:block/copper-hot" },
+    "emeral": { "base": "electricityaddon:block/emeral" },
+    "iron": { "base": "electricityaddon:block/iron" },
+    "steel": { "base": "electricityaddon:block/steel" },
+    "topaz": { "base": "electricityaddon:block/topaz" },
+    "zinc": { "base": "electricityaddon:block/zinc" }
+  },
+  "behaviors": [
+    {
+      "name": "HeatSource"
+    },
+    {
+      "name": "HorizontalOrientable",
+      "properties": {
+        "dropBlockFace": "south"
+      }
+    }
+  ],
+  "entityBehaviors": [
+    {
+      "name": "BEBehaviorEHorn"
+    },
+    {
+      "name": "Electricity"
+    }
+  ],
+
+  "variantgroups": [
+    {
+      "code": "state",
+      "states": [ "disabled", "enabled" ]
+    },
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+  "shapebytype": {
+    "*-enabled-north": {
+      "base": "block/forge-enabled",
+      "rotateY": 0
+    },
+    "*-enabled-east": {
+      "base": "block/forge-enabled",
+      "rotateY": 270
+    },
+    "*-enabled-south": {
+      "base": "block/forge-enabled",
+      "rotateY": 180
+    },
+    "*-enabled-west": {
+      "base": "block/forge-enabled",
+      "rotateY": 90
+    },
+    "*-disabled-north": {
+      "base": "block/forge-disabled",
+      "rotateY": 0
+    },
+    "*-disabled-east": {
+      "base": "block/forge-disabled",
+      "rotateY": 270
+    },
+    "*-disabled-south": {
+      "base": "block/forge-disabled",
+      "rotateY": 180
+    },
+    "*-disabled-west": {
+      "base": "block/forge-disabled",
+      "rotateY": 90
+    }
+  },
+  "blockMaterial": "Stone",
+  "creativeinventory": {
+    "general": [ "*-disabled-south" ],
+    "electricity": [ "*-disabled-south" ]
+  },
+  "replaceable": 500,
+  "lightAbsorption": 0,
+  "lightHsvByType": {
+    "*-disabled-*": [ 0, 0, 0 ],
+    "*-enabled-*": [ 7, 7, 11 ]
+  },
+  "resistance": 3.5,
+  "sounds": {
+    "walk": "game:walk/stone",
+    "byTool": {
+      "Pickaxe": {
+        "hit": "game:block/rock-hit-pickaxe",
+        "break": "game:block/rock-break-pickaxe"
+      }
+    }
+  },
+  "sideSolid": {
+    "all": false
+  },
+  "sideOpaque": {
+    "all": false
+  },
+  "collisionBox": {
+    "x1": 0.0625,
+    "y1": 0,
+    "z1": 0.0625,
+    "x2": 0.9375,
+    "y2": 0.875,
+    "z2": 0.9375
+  },
+  "selectionBox": {
+    "x1": 0.0625,
+    "y1": 0,
+    "z1": 0.0625,
+    "x2": 0.9375,
+    "y2": 0.875,
+    "z2": 0.9375
+  },
+  "heldTpIdleAnimation": "game:holdbothhandslarge",
+  "heldTpUseAnimation": "game:twohandplaceblock",
+  "tpHandTransform": {
+    "translation": {
+      "x": -1.23,
+      "y": -0.91,
+      "z": -0.8
+    },
+    "rotation": {
+      "x": -2,
+      "y": 25,
+      "z": -78
+    },
+    "scale": 0.4
+  }
 }

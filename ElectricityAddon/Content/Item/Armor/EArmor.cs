@@ -12,7 +12,7 @@ class EArmor : ItemWearable,IEnergyStorageItem
 {
     int consume;
     int maxcapacity;
-    EntityPlayer eplr;
+    //EntityPlayer eplr;
 
     public override void OnLoaded(ICoreAPI api)
     {

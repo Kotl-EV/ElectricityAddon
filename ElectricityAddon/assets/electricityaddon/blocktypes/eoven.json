@@ -46,7 +46,8 @@
           "text": "eoven-handbook-help-text"
         }
       ]
-    },
+    },    
+    "rotShape": "item/rot"
   },
   "creativeinventory": {
     "general": [ "*-north" ],

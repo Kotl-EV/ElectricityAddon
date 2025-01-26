@@ -35,12 +35,12 @@ public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer {
                 {
                     if (itemstack.Class == EnumItemClass.Block)
                     {
-                        if (itemstack.Block.Code.ToString().Contains("perfect"))
+                        if (itemstack.Block.Code.ToString().Contains("perfect") || itemstack.Block.Code.ToString().Contains("charred"))
                             stack_count_perfect++;
                     }
                     else
                     {
-                        if (itemstack.Item.Code.ToString().Contains("perfect") || itemstack.Item.Code.ToString().Contains("rot"))
+                        if (itemstack.Item.Code.ToString().Contains("perfect") || itemstack.Item.Code.ToString().Contains("rot") || itemstack.Item.Code.ToString().Contains("charred"))
                             stack_count_perfect++;
                     }
 

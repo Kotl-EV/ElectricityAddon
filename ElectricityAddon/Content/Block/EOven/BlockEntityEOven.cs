@@ -33,15 +33,28 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
     public virtual int bakeableCapacity => 4;
 
     public virtual int fuelitemCapacity => 6;
+
+
     private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
 
-    private EnumOvenContentMode OvenContentMode
+
+    private EnumOvenContentMode OvenContentMode  //как отображать содержимое
     {
         get
         {
             ItemSlot firstNonEmptySlot = this.ovenInv.FirstNonEmptySlot;
-            BakingProperties bakingProperties = BakingProperties.ReadFrom(firstNonEmptySlot.Itemstack); 
-            return !bakingProperties.LargeItem ? EnumOvenContentMode.Quadrants : EnumOvenContentMode.SingleCenter;
+            if (firstNonEmptySlot == null)
+                return EnumOvenContentMode.Quadrants;
+
+            BakingProperties bakingProperties = BakingProperties.ReadFrom(firstNonEmptySlot.Itemstack);
+
+            if (bakingProperties == null)    //протухло
+                return EnumOvenContentMode.Quadrants;
+            else
+                return !bakingProperties.LargeItem ? EnumOvenContentMode.Quadrants : EnumOvenContentMode.SingleCenter;
+
+
+            //return EnumOvenContentMode.Quadrants;
         }
     }
 
@@ -100,7 +113,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
             byPlayer.InventoryManager.BroadcastHotbarSlot();
             return true;
         }
-        CollectibleObject collectible = activeHotbarSlot.Itemstack.Collectible;        
+        CollectibleObject collectible = activeHotbarSlot.Itemstack.Collectible;
 
         if (collectible.Attributes?["bakingProperties"] == null)
         {
@@ -132,13 +145,39 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
                 this.Api.World.Logger.Audit("{0} Put 1-4x{1} into Clay oven at {2}.", (object)byPlayer.PlayerName, (object)code, (object)this.Pos);
                 return true;
             }
-            if (this.Api is ICoreClientAPI api && activeHotbarSlot.Itemstack?.Block?.GetBehavior<BlockBehaviorCanIgnite>() == null)
+
+            if (this.Api is ICoreClientAPI api)  //уведомления об ошибках
             {
-                if (activeHotbarSlot.Empty || !activeHotbarSlot.Itemstack.Attributes.GetBool("bakeable", true))
-                    api.TriggerIngameError((object)this, "notbakeable", Lang.Get("This item is not bakeable."));
-                else if (api != null && !activeHotbarSlot.Empty)
-                    capi.TriggerIngameError((object)this, "notbakeable", Lang.Get("Put-into-4-items"));
-                return true;
+                if (activeHotbarSlot.Empty)     //если слот пустой
+                {
+                    api.TriggerIngameError((object)this, "notbakeable", Lang.Get("Put-into-4-items"));
+                    return true;
+                }
+                else
+                {
+                    BakingProperties bakingProperties1 = BakingProperties.ReadFrom(activeHotbarSlot.Itemstack);
+                    if (bakingProperties1 == null)                                          //если свойства выпекания не найдены
+                    {
+                        api.TriggerIngameError((object)this, "notbakeable", Lang.Get("This item is not bakeable."));
+                        return true;
+                    }
+
+                    if (!activeHotbarSlot.Itemstack.Attributes.GetBool("bakeable", true))  //если аттрибут есть выпекания
+                    {
+                        api.TriggerIngameError((object)this, "notbakeable", Lang.Get("This item is not bakeable."));
+                        return true;
+                    }
+                                       
+
+                    if (activeHotbarSlot.Itemstack?.StackSize < 4 & !bakingProperties1.LargeItem)   //если айтемы в стаке меньше 4 
+                    {
+                        api.TriggerIngameError((object)this, "notbakeable", Lang.Get("Put-into-4-items"));
+                        return true;
+                    }                                  
+
+                    
+                }
+
             }
         }
         return false;
@@ -150,7 +189,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         if (bakingProperties1 == null || !slot.Itemstack.Attributes.GetBool("bakeable", true) || bakingProperties1.LargeItem && !this.ovenInv.Empty)
             return false;
 
-        if (slot.Itemstack.StackSize<4 & !bakingProperties1.LargeItem)   //если айтемы в стаке меньше 4 - выход
+        if (slot.Itemstack.StackSize < 4 & !bakingProperties1.LargeItem)   //если айтемы в стаке меньше 4 - выход
             return false;
 
         for (int index = 0; index < this.bakeableCapacity; ++index)
@@ -165,13 +204,15 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
                     this.MarkDirty(true);
                     this.lastRemoved = (ItemStack)null;
                 }
-                
+
             }
             if (index == 0)
             {
                 BakingProperties bakingProperties2 = BakingProperties.ReadFrom(this.ovenInv[0].Itemstack);
                 if (bakingProperties2 != null && bakingProperties2.LargeItem)            //если уже лежит пирог - выход
-                    return false;
+                {
+                    break;                    
+                }
             }
         }
         return true;
@@ -201,7 +242,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         }
         return false;
     }
-    
+
     public float GetHeatStrength(
       IWorldAccessor world,
       BlockPos heatSourcePos,
@@ -212,12 +253,10 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
 
     protected virtual void OnBurnTick(float dt)
     {
-        dt *= 1.0f;  
+        dt *= 1.0f;
         if (this.Api is ICoreClientAPI)
             return;
 
-
-      
 
         if (GetBehavior<BEBehaviorEOven>()?.powerSetting > 0)
         {
@@ -246,27 +285,34 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
 
 
         if (!ovenInv.Empty)   //если не пусто
-        {         
+        {
+            
+            int EnvTemp = this.EnvironmentTemperature();
 
             if (this.IsBurning)
             {
-                int EnvTemp = this.EnvironmentTemperature();
                 //чем больше энергии тем выше будет максимальная достижимая температура
                 int power = GetBehavior<BEBehaviorEOven>().powerSetting;
                 float toTemp = Math.Max(EnvTemp, power * maxBakingTemperatureAccepted / GetBehavior<BEBehaviorEOven>().maxConsumption);
-                this.ovenTemperature = this.ChangeTemperature(this.ovenTemperature, toTemp, dt*1.5F);
-                if (this.ovenTemperature > EnvTemp)
-                {
-                    this.HeatInput(dt);
-                }
+                this.ovenTemperature = this.ChangeTemperature(this.ovenTemperature, toTemp, dt * 1.5F);
+                
             }
             else
-                this.ovenTemperature = ChangeTemperature(ovenTemperature, EnvironmentTemperature(), dt);
-        }            
-    
-        else                 //выравниваем температуру с окружающей средой
+            {
+                this.ovenTemperature = ChangeTemperature(ovenTemperature, EnvironmentTemperature(), dt); //выравниваем температуру с окружающей средой
+                
+            }
+
+
+            if (this.ovenTemperature > EnvTemp)  //греем и охлаждаем еду
+            {
+                this.HeatInput(dt * 1.2f, this.IsBurning);
+            }
+        }
+
+        else
         {
-            this.ovenTemperature = ChangeTemperature(ovenTemperature, EnvironmentTemperature(), dt);
+            this.ovenTemperature = ChangeTemperature(ovenTemperature, EnvironmentTemperature(), dt); //выравниваем температуру с окружающей средой
         }
 
 
@@ -278,25 +324,30 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
     }
 
     //греем содержимое всей печи
-    protected virtual void HeatInput(float dt)
+    protected virtual void HeatInput(float dt, bool Up)
     {
         for (int index = 0; index < this.bakeableCapacity; ++index)
         {
             ItemStack itemstack = this.ovenInv[index].Itemstack;
-            if (itemstack != null && (double)this.HeatStack(itemstack, dt, index) >= 100.0)
-                this.IncrementallyBake(dt * 1.2f, index);
+            if (itemstack != null && (double)this.HeatStack(itemstack, dt, index, Up) >= 100.0)
+                if (Up)                             //если еда остывает, то не выпекаем и активно снижаем температуру в HeatStack
+                    this.IncrementallyBake(dt, index);
         }
     }
 
     //греем конкретно один предмет
-    protected virtual float HeatStack(ItemStack stack, float dt, int i)
+    protected virtual float HeatStack(ItemStack stack, float dt, int i, bool Up)
     {
         float temp = this.bakingData[i].temp;
         float val2_1 = temp;
-        if ((double)temp < (double)this.ovenTemperature)
+        float targetTemp=Up                   //при нагревании тянемся к печи, при остывании к окржающей среде
+            ? this.ovenTemperature
+            : this.EnvironmentTemperature();
+
+        if ((double)temp < (double)targetTemp)
         {
-            float dt1 = (1f + GameMath.Clamp((float)(((double)this.ovenTemperature - (double)temp) / 28.0), 0.0f, 1.6f)) * dt;
-            val2_1 = this.ChangeTemperature(temp, this.ovenTemperature, dt1);
+            float dt1 = (1f + GameMath.Clamp((float)(((double)targetTemp - (double)temp) / 28.0), 0.0f, 1.6f)) * dt;
+            val2_1 = this.ChangeTemperature(temp, targetTemp, dt1);
             CombustibleProperties combustibleProps = stack.Collectible.CombustibleProps;
             int maxTemperature = combustibleProps != null ? combustibleProps.MaxTemperature : 0;
             JsonObject itemAttributes = stack.ItemAttributes;
@@ -305,10 +356,10 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
             if (val1 > 0)
                 val2_1 = Math.Min((float)val1, val2_1);
         }
-        else if ((double)temp > (double)this.ovenTemperature)
+        else if ((double)temp > (double)targetTemp)
         {
-            float dt2 = (1f + GameMath.Clamp((float)(((double)temp - (double)this.ovenTemperature) / 28.0), 0.0f, 1.6f)) * dt;
-            val2_1 = this.ChangeTemperature(temp, this.ovenTemperature, dt2);
+            float dt2 = (1f + GameMath.Clamp((float)(((double)temp - (double)targetTemp) / 28.0), 0.0f, 1.6f)) * dt;
+            val2_1 = this.ChangeTemperature(temp, targetTemp, dt2);
         }
         if ((double)temp != (double)val2_1)
             this.bakingData[i].temp = val2_1;
@@ -485,10 +536,10 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
             case EnumOvenContentMode.Firewood:
                 vec3fArray[0] = new Vec3f();
                 break;
-            case EnumOvenContentMode.SingleCenter://положение пирога
+            case EnumOvenContentMode.SingleCenter:           //положение пирога
                 vec3fArray[0] = new Vec3f(0.0f, 1f / 16f, 0.0f);
                 break;
-            case EnumOvenContentMode.Quadrants://положение хлеба
+            case EnumOvenContentMode.Quadrants:             //положение хлеба
                 vec3fArray[0] = new Vec3f(-0.125f, 1f / 16f, -5f / 32f);
                 vec3fArray[1] = new Vec3f(-0.125f, 1f / 16f, 5f / 32f);
                 vec3fArray[2] = new Vec3f(3f / 16f, 1f / 16f, -5f / 32f);
@@ -526,21 +577,10 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
 
     protected override MeshData getOrCreateMesh(ItemStack stack, int index)
     {
-        if (this.OvenContentMode != EnumOvenContentMode.Firewood)
-            return base.getOrCreateMesh(stack, index);
-        MeshData modeldata = this.getMesh(stack);
-        if (modeldata != null)
-            return modeldata;
-        this.nowTesselatingShape = Shape.TryGet((ICoreAPI)this.capi, AssetLocation.Create(this.Block.Attributes["ovenFuelShape"].AsString(), this.Block.Code.Domain).WithPathPrefixOnce("shapes/").WithPathAppendixOnce(".json"));
-        this.nowTesselatingObj = stack.Collectible;
-        if (this.nowTesselatingShape == null)
-        {
-            this.capi.Logger.Error("Stacking model shape for collectible " + (string)stack.Collectible.Code + " not found. Block will be invisible!");
-            return (MeshData)null;
-        }
-        this.capi.Tesselator.TesselateShape("ovenFuelShape", this.nowTesselatingShape, out modeldata, (ITexPositionSource)this, quantityElements: new int?(stack.StackSize));
-        this.MeshCache[this.getMeshCacheKey(stack)] = modeldata;
-        return modeldata;
+
+        return base.getOrCreateMesh(stack, index);
+
+
     }
 
 

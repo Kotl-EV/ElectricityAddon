@@ -40,7 +40,7 @@ public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer {
                     }
                     else
                     {
-                        if (itemstack.Item.Code.ToString().Contains("perfect"))
+                        if (itemstack.Item.Code.ToString().Contains("perfect") || itemstack.Item.Code.ToString().Contains("rot"))
                             stack_count_perfect++;
                     }
 

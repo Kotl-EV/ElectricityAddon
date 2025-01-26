@@ -40,11 +40,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         get
         {
             ItemSlot firstNonEmptySlot = this.ovenInv.FirstNonEmptySlot;
-            if (firstNonEmptySlot == null)
-                return EnumOvenContentMode.Firewood;
-            BakingProperties bakingProperties = BakingProperties.ReadFrom(firstNonEmptySlot.Itemstack);
-            if (bakingProperties == null)
-                return EnumOvenContentMode.Firewood;
+            BakingProperties bakingProperties = BakingProperties.ReadFrom(firstNonEmptySlot.Itemstack); 
             return !bakingProperties.LargeItem ? EnumOvenContentMode.Quadrants : EnumOvenContentMode.SingleCenter;
         }
     }

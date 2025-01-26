@@ -24,7 +24,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
     private int rotationDeg;
     private Random prng;
     //private int syncCount;
-    //private ILoadedSound ambientSound;
+
     internal InventoryEOven ovenInv;
 
 
@@ -115,17 +115,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         }
         CollectibleObject collectible = activeHotbarSlot.Itemstack.Collectible;
 
-        if (collectible.Attributes?["bakingProperties"] == null)
-        {
-            CombustibleProperties combustibleProps = collectible.CombustibleProps;
-            if ((combustibleProps != null ? (combustibleProps.SmeltingType == EnumSmeltType.Bake ? 1 : 0) : 0) == 0 || collectible.CombustibleProps.MeltingPoint >= 260)
-            {
-                if (!this.TryTake(byPlayer))
-                    return false;
-                byPlayer.InventoryManager.BroadcastHotbarSlot();
-                return true;
-            }
-        }
+       
         if (activeHotbarSlot.Itemstack.Equals(this.Api.World, this.lastRemoved, GlobalConstants.IgnoredStackAttributes) && !this.ovenInv[0].Empty)
         {
             if (this.TryTake(byPlayer))
@@ -136,7 +126,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         }
         else
         {
-            AssetLocation code = activeHotbarSlot.Itemstack?.Collectible.Code;
+            AssetLocation code = activeHotbarSlot.Itemstack?.Collectible?.Code;
             if (this.TryPut(activeHotbarSlot))
             {
                 AssetLocation place = activeHotbarSlot.Itemstack?.Block?.Sounds?.Place;
@@ -533,9 +523,6 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         Vec3f[] vec3fArray = new Vec3f[this.DisplayedItems];
         switch (this.OvenContentMode)
         {
-            case EnumOvenContentMode.Firewood:
-                vec3fArray[0] = new Vec3f();
-                break;
             case EnumOvenContentMode.SingleCenter:           //положение пирога
                 vec3fArray[0] = new Vec3f(0.0f, 1f / 16f, 0.0f);
                 break;
@@ -549,8 +536,8 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         for (int index = 0; index < numArray.Length; ++index)
         {
             Vec3f vec3f = vec3fArray[index];
-            float y = this.OvenContentMode == EnumOvenContentMode.Firewood ? 0.9f : this.bakingData[index].CurHeightMul;
-            numArray[index] = new Matrixf().Translate(vec3f.X, vec3f.Y, vec3f.Z).Translate(0.5f, 0.0f, 0.5f).RotateYDeg((float)(this.rotationDeg + (this.OvenContentMode == EnumOvenContentMode.Firewood ? 270 : 0))).Scale(0.9f, y, 0.9f).Translate(-0.5f, 0.0f, -0.5f).Values;
+            float y = this.bakingData[index].CurHeightMul;
+            numArray[index] = new Matrixf().Translate(vec3f.X, vec3f.Y, vec3f.Z).Translate(0.5f, 0.0f, 0.5f).RotateYDeg((float)this.rotationDeg).Scale(0.9f, y, 0.9f).Translate(-0.5f, 0.0f, -0.5f).Values;
         }
         return numArray;
     }
@@ -566,7 +553,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
                 break;
             }
         }
-        return (this.OvenContentMode == EnumOvenContentMode.Firewood ? stack.StackSize.ToString() + "x" : "") + base.getMeshCacheKey(stack) + str;
+        return base.getMeshCacheKey(stack) + str;
     }
 
     public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tessThreadTesselator)

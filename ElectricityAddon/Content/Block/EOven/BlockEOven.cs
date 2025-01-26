@@ -19,81 +19,54 @@ public class BlockEOven : Vintagestory.API.Common.Block
         if (api.Side != EnumAppSide.Client)
             return;
         ICoreClientAPI capi = api as ICoreClientAPI;
-        if (capi != null)
-            this.interactions = ObjectCacheUtil.GetOrCreate<WorldInteraction[]>(api, "ovenInteractions",
-              (CreateCachableObjectDelegate<WorldInteraction[]>)(() =>
-              {
-                  List<ItemStack> itemStackList1 = new List<ItemStack>();
-                  List<ItemStack> fuelStacklist = new List<ItemStack>();
-                  List<ItemStack> itemStackList2 = BlockBehaviorCanIgnite.CanIgniteStacks(api, true);
-                  foreach (CollectibleObject collectible in api.World.Collectibles)
-                  {
-                      JsonObject attributes = collectible.Attributes;
-                      if ((attributes != null ? (attributes.IsTrue("isClayOvenFuel") ? 1 : 0) : 0) != 0)
-                      {
-                          List<ItemStack> handBookStacks = collectible.GetHandBookStacks(capi);
-                          if (handBookStacks != null)
-                              fuelStacklist.AddRange((IEnumerable<ItemStack>)handBookStacks);
-                      }
-                      else
-                      {
-                          if (collectible.Attributes?["bakingProperties"]?.AsObject<BakingProperties>() == null)
-                          {
-                              CombustibleProperties combustibleProps = collectible.CombustibleProps;
-                              if ((combustibleProps != null ? (combustibleProps.SmeltingType == EnumSmeltType.Bake ? 1 : 0) : 0) ==
-                            0 || collectible.CombustibleProps.SmeltedStack == null ||
-                            collectible.CombustibleProps.MeltingPoint >= 260)
-                                  continue;
-                          }
+        interactions = ObjectCacheUtil.GetOrCreate(api, "EOvenBlockInteractions", () =>
+        {
+            List<ItemStack> rackableStacklist = new List<ItemStack>();
 
-                          List<ItemStack> handBookStacks = collectible.GetHandBookStacks(capi);
-                          if (handBookStacks != null)
-                              itemStackList1.AddRange((IEnumerable<ItemStack>)handBookStacks);
-                      }
-                  }
-
-                  return new WorldInteraction[1]
+            foreach (CollectibleObject obj in api.World.Collectibles)
             {
-            new WorldInteraction()
-            {
-              ActionLangCode = "blockhelp-oven-bakeable",
-              HotKeyCode = (string)null,
-              MouseButton = EnumMouseButton.Right,
-              Itemstacks = itemStackList1.ToArray(),
-              GetMatchingStacks = (InteractionStacksDelegate)((wi, bs, es) =>
-              {
-                if (wi.Itemstacks.Length == 0)
-                  return (ItemStack[])null;
-                return !(api.World.BlockAccessor.GetBlockEntity(bs.Position) is BlockEntityEOven blockEntity2)
-                  ? (ItemStack[])null
-                  : blockEntity2.CanAdd(wi.Itemstacks);
-              })
+                if (obj.Attributes?["bakingProperties"]?.AsObject<BakingProperties>() == null) continue;
+                List<ItemStack> stacks = obj.GetHandBookStacks(capi);
+                if (stacks != null) rackableStacklist.AddRange(stacks);
             }
-                };
-              }));
-        
+
+            return new[]
+            {
+                new WorldInteraction
+                {
+                    ActionLangCode = "blockhelp-oven-bakeable",
+                    HotKeyCode = null,
+                    MouseButton = EnumMouseButton.Right,
+                    Itemstacks = rackableStacklist.ToArray(),
+                },
+                new WorldInteraction
+                {
+                    ActionLangCode = "blockhelp-toolrack-take",
+                    HotKeyCode = null,
+                    MouseButton = EnumMouseButton.Right,
+                }
+            };
+        });
     }
 
     public override bool DoParticalSelection(IWorldAccessor world, BlockPos pos) => true;
 
     public override bool OnBlockInteractStart(
-      IWorldAccessor world,
-      IPlayer byPlayer,
-      BlockSelection bs)
+        IWorldAccessor world,
+        IPlayer byPlayer,
+        BlockSelection bs)
     {
         return world.BlockAccessor.GetBlockEntity(bs.Position) is BlockEntityEOven blockEntity
-          ? blockEntity.OnInteract(byPlayer, bs)
-          : base.OnBlockInteractStart(world, byPlayer, bs);
+            ? blockEntity.OnInteract(byPlayer, bs)
+            : base.OnBlockInteractStart(world, byPlayer, bs);
     }
 
     public override WorldInteraction[] GetPlacedBlockInteractionHelp(
-      IWorldAccessor world,
-      BlockSelection selection,
-      IPlayer forPlayer)
+        IWorldAccessor world,
+        BlockSelection selection,
+        IPlayer forPlayer)
     {
-        return this.interactions.Append<WorldInteraction>(base.GetPlacedBlockInteractionHelp(world, selection, forPlayer));
+        return this.interactions.Append<WorldInteraction>(
+            base.GetPlacedBlockInteractionHelp(world, selection, forPlayer));
     }
-
-    
-
 }

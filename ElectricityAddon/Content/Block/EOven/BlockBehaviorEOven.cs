@@ -72,7 +72,7 @@ public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer {
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
         base.GetBlockInfo(forPlayer, stringBuilder);
         stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
-        stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Eu");
+        stringBuilder.AppendLine("├ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Eu");
         stringBuilder.AppendLine("└ " + Lang.Get("Temperature") + OvenTemperature + "°");
         stringBuilder.AppendLine();
     }

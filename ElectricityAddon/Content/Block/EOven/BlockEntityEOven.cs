@@ -205,24 +205,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         }
         return false;
     }
-
-    public virtual ItemStack[] CanAdd(ItemStack[] itemstacks)
-    {
-        if (this.IsBurning)
-            return (ItemStack[])null;
-        if (!this.FuelSlot.Empty)
-            return (ItemStack[])null;
-        if ((double)this.ovenTemperature <= (double)(this.EnvironmentTemperature() + 25))
-            return (ItemStack[])null;
-        for (int slotId = 0; slotId < this.bakeableCapacity; ++slotId)
-        {
-            if (this.ovenInv[slotId].Empty)
-                return itemstacks;
-        }
-        return (ItemStack[])null;
-    }
-
-
+    
     public float GetHeatStrength(
       IWorldAccessor world,
       BlockPos heatSourcePos,
@@ -506,10 +489,10 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
             case EnumOvenContentMode.Firewood:
                 vec3fArray[0] = new Vec3f();
                 break;
-            case EnumOvenContentMode.SingleCenter:
+            case EnumOvenContentMode.SingleCenter://положение пирога
                 vec3fArray[0] = new Vec3f(0.0f, 1f / 16f, 0.0f);
                 break;
-            case EnumOvenContentMode.Quadrants:
+            case EnumOvenContentMode.Quadrants://положение хлеба
                 vec3fArray[0] = new Vec3f(-0.125f, 1f / 16f, -5f / 32f);
                 vec3fArray[1] = new Vec3f(-0.125f, 1f / 16f, 5f / 32f);
                 vec3fArray[2] = new Vec3f(3f / 16f, 1f / 16f, -5f / 32f);

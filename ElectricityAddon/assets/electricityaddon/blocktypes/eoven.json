@@ -4,7 +4,7 @@
   "entityClass": "BlockEntityEOven",
   "entityBehaviors": [
     { "name": "BEBehaviorEOven" },
-    { "name": "Electricity" }
+    { "name": "ElectricityAddon" }
   ],
   "blockmaterial": "Ceramic",
   "behaviors": [

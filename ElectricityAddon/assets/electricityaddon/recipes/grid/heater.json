@@ -1,0 +1,21 @@
+{
+  "ingredientPattern": "MC",
+  "width": 2,
+  "height": 1,
+  "ingredients": {
+    "M": {
+      "type": "item",
+      "code": "game:metalplate-iron"
+    },
+    "C": {
+      "type": "block",
+      "code": "electricityaddon:cable-*",
+      "quantity": 16
+    }
+  },
+  "output": {
+    "type": "block",
+    "code": "electricityaddon:heater-disabled",
+    "quantity": 4
+  }
+}

@@ -7,7 +7,7 @@
       "name": "BEBehaviorELamp"
     },
     {
-      "name": "Electricity"
+      "name": "ElectricityAddon"
     }
   ],
   "attributes": {
@@ -65,10 +65,10 @@
 
   "shapeByType": {
     "*-disabled": {
-      "base": "electricity:block/lamp_small-disabled"
+      "base": "block/lamp_small-disabled"
     },
     "*-enabled": {
-      "base": "electricity:block/lamp_small-enabled"
+      "base": "block/lamp_small-enabled"
     }
   },
   "resistance": 1,

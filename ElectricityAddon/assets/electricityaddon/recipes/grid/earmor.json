@@ -22,7 +22,7 @@
       "C": { "type": "item", "code": "game:armor-body-chain-steel"},
       "B": {"type": "item", "code": "game:glider"},
       "E": {"type": "item", "code": "electricityaddon:coil", "quantity": 8},
-      "Z": {"type": "block", "code": "electricity:accumulator"}
+      "Z": {"type": "block", "code": "electricityaddon:accumulator"}
     },
     "width": 3,
     "height": 3,

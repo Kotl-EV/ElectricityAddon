@@ -1,8 +1,7 @@
-﻿
-using Electricity.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;

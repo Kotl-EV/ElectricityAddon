@@ -3,7 +3,7 @@
   "ingredients": {
     "M": {
       "type": "block",
-      "code": "electricity:cable-dot", "quantity": 3
+      "code": "electricityaddon:cable-dot", "quantity": 3
     },
     "B": {
       "type": "item",

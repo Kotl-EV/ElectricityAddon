@@ -1,5 +1,5 @@
-﻿using Electricity.Utils;
-using System;
+﻿using System;
+using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
@@ -10,7 +10,7 @@ namespace ElectricityAddon.Content.Block.ELamp
     {
         private Facing facing = Facing.None;
 
-        private Electricity.Content.Block.Entity.Behavior.Electricity Electricity => this.GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
+        private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 
         private BEBehaviorELamp Behavior => this.GetBehavior<BEBehaviorELamp>();
 
@@ -23,11 +23,11 @@ namespace ElectricityAddon.Content.Block.ELamp
                 {
                     if (this.Block.Code.ToString().Contains("small"))                           //смотрим какая все же лампочка вызвала
                     {
-                        this.Electricity.Connection = this.facing = value;                      //если лампа маленькая
+                        this.ElectricityAddon.Connection = this.facing = value;                      //если лампа маленькая
                     }
                     else
                     {
-                        this.Electricity.Connection = FacingHelper.FullFace(this.facing = value);  //если лампа обычная
+                        this.ElectricityAddon.Connection = FacingHelper.FullFace(this.facing = value);  //если лампа обычная
                     }
                 }
             }

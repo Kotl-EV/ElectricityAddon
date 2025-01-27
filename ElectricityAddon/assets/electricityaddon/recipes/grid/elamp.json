@@ -20,7 +20,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       },
       "A": {
@@ -84,7 +84,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       },
       "A": {
@@ -148,7 +148,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       },
       "A": {
@@ -212,7 +212,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       },
       "A": {
@@ -276,7 +276,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       }
     },
@@ -322,7 +322,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       },
       "A": {
@@ -386,7 +386,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       },
       "A": {
@@ -450,7 +450,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       },
       "A": {

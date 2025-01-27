@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using Electricity.Utils;
+using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -10,15 +9,14 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Server;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
-using PositionProviderDelegate = Vintagestory.GameContent.PositionProviderDelegate;
 
 namespace ElectricityAddon.Content.Block.EFreezer;
 
-class BlockEntityEFreezer : BlockEntityContainerFreezer, ITexPositionSource
+class BlockEntityEFreezer : ContainerEFreezer, ITexPositionSource
 {
-    private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
+    private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
     private static readonly Vec3f center = new Vec3f(0.5f, 0.25f, 0.5f);
-    internal EFreezerInventory inventory;
+    internal InventoryEFreezer inventory;
     GuiEFreezer freezerDialog;
     ICoreClientAPI capi;
     public bool isOpened;
@@ -33,7 +31,7 @@ class BlockEntityEFreezer : BlockEntityContainerFreezer, ITexPositionSource
 
     public BlockEntityEFreezer()
     {
-        inventory = new EFreezerInventory(null, null);
+        inventory = new InventoryEFreezer(null, null);
         isOpened = false;
         closedDelay = 0;
         meshes = new MeshData[inventory.Count];
@@ -421,7 +419,7 @@ class BlockEntityEFreezer : BlockEntityContainerFreezer, ITexPositionSource
     public override void OnBlockPlaced(ItemStack? byItemStack = null)
     {
         base.OnBlockPlaced(byItemStack);
-        var electricity = Electricity;
+        var electricity = ElectricityAddon;
         if (electricity != null)
         {
             electricity.Connection = Facing.DownAll;
@@ -431,7 +429,7 @@ class BlockEntityEFreezer : BlockEntityContainerFreezer, ITexPositionSource
     public override void OnBlockRemoved()
     {
         base.OnBlockRemoved();
-        var electricity = Electricity;
+        var electricity = ElectricityAddon;
         electricity.Connection = Facing.None;
         if (freezerDialog != null)
         {

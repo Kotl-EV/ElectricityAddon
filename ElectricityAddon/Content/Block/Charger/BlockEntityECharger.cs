@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using Cairo;
-using Electricity.Utils;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
@@ -11,7 +10,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
-using Facing = Electricity.Utils.Facing;
+using Facing = ElectricityAddon.Utils.Facing;
 
 namespace ElectricityAddon.Content.Block.ECharger;
 
@@ -44,7 +43,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
         }
     }
 
-    private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
+    private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 
     public BlockEntityECharger()
     {
@@ -213,7 +212,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
     public override void OnBlockPlaced(ItemStack? byItemStack = null)
     {
         base.OnBlockPlaced(byItemStack);
-        var electricity = Electricity;
+        var electricity = ElectricityAddon;
         if (electricity != null)
         {
             electricity.Connection = Facing.DownAll;
@@ -223,7 +222,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
     public override void OnBlockRemoved()
     {
         base.OnBlockRemoved();
-        var electricity = Electricity;
+        var electricity = ElectricityAddon;
         electricity.Connection = Facing.DownAll;
     }
 

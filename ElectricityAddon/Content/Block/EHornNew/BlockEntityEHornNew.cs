@@ -12,7 +12,7 @@ namespace ElectricityAddon.Content.Block.EHornNew;
 
 public class BlockEntityEHornNew : BlockEntity, IHeatSource
 {
-    private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
+    private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
     EHornContentsRenderer renderer;
     ItemStack contents;
     public bool burning;

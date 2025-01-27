@@ -1,5 +1,5 @@
 ﻿using Electricity.Content.Block.Entity;
-using Electricity.Utils;
+using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -14,7 +14,7 @@ public class BlockConnector : Vintagestory.API.Common.Block {
                 return;
             }
 
-            if (world.BlockAccessor.GetBlockEntity(position) is Cable  entity) {
+            if (world.BlockAccessor.GetBlockEntity(position) is BlockEntityECable  entity) {
                 if (byPlayer is { CurrentBlockSelection: { } blockSelection }) {
                     var connection = entity.Connection & ~Facing.AllAll;
 
@@ -36,7 +36,7 @@ public class BlockConnector : Vintagestory.API.Common.Block {
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos) {
             base.OnNeighbourBlockChange(world, pos, neibpos);
 
-            if (world.BlockAccessor.GetBlockEntity(pos) is Cable entity) {
+            if (world.BlockAccessor.GetBlockEntity(pos) is BlockEntityECable entity) {
                 var blockFacing = BlockFacing.FromVector(neibpos.X - pos.X, neibpos.Y - pos.Y, neibpos.Z - pos.Z);
                 var selectedFacing = FacingHelper.FromFace(blockFacing);
 

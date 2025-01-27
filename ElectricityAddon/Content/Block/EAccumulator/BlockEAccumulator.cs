@@ -60,7 +60,7 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
 
     public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
     {
-        Electricity.Content.Block.Entity.Accumulator? be = world.BlockAccessor.GetBlockEntity(pos) as Electricity.Content.Block.Entity.Accumulator;
+        BlockEntityEAccumulator? be = world.BlockAccessor.GetBlockEntity(pos) as BlockEntityEAccumulator;
         ItemStack item = new ItemStack(world.BlockAccessor.GetBlock(pos));
         if (be != null) item.Attributes.SetInt("electricity:energy", be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
         if (be != null) item.Attributes.SetInt("durability", 100 * be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity() / maxcapacity);
@@ -69,7 +69,7 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
 
     public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
     {
-        Electricity.Content.Block.Entity.Accumulator? be = world.BlockAccessor.GetBlockEntity(pos) as Electricity.Content.Block.Entity.Accumulator;
+        BlockEntityEAccumulator? be = world.BlockAccessor.GetBlockEntity(pos) as BlockEntityEAccumulator;
         ItemStack item = new ItemStack(world.BlockAccessor.GetBlock(pos));
         if (be != null) item.Attributes.SetInt("electricity:energy", be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
         if (be != null) item.Attributes.SetInt("durability", 100 * be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity() / maxcapacity);
@@ -81,7 +81,7 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
         base.OnBlockPlaced(world, blockPos, byItemStack);
         if (byItemStack != null)
         {
-            Electricity.Content.Block.Entity.Accumulator? be = world.BlockAccessor.GetBlockEntity(blockPos) as Electricity.Content.Block.Entity.Accumulator;
+            BlockEntityEAccumulator? be = world.BlockAccessor.GetBlockEntity(blockPos) as BlockEntityEAccumulator;
             be.GetBehavior<BEBehaviorEAccumulator>().Store(byItemStack.Attributes.GetInt("electricity:energy", 0));
         }
     }

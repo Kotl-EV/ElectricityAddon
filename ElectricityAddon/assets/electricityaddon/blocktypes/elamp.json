@@ -7,7 +7,7 @@
       "name": "BEBehaviorELamp"
     },
     {
-      "name": "Electricity"
+      "name": "ElectricityAddon"
     }
   ],
   "attributes": {
@@ -56,24 +56,24 @@
 
   "shapeByType": {
     "*-disabled": {
-      "base": "electricity:block/lamp-disabled"
+      "base": "block/lamp-disabled"
     },
     "*-enabled": {
-      "base": "electricity:block/lamp-enabled"
+      "base": "block/lamp-enabled"
     }
   },
 
   "textures": {
-    "brass": { "base": "electricityaddon:block/brass" },
-    "copper": { "base": "electricityaddon:block/copper" },
-    "copper-hot": { "base": "electricityaddon:block/copper-hot" },
-    "emeral": { "base": "electricityaddon:block/emeral" },
-    "iron": { "base": "electricityaddon:block/iron" },
-    "quartzglass": { "base": "electricityaddon:block/quartzglass" },
-    "stainlesssteel": { "base": "electricityaddon:block/stainlesssteel" },
-    "steel": { "base": "electricityaddon:block/steel" },
-    "topaz": { "base": "electricityaddon:block/topaz" },
-    "zinc": { "base": "electricityaddon:block/zinc" }
+    "brass": { "base": "block/brass" },
+    "copper": { "base": "block/copper" },
+    "copper-hot": { "base": "block/copper-hot" },
+    "emeral": { "base": "block/emeral" },
+    "iron": { "base": "block/iron" },
+    "quartzglass": { "base": "block/quartzglass" },
+    "stainlesssteel": { "base": "block/stainlesssteel" },
+    "steel": { "base": "block/steel" },
+    "topaz": { "base": "block/topaz" },
+    "zinc": { "base": "block/zinc" }
   },
   "resistance": 1,
   "drawType": "JSON",

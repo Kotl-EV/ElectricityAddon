@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 
-namespace ElectricityAddon.Network;
+namespace ElectricityAddon.Net;
     [ProtoContract(ImplicitFields = ImplicitFields.AllPublic)]
     public class FlyToggle
     {

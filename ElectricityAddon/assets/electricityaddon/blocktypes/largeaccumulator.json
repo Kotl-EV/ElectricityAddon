@@ -1,14 +1,14 @@
 {
   "code": "largeaccumulator",
   "class": "BlockEAccumulator",
-  "entityClass": "Accumulator",
+  "entityClass": "BlockEntityEAccumulator",
   "storageFlags": 2,
   "entityBehaviors": [
     {
       "name": "BEBehaviorEAccumulator"
     },
     {
-      "name": "Electricity"
+      "name": "ElectricityAddon"
     }
   ],
   "behaviors": [

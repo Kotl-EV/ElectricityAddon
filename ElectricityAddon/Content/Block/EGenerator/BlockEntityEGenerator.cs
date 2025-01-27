@@ -1,5 +1,5 @@
 using System;
-using Electricity.Utils;
+using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
@@ -10,7 +10,7 @@ public class BlockEntityEGenerator : BlockEntity
 {
     private Facing facing = Facing.None;
 
-    private Electricity.Content.Block.Entity.Behavior.Electricity Electricity => this.GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
+    private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 
     public Facing Facing
     {
@@ -19,7 +19,7 @@ public class BlockEntityEGenerator : BlockEntity
         {
             if (value != this.facing)
             {
-                this.Electricity.Connection =
+                this.ElectricityAddon.Connection =
                     FacingHelper.FullFace(this.facing = value);
             }
         }

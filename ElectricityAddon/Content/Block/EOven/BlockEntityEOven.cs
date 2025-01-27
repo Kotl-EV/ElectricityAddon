@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
-using Electricity.Utils;
-using ElectricityAddon.Content.Block.EStove;
+using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
@@ -31,11 +30,8 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
     public virtual float maxTemperature => 300f;
 
     public virtual int bakeableCapacity => 4;
-
-    public virtual int fuelitemCapacity => 6;
-
-
-    private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
+    
+    private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 
 
     private EnumOvenContentMode OvenContentMode  //как отображать содержимое
@@ -503,7 +499,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
     public override void OnBlockPlaced(ItemStack? byItemStack = null)
     {
         base.OnBlockPlaced(byItemStack);
-        var electricity = Electricity;
+        var electricity = ElectricityAddon;
         if (electricity != null)
         {
             electricity.Connection = Facing.DownAll;

@@ -1,6 +1,6 @@
 ﻿using System;
 using ElectricityAddon.Content.Armor;
-using ElectricityAddon.Network;
+using ElectricityAddon.Net;
 using Vintagestory.API.Common;
 using Vintagestory.API.Client;
 using Vintagestory.API.Server;

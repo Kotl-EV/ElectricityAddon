@@ -1,8 +1,7 @@
-﻿using Electricity.Interface;
-using Electricity.Utils;
-using ElectricityAddon.Utils;
+﻿using ElectricityAddon.Utils;
 using System;
 using System.Text;
+using ElectricityAddon.Interface;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 

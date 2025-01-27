@@ -3,7 +3,7 @@
   "ingredients": {
     "M": {
       "type": "block",
-      "code": "electricity:lamp_small-*", "quantity": 1
+      "code": "electricityaddon:elamp_small-*", "quantity": 1
     },
     "B": {
       "type": "item",

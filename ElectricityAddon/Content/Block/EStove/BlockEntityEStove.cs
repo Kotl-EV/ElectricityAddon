@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Electricity.Utils;
+using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -22,7 +22,7 @@ public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPosition
     ICoreClientAPI capi;
     ICoreServerAPI sapi;
     internal InventorySmelting inventory;
-    private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
+    private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 
     // Temperature before the half second tick
     public float prevStoveTemperature = 20;
@@ -695,7 +695,7 @@ public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPosition
 
     public override void OnBlockPlaced(ItemStack? byItemStack = null) {
         base.OnBlockPlaced(byItemStack);
-        var electricity = Electricity;
+        var electricity = ElectricityAddon;
         if (electricity != null) {
             electricity.Connection = Facing.DownAll;
         }

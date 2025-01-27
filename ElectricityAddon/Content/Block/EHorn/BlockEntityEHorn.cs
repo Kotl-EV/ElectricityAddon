@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Electricity.Utils;
+using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -45,7 +45,7 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
         }
     }
 
-    private Electricity.Content.Block.Entity.Behavior.Electricity? Electricity => GetBehavior<Electricity.Content.Block.Entity.Behavior.Electricity>();
+    private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 
     public float GetHeatStrength(IWorldAccessor world, BlockPos heatSourcePos, BlockPos heatReceiverPos)
     {
@@ -277,7 +277,7 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
     {
         base.OnBlockPlaced(byItemStack);
 
-        var electricity = this.Electricity;
+        var electricity = this.ElectricityAddon;
 
         if (electricity != null)
         {

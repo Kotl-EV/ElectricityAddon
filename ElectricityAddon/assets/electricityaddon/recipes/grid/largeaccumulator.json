@@ -38,7 +38,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       },
       "E": {

@@ -44,7 +44,7 @@
       "name": "BEBehaviorECharger"
     },
     {
-      "name": "Electricity"
+      "name": "ElectricityAddon"
     }
   ],
   "blockMaterial": "Stone",

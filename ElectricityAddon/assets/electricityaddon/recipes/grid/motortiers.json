@@ -12,7 +12,7 @@
       },
       "H": {
         "type": "block",
-        "code": "electricity:motor-stator",
+        "code": "electricityaddon:motor-stator",
         "quantity": 1
       },
       "X": {
@@ -33,7 +33,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 16
       }
     },
@@ -57,12 +57,12 @@
       },
       "H": {
         "type": "block",
-        "code": "electricity:motor-stator",
+        "code": "electricityaddon:motor-stator",
         "quantity": 1
       },
       "X": {
         "type": "block",
-        "code": "electricity:cable-*",
+        "code": "electricityaddon:cable-*",
         "quantity": 8
       },
       "M": {

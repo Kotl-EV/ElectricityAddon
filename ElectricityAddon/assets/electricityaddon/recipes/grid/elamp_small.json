@@ -166,7 +166,7 @@
     },
     "output": {
       "type": "block",
-      "code": "electricityaddon:elamp_small-6000-disabled",
+      "code": "electricityaddon:elamp_small-6000-disabled"
     }
   }
 

@@ -82,5 +82,9 @@
   "game:BlockEStove": "Fogão elétrico",
   "game:freezer-title-gui": "Freezer",
   "game:freezer-over-sneak-help": "Abra/feche a porta.",
-  "game:freezer-over-help": "Abra a porta e coloque os alimentos para conservá-los."
+  "game:freezer-over-help": "Abra a porta e coloque os alimentos para conservá-los.",
+  "block-eoven-*": "Forno elétrico",
+  "block-handbooktitle-eoven": "Usado",
+  "block-handbooktext-eoven": "Um forno elétrico permite substituir completamente o forno. Desliga automaticamente quando o processo de cozimento termina. Chega de queima!<br><br>Consumo máximo: 100 Eu/s.",
+  "game:Put-into-4-items": "Você precisa de pelo menos 4 itens de panificação."
 }

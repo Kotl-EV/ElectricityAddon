@@ -82,5 +82,10 @@
   "game:BlockEStove": "Electric stove",
   "game:freezer-title-gui": "Freezer",
   "game:freezer-over-sneak-help": "Open/close the door.",
-  "game:freezer-over-help": "Open the door and put the food in to preserve it."
+  "game:freezer-over-help": "Open the door and put the food in to preserve it.",
+
+  "block-eoven-*": "Electric oven",
+  "block-handbooktitle-eoven": "Used",
+  "block-handbooktext-eoven": "The electric oven allows you to completely replace the stove. It switches off automatically when the baking process is finished. No more burning!<br><br><br>Maximum consumption: 100 Eu/s.",
+  "game:Put-into-4-items": "A minimum of 4 baking items are required."
 }

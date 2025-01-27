@@ -42,12 +42,11 @@
       "groupBy": [ "eoven-*" ],
       "extraSections": [
         {
-          "title": "eoven-handbook-help-title",
-          "text": "eoven-handbook-help-text"
+          "title": "electricityaddon:block-handbooktitle-eoven",
+          "text": "electricityaddon:block-handbooktext-eoven"
         }
       ]
-    },    
-    "rotShape": "item/rot"
+    }
   },
   "creativeinventory": {
     "general": [ "*-north" ],

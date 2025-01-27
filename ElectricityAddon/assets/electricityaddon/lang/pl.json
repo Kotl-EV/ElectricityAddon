@@ -82,5 +82,9 @@
   "game:BlockEStove": "Kuchenka elektryczna",
   "game:freezer-title-gui": "Zamrażarka",
   "game:freezer-over-sneak-help": "Otwórz/zamknij drzwi.",
-  "game:freezer-over-help": "Otwórz drzwi i włóż żywność, aby ją zakonserwować."
+  "game:freezer-over-help": "Otwórz drzwi i włóż żywność, aby ją zakonserwować.",
+  "block-eoven-*": "Piekarnik elektryczny",
+  "block-handbooktitle-eoven": "Używany",
+  "block-handbooktext-eoven": "Piekarnik elektryczny pozwala na całkowitą wymianę piekarnika. Wyłącza się automatycznie po zakończeniu procesu pieczenia. Koniec ze spalaniem!<br><br>Maksymalne zużycie: 100 Eu/s.",
+  "game:Put-into-4-items": "Potrzebujesz co najmniej 4 elementów do pieczenia."
 }

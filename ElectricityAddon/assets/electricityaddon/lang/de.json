@@ -82,5 +82,9 @@
   "game:BlockEStove": "Elektroherd",
   "game:freezer-title-gui": "Gefrierschrank",
   "game:freezer-over-sneak-help": "Öffnen/schließen Sie die Tür.",
-  "game:freezer-over-help": "Öffnen Sie die Tür und legen Sie Lebensmittel hinein, um sie aufzubewahren."
+  "game:freezer-over-help": "Öffnen Sie die Tür und legen Sie Lebensmittel hinein, um sie aufzubewahren.",
+  "block-eoven-*": "Elektrischer Ofen",
+  "block-handbooktitle-eoven": "Gebraucht",
+  "block-handbooktext-eoven": "Mit einem Elektrobackofen können Sie den Backofen komplett ersetzen. Es schaltet sich automatisch aus, wenn der Backvorgang beendet ist. Kein Brennen mehr!<br><br>Maximaler Verbrauch: 100 Eu/s.",
+  "game:Put-into-4-items": "Sie benötigen mindestens 4 Backwaren."
 }

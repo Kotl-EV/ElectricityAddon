@@ -1,38 +1,26 @@
 {
-  "code": "elamp_small",
-  "class": "BlockESmallLamp",
-  "entityClass": "BlockEntityELamp",
+  "code": "lamp",
+  "class": "Lamp",
+  "entityClass": "Lamp",
   "entityBehaviors": [
     {
-      "name": "BEBehaviorELamp"
+      "name": "Lamp"
     },
     {
       "name": "ElectricityAddon"
     }
   ],
+
   "attributes": {
-    "maxConsumption": 4, //максимальное потребление
     "handbook": {
-      "groupBy": [ "elamp_small-*" ],
+      "groupBy": [ "lamp-*" ],
       "extraSections": [
         {
-          "title": "electricityaddon:block-handbooktitle-lamp_small",
-          "text": "electricityaddon:block-handbooktext-lamp_small"
+
         }
       ]
     }
   },
-
-  "attributesByType": {
-    "*-3000-*": { "HSV": [ 58, 40, 10 ] },
-    "*-4000-*": { "HSV": [ 58, 32, 10 ] },
-    "*-5000-*": { "HSV": [ 57, 16, 10 ] },
-    "*-6000-*": { "HSV": [ 0, 0, 10 ] },
-    "*-7000-*": { "HSV": [ 203, 9, 10 ] },
-    "*-8000-*": { "HSV": [ 201, 25, 10 ] },
-    "*-9000-*": { "HSV": [ 199, 40, 10 ] }
-  },
-
 
   "creativeInventory": {
     "general": [
@@ -42,34 +30,34 @@
       "*-disabled"
     ]
   },
+
   "variantGroups": [
-    {
-      "code": "tempK",
-      "states": [ "3000", "4000", "5000", "6000", "7000", "8000", "9000" ]
-    },
     {
       "code": "state",
       "states": [ "disabled", "enabled" ]
     }
-
   ],
-  "textures": {
-    "bismuthbronze": { "base": "block/bismuthbronze" },
-    "brass": { "base": "block/brass" },
-    "copper": { "base": "block/copper" },
-    "iron": { "base": "block/iron" },
-    "quartzglass": { "base": "block/quartzglass" },
-    "stainlesssteel": { "base": "block/stainlesssteel" },
-    "steel": { "base": "block/steel" }
-  },
 
   "shapeByType": {
     "*-disabled": {
-      "base": "block/lamp_small-disabled"
+      "base": "electricityaddon:block/lamp-disabled"
     },
     "*-enabled": {
-      "base": "block/lamp_small-enabled"
+      "base": "electricityaddon:block/lamp-enabled"
     }
+  },
+
+  "textures": {
+    "brass": { "base": "electricityaddon:block/brass" },
+    "copper": { "base": "electricityaddon:block/copper" },
+    "copper-hot": { "base": "electricityaddon:block/copper-hot" },
+    "emeral": { "base": "electricityaddon:block/emeral" },
+    "iron": { "base": "electricityaddon:block/iron" },
+    "quartzglass": { "base": "electricityaddon:block/quartzglass" },
+    "stainlesssteel": { "base": "electricityaddon:block/stainlesssteel" },
+    "steel": { "base": "electricityaddon:block/steel" },
+    "topaz": { "base": "electricityaddon:block/topaz" },
+    "zinc": { "base": "electricityaddon:block/zinc" }
   },
   "resistance": 1,
   "drawType": "JSON",

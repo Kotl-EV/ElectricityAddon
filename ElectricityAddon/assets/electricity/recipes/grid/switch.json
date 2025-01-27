@@ -4,8 +4,8 @@
   "height": 2,
   "ingredients": {
     "G": {
-      "type": "block",
-      "code": "game:forge"
+      "type": "item",
+      "code": "game:stick"
     },
     "S": {
       "type": "item",
@@ -19,13 +19,13 @@
     },
     "C": {
       "type": "block",
-      "code": "electricityaddon:cable-*",
-      "quantity": 16
+      "code": "electricity:cable-*",
+      "quantity": 8
     }
   },
   "output": {
     "type": "block",
-    "code": "electricityaddon:forge-disabled-south",
-    "quantity": 1
+    "code": "electricity:switch-enabled",
+    "quantity": 4
   }
 }

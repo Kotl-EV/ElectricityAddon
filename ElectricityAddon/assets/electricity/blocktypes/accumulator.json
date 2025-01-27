@@ -23,24 +23,19 @@
         "maxcapacity": 64000,
 		    "handbook": {
             "groupBy": ["accumulator-*"],
-          "extraSections": [
-            {
-              "title": "electricityaddon:block-handbooktitle-accumulator",
-              "text": "electricityaddon:block-handbooktext-accumulator"
-            }
-          ]
+            "extraSections": [{}]
 		}
     },
-	
-    "shape": {
-        "base": "block/accumulator"
-    },
+
+  "shape": {
+    "base": "electricityaddon:block/accumulator"
+  },
     "textures": {
-        "brass": { "base": "block/brass" },
-        "copper": { "base": "block/copper" },
-        "iron": { "base": "block/iron" },
-        "steel": { "base": "block/steel" },
-        "zinc": { "base": "block/zinc" }
+      "brass": { "base": "electricityaddon:block/brass" },
+      "copper": { "base": "electricityaddon:block/copper" },
+      "iron": { "base": "electricityaddon:block/iron" },
+      "steel": { "base": "electricityaddon:block/steel" },
+      "zinc": { "base": "electricityaddon:block/zinc" }
     },
     "resistance": 1,
     "drawType": "JSON",

@@ -127,9 +127,9 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
             // .AppendLine("├ Number of producers: " + networkInformation?.NumberOfProducers)
             // .AppendLine("├ Number of accumulators: " + networkInformation?.NumberOfAccumulators)
             // .AppendLine("├ Block: " + networkInformation?.NumberOfBlocks)
-            .AppendLine("├ " + Lang.Get("Production") + networkInformation?.Production + "Eu")
-            .AppendLine("├ " + Lang.Get("Consumption") + networkInformation?.Consumption + "Eu")
-            .AppendLine("└ " + Lang.Get("Overflow") + networkInformation?.Overflow + "Eu");
+            .AppendLine("├ " + Lang.Get("Production") + networkInformation?.Production + " Eu")
+            .AppendLine("├ " + Lang.Get("Consumption") + networkInformation?.Consumption + " Eu")
+            .AppendLine("└ " + Lang.Get("Overflow") + networkInformation?.Overflow + " Eu");
     }
 
 

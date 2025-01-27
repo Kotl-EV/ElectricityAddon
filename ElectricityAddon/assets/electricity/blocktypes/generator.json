@@ -1,23 +1,21 @@
 {
-  "code": "Motor",
-  "class": "BlockEMotorTier1",
-  "entityClass": "BlockEntityEMotor",
+  "code": "Generator",
+  "class": "BlockEGeneratorTier1",
+  "entityClass": "BlockEntityEGenerator",
   "entityBehaviors": [
     {
-      "name": "BEBehaviorEMotorTier1"
+      "name": "BEBehaviorEGeneratorTier1"
     },
     {
       "name": "ElectricityAddon"
     }
   ],
   "attributes": {
-    "params": [ 10.0, 100.0, 0.5, 0.75, 0.5, 0.1 ],  //параметры двигателя, менять на свой страх и риск
+    "params": [ 100.0, 0.5, 0.1, 0.25 ],    //параметры генератора, менять на свой страх и риск
     "handbook": {
-      "groupBy": [ "motor-*" ],
+      "groupBy": [ "generator-*" ],
       "extraSections": [
         {
-          "title": "electricityaddon:block-handbooktitle-motor",
-          "text": "electricityaddon:block-handbooktext-motor"
         }
       ]
     }
@@ -43,14 +41,14 @@
     }
   ],
   "shapeInventory": {
-    "base": "block/motortier1"
+    "base": "electricityaddon:block/generatortier1"
   },
   "shapeByType": {
-    "*-rotor": {
-      "base": "block/motortier1-rotor"
+    "Generator-rotor": {
+      "base": "electricityaddon:block/generatortier1-rotor"
     },
-    "*-stator": {
-      "base": "block/motortier1-stator"
+    "Generator-stator": {
+      "base": "electricityaddon:block/generatortier1-stator"
     }
   },
   "resistance": 1,

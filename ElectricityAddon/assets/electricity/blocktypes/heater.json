@@ -33,22 +33,22 @@
         }
     ],
     "shapeByType": {
-        "*-disabled": {
-            "base": "block/heater-disabled"
-        },
-        "*-enabled": {
-            "base": "block/heater-enabled"
-        }
+      "*-disabled": {
+        "base": "electricityaddon:block/heater-disabled"
+      },
+      "*-enabled": {
+        "base": "electricityaddon:block/heater-enabled"
+      }
     },
     "textures": {
-        "bismuthbronze": { "base": "block/bismuthbronze" },
-        "brass": { "base": "block/brass" },
-        "copper": { "base": "block/copper" },
-        "copper-hot": { "base": "block/copper-hot" },
-        "emeral": { "base": "block/emeral" },
-        "iron": { "base": "block/iron" },
-        "steel": { "base": "block/steel" },
-        "topaz": { "base": "block/topaz" }
+        "bismuthbronze": { "base": "electricityaddon:block/bismuthbronze" },
+        "brass": { "base": "electricityaddon:block/brass" },
+        "copper": { "base": "electricityaddon:block/copper" },
+        "copper-hot": { "base": "electricityaddon:block/copper-hot" },
+        "emeral": { "base": "electricityaddon:block/emeral" },
+        "iron": { "base": "electricityaddon:block/iron" },
+        "steel": { "base": "electricityaddon:block/steel" },
+        "topaz": { "base": "electricityaddon:block/topaz" }
     },
     "resistance": 1,
     "drawType": "JSON",

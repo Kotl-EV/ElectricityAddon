@@ -16,8 +16,8 @@
       "groupBy": [ "elamp-*" ],
       "extraSections": [
         {
-          "title": "electricity:block-handbooktitle-lamp",
-          "text": "electricity:block-handbooktext-lamp"
+          "title": "electricityaddon:block-handbooktitle-lamp",
+          "text": "electricityaddon:block-handbooktext-lamp"
         }
       ]
     }

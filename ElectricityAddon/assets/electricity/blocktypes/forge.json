@@ -1,32 +1,30 @@
 {
-  "code": "eforge",
+  "code": "forge",
   "class": "BlockEHorn",
   "entityClass": "BlockEntityEHorn",
   "attributes": {
     "maxConsumption": 100,
     "handbook": {
-      "groupBy": [ "eforge-*" ],
+      "groupBy": [ "forge-*" ],
       "extraSections": [
         {
-          "title": "electricityaddon:block-handbooktitle-eforge",
-          "text": "electricityaddon:block-handbooktext-eforge"
         }
       ]
     }
   },
   "shape": {
-    "base": "block/eforge-disabled"
+    "base": "block/forge"
   },
   "textures": {
-    "bismuthbronze": { "base": "block/bismuthbronze" },
-    "brass": { "base": "block/brass" },
-    "copper": { "base": "block/copper" },
-    "copper-hot": { "base": "block/copper-hot" },
-    "emeral": { "base": "block/emeral" },
-    "iron": { "base": "block/iron" },
-    "steel": { "base": "block/steel" },
-    "topaz": { "base": "block/topaz" },
-    "zinc": { "base": "block/zinc" }
+    "bismuthbronze": { "base": "electricityaddon:block/bismuthbronze" },
+    "brass": { "base": "electricityaddon:block/brass" },
+    "copper": { "base": "electricityaddon:block/copper" },
+    "copper-hot": { "base": "electricityaddon:block/copper-hot" },
+    "emeral": { "base": "electricityaddon:block/emeral" },
+    "iron": { "base": "electricityaddon:block/iron" },
+    "steel": { "base": "electricityaddon:block/steel" },
+    "topaz": { "base": "electricityaddon:block/topaz" },
+    "zinc": { "base": "electricityaddon:block/zinc" }
   },
   "behaviors": [
     {
@@ -60,35 +58,35 @@
   ],
   "shapebytype": {
     "*-enabled-north": {
-      "base": "block/eforge-enabled",
+      "base": "electricityaddon:block/eforge-enabled",
       "rotateY": 0
     },
     "*-enabled-east": {
-      "base": "block/eforge-enabled",
+      "base": "electricityaddon:block/eforge-enabled",
       "rotateY": 270
     },
     "*-enabled-south": {
-      "base": "block/eforge-enabled",
+      "base": "electricityaddon:block/eforge-enabled",
       "rotateY": 180
     },
     "*-enabled-west": {
-      "base": "block/eforge-enabled",
+      "base": "electricityaddon:block/eforge-enabled",
       "rotateY": 90
     },
     "*-disabled-north": {
-      "base": "block/eforge-disabled",
+      "base": "electricityaddon:block/eforge-disabled",
       "rotateY": 0
     },
     "*-disabled-east": {
-      "base": "block/eforge-disabled",
+      "base": "electricityaddon:block/eforge-disabled",
       "rotateY": 270
     },
     "*-disabled-south": {
-      "base": "block/eforge-disabled",
+      "base": "electricityaddon:block/eforge-disabled",
       "rotateY": 180
     },
     "*-disabled-west": {
-      "base": "block/eforge-disabled",
+      "base": "electricityaddon:block/eforge-disabled",
       "rotateY": 90
     }
   },

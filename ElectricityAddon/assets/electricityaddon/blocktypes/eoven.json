@@ -42,8 +42,8 @@
       "groupBy": [ "eoven-*" ],
       "extraSections": [
         {
-          "title": "eoven-handbook-help-title",
-          "text": "eoven-handbook-help-text"
+          "title": "electricityaddon:eoven-handbook-help-title",
+          "text": "electricityaddon:eoven-handbook-help-text"
         }
       ]
     },    

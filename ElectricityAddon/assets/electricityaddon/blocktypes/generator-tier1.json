@@ -16,8 +16,8 @@
       "groupBy": [ "generator-*" ],
       "extraSections": [
         {
-          "title": "electricity:block-handbooktitle-generator",
-          "text": "electricity:block-handbooktext-generator"
+          "title": "electricityaddon:block-handbooktitle-generator",
+          "text": "electricityaddon:block-handbooktext-generator"
         }
       ]
     }
@@ -43,14 +43,14 @@
     }
   ],
   "shapeInventory": {
-    "base": "electricityaddon:block/generatortier1"
+    "base": "block/generatortier1"
   },
   "shapeByType": {
     "Generator-rotor": {
-      "base": "electricityaddon:block/generatortier1-rotor"
+      "base": "block/generatortier1-rotor"
     },
     "Generator-stator": {
-      "base": "electricityaddon:block/generatortier1-stator"
+      "base": "block/generatortier1-stator"
     }
   },
   "resistance": 1,

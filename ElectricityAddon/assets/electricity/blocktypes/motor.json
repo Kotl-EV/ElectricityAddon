@@ -16,8 +16,6 @@
       "groupBy": [ "motor-*" ],
       "extraSections": [
         {
-          "title": "electricityaddon:block-handbooktitle-motor",
-          "text": "electricityaddon:block-handbooktext-motor"
         }
       ]
     }
@@ -43,14 +41,14 @@
     }
   ],
   "shapeInventory": {
-    "base": "block/motortier1"
+    "base": "electricityaddon:block/motortier1"
   },
   "shapeByType": {
     "*-rotor": {
-      "base": "block/motortier1-rotor"
+      "base": "electricityaddon:block/motortier1-rotor"
     },
     "*-stator": {
-      "base": "block/motortier1-stator"
+      "base": "electricityaddon:block/motortier1-stator"
     }
   },
   "resistance": 1,

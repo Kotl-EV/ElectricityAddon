@@ -1,116 +1,171 @@
 {
-  "block-charger-*": "Charging station",
-  "block-estove-*": "Electric stove",
-  "block-efreezer-*": "Electric freezer",
-  "block-largeaccumulator": "Battery (large)",
-  "block-motortier2-*": "Upgraded engine",
-  "block-motortier3-*": "High performance engine",
-  "block-generatortier2-*": "Upgraded generator",
-  "block-generatortier3-*": "High performance generator",
-  "block-elamp-3000-*": "Electric lamp: orange-warm (3000K)",
-  "block-elamp-4000-*": "Electric lamp: yellow-warm (4000K)",
-  "block-elamp-5000-*": "Electric lamp: warm white (5000K)",
-  "block-elamp-6000-*": "Electric lamp: neutral white (6000K)",
-  "block-elamp-7000-*": "Electric lamp: bluish white (7000K)",
-  "block-elamp-8000-*": "Electric lamp: cold white (8000K)",
-  "block-elamp-9000-*": "Electric lamp: blue-cold (9000K)",
-  "block-elamp_small-3000-*": "Electric lamp (small): orange-warm (3000K)",
-  "block-elamp_small-4000-*": "Electric lamp (small): yellow-warm (4000K)",
-  "block-elamp_small-5000-*": "Electric lamp (small): warm white (5000K)",
-  "block-elamp_small-6000-*": "Electric lamp (small): neutral white (6000K)",
-  "block-elamp_small-7000-*": "Electric lamp (small): bluish white (7000K)",
-  "block-elamp_small-8000-*": "Electric lamp (small): cold white (8000K)",
-  "block-elamp_small-9000-*": "Electric lamp (small): blue-cold (9000K)",
-  "item-edrill": "Electric drill",
-  "item-echisel": "Electric chisel",
-  "item-coil": "Copper coil",
-  "item-edrilltip": "Drill tip",
-  "item-engineshaft": "Rotor",
-  "item-eaxe": "Electric axe",
-  "item-static-saber": "Electric sword",
-  "item-static-spear": "Electric Spear",
-  "item-static-shield": "Electrical panel",
-  "item-static-helmet": "Electric helmet",
-  "item-static-armor": "Electric Bib",
-  "item-static-boots": "Electric Leggings",
-  "game:drill1": "Digs 1X1 block",
-  "game:drill2": "Digs 1X3 blocks",
-  "game:gamemechanicinfo-electricityaddon-title": "Electricity: ElectricityAddon/Electricity modification",
-  "game:gamemechanicinfo-electricityaddon-text": "<strong>Electricity: ElectricityAddon/Electricity modification</strong><br>The modification adds electrical energy, electrical appliances, devices, weapons and armor to the game. All this helps to make it easier (or not) to survive in the game world, reduce the amount of routine, and diversify the gaming experience.<br><br><strong>Basics</strong><br>The law of conservation of energy states that energy does not appear from anywhere and does not disappear anywhere. Energy only passes from one type to another or from one body to another. So it is in the game.<br><br>The main source of mechanical energy is windmills. Generators can be used to convert mechanical energy into electrical energy. To do this, you need to use a shaft and/or gear to transmit torque from the mill to the generator shaft. After this, the generator will begin to generate electricity.<br><br>Electric energy can be transmitted through cables to consumers. Just place the cable on the blocks in the desired direction. On each edge of the block, you can place up to 4 cables that will be directed in different directions. This allows you to lay cables in any direction and branch the electrical circuit. The cable must be connected to the iron plate of the electrical device, then it will start working. Electrical devices and metal blocks can also be conductors of current.<br><br>Since the wind does not always blow and not at full strength, the energy produced by the generators may not be enough to operate all electrical devices. To avoid this, you need to connect your electrical circuit to the battery(s). They will constantly accumulate electrical energy and give it to the circuit to power the devices, at any time, even in the absence of wind.<br><br>To save energy, some devices must be disconnected from the circuit when they are not in use. A switch is used for this. Install it on the section of the circuit where you need to turn off the power.<br><br>For some devices that still need mechanical energy to work, you will need a motor. It converts electrical energy into mechanical energy. You need to connect it with a shaft to the device. When turned on, the motor will try to deliver maximum power to the shaft, so make sure there is enough power in the circuit.",
-  "game:gamemechanicinfo-electricityaddon-rotors-title": "Electricity: Motors and Generators",
-  "game:gamemechanicinfo-electricityaddon-rotors-text": "<strong>Electricity: engines and generators</strong><br>The engines and generators in the modification allow you to convert electrical energy into mechanical energy and vice versa. To do this, you need to connect cables to them and connect the shaft. <br><br><strong>Features of the game mechanics</strong><br>The engines and generators most closely simulate the behavior of such devices from real life. DC machines were taken as an example. Therefore, in order to better understand how to use them and in what situations, you need to understand the laws by which they work. <br>All rotating mechanisms in the game, including shafts and gears, have two basic parameters: torque (<i>torque</i>) and resistance (<i>resistance</i>). Torque characterizes the force with which the mechanism rotates the shaft, and resistance characterizes the friction forces and losses that may occur during their operation. The torque of shafts and gears is zero. The game engine adds up all the moments and calculates the shaft speed (<i>speed</i>) and its acceleration/deceleration. If the torque is greater than the resistance moment, the shaft speed will increase. If vice versa, it will decrease. In this case, both of these parameters change according to certain laws. Usually, the resistance moment increases with increasing speed.<br><br><strong>Generators</strong><br>In the modification, the generators have the following additional parameters: <br><i>I_max</i> - maximum value of energy production; <br><i>speed_max</i> - maximum nominal rotation speed; <br><i>resistance_factor</i> - multiplier for the resistance moment; <br><i>resistance_load</i> - constant component of the resistance moment. <br><br>The energy output of the generator depends only on the shaft speed and is calculated using the formula: <br><i>power = I_max *(1 – (|speed| / speed_max – 1) ^4 ) </i>.<br>That is, energy output quickly increases from zero and smoothly reaches its maximum value. When the value of <i>speed_max</i> is exceeded, output is equal to <i>power = I_max</i>. <br>In this case, the resistance torque initially increases linearly from <i>resistance_load</i>, and when <i>speed_max</i> is exceeded, it increases according to a quadratic dependence. <br><i>if |speed| <= speed_max then resistance = resistance_load + (resistance_factor * |speed|/ speed_max) </i> <br> <i>if |speed| > speed_max then resistance = resistance_load + (resistance_factor * (|speed|/ speed_max)^ 2) </i><br><br><strong>Engines</strong><br>In the modification, the engines have the following additional parameters: <br><i>I_min</i> – the minimum value of energy that is needed,for the engine to start; <br><i>I_max</i> – maximum value of energy consumption; <br><i>torque_max</i> – maximum torque; <br><i>kpd_max</i> – peak efficiency; <br><i>speed_max</i> – maximum rated rotation speed; <br><i>resistance_factor</i> – multiplier for the torque. <br><br>The engine produces torque in direct proportion to the energy available to it. At the same time, the engine also takes into account its own curve of efficiency of consumption depending on the torque. Efficiency reaches its maximum at 70% of <i>torque_max</i>. The efficiency curve from zero first grows along a parabola (quadratic dependence, when the branches of the parabola are downwards) to the peak at <i>kpd_max</i>, and then smoothly drops to 90% of <i>kpd_max</i> at a torque of <i>torque_max</i>.<br><br>The resistance torque of the engine is calculated similarly to the generator, only <i>resistance_load</i> is equal to zero.",
-  "block-handbooktitle-charger": "Used",
-  "block-handbooktext-charger": "The charging station allows you to charge batteries and devices with a built-in battery.<br><br>Maximum consumption: 200 Eu/s.",
-  "block-handbooktitle-estove": "Used",
-  "block-handbooktext-estove": "The electric stove allows you to completely replace a conventional fire.<br><br>Maximum heating temperature of the stove: 1325 °C.<br>Maximum consumption: 100 Eu/s.",
-  "block-handbooktitle-efreezer": "Used",
-  "block-handbooktext-efreezer": "Electric freezer allows you to store food longer.<br><br>Storage slots: 6.<br>Food spoilage rate: 0.05x<br>Maximum consumption: 100 Eu/sec.",
-  "block-handbooktitle-largeaccumulator": "Used",
-  "block-handbooktext-largeaccumulator": "Allows you to store electrical energy. A more capacious version of the usual <a href=\"handbooksearch://акумулятор\">battery</a>.<br>A charged battery (large), if necessary, can be carried with you, but only in the bag slot.",
-  "block-handbooktitle-motortier2": "Used",
-  "block-handbooktext-motortier2": "The upgraded engine converts electrical energy into mechanical energy. It has increased output power and rotation speed compared to the <a href=\"handbooksearch://Engine\">engine</a>.<br><br>Additional parameters: <br><i>I_min</i>: 10; <br><i>I_max</i>: 400; <br><i>torque_max</i>: 1.0; <br><i>kpd_max</i>: 0.85; <br><i>speed_max</i>: 1.0; <br><i>resistance_factor</i>: 0.1. <br><br>Read about the features of operation in the <a href=\"handbook://gamemechanicinfo-electricityaddon-rotors\">manual</a>.",
-  "block-handbooktitle-motortier3": "Used",
-  "block-handbooktext-motortier3": "The high-performance engine converts electrical energy into mechanical energy. Thanks to the use of the best materials, it has a higher output power compared to the <a href=\"handbooksearch://Upgraded Engine\">Upgraded Engine</a>.<br><br>Additional parameters: <br><i>I_min</i>: 10; <br><i>I_max</i>: 800; <br><i>torque_max</i>: 2.0; <br><i>kpd_max</i>: 0.95; <br><i>speed_max</i>: 1.0; <br><i>resistance_factor</i>: 0.1. <br> <br>Read about the features of operation in the <a href=\"handbook://gamemechanicinfo-electricityaddon-rotors\">manual</a>.",
-  "block-handbooktitle-generatortier2": "Used",
-  "block-handbooktext-generatortier2": "The upgraded generator converts mechanical energy into electrical energy. It has increased power compared to the <a href=\"handbooksearch://Generator\">generator</a>.<br><br>Additional parameters: <br><i>I_max</i>: 200;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i>: 0.1;<br><i>resistance_load</i>: 0.32. <br>Read about the features of the <a href=\"handbook://gamemechanicinfo-electricityaddon-rotors\">manual</a>.",
-  "block-handbooktitle-generatortier3": "Used",
-  "block-handbooktext-generatortier3": "The high-performance generator converts mechanical energy into electrical energy. Thanks to the use of the best materials, it has a higher power compared to the <a href=\"handbooksearch://Upgraded Generator\">Upgraded Generator</a>.<br><br>Additional parameters: <br><i>I_max</i>: 400;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i>: 0.1;<br><i>resistance_load</i>: 0.81. <br>Read about the features of the <a href=\"handbook://gamemechanicinfo-electricityaddon-rotors\">manual</a>.",
-  "item-handbooktitle-static-saber": "Used",
-  "item-handbooktext-static-saber": "A good choice for effectively cutting up opponents.<br>When it runs out of power, it will stop dealing damage. Don't forget to recharge!",
-  "item-handbooktitle-static-spear": "Used",
-  "item-handbooktext-static-spear": "A good choice for creating holes in enemies.<br>When it runs out of power, it will no longer deal damage. Don't forget to recharge!",
-  "item-handbooktitle-static-shield": "Used",
-  "item-handbooktext-static-shield": "Excellent protection with a built-in flashlight.<br>When discharged, it will stop absorbing damage. Don't forget to charge!",
-  "item-handbooktitle-static-helmet": "Used",
-  "item-handbooktext-static-helmet": "Excellent protection and capabilities.<br>When discharged, it will stop absorbing damage. Don't forget to charge!",
-  "item-handbooktitle-static-armor": "Used",
-  "item-handbooktext-static-armor": "Excellent protection and capabilities. Allows you to fly by pressing the R button.<br>When it runs out of power, it will stop absorbing damage and turn off the flight mode. Don't forget to charge it!",
-  "item-handbooktitle-static-boots": "Used",
-  "item-handbooktext-static-boots": "Excellent protection and capabilities.<br>When discharged, it will stop absorbing damage. Don't forget to charge!",
-  "item-handbooktitle-edrill": "Used",
-  "item-handbooktext-edrill": "Mining is moving to a new level. Allows you to work in two modes: 1x1 and 1x3.<br>When it runs out of battery, it will stop working. Don't forget to charge it!",
-  "item-handbooktitle-echisel": "Used",
-  "item-handbooktext-echisel": "Chisel, but on batteries!. Not used in recipes.<br>When it runs out of power, it will stop working. Don't forget to charge it!",
-  "item-handbooktitle-coil": "Used",
-  "item-handbooktext-coil": "And where would we be without copper coils in electrical appliances?",
-  "item-handbooktitle-edrilltip": "Used",
-  "item-handbooktext-edrilltip": "Base for electric drill.",
-  "item-handbooktitle-engineshaft": "Used",
-  "item-handbooktext-engineshaft": "Typically the rotor is needed in motors/generators, but not only.",
-  "item-handbooktitle-eaxe": "Used",
-  "item-handbooktext-eaxe": "Works great for chopping. Not used in recipes.<br>When it runs out of power, it will stop working. Don't forget to charge it!",
-  "game:BlockEStove": "Electric stove",
-  "game:freezer-title-gui": "Freezer",
-  "game:freezer-over-sneak-help": "Open/close the door.",
-  "game:freezer-over-help": "Open the door and put the food in to preserve it.",
+  "block-charger-*": "Зарядная станция",
+  "block-estove-*": "Электрическая плита",
+  "block-efreezer-*": "Электрический морозильник",
+  "block-largeaccumulator": "Аккумулятор (большой)",
+  "block-motortier2-*": "Модернизированный двигатель",
+  "block-motortier3-*": "Высокопроизводительный двигатель",
+  "block-generatortier2-*": "Модернизированный генератор",
+  "block-generatortier3-*": "Высокопроизводительный генератор",
+  "block-eoven-*": "Электрическая духовка",
 
-  "game:tabname-electricity": "Electricity",
-  "block-accumulator": "Battery",
-  "block-cable-*": "Cable",
-  "block-motor-*": "Engine",
-  "block-generator-*": "Generator",
-  "block-switch-*": "Switch",
-  "block-lamp-*": "Electric lamp",
-  "block-lamp_small-*": "Electric lamp (small)",
-  "block-forge-*": "Electric Horn",
-  "block-heater-*": "Electric heater",
-  "block-handbooktitle-accumulator": "Used",
-  "block-handbooktext-accumulator": "Allows you to store electrical energy.<br>The charged battery can be carried with you if necessary.",
-  "block-handbooktitle-motor": "Used",
-  "block-handbooktext-motor": "The engine converts electrical energy into mechanical energy. It has low power and rotation speed <br><br>Additional parameters: <br><i>I_min</i>: 10; <br><i>I_max</i>: 100; <br><i>torque_max</i>: 0.5; <br><i>kpd_max</i>: 0.75; <br><i>speed_max</i>: 0.5; <br><i>resistance_factor</i>: 0.1. <br> <br>Read about the features of operation in the <a href=\"handbook://gamemechanicinfo-electricityaddon-rotors\">manual</a>.",
-  "block-handbooktitle-generator": "Used",
-  "block-handbooktext-generator": "The generator converts mechanical energy into electrical energy. It has low power and rotation speed. <br><br>Additional parameters: <br><i>I_max</i>: 100;<br><i>speed_max</i>: 0.5;<br><i>resistance_factor</i>: 0.1;<br><i>resistance_load</i>: 0.25. <br>Read about the features of operation in the <a href=\"handbook://gamemechanicinfo-electricityaddon-rotors\">manual</a>.",
-  "block-handbooktitle-lamp": "Used",
-  "block-handbooktext-lamp": "Good light source that consumes electrical energy.<br><br>Maximum light level: 21.<br>Maximum consumption: 8 Eu/s.",
-  "block-handbooktitle-lamp_small": "Used",
-  "block-handbooktext-lamp_small": "A weak light source that consumes electrical energy.<br><br>Maximum light level: 10.<br>Maximum consumption: 4 Eu/s.",
-  "block-handbooktitle-forge": "Used",
-  "block-handbooktext-forge": "The electric forge allows you to completely replace the conventional forge.<br><br>Maximum heating temperature: 1100 °C.<br>Maximum consumption: 100 Eu/s.",
-  "game:Electricity": "Electricity grid",
-  "game:Storage": "Stores:",
-  "game:Temperature": "Temperature:",
-  "game:Consumption": "Consumes:",
-  "game:Production": "Produces:",
-  "game:Overflow": "Excess:",
-  "game:Contents": "Content:"
+  "block-accumulator": "Аккумулятор",
+  "block-cable-*": "Кабель",
+  "block-motor-*": "Двигатель",
+  "block-generator-*": "Генератор",
+  "block-switch-*": "Переключатель",
+  "block-lamp-*": "Электрическая лампа",
+  "block-lamp_small-*": "Электрическая лампа (маленькая)",
+  "block-eforge-*": "Электрический горн",
+  "block-heater-*": "Электрический нагреватель",
+
+  "block-elamp-3000-*": "Электрическая лампа: оранжево-теплый (3000К)",
+  "block-elamp-4000-*": "Электрическая лампа: желто-теплый (4000К)",
+  "block-elamp-5000-*": "Электрическая лампа: белый теплый (5000К)",
+  "block-elamp-6000-*": "Электрическая лампа: нейтральный белый (6000К)",
+  "block-elamp-7000-*": "Электрическая лампа: голубоватый белый (7000К)",
+  "block-elamp-8000-*": "Электрическая лампа: белый холодный (8000К)",
+  "block-elamp-9000-*": "Электрическая лампа: сине-холодный  (9000К)",
+
+
+
+
+  "block-elamp_small-3000-*": "Эл. лампа (маленькая): оранжево-теплый (3000К)",
+  "block-elamp_small-4000-*": "Эл. лампа (маленькая): желто-теплый (4000К)",
+  "block-elamp_small-5000-*": "Эл. лампа (маленькая): белый теплый (5000К)",
+  "block-elamp_small-6000-*": "Эл. лампа (маленькая): нейтральный белый (6000К)",
+  "block-elamp_small-7000-*": "Эл. лампа (маленькая): голубоватый белый (7000К)",
+  "block-elamp_small-8000-*": "Эл. лампа (маленькая): белый холодный (8000К)",
+  "block-elamp_small-9000-*": "Эл. лампа (маленькая): сине-холодный  (9000К)",
+
+
+
+
+  "item-edrill": "Элекрический бур",
+  "item-echisel": "Электрическое зубило",
+  "item-coil": "Медная катушка",
+  "item-edrilltip": "Наконечник бура",
+  "item-engineshaft": "Ротор",
+  "item-eaxe": "Электрический топор",
+  "item-static-saber": "Электрический меч",
+  "item-static-spear": "Электрическое копье",
+  "item-static-shield": "Электрический щит",
+  "item-static-helmet": "Электрический шлем",
+  "item-static-armor": "Электрический нагрудник",
+  "item-static-boots": "Электрические поножи",
+
+  "game:drill1": "Копает 1X1 блок",
+  "game:drill2": "Копает 1X3 блока",
+
+  "game:tabname-electricity": "Электричество",
+
+  "block-handbooktitle-accumulator": "Используется",
+  "block-handbooktext-accumulator": "Позволяет хранить электрическую энергию.<br>Заряженный аккумулятор, при необходимости, можно носить с собой.",
+
+  "block-handbooktitle-motor": "Используется",
+  "block-handbooktext-motor": "Двигатель преобразовывает электрическую энергию в механическую. Имеет небольшую мощность и скорость вращения <br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 100; <br><i>torque_max</i> : 0.5; <br><i>kpd_max</i> : 0.75; <br><i>speed_max</i> : 0.5; <br><i>resistance_factor</i> : 0.1. <br> <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+
+  "block-handbooktitle-generator": "Используется",
+  "block-handbooktext-generator": "Генератор преобразовывает механическую энергию в электрическую. Имеет небольшую мощность и скорость вращения <br><br>Дополнительные параметры: <br><i>I_max</i>: 100;<br><i>speed_max</i>: 0.5;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.25. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+
+  "block-handbooktitle-lamp": "Используется",
+  "block-handbooktext-lamp": "Хороший источник света, потребляющий электрическую энергию.<br><br>Максимальный уровень света: 21.<br>Максимальное потребление: 8 Eu/с.",
+
+  "block-handbooktitle-lamp_small": "Используется",
+  "block-handbooktext-lamp_small": "Слабый источник света, потребляющий электрическую энергию.<br><br>Максимальный уровень света: 10.<br>Максимальное потребление: 4 Eu/с.",
+
+  "block-handbooktitle-eforge": "Используется",
+  "block-handbooktext-eforge": "Электрический горн позволяет полностью заменить обычный кузнечный горн.<br><br>Максимальная температура нагрева: 1100 °C.<br>Максимальное потребление: 100 Eu/с.",
+
+
+  "game:gamemechanicinfo-electricityaddon-title": "Электричество: модификация ElectricityAddon/Electricity",
+  "game:gamemechanicinfo-electricityaddon-text": "<strong>Электричество: модификация ElectricityAddon/Electricity</strong><br>Модификация добавляет в игру электрическую энергию, электрические приборы, устройства, оружие и броню. Все это помогает облегчить (или нет) выживание в мире игры, уменьшить количество рутины, а также разнобразить игровой опыт.<br><br><strong>Основы</strong><br>Закон сохранения энергии гласит, что энергия ниоткуда не возникает и никуда не пропадает. Энергия лишь переходит из одного вида в другой или от одного тела к другому. Так и в игре.<br><br>Основной источник механической энергии - ветряные мельницы. С помощью генераторов можно преобразовать механическую энергию в электрическую. Для этого нужно с помощью вала и/или шестерни передать крутящий момент с мельницы на вал генератора. После этого начнется выработка электричества генератором.<br><br>Электрическую энергию можно передавать по кабелям к потребителям. Просто размещайте кабель по блокам в нужном направлении. На каждой грани блока можно разместить до 4 кабелей, которые будут направлены в разные стороны. Это позволяет прокладывать кабеля в любом направлении и разветвлять электрическую цепь. Кабель необходимо подключать к железной пластине электрического прибора, тогда он начнет свою работу. Электрические приборы и металлические блоки также могут быть проводниками тока.<br><br>Так как ветер дует далеко не всегда и не на полную силу, то выработки энергии генераторами может не хватать для работы всех электрических приборов. Чтобы избежать такого, необходимо вашу электрическую цепь подключить к аккумулятору(-ам). Они будут постоянно накапливать электрическую энергию и отдавать ее в цепь для питания приборов, в любой момент, даже при отсутствии ветра.<br><br>Для экономии энергии, некоторые приборы необходимо отключать от цепи, когда они не используются. Для этого служит переключатель. Установите его не участок цепи, где нужно производить отключение питания.<br><br>Для некоторых устройств, где все же нужна механическая энергия для работы, понадобится двигатель. Он преобразует электрическую энергию в механическую. Подключить его нужно валом к устройству. При включении, двигатель будет стремиться выдавать на валу максимальную мощность, поэтому убедитесь, что в цепи имеется достаточно энергии.",
+
+  "game:gamemechanicinfo-electricityaddon-rotors-title": "Электричество: двигатели и генераторы",
+  "game:gamemechanicinfo-electricityaddon-rotors-text": "<strong>Электричество: двигатели и генераторы</strong><br>Двигатели и генераторы в модификации позволяют преобразовывать электрическую энергию в механическую и наоборот. Для этого к ним нужно подвести кабеля и подключиться валом. <br><br><strong>Особенности механики игры</strong><br>Двигатели и генераторы наиболее приближенно моделируют поведение таких устройств из реальной жизни. В качестве примера были взяты машины постоянного тока. Поэтому, чтобы лучше понимать как их использовать и в каких ситуациях, нужно понимать по каким законам они работают. <br>Все вращающиеся механизмы в игре, в том числе валы и шестерни, имеют два базовых параметра: вращающий момент (<i>torque</i>) и момент сопротивления (<i>resistance</i>). Вращающий момент характеризует силу, с которой механизм вращает вал, а момент сопротивления – силы трения и потери, которые могут возникать при их работе. Вращающий момент валов и шестерен равен нулю. Движок игры складывает все моменты и рассчитывает скорость вала (<i>speed</i>) и его ускорение/замедление. Если вращающий момент больше момента сопротивления, то скорость вала будет увеличиваться. Если наоборот – будет уменьшаться. При этом всем, оба этих параметра, изменяются по определенным законам. Обычно, момент сопротивления увеличивается с увеличением скорости.<br><br><strong>Генераторы</strong><br>В модификации генераторы имеют следующие дополнительные параметры: <br><i>I_max</i> – максимальное значение выработки энергии; <br><i>speed_max</i> – максимальная номинальная скорость вращения; <br><i>resistance_factor</i>  – множитель для момента сопротивления; <br><i>resistance_load</i> – постоянная составляющая момента сопротивления. <br><br>Выработка энергии генератором зависит только от скорости на валу и рассчитывается по формуле: <br><i>power = I_max *(1 – (|speed| / speed_max – 1) ^4 ) </i>.<br>Тоесть выработка энергии из нуля быстро возрастает и плавно выходит к максимальному значению. При превышении значения <i>speed_max</i> выработка равна <i>power = I_max</i>. <br>При этом момент сопротивления сначала растет линейно от <i>resistance_load</i>, а при превышении <i>speed_max</i> растет уже по квадратичной зависимости. <br><i>if |speed| &lt;= speed_max  then   resistance = resistance_load + (resistance_factor * |speed|/ speed_max) </i> <br> <i>if |speed| &gt; speed_max  then   resistance = resistance_load + (resistance_factor * (|speed|/ speed_max)^ 2) </i><br><br><strong>Двигатели</strong><br>В модификации двигатели имеют следующие дополнительные параметры: <br><i>I_min</i> – минимальное значение энергии, которая нужна, чтобы двигатель начал свою работу; <br><i>I_max</i> – максимальное значение потребления энергии; <br><i>torque_max</i> – максимальный вращающий момент; <br><i>kpd_max</i> – пиковый КПД;<br><i>speed_max</i> – максимальная номинальная скорость вращения; <br><i>resistance_factor</i>  – множитель для момента сопротивления. <br><br>Двигатель выдает вращающий момент прямопропорционально доступной ему энергии. При этом еще двигатель учитывает собственную кривую КПД потребления в зависимости от вращающего момента. КПД достигает максимума при 70% от <i>torque_max</i>. Кривая КПД из нуля растет сначала по параболе (квадратичной зависимости, когда ветви параболы вниз) до вершины в <i>kpd_max</i>, а затем плавно падает до 90% от <i>kpd_max</i> при вращающем моменте <i>torque_max</i>.<br><br>Момент сопротивления у двигателя рассчитывается аналогично генератору, только <i>resistance_load</i> равен нулю.",
+
+
+
+
+  "block-handbooktitle-charger": "Используется",
+  "block-handbooktext-charger": "Зарядная станция позволяет заряжать аккумуляторы и устройства со встроенным аккумулятором.<br><br>Максимальное потребление: 200 Eu/с.",
+
+  "block-handbooktitle-estove": "Используется",
+  "block-handbooktext-estove": "Электрическая плита позволяет полностью заменить обычный костер.<br><br>Максимальная температура нагрева плиты: 1325 °C.<br>Максимальное потребление: 100 Eu/с.",
+
+  "block-handbooktitle-efreezer": "Используется",
+  "block-handbooktext-efreezer": "Электрический морозильник позволяет хранить продукты дольше. <br><br>Слотов для хранения: 6.<br>Скорость порчи еды: 0,05х<br>Максимальное потребление: 100 Eu/с.",
+
+  "block-handbooktitle-largeaccumulator": "Используется",
+  "block-handbooktext-largeaccumulator": "Позволяет хранить электрическую энергию. Более вместительный вариант обычного <a href=\"handbooksearch:\/\/аккумулятор\">аккумулятора<\/a>.<br>Заряженный аккумулятор (большой), при необходимости, можно носить с собой, но только в слоте для сумок.",
+
+
+
+  "block-handbooktitle-motortier2": "Используется",
+  "block-handbooktext-motortier2": "Модернизированный двигатель преобразовывает электрическую энергию в механическую. Имеет повышенную выходную мощность и скорость вращения по сравнению с <a href=\"handbooksearch:\/\/Двигатель\">двигателем<\/a>.<br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 400; <br><i>torque_max</i> : 1.0; <br><i>kpd_max</i> : 0.85; <br><i>speed_max</i> : 1.0; <br><i>resistance_factor</i> : 0.1. <br><br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+
+  "block-handbooktitle-motortier3": "Используется",
+  "block-handbooktext-motortier3": "Высокопроизводительный двигатель преобразовывает электрическую энергию в механическую. Благодаря использованию лучших материалов, имеет более высокую выходную мощность по сравнению с <a href=\"handbooksearch:\/\/Модернизированный двигатель\">модернизированным двигателем<\/a>.<br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 800; <br><i>torque_max</i> : 2.0; <br><i>kpd_max</i> : 0.95; <br><i>speed_max</i> : 1.0; <br><i>resistance_factor</i> : 0.1. <br> <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+
+  "block-handbooktitle-generatortier2": "Используется",
+  "block-handbooktext-generatortier2": "Модернизированный генератор преобразовывает механическую энергию в электрическую. Имеет повышенную мощность по сравнению с <a href=\"handbooksearch:\/\/Генератор\">генератором<\/a>.<br><br>Дополнительные параметры: <br><i>I_max</i>: 200;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.32. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+
+  "block-handbooktitle-generatortier3": "Используется",
+  "block-handbooktext-generatortier3": "Высокопроизводительный генератор преобразовывает механическую энергию в электрическую. Благодаря использованию лучших материалов, имеет более высокую мощность по сравнению с <a href=\"handbooksearch:\/\/Модернизированный генератор\">модернизированным генератором<\/a>.<br><br>Дополнительные параметры: <br><i>I_max</i>: 400;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.81. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+
+
+
+
+  "item-handbooktitle-static-saber": "Используется",
+  "item-handbooktext-static-saber": "Хороший выбор для эффективного нарезания противников.<br>Когда разрядится, то перестанет наносить урон. Не забывайте заряжать!",
+
+  "item-handbooktitle-static-spear": "Используется",
+  "item-handbooktext-static-spear": "Хороший выбор для создания отверстий в противниках.<br>Когда разрядится, то перестанет наносить урон. Не забывайте заряжать!",
+
+  "item-handbooktitle-static-shield": "Используется",
+  "item-handbooktext-static-shield": "Превосходная защита со встроенным фонарем.<br>Когда разрядится, то перестанет поглощать урон. Не забывайте заряжать!",
+
+  "item-handbooktitle-static-helmet": "Используется",
+  "item-handbooktext-static-helmet": "Превосходная защита и возможности.<br>Когда разрядится, то перестанет поглощать урон. Не забывайте заряжать!",
+
+  "item-handbooktitle-static-armor": "Используется",
+  "item-handbooktext-static-armor": "Превосходная защита и возможности. Позволяет летать по нажатию кнопки R.<br>Когда разрядится, то перестанет поглощать урон и выключится режим полета. Не забывайте заряжать!",
+
+  "item-handbooktitle-static-boots": "Используется",
+  "item-handbooktext-static-boots": "Превосходная защита и возможности.<br>Когда разрядится, то перестанет поглощать урон. Не забывайте заряжать!",
+
+  "item-handbooktitle-edrill": "Используется",
+  "item-handbooktext-edrill": "Добыча полезных ископаемых переходит на новый уровень. Позволяет работать в двух режимах: 1х1 и 1х3.<br>Когда разрядится, то перестанет работать. Не забывайте заряжать!",
+
+  "item-handbooktitle-echisel": "Используется",
+  "item-handbooktext-echisel": "Зубило, но на батарейках!. Не используется в рецептах.<br>Когда разрядится, то перестанет работать. Не забывайте заряжать!",
+
+  "item-handbooktitle-coil": "Используется",
+  "item-handbooktext-coil": "И куда же без медных катушек в электрических приборах?",
+
+  "item-handbooktitle-edrilltip": "Используется",
+  "item-handbooktext-edrilltip": "Основа для электрического бура.",
+
+  "item-handbooktitle-engineshaft": "Используется",
+  "item-handbooktext-engineshaft": "Обычно ротор нужен в двигателях/генераторах, но не только.",
+
+  "item-handbooktitle-eaxe": "Используется",
+  "item-handbooktext-eaxe": "Прекрасно справляется с рубкой. Не используется в рецептах.<br>Когда разрядится, то перестанет работать. Не забывайте заряжать!",
+
+  "game:BlockEStove": "Электрическая плита",
+  "game:freezer-title-gui": "Морозильник",
+  "game:freezer-over-sneak-help": "Откр/закр дверцу.",
+  "game:freezer-over-help": "Откройте дверцу и положите еду что бы сохранить ее.",
+
+  "game:Put-into-4-items": "Нужно минимум 4 предмета для выпечки.",
+
+
+  "game:Electricity": "Электросеть",
+  "game:Storage": "Хранит: ",
+  "game:Temperature": "Температура: ",
+  "game:Consumption": "Потребляет: ",
+  "game:Production": "Производит: ",
+  "game:Overflow": "Избыток: ",
+  "game:Contents": "Содержимое: "
+
 }

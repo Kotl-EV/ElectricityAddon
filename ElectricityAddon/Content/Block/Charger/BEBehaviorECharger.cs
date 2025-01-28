@@ -15,7 +15,7 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
     {
         maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 200);
     }
-    public ConsumptionRange ConsumptionRange => working ? new ConsumptionRange(1, maxConsumption) : new ConsumptionRange(0, 0);
+    public ConsumptionRange ConsumptionRange => working ? new ConsumptionRange(0, maxConsumption) : new ConsumptionRange(0, 0);
     public void Consume(int amount)
     {
         BlockEntityECharger? entity = null;

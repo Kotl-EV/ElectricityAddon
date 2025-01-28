@@ -164,11 +164,11 @@ public class ElectricityAddon : ModSystem
 
         foreach (var network in this.networks)
         {
-            this.consumers.Clear();
+            this.consumers.Clear();           //очистка всех потребителей
 
-            var production = network.Producers.Sum(producer => producer.Produce());
+            int production = network.Producers.Sum(producer => producer.Produce());   //собирает сумму производства всей энергии в цепи
 
-            var totalRequiredEnergy = 0;
+            int totalRequiredEnergy = 0;    //необходимо энергии потребителям
 
             foreach (var consumer in network.Consumers.Select(electricConsumer => new Consumer(electricConsumer)))
             {
@@ -176,16 +176,16 @@ public class ElectricityAddon : ModSystem
                 this.consumers.Add(consumer);
             }
 
-            if (production < totalRequiredEnergy)
+            if (production < totalRequiredEnergy)   //если производится меньше, чем потребляется
             {
                 do
                 {
                     accumulators.Clear();
                     accumulators.AddRange(network.Accumulators.Where(accumulator => accumulator.GetCapacity() > 0));
 
-                    if (accumulators.Count > 0)
+                    if (accumulators.Count > 0)   //есть ли подключенные аккумуляторы в этой цепи
                     {
-                        var rest = (totalRequiredEnergy - production) / accumulators.Count;
+                        int rest = (totalRequiredEnergy - production) / accumulators.Count;
 
                         if (rest == 0)
                         {
@@ -235,7 +235,7 @@ public class ElectricityAddon : ModSystem
                 .SelectMany(grouping => grouping)
                 .ToArray();
 
-            var requiredEnergy = int.MaxValue;
+            int requiredEnergy = int.MaxValue;
 
             while (availableEnergy > 0 && requiredEnergy != 0)
             {
@@ -252,7 +252,7 @@ public class ElectricityAddon : ModSystem
                     break;
                 }
 
-                var distributableEnergy = Math.Max(1, availableEnergy / numberOfDissatisfiedConsumers);
+                int distributableEnergy = Math.Max(1, availableEnergy / numberOfDissatisfiedConsumers);
 
                 foreach (var consumer in dissatisfiedConsumers)
                 {
@@ -261,10 +261,7 @@ public class ElectricityAddon : ModSystem
                         break;
                     }
 
-                    var giveableEnergy = Math.Min(
-                        distributableEnergy,
-                        consumer.Consumption.Max - consumer.GivenEnergy
-                    );
+                    var giveableEnergy = Math.Min(distributableEnergy, consumer.Consumption.Max - consumer.GivenEnergy  );
 
                     availableEnergy -= giveableEnergy;
                     consumer.GivenEnergy += giveableEnergy;

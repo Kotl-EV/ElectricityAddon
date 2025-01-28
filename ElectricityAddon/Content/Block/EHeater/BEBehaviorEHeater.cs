@@ -11,7 +11,7 @@ namespace Electricity.Content.Block.Entity.Behavior {
 
         public int HeatLevel { get; private set; }
 
-        public ConsumptionRange ConsumptionRange => new(1, 8);
+        public ConsumptionRange ConsumptionRange => new(0, 8);
 
         public void Consume(int heatLevel) {
             if (this.Api is { } api) {

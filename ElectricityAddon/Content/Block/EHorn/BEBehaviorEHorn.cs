@@ -14,7 +14,7 @@ public class BEBehaviorEHorn : BlockEntityBehavior, IElectricConsumer {
     public BEBehaviorEHorn(BlockEntity blockEntity) : base(blockEntity) {
         maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 100);
     }
-    public ConsumptionRange ConsumptionRange => hasItems ? new ConsumptionRange(10, maxConsumption) : new ConsumptionRange(0, 0);
+    public ConsumptionRange ConsumptionRange => hasItems ? new ConsumptionRange(0, maxConsumption) : new ConsumptionRange(0, 0);
     public void Consume(int amount) {
         BlockEntityEHorn? entity = null;
         if (Blockentity is BlockEntityEHorn temp)

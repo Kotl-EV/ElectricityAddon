@@ -1,15 +1,10 @@
 {
   "code": "forge",
   "class": "BlockEHorn",
-  "entityClass": "BlockEntityEHorn",
   "attributes": {
     "maxConsumption": 100,
     "handbook": {
-      "groupBy": [ "forge-*" ],
-      "extraSections": [
-        {
-        }
-      ]
+      "groupBy": [ "forge-*" ]
     }
   },
   "shape": {
@@ -37,14 +32,7 @@
       }
     }
   ],
-  "entityBehaviors": [
-    {
-      "name": "BEBehaviorEHorn"
-    },
-    {
-      "name": "ElectricityAddon"
-    }
-  ],
+
 
   "variantgroups": [
     {

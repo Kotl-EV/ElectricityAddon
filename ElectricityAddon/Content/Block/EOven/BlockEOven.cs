@@ -69,4 +69,23 @@ public class BlockEOven : Vintagestory.API.Common.Block
         return this.interactions.Append<WorldInteraction>(
             base.GetPlacedBlockInteractionHelp(world, selection, forPlayer));
     }
+    
+    public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
+    {
+        AssetLocation blockCode = CodeWithVariants(new Dictionary<string, string>
+        {
+            { "state", "disabled" },
+            { "horizontalorientation", "south" }
+        });
+
+        Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockCode);
+
+        return new ItemStack(block);
+    }
+    
+    public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer,
+        float dropQuantityMultiplier = 1)
+    {
+        return new[] { OnPickBlock(world, pos) };
+    }
 }

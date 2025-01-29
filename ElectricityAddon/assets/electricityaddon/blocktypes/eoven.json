@@ -69,8 +69,8 @@
     }
   },
   "creativeinventory": {
-    "general": [ "*-disabled-north" ],
-    "electricity": [ "*-disabled-north" ]
+    "general": [ "*-disabled-south" ],
+    "electricity": [ "*-disabled-south" ]
   },
   "textures": {
     "brass": { "base": "block/brass" },
@@ -123,13 +123,6 @@
       "z": -78
     },
     "scale": 0.4
-  },
-  "guiTransform": {
-    "rotation": {
-      "x": -33,
-      "y": 135,
-      "z": 1
-    }
   },
   "particleProperties": [
     {

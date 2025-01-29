@@ -121,13 +121,14 @@
     "y2": 0.875,
     "z2": 0.9375
   },
-  "heldTpIdleAnimation": "game:holdbothhandslarge",
-  "heldTpUseAnimation": "game:twohandplaceblock",
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldRightReadyAnimation": "heldblockready",
+  "heldTpUseAnimation": "twohandplaceblock",
   "tpHandTransform": {
     "translation": {
-      "x": -1.23,
+      "x": -1.43,
       "y": -0.91,
-      "z": -0.8
+      "z": -0.7
     },
     "rotation": {
       "x": -2,

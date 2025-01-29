@@ -20,6 +20,8 @@
 		"rechargeable": true,
 		"maxcapacity": 20000,
 		"consume": 20,
+		"consumeFly": 40,
+		"speedFly": 2.0,
 		"wearableAttachment": true,
 		"handbook": {
 			"groupBy": [ "static-armor-*" ],

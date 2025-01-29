@@ -11,8 +11,10 @@ namespace ElectricityAddon.Content.Armor;
 
 class EArmor : ItemWearable,IEnergyStorageItem
 {
-    int consume;
-    int maxcapacity;
+    public int consume;
+    public int maxcapacity;
+    public int consumefly;
+    public float flySpeed;
     //EntityPlayer eplr;
 
     public override void OnLoaded(ICoreAPI api)
@@ -20,11 +22,13 @@ class EArmor : ItemWearable,IEnergyStorageItem
         base.OnLoaded(api);
         consume = MyMiniLib.GetAttributeInt(this, "consume", 20);
         maxcapacity = MyMiniLib.GetAttributeInt(this, "maxcapacity", 20000);
+        consumefly = MyMiniLib.GetAttributeInt(this, "consumeFly", 40);
+        flySpeed = MyMiniLib.GetAttributeFloat(this, "speedFly", 2.0F);
         Durability = maxcapacity / consume;
     }
     
     
-    public override void DamageItem(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, int amount = 1)
+    public override void DamageItem(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, int amount)
     {
         int energy = itemslot.Itemstack.Attributes.GetInt("electricityaddon:energy");
         if (energy >= consume * amount)

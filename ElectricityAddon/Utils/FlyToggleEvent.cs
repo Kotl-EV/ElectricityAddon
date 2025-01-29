@@ -22,6 +22,9 @@ public class FlyToggleEvent : ModSystem
     private ICoreClientAPI capi;
     
     private ICoreServerAPI sapi;
+
+    private int consumeFly;
+    private float speedFly;
     
     public override bool ShouldLoad(EnumAppSide forSide)
     {
@@ -53,7 +56,7 @@ public class FlyToggleEvent : ModSystem
             (FlyToggle)).RegisterMessageType(typeof(FlyResponse)).SetMessageHandler<FlyToggle>(new
             NetworkClientMessageHandler<FlyToggle>(this.OnClientSent));
         api.Event.RegisterGameTickListener(new Action<float>(this.onTickItem), 1000);
-        api.Event.RegisterGameTickListener(new Action<float>(this.onTickCheckFly), 400);
+        api.Event.RegisterGameTickListener(new Action<float>(this.onTickCheckFly), 1000, 200);
     }
     private void onTickItem(float dt)
     {
@@ -69,18 +72,20 @@ public class FlyToggleEvent : ModSystem
                 ItemSlot itemSlot = ownInventory[ElectricityAddon.combatoverhaul ? 34:13];
                 if (itemSlot.Itemstack?.Collectible is EArmor collectible)
                 {
+                    consumeFly = collectible.consumefly;
+                    speedFly = collectible.flySpeed;
                     int energy = itemSlot.Itemstack.Attributes.GetInt("electricity:energy");
-                    if (energy > 40)
+                    if (energy > consumeFly/num)
                     {
                         if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos))
                         {
-                            collectible.receiveEnergy(itemSlot.Itemstack, -(int)(num * 4000));
+                            collectible.receiveEnergy(itemSlot.Itemstack, -(int)(consumeFly/num));
                             itemSlot.MarkDirty();
                         }
                     }
                     else
-                    {
-                        itemSlot.Itemstack.Attributes.SetInt("electricity:energy",1);
+                    { 
+                        itemSlot.Itemstack.Attributes.SetBool("flying", false);
                         itemSlot.MarkDirty();
                     }
                 }
@@ -99,9 +104,7 @@ public class FlyToggleEvent : ModSystem
                 ItemSlot itemSlot = ownInventory[ElectricityAddon.combatoverhaul ? 34:13];
                 if (itemSlot.Itemstack?.Collectible is EArmor collectible)
                 {
-                    int energy = itemSlot.Itemstack.Attributes.GetInt("electricity:energy");
-                    if (energy > 40)
-                    {
+
                         if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos))
                         {
                             if (allOnlinePlayer.WorldData.FreeMove != true)
@@ -110,8 +113,8 @@ public class FlyToggleEvent : ModSystem
                                     allOnlinePlayer);
                                 allOnlinePlayer.WorldData.FreeMove = true;
                                 allOnlinePlayer.Entity.Properties.FallDamageMultiplier = 0f;
-                                allOnlinePlayer.WorldData.MoveSpeedMultiplier = 2f;
-                                allOnlinePlayer.WorldData.EntityControls.MovespeedMultiplier = 2f;
+                                allOnlinePlayer.WorldData.MoveSpeedMultiplier = speedFly;
+                                allOnlinePlayer.WorldData.EntityControls.MovespeedMultiplier = speedFly;
                                 ((IServerPlayer)allOnlinePlayer).BroadcastPlayerData();
                             }
                         }
@@ -129,27 +132,7 @@ public class FlyToggleEvent : ModSystem
                                 ((IServerPlayer)allOnlinePlayer).BroadcastPlayerData();
                             }
                         }
-                    }
-                    else
-                    {
-                        if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
-                        {
-                            itemSlot.Itemstack.Attributes.SetBool("flying", false);
-                            itemSlot.MarkDirty();
-                            if (allOnlinePlayer.WorldData.FreeMove)
-                            {
-                                api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-breakdimension"), allOnlinePlayer);
-                                allOnlinePlayer.Entity.PositionBeforeFalling = allOnlinePlayer.Entity.Pos.XYZ;
-                                allOnlinePlayer.WorldData.FreeMove = false;
-                                allOnlinePlayer.Entity.Properties.FallDamageMultiplier = 1.0f;
-                                allOnlinePlayer.WorldData.MoveSpeedMultiplier = 1f;
-                                allOnlinePlayer.WorldData.EntityControls.MovespeedMultiplier = 1f;
-                                allOnlinePlayer.WorldData.FreeMovePlaneLock = EnumFreeMovAxisLock.None;
-                                ((IServerPlayer)allOnlinePlayer).BroadcastPlayerData();
-                            }
-                        }
-
-                    }
+                        
                 }else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
                 {
                     if (allOnlinePlayer.WorldData.FreeMove)
@@ -206,17 +189,16 @@ public class FlyToggleEvent : ModSystem
     {
         ItemSlot itemSlot = player.InventoryManager.GetOwnInventory("character")[ElectricityAddon.combatoverhaul ? 34:13];
         if (itemSlot == null) return false;
-        
         if (!itemSlot.Itemstack.Attributes.GetBool("flying") &&
-            itemSlot.Itemstack.Attributes.GetInt("electricity:energy") > 40)
+            itemSlot.Itemstack.Attributes.GetInt("electricity:energy") > consumeFly/0.05)
         {
             itemSlot.Itemstack.Attributes.SetBool("flying", true);
             itemSlot.MarkDirty();
             api.World.PlaySoundAt(new AssetLocation("game:sounds/effect/translocate-active"), player);
             player.WorldData.FreeMove = true;
             player.Entity.Properties.FallDamageMultiplier = 0f;
-            player.WorldData.MoveSpeedMultiplier = 2f;
-            player.WorldData.EntityControls.MovespeedMultiplier = 2f;
+            player.WorldData.MoveSpeedMultiplier = speedFly;
+            player.WorldData.EntityControls.MovespeedMultiplier = speedFly;
             ((IServerPlayer)player).BroadcastPlayerData();
         }
         else

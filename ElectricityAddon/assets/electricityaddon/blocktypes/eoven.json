@@ -13,25 +13,45 @@
   ],
   "variantgroups": [
     {
+      "code": "state",
+      "states": [ "disabled", "enabled" ]
+    },
+    {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
-  "shapeByType": {
-    "*-north": {
-      "base": "game:block/clay/oven",
+  "shapebytype": {
+    "*-enabled-north": {
+      "base": "block/electricoven-enabled",
       "rotateY": 0
     },
-    "*-east": {
-      "base": "game:block/clay/oven",
+    "*-enabled-east": {
+      "base": "block/electricoven-enabled",
       "rotateY": 270
     },
-    "*-south": {
-      "base": "game:block/clay/oven",
+    "*-enabled-south": {
+      "base": "block/electricoven-enabled",
       "rotateY": 180
     },
-    "*-west": {
-      "base": "game:block/clay/oven",
+    "*-enabled-west": {
+      "base": "block/electricoven-enabled",
+      "rotateY": 90
+    },
+    "*-disabled-north": {
+      "base": "block/electricoven-disabled",
+      "rotateY": 0
+    },
+    "*-disabled-east": {
+      "base": "block/electricoven-disabled",
+      "rotateY": 270
+    },
+    "*-disabled-south": {
+      "base": "block/electricoven-disabled",
+      "rotateY": 180
+    },
+    "*-disabled-west": {
+      "base": "block/electricoven-disabled",
       "rotateY": 90
     }
   },
@@ -49,13 +69,28 @@
     }
   },
   "creativeinventory": {
-    "general": [ "*-north" ],
-    "electricity": [ "*-north" ]
+    "general": [ "*-disabled-north" ],
+    "electricity": [ "*-disabled-north" ]
+  },
+  "textures": {
+    "brass": { "base": "block/brass" },
+    "copper": { "base": "block/copper" },
+    "copper-hot": { "base": "block/copper-hot" },
+    "emeral": { "base": "block/emeral" },
+    "iron": { "base": "block/iron" },
+    "stainlesssteel": { "base": "block/stainlesssteel" },
+    "steel": { "base": "block/steel" },
+    "topaz": { "base": "block/topaz" },
+    "zinc": { "base": "block/zinc" }
   },
   "replaceable": 500,
   "resistance": 3.5,
   "maxStackSize": 1,
-  "lightAbsorption": 3,
+  "lightAbsorption": 0,
+  "lightHsvByType": {
+    "*-disabled-*": [ 0, 0, 0 ],
+    "*-enabled-*": [ 7, 7, 11 ]
+  },
 
   "sounds": {
     "walk": "walk/stone",
@@ -66,63 +101,6 @@
         "break": "block/rock-break-pickaxe"
       }
     }
-  },
-  "collisionboxes": [
-    {
-      "x1": 0,
-      "y1": 0.25,
-      "z1": 0,
-      "x2": 1,
-      "y2": 1,
-      "z2": 1
-    },
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0.25,
-      "x2": 1,
-      "y2": 0.25,
-      "z2": 1,
-      "rotateYByType": {
-        "*-north": 180,
-        "*-east": 90,
-        "*-west": 270
-      }
-    },
-    {
-      "x1": 0,
-      "y1": 0,
-      "z1": 0,
-      "x2": 0.375,
-      "y2": 0.25,
-      "z2": 0.25,
-      "rotateYByType": {
-        "*-north": 180,
-        "*-east": 90,
-        "*-west": 270
-      }
-    },
-    {
-      "x1": 0.625,
-      "y1": 0,
-      "z1": 0,
-      "x2": 1,
-      "y2": 0.25,
-      "z2": 0.25,
-      "rotateYByType": {
-        "*-north": 180,
-        "*-east": 90,
-        "*-west": 270
-      }
-    }
-  ],
-  "selectionbox": {
-    "x1": 0,
-    "y1": 0,
-    "z1": 0,
-    "x2": 1,
-    "y2": 0.748,
-    "z2": 1
   },
   "sideopaque": {
     "all": false

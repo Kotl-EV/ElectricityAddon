@@ -16,6 +16,12 @@ namespace Electricity.Content.Block.Entity {
             set => this.ElectricityAddon.Connection = value;
         }
 
+        public float[] Eparams
+        {
+            get => this.ElectricityAddon.Eparams;
+            set => this.ElectricityAddon.Eparams = value;
+        }
+
         public Facing Switches {
             get => this.switches;
             set => this.ElectricityAddon.Interruption &= this.switches = value;

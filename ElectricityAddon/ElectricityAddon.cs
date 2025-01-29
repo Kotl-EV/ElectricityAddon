@@ -49,9 +49,9 @@ public class ElectricityAddon : ModSystem
 
         api.RegisterBlockClass("BlockECable", typeof(BlockECable));
         api.RegisterBlockEntityClass("BlockEntityECable", typeof(BlockEntityECable));
-        
+
         api.RegisterBlockClass("BlockESwitch", typeof(BlockESwitch));
-        
+
         api.RegisterBlockClass("BlockEHorn", typeof(BlockEHorn));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEHorn", typeof(BEBehaviorEHorn));
         api.RegisterBlockEntityClass("BlockEntityEHorn", typeof(BlockEntityEHorn));
@@ -100,16 +100,16 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier1", typeof(BEBehaviorEGeneratorTier1));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier2", typeof(BEBehaviorEGeneratorTier2));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier3", typeof(BEBehaviorEGeneratorTier3));
-        
+
         api.RegisterBlockEntityBehaviorClass("ElectricityAddon", typeof(BEBehaviorElectricityAddon));
-        
+
         api.RegisterItemClass("EChisel", typeof(EChisel));
         api.RegisterItemClass("EAxe", typeof(EAxe));
         api.RegisterItemClass("EDrill", typeof(EDrill));
         api.RegisterItemClass("EArmor", typeof(EArmor));
         api.RegisterItemClass("EWeapon", typeof(EWeapon));
         api.RegisterItemClass("EShield", typeof(EShield));
-        
+
         api.Event.RegisterGameTickListener(this.OnGameTick, 500);
 
         if (api.ModLoader.IsModEnabled("combatoverhaul"))
@@ -261,7 +261,7 @@ public class ElectricityAddon : ModSystem
                         break;
                     }
 
-                    var giveableEnergy = Math.Min(distributableEnergy, consumer.Consumption.Max - consumer.GivenEnergy  );
+                    var giveableEnergy = Math.Min(distributableEnergy, consumer.Consumption.Max - consumer.GivenEnergy);
 
                     availableEnergy -= giveableEnergy;
                     consumer.GivenEnergy += giveableEnergy;
@@ -626,6 +626,17 @@ public class ElectricityAddon : ModSystem
         }
     }
 
+    public void SetElectricParams(BlockPos position, float[] eparams)
+    {
+        if (!this.parts.TryGetValue(position, out var part))
+        {     
+            this.parts[position] = new NetworkPart(position);
+        }
+
+        this.parts[position].eparams= eparams;
+    }
+
+
     public void SetProducer(BlockPos position, IElectricProducer? producer)
     {
         if (!this.parts.TryGetValue(position, out var part))
@@ -739,19 +750,21 @@ public class ElectricityAddon : ModSystem
     }
 }
 
-internal class Network {
-        public readonly HashSet<IElectricAccumulator> Accumulators = new();
-        public readonly HashSet<IElectricConsumer> Consumers = new();
-        public readonly HashSet<BlockPos> PartPositions = new();
-        public readonly HashSet<IElectricProducer> Producers = new();
+internal class Network
+{
+    public readonly HashSet<IElectricAccumulator> Accumulators = new();
+    public readonly HashSet<IElectricConsumer> Consumers = new();
+    public readonly HashSet<BlockPos> PartPositions = new();
+    public readonly HashSet<IElectricProducer> Producers = new();
 
-        public int Consumption;
-        public int Overflow;
-        public int Production;
-    }
+    public int Consumption;
+    public int Overflow;
+    public int Production;
+}
 
-    internal class NetworkPart {
-        public readonly Network?[] Networks = {
+internal class NetworkPart                       //элемент цепи
+{                     
+    public readonly Network?[] Networks = {      //в какие стороны провода направлены
             null,
             null,
             null,
@@ -760,37 +773,48 @@ internal class Network {
             null
         };
 
-        public readonly BlockPos Position;
-        public IElectricAccumulator? Accumulator;
-        public Facing Connection = Facing.None;
-        public IElectricConsumer? Consumer;
-        public IElectricProducer? Producer;
-
-        public NetworkPart(BlockPos position) {
-            this.Position = position;
-        }
-    }
-
-    public class NetworkInformation {
-        public int Consumption;
-        public Facing Facing = Facing.None;
-        public int NumberOfAccumulators;
-        public int NumberOfBlocks;
-        public int NumberOfConsumers;
-        public int NumberOfProducers;
-        public int Overflow;
-        public int Production;
-    }
-
-    internal class Consumer
-    {
-        public readonly ConsumptionRange Consumption;
-        public readonly IElectricConsumer ElectricConsumer;
-        public int GivenEnergy;
-
-        public Consumer(IElectricConsumer electricConsumer)
+    public readonly BlockPos Position;          //позиция
+    public IElectricAccumulator? Accumulator;   //поведение аккумулятора?
+    public Facing Connection = Facing.None;
+    public IElectricConsumer? Consumer;         //поведение потребителя?
+    public IElectricProducer? Producer;         //поведение источнрка?
+    public float[] eparams= new float[5]
         {
-            this.ElectricConsumer = electricConsumer;
-            this.Consumption = electricConsumer.ConsumptionRange;
-        }
+            0,                                  //максимальный размер пакета энергии, которое может пройти по одной линии этого элемента цепи
+            0,                                  //текущий размер энергии в пакете/ах, который проходит в элементе цепи
+            0,                                  //потери энергии в элементе цепи
+            0,                                  //количество линий элемента цепи/провода
+            0                                   //напряжение? (возможно будет про запас)
+        };
+    public float maxPacketEnergy=0;               
+    public float PacketEnergy=0;                
+    public NetworkPart(BlockPos position)
+    {
+        this.Position = position;
     }
+}
+
+public class NetworkInformation
+{
+    public int Consumption;
+    public Facing Facing = Facing.None;
+    public int NumberOfAccumulators;
+    public int NumberOfBlocks;
+    public int NumberOfConsumers;
+    public int NumberOfProducers;
+    public int Overflow;
+    public int Production;
+}
+
+internal class Consumer
+{
+    public readonly ConsumptionRange Consumption;
+    public readonly IElectricConsumer ElectricConsumer;
+    public int GivenEnergy;
+
+    public Consumer(IElectricConsumer electricConsumer)
+    {
+        this.ElectricConsumer = electricConsumer;
+        this.Consumption = electricConsumer.ConsumptionRange;
+    }
+}

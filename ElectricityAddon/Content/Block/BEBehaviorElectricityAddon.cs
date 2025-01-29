@@ -17,6 +17,9 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     private bool dirty = true;
     private Facing interruption;
     private IElectricProducer? producer;
+    public float[] eparams;               //максимальный размер пакета энергии, которое может хранить этот элемент цепи
+
+
 
     public BEBehaviorElectricityAddon(BlockEntity blockEntity)
         : base(blockEntity)
@@ -34,6 +37,20 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
             if (this.connection != value)
             {
                 this.connection = value;
+                this.dirty = true;
+                this.Update();
+            }
+        }
+    }
+
+    public float[] Eparams
+    {
+        get => this.eparams;
+        set
+        {
+            if (this.eparams != value)
+            {
+                this.eparams = value;
                 this.dirty = true;
                 this.Update();
             }
@@ -93,10 +110,12 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                             break;
                     }
                 }
-
-                system.SetConsumer(this.Blockentity.Pos, this.consumer);
+                
+                //тут собственно передаем и обновляем элемент сети
+                system.SetConsumer(this.Blockentity.Pos, this.consumer); 
                 system.SetProducer(this.Blockentity.Pos, this.producer);
                 system.SetAccumulator(this.Blockentity.Pos, this.accumulator);
+                system.SetElectricParams(this.Blockentity.Pos, Eparams); //тут закидываем электрические параметры 
 
                 if (system.Update(this.Blockentity.Pos, this.connection & ~this.interruption))
                 {
@@ -123,13 +142,19 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
 
         stringBuilder
             .AppendLine(Lang.Get("Electricity"))
-            // .AppendLine("├ Number of consumers: " + networkInformation?.NumberOfConsumers)
-            // .AppendLine("├ Number of producers: " + networkInformation?.NumberOfProducers)
-            // .AppendLine("├ Number of accumulators: " + networkInformation?.NumberOfAccumulators)
-            // .AppendLine("├ Block: " + networkInformation?.NumberOfBlocks)
+                        // .AppendLine("├ Number of consumers: " + networkInformation?.NumberOfConsumers)
+                        // .AppendLine("├ Number of producers: " + networkInformation?.NumberOfProducers)
+                        // .AppendLine("├ Number of accumulators: " + networkInformation?.NumberOfAccumulators)
+                        // .AppendLine("├ Block: " + networkInformation?.NumberOfBlocks)
+            .AppendLine("├ " + "Макс. передача: " + this.eparams[0] + " Eu/линию")
+            .AppendLine("├ " + "В пакете/ах: " + this.eparams[1] + " Eu")
+            .AppendLine("├ " + "Потери: " + this.eparams[2] + " %Eu/блок")
+            .AppendLine("├ " + "Линий: " + this.eparams[3] + " шт")
             .AppendLine("├ " + Lang.Get("Production") + networkInformation?.Production + " Eu")
             .AppendLine("├ " + Lang.Get("Consumption") + networkInformation?.Consumption + " Eu")
             .AppendLine("└ " + Lang.Get("Overflow") + networkInformation?.Overflow + " Eu");
+
+
     }
 
 
@@ -139,6 +164,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
 
         tree.SetBytes("electricity:connection", SerializerUtil.Serialize(this.connection));
         tree.SetBytes("electricity:interruption", SerializerUtil.Serialize(this.interruption));
+        tree.SetBytes("electricity:eparams", SerializerUtil.Serialize(this.eparams));
     }
 
     public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
@@ -147,11 +173,13 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
 
         var connection = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricity:connection"));
         var interruption = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricity:interruption"));
+        var eparams = SerializerUtil.Deserialize<float[]>(tree.GetBytes("electricity:eparams"));
 
         if (connection != this.connection || interruption != this.interruption)
         {
             this.interruption = interruption;
             this.connection = connection;
+            this.eparams = eparams;
             this.dirty = true;
             this.Update();
         }

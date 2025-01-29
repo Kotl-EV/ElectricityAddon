@@ -258,7 +258,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
             {
                 IsBurning = true;
 
-                //Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
+                Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
                 MarkDirty(true);
             }
         }
@@ -268,7 +268,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
             {
                 IsBurning = false;
 
-                //Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
+                Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
                 MarkDirty(true);
                 if (!ovenInv.Empty)
                     Api.World.PlaySoundAt(new AssetLocation("electricityaddon:sounds/din_din_din"), Pos.X, Pos.Y, Pos.Z, null, false, 8.0F, 0.4F);
@@ -527,13 +527,13 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         switch (this.OvenContentMode)
         {
             case EnumOvenContentMode.SingleCenter:           //положение пирога
-                vec3fArray[0] = new Vec3f(0.0f, 1f / 16f, 0.0f);
+                vec3fArray[0] = new Vec3f(0.0f, 0.4f, 0.0f);
                 break;
             case EnumOvenContentMode.Quadrants:             //положение хлеба
-                vec3fArray[0] = new Vec3f(-0.125f, 1f / 16f, -5f / 32f);
-                vec3fArray[1] = new Vec3f(-0.125f, 1f / 16f, 5f / 32f);
-                vec3fArray[2] = new Vec3f(3f / 16f, 1f / 16f, -5f / 32f);
-                vec3fArray[3] = new Vec3f(3f / 16f, 1f / 16f, 5f / 32f);
+                vec3fArray[0] = new Vec3f(-0.125f, 0.4f, -5f / 32f);
+                vec3fArray[1] = new Vec3f(-0.125f, 0.4f, 5f / 32f);
+                vec3fArray[2] = new Vec3f(3f / 16f, 0.4f, -5f / 32f);
+                vec3fArray[3] = new Vec3f(3f / 16f, 0.4f, 5f / 32f);
                 break;
         }
         for (int index = 0; index < numArray.Length; ++index)

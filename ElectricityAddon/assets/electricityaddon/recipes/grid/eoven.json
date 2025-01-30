@@ -28,7 +28,7 @@
     },
     "output": {
       "type": "block",
-      "code": "electricityaddon:eoven-disabled-north",
+      "code": "electricityaddon:eoven-disabled-south",
       "quantity": 1
     }
   }

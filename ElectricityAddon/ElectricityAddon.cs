@@ -116,45 +116,46 @@ public class ElectricityAddon : ModSystem
             combatoverhaul = true;
     }
 
-    public bool Update(BlockPos position, Facing facing)
+    public bool Update(BlockPos position, Facing facing,float[] setEparams)
     {
-        if (!this.parts.TryGetValue(position, out var part))
+        if (!this.parts.TryGetValue(position, out var part))     //смотрим, есть ли такой элемент уже в этом блоке
         {
-            if (facing == Facing.None)
+            if (facing == Facing.None)                           
             {
                 return false;
             }
 
-            part = this.parts[position] = new NetworkPart(position);
+            part = this.parts[position] = new NetworkPart(position);   //если нет, то создаем новый
         }
 
-        if (facing == part.Connection)
+        if (facing == part.Connection)       //если соединения совпадают, то зачем вызывали?
         {
             return false;
         }
 
-        var addedConnections = ~part.Connection & facing;
-        var removedConnections = part.Connection & ~facing;
+        var addedConnections = ~part.Connection & facing;      // вычисляет, что добавилось
+        var removedConnections = part.Connection & ~facing;    // вычисляет, что убавилось
 
-        part.Connection = facing;
+        part.Connection = facing;                              // раз уж просят, применим направления
 
-        this.AddConnections(ref part, addedConnections);
-        this.RemoveConnections(ref part, removedConnections);
+        this.AddConnections(ref part, addedConnections, setEparams);         // добавляем новое соединение
+        this.RemoveConnections(ref part, removedConnections, new float[5]);  // убираем соединение
 
-        if (part.Connection == Facing.None)
+        if (part.Connection == Facing.None)                    // если направлений в блоке не осталось, то
         {
-            this.parts.Remove(position);
+            this.parts.Remove(position);                       // вообще удаляем этот элемент из системы
         }
 
         return true;
     }
 
+    //удаляет элемент в этом блоке
     public void Remove(BlockPos position)
     {
         if (this.parts.TryGetValue(position, out var part))
         {
             this.parts.Remove(position);
-            this.RemoveConnections(ref part, part.Connection);
+            this.RemoveConnections(ref part, part.Connection, new float[5]);
         }
     }
 
@@ -414,35 +415,39 @@ public class ElectricityAddon : ModSystem
         return outNetwork ?? this.CreateNetwork();
     }
 
+    //удаляем сеть
     private void RemoveNetwork(ref Network network)
     {
         var partPositions = new BlockPos[network.PartPositions.Count];
         network.PartPositions.CopyTo(partPositions);
-        this.networks.Remove(network);
+        this.networks.Remove(network);                                  //удаляем цепь из списка цепей
 
-        foreach (var position in partPositions)
+        foreach (var position in partPositions)                         //перебираем по всем бывшим элементам этой цепи
         {
-            if (this.parts.TryGetValue(position, out var part))
+            if (this.parts.TryGetValue(position, out var part))         //есть такое соединение?
             {
-                foreach (var face in BlockFacing.ALLFACES)
+                foreach (var face in BlockFacing.ALLFACES)              //перебираем по всем 6 направлениям
                 {
-                    if (part.Networks[face.Index] == network)
+                    if (part.Networks[face.Index] == network)           //если нашли привязку к этой цепи
                     {
-                        part.Networks[face.Index] = null;
+                        part.Networks[face.Index] = null;               //обнуляем ее
+                        part.eparams[face.Index]= new float[5];         //заодно обнуляем все параметры цепи аналогично
                     }
                 }
             }
         }
 
-        foreach (var position in partPositions)
-        {
-            if (this.parts.TryGetValue(position, out var part))
+        foreach (var position in partPositions)                                 //перебираем по всем бывшим элементам этой цепи
+        {   
+            if (this.parts.TryGetValue(position, out var part))                 //есть такое соединение?
             {
-                this.AddConnections(ref part, part.Connection);
+                this.AddConnections(ref part, part.Connection, new float[5]);   //добавляем соединения???
             }
         }
     }
 
+
+    //создаем новую цепь
     private Network CreateNetwork()
     {
         var network = new Network();
@@ -451,7 +456,9 @@ public class ElectricityAddon : ModSystem
         return network;
     }
 
-    private void AddConnections(ref NetworkPart part, Facing addedConnections)
+
+
+    private void AddConnections(ref NetworkPart part, Facing addedConnections, float[] setEparams)
     {
         if (addedConnections == Facing.None)
         {
@@ -468,7 +475,7 @@ public class ElectricityAddon : ModSystem
             new HashSet<Network>()
         };
 
-        foreach (var face in FacingHelper.Faces(part.Connection))
+        foreach (var face in FacingHelper.Faces(part.Connection))           //ищет к каким сетям эти провода могут относиться
         {
             networksByFace[face.Index].Add(part.Networks[face.Index] ?? this.CreateNetwork());
         }
@@ -478,7 +485,7 @@ public class ElectricityAddon : ModSystem
             var directionFilter = FacingHelper.FromDirection(direction);
             var neighborPosition = part.Position.AddCopy(direction);
 
-            if (this.parts.TryGetValue(neighborPosition, out var neighborPart))
+            if (this.parts.TryGetValue(neighborPosition, out var neighborPart))         //проверяет, если в той стороне сосед
             {
                 foreach (var face in FacingHelper.Faces(addedConnections & directionFilter))
                 {
@@ -487,6 +494,7 @@ public class ElectricityAddon : ModSystem
                         if (neighborPart.Networks[face.Index] is { } network)
                         {
                             networksByFace[face.Index].Add(network);
+
                         }
                     }
 
@@ -550,7 +558,8 @@ public class ElectricityAddon : ModSystem
             }
 
             network.PartPositions.Add(part.Position);
-            part.Networks[face.Index] = network;
+            part.Networks[face.Index] = network;         //присваиваем в этой точке эту цепь
+            part.eparams[face.Index] = setEparams;       //аналогично с параметрами электричества
         }
 
         foreach (var direction in FacingHelper.Directions(part.Connection))
@@ -579,7 +588,7 @@ public class ElectricityAddon : ModSystem
         }
     }
 
-    private void RemoveConnections(ref NetworkPart part, Facing removedConnections)
+    private void RemoveConnections(ref NetworkPart part, Facing removedConnections, float[] setEparams)
     {
         if (removedConnections == Facing.None)
         {
@@ -626,16 +635,21 @@ public class ElectricityAddon : ModSystem
         }
     }
 
+    /*
     public void SetElectricParams(BlockPos position, float[] eparams)
     {
         if (!this.parts.TryGetValue(position, out var part))
-        {     
-            this.parts[position] = new NetworkPart(position);
+        {
+            part=this.parts[position] = new NetworkPart(position);
         }
 
-        this.parts[position].eparams= eparams;
+        //foreach (var network in part.Networks)
+        //{
+        //    if (network != null)
+        //        this.parts[position].eparams[] = eparams;
+       // }
     }
-
+    */
 
     public void SetProducer(BlockPos position, IElectricProducer? producer)
     {
@@ -699,6 +713,7 @@ public class ElectricityAddon : ModSystem
         }
     }
 
+    //собирает информацию по цепям
     public NetworkInformation GetNetworks(BlockPos position, Facing facing)
     {
         var result = new NetworkInformation();
@@ -709,10 +724,11 @@ public class ElectricityAddon : ModSystem
 
             foreach (var blockFacing in FacingHelper.Faces(facing))
             {
-                if (part.Networks[blockFacing.Index] is { } network)
+                if (part.Networks[blockFacing.Index] is { } networkk)
                 {
-                    networks.Add(network);
-                    result.Facing |= FacingHelper.FromFace(blockFacing);
+                    networks.Add(networkk);                                     //выдаем найденную цепь
+                    result.Facing |= FacingHelper.FromFace(blockFacing);        //выдаем ее направления?
+                    result.eParamsInNetwork = part.eparams[blockFacing.Index];  //выдаем ее текущие параметры
                 }
             }
 
@@ -763,7 +779,7 @@ internal class Network
 }
 
 internal class NetworkPart                       //элемент цепи
-{                     
+{
     public readonly Network?[] Networks = {      //в какие стороны провода направлены
             null,
             null,
@@ -773,37 +789,49 @@ internal class NetworkPart                       //элемент цепи
             null
         };
 
-    public readonly BlockPos Position;          //позиция
-    public IElectricAccumulator? Accumulator;   //поведение аккумулятора?
-    public Facing Connection = Facing.None;
-    public IElectricConsumer? Consumer;         //поведение потребителя?
-    public IElectricProducer? Producer;         //поведение источнрка?
-    public float[] eparams= new float[5]
+    public readonly float[][] eparams =
+        {                                       //в какие стороны провода направлены
+            new float[5],
+            new float[5],
+            new float[5],
+            new float[5],
+            new float[5],
+            new float[5],
+        };
+    /*
         {
             0,                                  //максимальный размер пакета энергии, которое может пройти по одной линии этого элемента цепи
             0,                                  //текущий размер энергии в пакете/ах, который проходит в элементе цепи
             0,                                  //потери энергии в элементе цепи
             0,                                  //количество линий элемента цепи/провода
             0                                   //напряжение? (возможно будет про запас)
-        };
-    public float maxPacketEnergy=0;               
-    public float PacketEnergy=0;                
+        },
+
+    */
+
+    public readonly BlockPos Position;           //позиция
+    public IElectricAccumulator? Accumulator;    //поведение аккумулятора?
+    public Facing Connection = Facing.None;
+    public IElectricConsumer? Consumer;          //поведение потребителя?
+    public IElectricProducer? Producer;          //поведение источнрка?
+
     public NetworkPart(BlockPos position)
     {
         this.Position = position;
     }
 }
 
-public class NetworkInformation
+public class NetworkInformation             //информация о конкретной цепи
 {
-    public int Consumption;
-    public Facing Facing = Facing.None;
-    public int NumberOfAccumulators;
-    public int NumberOfBlocks;
-    public int NumberOfConsumers;
-    public int NumberOfProducers;
-    public int Overflow;
-    public int Production;
+    public int Consumption;                 //потреблении
+    public Facing Facing = Facing.None;     //направлений
+    public int NumberOfAccumulators;        //аккумуляторах
+    public int NumberOfBlocks;              //блоков
+    public int NumberOfConsumers;           //потребителй
+    public int NumberOfProducers;           //источников
+    public int Overflow;                    //перепроизводстве
+    public int Production;                  //проивзодстве
+    public float[] eParamsInNetwork= new float[5];       //параметрах конкретно этого блока в этой цепи
 }
 
 internal class Consumer

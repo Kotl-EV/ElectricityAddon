@@ -77,7 +77,7 @@ public class FlyToggleEvent : ModSystem
                     int energy = itemSlot.Itemstack.Attributes.GetInt("electricity:energy");
                     if (energy > consumeFly/num)
                     {
-                        if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos))
+                        if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && ownInventory[(int)EnumCharacterDressType.Waist]?.Itemstack?.Item.FirstCodePart().Contains("angelbelt") != true)
                         {
                             collectible.receiveEnergy(itemSlot.Itemstack, -(int)(consumeFly/num));
                             itemSlot.MarkDirty();
@@ -104,7 +104,6 @@ public class FlyToggleEvent : ModSystem
                 ItemSlot itemSlot = ownInventory[ElectricityAddon.combatoverhaul ? 34:13];
                 if (itemSlot.Itemstack?.Collectible is EArmor collectible)
                 {
-
                         if (itemSlot.Itemstack.Attributes.GetBool("flying") && itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos))
                         {
                             if (allOnlinePlayer.WorldData.FreeMove != true)
@@ -118,7 +117,7 @@ public class FlyToggleEvent : ModSystem
                                 ((IServerPlayer)allOnlinePlayer).BroadcastPlayerData();
                             }
                         }
-                        else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
+                        else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative && ownInventory[(int)EnumCharacterDressType.Waist]?.Itemstack?.Item.FirstCodePart().Contains("angelbelt") != true)
                         {
                             if (allOnlinePlayer.WorldData.FreeMove)
                             {
@@ -133,7 +132,7 @@ public class FlyToggleEvent : ModSystem
                             }
                         }
                         
-                }else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
+                }else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative && ownInventory[(int)EnumCharacterDressType.Waist]?.Itemstack?.Item.FirstCodePart().Contains("angelbelt") != true)
                 {
                     if (allOnlinePlayer.WorldData.FreeMove)
                     {

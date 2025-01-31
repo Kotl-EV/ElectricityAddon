@@ -25,6 +25,14 @@ public class BlockEntityEMotor : BlockEntity
         }
     }
 
+
+    //передает значения из Block в BEBehaviorElectricityAddon
+    public float[] Eparams
+    {
+        get => this.ElectricityAddon.Eparams;
+        set => this.ElectricityAddon.Eparams = value;
+    }
+
     public override void ToTreeAttributes(ITreeAttribute tree)
     {
         base.ToTreeAttributes(tree);

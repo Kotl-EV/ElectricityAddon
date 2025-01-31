@@ -162,10 +162,15 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     public override void ToTreeAttributes(ITreeAttribute tree)
     {
         base.ToTreeAttributes(tree);
+
         
         tree.SetBytes("electricity:connection", SerializerUtil.Serialize(this.connection));
         tree.SetBytes("electricity:interruption", SerializerUtil.Serialize(this.interruption));
-       // tree.SetBytes("electricity:eparams", SerializerUtil.Serialize(ElectricityAddon.));
+
+        //var networkInformation = this.System?.GetNetworks(this.Blockentity.Pos, this.Connection);      //получаем информацию о сети
+        //tree.SetBytes("electricity:eparams", SerializerUtil.Serialize(networkInformation?.eParamsInNetwork));
+        
+        tree.SetBytes("electricity:eparams", SerializerUtil.Serialize(this.eparams));
     }
 
     public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
@@ -174,13 +179,14 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
 
         var connection = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricity:connection"));
         var interruption = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricity:interruption"));
-        //var eparams = SerializerUtil.Deserialize<this.System.>(tree.GetBytes("electricity:eparams"));
+
+        var eparams = SerializerUtil.Deserialize<float[]>(tree.GetBytes("electricity:eparams"));
 
         if (connection != this.connection || interruption != this.interruption)
         {
             this.interruption = interruption;
             this.connection = connection;
-            //this.eparams = eparams;
+            this.eparams = eparams;
             this.dirty = true;
             this.Update();
         }

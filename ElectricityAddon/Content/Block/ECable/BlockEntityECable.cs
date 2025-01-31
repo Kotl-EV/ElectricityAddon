@@ -16,6 +16,7 @@ namespace Electricity.Content.Block.Entity {
             set => this.ElectricityAddon.Connection = value;
         }
 
+        //передает значения из Block в BEBehaviorElectricityAddon
         public float[] Eparams
         {
             get => this.ElectricityAddon.Eparams;

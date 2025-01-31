@@ -127,19 +127,23 @@ public class ElectricityAddon : ModSystem
 
             part = this.parts[position] = new NetworkPart(position);   //если нет, то создаем новый
         }
+           
 
-        if (facing == part.Connection)       //если соединения совпадают, то зачем вызывали?
-        {
-            return false;
-        }
 
         var addedConnections = ~part.Connection & facing;      // вычисляет, что добавилось
         var removedConnections = part.Connection & ~facing;    // вычисляет, что убавилось
 
+
+        //if (facing == part.Connection)       //если соединения совпадают и параметры соединения, то зачем вызывали?
+        //{
+        //    return false;
+        //}
+
+
         part.Connection = facing;                              // раз уж просят, применим направления
 
         this.AddConnections(ref part, addedConnections, setEparams);         // добавляем новое соединение
-        this.RemoveConnections(ref part, removedConnections, new float[5]);  // убираем соединение
+        this.RemoveConnections(ref part, removedConnections);  // убираем соединение
 
         if (part.Connection == Facing.None)                    // если направлений в блоке не осталось, то
         {
@@ -155,7 +159,7 @@ public class ElectricityAddon : ModSystem
         if (this.parts.TryGetValue(position, out var part))
         {
             this.parts.Remove(position);
-            this.RemoveConnections(ref part, part.Connection, new float[5]);
+            this.RemoveConnections(ref part, part.Connection);
         }
     }
 
@@ -431,7 +435,6 @@ public class ElectricityAddon : ModSystem
                     if (part.Networks[face.Index] == network)           //если нашли привязку к этой цепи
                     {
                         part.Networks[face.Index] = null;               //обнуляем ее
-                        part.eparams[face.Index]= new float[5];         //заодно обнуляем все параметры цепи аналогично
                     }
                 }
             }
@@ -441,7 +444,7 @@ public class ElectricityAddon : ModSystem
         {   
             if (this.parts.TryGetValue(position, out var part))                 //есть такое соединение?
             {
-                this.AddConnections(ref part, part.Connection, new float[5]);   //добавляем соединения???
+                this.AddConnections(ref part, part.Connection, null);     //добавляем соединения???
             }
         }
     }
@@ -460,10 +463,10 @@ public class ElectricityAddon : ModSystem
 
     private void AddConnections(ref NetworkPart part, Facing addedConnections, float[] setEparams)
     {
-        if (addedConnections == Facing.None)
-        {
-            return;
-        }
+        //if (addedConnections == Facing.None)
+        //{
+        //    return;
+        //}
 
         var networksByFace = new[]
         {
@@ -558,8 +561,10 @@ public class ElectricityAddon : ModSystem
             }
 
             network.PartPositions.Add(part.Position);
-            part.Networks[face.Index] = network;         //присваиваем в этой точке эту цепь
-            part.eparams[face.Index] = setEparams;       //аналогично с параметрами электричества
+
+            part.Networks[face.Index] = network;             //присваиваем в этой точке эту цепь
+            if (setEparams != null)
+                part.eparams[face.Index] = setEparams;       //аналогично с параметрами электричества
         }
 
         foreach (var direction in FacingHelper.Directions(part.Connection))
@@ -588,12 +593,12 @@ public class ElectricityAddon : ModSystem
         }
     }
 
-    private void RemoveConnections(ref NetworkPart part, Facing removedConnections, float[] setEparams)
+    private void RemoveConnections(ref NetworkPart part, Facing removedConnections)
     {
-        if (removedConnections == Facing.None)
-        {
-            return;
-        }
+        //if (removedConnections == Facing.None)
+        //{
+        //    return;
+        //}
 
         foreach (var blockFacing in FacingHelper.Faces(removedConnections))
         {
@@ -791,20 +796,22 @@ internal class NetworkPart                       //элемент цепи
 
     public readonly float[][] eparams =
         {                                       //в какие стороны провода направлены
-            new float[5],
-            new float[5],
-            new float[5],
-            new float[5],
-            new float[5],
-            new float[5],
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
         };
+
     /*
         {
             0,                                  //максимальный размер пакета энергии, которое может пройти по одной линии этого элемента цепи
             0,                                  //текущий размер энергии в пакете/ах, который проходит в элементе цепи
             0,                                  //потери энергии в элементе цепи
             0,                                  //количество линий элемента цепи/провода
-            0                                   //напряжение? (возможно будет про запас)
+            0,                                  //напряжение макс (возможно будет про запас)
+            0                                   //сгорел или нет
         },
 
     */
@@ -831,7 +838,7 @@ public class NetworkInformation             //информация о конкр
     public int NumberOfProducers;           //источников
     public int Overflow;                    //перепроизводстве
     public int Production;                  //проивзодстве
-    public float[] eParamsInNetwork= new float[5];       //параметрах конкретно этого блока в этой цепи
+    public float[] eParamsInNetwork= new float[6];       //параметрах конкретно этого блока в этой цепи
 }
 
 internal class Consumer

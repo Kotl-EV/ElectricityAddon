@@ -76,6 +76,7 @@ public class BlockEGeneratorTier1 : Vintagestory.API.Common.Block, IMechanicalPo
         return base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
     }
 
+    //ставим блок
     public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel,
         ItemStack byItemStack)
     {
@@ -87,7 +88,17 @@ public class BlockEGeneratorTier1 : Vintagestory.API.Common.Block, IMechanicalPo
             world.BlockAccessor.GetBlockEntity(blockSel.Position) is BlockEntityEGenerator entity
         )
         {
-            entity.Facing = facing;
+            entity.Facing = facing;                             //сообщаем направление
+            entity.Eparams = new float[6]
+                        {
+                            200,                                //максимальный размер пакета энергии, которое может пройти по одной линии этого элемента цепи
+                            0,                                  //текущий размер энергии в пакете/ах, который проходит в элементе цепи
+                            0,                                  //потери энергии в элементе цепи
+                            1,                                  //количество линий элемента цепи/провода
+                            0,                                  //напряжение (возможно будет про запас)
+                            0                                   //сгорел или нет
+                        };
+
 
             var blockFacing = FacingHelper.Directions(entity.Facing).First();
             var blockPos = blockSel.Position;

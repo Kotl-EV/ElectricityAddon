@@ -16,25 +16,30 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
 {
 
     private static CompositeShape? compositeShape;
-    private int powerSetting;             //текущее значение потребления
+
+    private float powerRequest = I_max;         // Нужно энергии
+    private float powerReceive = 0;             // Дали энергии
 
     // Константы двигателя
-    private static float I_min;          // Минимальный ток
-    private static float I_max;         // Максимальный ток
-    private static float torque_max;     // Максимальный крутящий момент
-    private static float kpd_max;        // Пиковый КПД
-    private static float speed_max;       // Максимальная скорость вращения
-    private static float resistance_factor;    // множитель сопротивления
+    private static float I_min;                 // Минимальный ток
+    private static float I_max;                 // Максимальный ток
+    private static float torque_max;            // Максимальный крутящий момент
+    private static float kpd_max;               // Пиковый КПД
+    private static float speed_max;             // Максимальная скорость вращения
+    private static float resistance_factor;     // множитель сопротивления
 
-    private float torque;                        // Текущий крутящий момент
-    private float I_value;                       // Ток потребления
-    public float kpd;                            // КПД
+    private float torque;                       // Текущий крутящий момент
+    private float I_value, I_value2;            // Ток потребления
+    public float kpd;                           // КПД
 
     private float[] def_Params = { 10.0F, 100.0F, 0.5F, 0.75F, 0.5F, 0.1F };   //заглушка
-    public float[] Params = { 0, 0, 0, 0, 0, 0 };                              //сюда берем параметры
+    public float[] Params = { 0, 0, 0, 0, 0, 0 };                              //сюда берем параметры из ассетов
 
+    private static float constanta = (I_max - I_min) / torque_max;
 
-    //извлекаем параметры
+    /// <summary>
+    /// Извлекаем параметры из ассетов
+    /// </summary>
     public void GetParams()
     {
         Params = MyMiniLib.GetAttributeArrayFloat(this.Block, "params", def_Params);
@@ -50,6 +55,9 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     {
         GetParams();
     }
+
+
+
 
     public override BlockFacing OutFacingForNetworkDiscovery
     {
@@ -106,108 +114,130 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         _ => throw new Exception()
     };
 
-    //диапазон потребления
+    /// <summary>
+    /// Диапазон потребления
+    /// </summary>
     public ConsumptionRange ConsumptionRange => new(0, (int)I_max);
 
-    //событие потребления
-    public void Consume(int amount)
+    public BlockPos Pos => this.Position;
+
+    /// <summary>
+    /// Запрашивает энергию
+    /// </summary>
+    public float Consume_request()
     {
-        if (this.powerSetting != amount)
+        return this.powerRequest;
+    }
+
+    /// <summary>
+    /// Получает энергию
+    /// </summary>
+    public void Consume_receive(float amount)
+    {
+        if (this.powerReceive != amount)
         {
-            this.powerSetting = amount;
+            this.powerReceive = amount;
             this.Blockentity.MarkDirty(true);
         }
     }
 
-    //событие подключения к механической сети
+
+    public void Consume(int amount)                //удалить можно---------------------------
+    {
+
+    }
 
 
 
 
-    //не удалять
-    //никто не обращается к этой функции, когда работает GetTorque, но быть должна
+    // не удалять
+    // никто не обращается к этой функции, когда работает GetTorque, но быть должна
     public override float GetResistance()
     {
         return 0;
     }
 
-    //считаем сопротивление самого двигателя
-    public float Resistance(float spd)
-    {
-        return (Math.Abs(spd) > speed_max)                           // Если скорость превышает максимальную, рассчитываем сопротивление как степенную зависимость
-            ? resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f)  // Степенная зависимость, если скорость ушла за пределы двигателя   
-            : resistance_factor * Math.Abs(spd) / speed_max;                      // Линейное сопротивление для обычных скоростей
-    }
-
-
-    // Рассчитываем КПД
-    public float KPD(float tor)
-    {
-        float b = 0.7f;                             // Положение вершины параболы
-        float a = (tor <= torque_max / 2.0F) ?        // левая и права ветвь параболы разные
-            2.04F
-            : 0.8f;
-        float buf = kpd_max * (1 - a * (float)Math.Pow(tor / torque_max - b, 2));   // Параболическая зависимость
-        return Math.Max(0.01f, buf);                                             // Минимальное значение КПД
-    }
-
-
-    private static float constanta = (I_max - I_min) / torque_max ;
 
     /// <summary>
-    /// Основной метод поведения двигателя
+    /// Считаем сопротивление самого двигателя
+    /// </summary>
+    public float Resistance(float spd)
+    {
+        return (Math.Abs(spd) > speed_max)                                          // Если скорость превышает максимальную, рассчитываем сопротивление как степенную зависимость
+            ? resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f)  // Степенная зависимость, если скорость ушла за пределы двигателя   
+            : resistance_factor * Math.Abs(spd) / speed_max;                        // Линейное сопротивление для обычных скоростей
+    }
+
+    /// <summary>
+    /// Рассчитываем КПД
+    /// </summary>
+    public float KPD(float tor)
+    {
+        float b = 0.7f;                         // Положение вершины параболы
+        float a = (tor <= torque_max / 2.0F)    // Левая и права ветвь параболы разные
+            ? 2.04F
+            : 0.8f;
+        float buf = kpd_max * (1 - a * (float)Math.Pow(tor / torque_max - b, 2));   // Параболическая зависимость
+        return Math.Max(0.01f, buf);                                                // Минимальное значение КПД
+    }
+
+
+
+
+    /// <summary>
+    /// Основной метод поведения двигателя возвращающий момент и сопротивление
     /// </summary>
     public override float GetTorque(long tick, float speed, out float resistance)
     {
 
-        torque = 0f;        // Текущий крутящий момент
-        resistance = Resistance(speed);  //вычисляем текущее сопротивление двигателя    
-        I_value = I_min;    // Ток потребления
+        torque = 0f;                            // Текущий крутящий момент
+        resistance = Resistance(speed);         // Вычисляем текущее сопротивление двигателя    
+        I_value = I_min;                        // Ток потребления
 
-        float I_amount = this.powerSetting;  //доступно тока 
+        float I_amount = this.powerReceive;     // Доступно тока/энергии 
 
-        // Если ток меньше минимального, двигатель не работает
-        if (I_amount < I_min)
+        if (I_amount < I_min)                   // Если ток меньше минимального, двигатель не работает
             return torque;
 
-        I_value = Math.Min(I_amount, I_max);
+        I_value = Math.Min(I_amount, I_max);    // Берем, что дают
 
-        // Рассчитываем момент для компенсации сопротивления
-        //torque = Math.Min(Network.NetworkResistance, torque_max);
-        //float torque2 = torque_max * (I_value - I_min) / (I_max - I_min);
-        //torque =(torque+ torque2)/2;
 
-        //момент линейно от тока
-        torque = torque_max * (I_value - I_min) / (I_max - I_min); //берем максимум момента из всей энергии, что нам дают
+        torque = Math.Min(Network.NetworkResistance, torque_max);           // Рассчитываем момент для компенсации сопротивления
+        float torque2 = torque_max * (I_value - I_min) / (I_max - I_min);   // Рассчитываем момент линейно от тока
+        torque = (torque + torque2) / 2;                                    // Выдаем момент среднее между вычисленных
 
-        // Ток потребления с учетом КПД
-        I_value = torque * constanta / KPD(torque) + I_min;
+        //torque = torque_max * (I_value - I_min) / (I_max - I_min);        // Берем максимум момента из всей энергии, что нам дают
 
-        // Проверка, чтобы ток не превышал максимальное значение I_max и I_amount
-        float torque_down = 0;  //понижаем 
+        I_value = torque * constanta / KPD(torque) + I_min;                 // Ток потребления с учетом КПД
+
+
+        float torque_down = 0;                                              
         int k = 0;
-        while (I_value > Math.Min(I_max, I_amount))
+        I_value2 = I_value;
+        while (I_value2 > I_value)                                          // Проверка, чтобы ток не превышал максимальное значение I_max и I_amount
         {
             k++;
             // Пропорционально снижаем крутящий момент
-            torque_down = torque * (1 - (0.02F * k));         // Уменьшаем крутящий момент на 2%
+            torque_down = torque * (1 - (0.02F * k));                       // Уменьшаем крутящий момент на 2%
 
             if (torque_down < 0)
             {
                 torque_down = 0;
                 break;
             }
-            // Ток потребления с учетом КПД
-            I_value = torque_down * constanta / KPD(torque_down) + I_min;
+            
+            I_value2 = torque_down * constanta / KPD(torque_down) + I_min;  // Ток потребления с учетом КПД
 
         }
-        //var storageEnergyBlock = inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
 
         if (k > 0)
-            torque = torque_down;
+            torque = torque_down;                                           // Отдаем новое значение момента
+           
 
-        // Возвращаем все значения            
-        return this.propagationDir == this.OutFacingForNetworkDiscovery
+        this.powerRequest = I_value;                                        // Запрашиваем энергии столько, сколько нужно реально для работы
+
+
+        return this.propagationDir == this.OutFacingForNetworkDiscovery     // Возвращаем все значения
             ? 1f * torque
             : -1f * torque;
     }
@@ -278,12 +308,16 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         return false;
     }
 
+
+    /// <summary>
+    /// Подсказка при наведении на блок
+    /// </summary>
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
 
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting / I_max * 100));
-        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + this.powerSetting + "/" + I_max + " Eu");
+        stringBuilder.AppendLine(StringHelper.Progressbar(powerReceive / I_max * 100));
+        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerReceive + "/" + I_max + " Eu");
         //stringBuilder.AppendLine("└ " + "КПД " + this.kpd*100F + "%/" + this.kpd_max*100+"%");
         //stringBuilder.AppendLine("└ " + "Реальный ток " + I_value + "/" + this.I_max);
         stringBuilder.AppendLine();

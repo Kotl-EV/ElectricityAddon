@@ -7,20 +7,23 @@ using Vintagestory.API.Config;
 
 namespace ElectricityAddon.Content.Block.EOven;
 
-public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer {
+public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer
+{
     public int powerSetting;
     public bool working;
     private float OvenTemperature;
     public int maxConsumption;
-    public BEBehaviorEOven(BlockEntity blockEntity) : base(blockEntity) {
+    public BEBehaviorEOven(BlockEntity blockEntity) : base(blockEntity)
+    {
         maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 100);
     }
     public ConsumptionRange ConsumptionRange => working ? new ConsumptionRange(0, maxConsumption) : new ConsumptionRange(0, 0);
-    public void Consume(int amount) {
+    public void Consume(int amount)
+    {
         BlockEntityEOven? entity = null;
         if (Blockentity is BlockEntityEOven temp)
         {
-            entity = temp;            
+            entity = temp;
             OvenTemperature = (int)entity.ovenTemperature;
 
             //проверяем количество занятых слотов и готовой еды
@@ -50,7 +53,7 @@ public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer {
             {
                 working = true;
                 if (stack_count_perfect == stack_count) //если еда вся готова - не греем
-                {                    
+                {
                     working = false;
                 }
             }
@@ -67,11 +70,22 @@ public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer {
         }
     }
 
-    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
+    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+    {
         base.GetBlockInfo(forPlayer, stringBuilder);
         stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
         stringBuilder.AppendLine("├ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Eu");
         stringBuilder.AppendLine("└ " + Lang.Get("Temperature") + OvenTemperature + "°");
         stringBuilder.AppendLine();
+    }
+
+    public float Consume_request()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Consume_receive(float amount)
+    {
+        throw new System.NotImplementedException();
     }
 }

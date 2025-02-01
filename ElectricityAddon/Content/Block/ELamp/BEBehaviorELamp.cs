@@ -79,5 +79,14 @@ namespace ElectricityAddon.Content.Block.ELamp
             stringBuilder.AppendLine();
         }
 
+        public float Consume_request()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Consume_receive(float amount)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

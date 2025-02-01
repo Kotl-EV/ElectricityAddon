@@ -205,4 +205,14 @@ public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
         stringBuilder.AppendLine("└ " + Lang.Get("Production") + this.powerSetting + "/" + I_max + " Eu");
         stringBuilder.AppendLine();
     }
+
+    public void Produce_order(float amount)
+    {
+        throw new NotImplementedException();
+    }
+
+    public float Produce_give()
+    {
+        throw new NotImplementedException();
+    }
 }

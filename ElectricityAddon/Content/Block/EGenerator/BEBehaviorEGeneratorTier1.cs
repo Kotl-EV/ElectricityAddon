@@ -14,27 +14,30 @@ namespace ElectricityAddon.Content.Block.EGenerator;
 public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 {
     private static CompositeShape? compositeShape;
-    private int powerSetting;
+    private float powerOrder = 0;           // Просят столько энергии
+    private float powerGive = I_max;        // Отдаем столько энергии
 
     // Константы генератора
-    private static float I_max;              // Максимальный ток
-    private static float speed_max;            // Максимальная скорость вращения
-    private static float resistance_factor ;    // множитель сопротивления
-    private static float resistance_load ;     // сопротивление нагрузки генератора
+    private static float I_max;                 // Максимальный ток
+    private static float speed_max;             // Максимальная скорость вращения
+    private static float resistance_factor;     // Множитель сопротивления
+    private static float resistance_load;       // Сопротивление нагрузки генератора
 
-    private float[] def_Params = { 100.0F, 0.5F, 0.1F, 0.25F };                //заглушка
-    public float[] Params = { 0, 0, 0, 0};                              //сюда берем параметры
+    private float[] def_Params = { 100.0F, 0.5F, 0.1F, 0.25F };          //заглушка
+    public float[] Params = { 0, 0, 0, 0 };                              //сюда берем параметры из ассетов
 
 
-    //извлекаем параметры
+    /// <summary>
+    /// Извлекаем параметры из ассетов
+    /// </summary>  
     public void GetParams()
     {
         Params = MyMiniLib.GetAttributeArrayFloat(this.Block, "params", def_Params);
-        
+
         I_max = Params[0];
         speed_max = Params[1];
         resistance_factor = Params[2];
-        resistance_load= Params[3];
+        resistance_load = Params[3];
     }
 
     public BEBehaviorEGeneratorTier1(BlockEntity blockEntity) : base(blockEntity)
@@ -97,24 +100,41 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     };
 
 
+    public int Produce()                        //можно удалять потом----------------------------------
+    {
+        return 0;
+    }
 
+    /// <summary>
+    /// Запрашивают энергию у генератора
+    /// </summary>
+    public void Produce_order(float amount)
+    {
+        if (this.powerOrder != amount)
+        {
+            this.powerOrder = amount;
+            this.Blockentity.MarkDirty(true);
+        }
+    }
 
-    //выработка энергии
-    public int Produce()
+    /// <summary>
+    /// Генератор отдает энергию
+    /// </summary>
+    public float Produce_give()
     {
         float speed = this.network?.Speed ?? 0.0F;
 
-        float b = 1f;                                                                     // Положение вершины кривой
+        float b = 1f;                                                                       // Положение вершины кривой
         float a = 1F;
-        int power = (Math.Abs(speed) <= speed_max) ?                                      // задаем форму кривых тока(мощности)
-            (int)((1 - a * (float)Math.Pow(Math.Abs(speed) / speed_max - b, 4F)) * I_max) //степенная с резким падением ближе к 0
-            : (int)(I_max);                                                               //линейная горизонтальная
+        float power = (Math.Abs(speed) <= speed_max)                                        // Задаем форму кривых тока(мощности)
+            ? (int)((1 - a * (float)Math.Pow(Math.Abs(speed) / speed_max - b, 4F)) * I_max) // Степенная с резким падением ближе к 0
+            : (int)(I_max);                                                                 // Линейная горизонтальная
 
-        power=Math.Max(0, power);                   //чтобы уж точно не ниже нуля
+        power = Math.Max(0, power);                                                         // Чтобы уж точно не ниже нуля
 
-        if (power != this.powerSetting)
+        if (power != this.powerGive)
         {
-            this.powerSetting = power;
+            this.powerGive = power;
             this.Blockentity.MarkDirty(true);
         }
 
@@ -122,13 +142,16 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     }
 
 
-    //сеть берет отсюда сопротивление этого генератора
+    /// </summary>
+    /// Механическая сеть берет отсюда сопротивление этого генератора
+    /// </summary>
     public override float GetResistance()
     {
         float spd = this.Network.Speed;
-        return (Math.Abs(spd) > speed_max)                                      // Если скорость превышает максимальную, рассчитываем сопротивление как квадратичную
-            ? resistance_load + (resistance_factor * (float) Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
-            : resistance_load + (resistance_factor * Math.Abs(spd) / speed_max);                       // Линейное сопротивление для обычных скоростей
+        return (Math.Abs(spd) > speed_max)                                                                                      // Если скорость превышает максимальную, рассчитываем сопротивление как квадратичную
+            ? resistance_load * (powerOrder / I_max) + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
+            : resistance_load * (powerOrder / I_max) + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
+        // сопротивление генератора также напрямую зависит от нагрузки в электрической цепи powerOrder 
     }
 
 
@@ -196,11 +219,15 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     {
         return false;
     }
-    
-    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder) {
+
+    /// <summary>
+    /// Подсказка при наведении на блок
+    /// </summary>
+    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+    {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting/I_max*100));
-        stringBuilder.AppendLine("└ "+ Lang.Get("Production") + this.powerSetting + "/" + I_max + " Eu");
+        stringBuilder.AppendLine(StringHelper.Progressbar(powerGive / I_max * 100));
+        stringBuilder.AppendLine("└ " + Lang.Get("Production") + powerGive + "/" + I_max + " Eu");
         stringBuilder.AppendLine();
     }
 }

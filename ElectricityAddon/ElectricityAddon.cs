@@ -21,6 +21,7 @@ using ElectricityAddon.Content.Block.ESwitch;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.MathTools;
+using HarmonyLib;
 
 [assembly: ModDependency("game", "1.20.0")]
 [assembly: ModInfo(
@@ -40,8 +41,9 @@ public class ElectricityAddon : ModSystem
 {
     private readonly List<Consumer> consumers = new();
     private readonly HashSet<Network> networks = new();
-    private readonly Dictionary<BlockPos, NetworkPart> parts = new();
-    public static bool combatoverhaul = false;
+    private readonly Dictionary<BlockPos, NetworkPart> parts = new(); //хранит все элементы всех цепей
+    public static bool combatoverhaul = false;                        //установлен ли combatoverhaul
+    public int speedOfElectricity=1;                                  //скорость электричетсва в проводах при одном обновлении сети (блоков в тик)
 
     public override void Start(ICoreAPI api)
     {
@@ -116,6 +118,8 @@ public class ElectricityAddon : ModSystem
             combatoverhaul = true;
     }
 
+
+    //в цепи изменения, значит обновить все соединения
     public bool Update(BlockPos position, Facing facing,float[] setEparams)
     {
         if (!this.parts.TryGetValue(position, out var part))     //смотрим, есть ли такой элемент уже в этом блоке
@@ -163,128 +167,195 @@ public class ElectricityAddon : ModSystem
         }
     }
 
+
+    //просчет сетей в этом тике
     private void OnGameTick(float _)
     {
         var accumulators = new List<IElectricAccumulator>();
-
-        foreach (var network in this.networks)
+        speedOfElectricity = 1;                                 //временно тут
+        while (speedOfElectricity >= 1)
         {
-            this.consumers.Clear();           //очистка всех потребителей
-
-            int production = network.Producers.Sum(producer => producer.Produce());   //собирает сумму производства всей энергии в цепи
-
-            int totalRequiredEnergy = 0;    //необходимо энергии потребителям
-
-            foreach (var consumer in network.Consumers.Select(electricConsumer => new Consumer(electricConsumer)))
+            foreach (var network in this.networks)              //каждую сеть считаем
             {
-                totalRequiredEnergy += consumer.Consumption.Max;
-                this.consumers.Add(consumer);
-            }
+                
+                this.consumers.Clear();                         //очистка списка всех потребителей, потому как для каждой network список свой
 
-            if (production < totalRequiredEnergy)   //если производится меньше, чем потребляется
-            {
-                do
+                foreach (var consumer in network.Consumers.Select(electricConsumer => new Consumer(electricConsumer)))  //выбираем всех потребителей из этой сети
                 {
-                    accumulators.Clear();
-                    accumulators.AddRange(network.Accumulators.Where(accumulator => accumulator.GetCapacity() > 0));
-
-                    if (accumulators.Count > 0)   //есть ли подключенные аккумуляторы в этой цепи
-                    {
-                        int rest = (totalRequiredEnergy - production) / accumulators.Count;
-
-                        if (rest == 0)
-                        {
-                            break;
-                        }
-
-                        foreach (var accumulator in accumulators)
-                        {
-                            var capacity = Math.Min(accumulator.GetCapacity(), rest);
-
-                            if (capacity > 0)
-                            {
-                                production += capacity;
-                                accumulator.Release(capacity);
-                            }
-                        }
-                    }
-                } while (accumulators.Count > 0 && totalRequiredEnergy - production > 0);
-            }
-
-            var availableEnergy = production;
-
-            var activeConsumers = this.consumers
-                .OrderBy(consumer => consumer.Consumption.Min)
-                .GroupBy(consumer => consumer.Consumption.Min)
-                .Where(
-                    grouping =>
-                    {
-                        var range = grouping.First().Consumption;
-                        var totalMinConsumption = range.Min * grouping.Count();
-
-                        if (totalMinConsumption <= availableEnergy)
-                        {
-                            availableEnergy -= totalMinConsumption;
-
-                            foreach (var consumer in grouping)
-                            {
-                                consumer.GivenEnergy += range.Min;
-                            }
-
-                            return true;
-                        }
-
-                        return false;
-                    }
-                )
-                .SelectMany(grouping => grouping)
-                .ToArray();
-
-            int requiredEnergy = int.MaxValue;
-
-            while (availableEnergy > 0 && requiredEnergy != 0)
-            {
-                requiredEnergy = 0;
-
-                var dissatisfiedConsumers = activeConsumers
-                    .Where(consumer => consumer.Consumption.Max > consumer.GivenEnergy)
-                    .ToArray();
-
-                var numberOfDissatisfiedConsumers = dissatisfiedConsumers.Count();
-
-                if (numberOfDissatisfiedConsumers == 0)
-                {
-                    break;
+                    this.consumers.Add(consumer);      //создаем список с потребителями
                 }
 
-                int distributableEnergy = Math.Max(1, availableEnergy / numberOfDissatisfiedConsumers);
-
-                foreach (var consumer in dissatisfiedConsumers)
+                bool[] updatedPos = new bool[network.PartPositions.Count];      //содержит массив просчитанных блоков
+                
+                // работаем с потребителями цепи
+                BlockPos[] startPositions=null;
+                
+                foreach (var consumer in this.consumers)     //работаем со всеми потребителями в этой сети
                 {
-                    if (availableEnergy == 0)
+                    float requestedEnergy=consumer.ElectricConsumer.Consume_request();      //этому потребителю нужно столько энергии
+                    startPositions=startPositions.AddToArray<BlockPos>(consumer.ElectricConsumer.Pos);     //сохраняем начальные позиции потребителей
+                    if (this.parts.TryGetValue(consumer.ElectricConsumer.Pos, out var part))
+                    {
+                        int k = 0; //счетчик -__-
+                        foreach (var network2 in part.Networks)              //каждую сеть в части перебираем
+                        {
+                            
+                            if (network2 != null && network == network2)
+                            {
+                                float recieveEnergy = Math.Min(part.eparams[k][1], requestedEnergy); //выдаем энергии сколько есть сейчас внутри
+                                part.eparams[k][1] -= recieveEnergy;                                 //обновляем пакет
+                                consumer.ElectricConsumer.Consume_receive(recieveEnergy);            //выдаем потребителю
+                            }
+                            k++;
+                        }
+                    }
+                }
+
+                if (startPositions == null)                                                         //если нет потребителей, то зачем считать вообще?
+                    return;
+
+                var tree = ChainTreeBuilder.BuildTree(network, startPositions);                     //строит дерево для цепи, где в корнях потребители
+
+                // Вывод дерева
+                /*
+      for (int level = 0; level < tree.Count; level++)
+        {
+            Console.WriteLine($"Level {level}:");
+            foreach (var node in tree[level])
+            {
+                Console.WriteLine($"  Node: ({node.Position.X}, {node.Position.Y}, {node.Position.Z})");
+                Console.WriteLine("    Children:");
+                foreach (var child in node.Children)
+                {
+                    Console.WriteLine($"      Child: ({child.Position.X}, {child.Position.Y}, {child.Position.Z})");
+                }
+            }
+        }
+                
+
+
+                ////////////////////////////////////////////////////////////////////
+                this.consumers.Clear();           //очистка всех потребителей
+
+                int production = network.Producers.Sum(producer => producer.Produce());   //собирает сумму производства всей энергии в цепи
+
+                int totalRequiredEnergy = 0;    //необходимо энергии потребителям
+
+                foreach (var consumer in network.Consumers.Select(electricConsumer => new Consumer(electricConsumer)))  //выбираем всех потребителей из этйо сети
+                {
+                    totalRequiredEnergy += consumer.Consumption.Max;
+                    this.consumers.Add(consumer);
+                }
+
+                if (production < totalRequiredEnergy)   //если производится меньше, чем потребляется
+                {
+                    do
+                    {
+                        accumulators.Clear();
+                        accumulators.AddRange(network.Accumulators.Where(accumulator => accumulator.GetCapacity() > 0));
+
+                        if (accumulators.Count > 0)   //есть ли подключенные аккумуляторы в этой цепи
+                        {
+                            int rest = (totalRequiredEnergy - production) / accumulators.Count;
+
+                            if (rest == 0)
+                            {
+                                break;
+                            }
+
+                            foreach (var accumulator in accumulators)
+                            {
+                                var capacity = Math.Min(accumulator.GetCapacity(), rest);
+
+                                if (capacity > 0)
+                                {
+                                    production += capacity;
+                                    accumulator.Release(capacity);
+                                }
+                            }
+                        }
+                    } while (accumulators.Count > 0 && totalRequiredEnergy - production > 0);
+                }
+
+                var availableEnergy = production;
+
+                var activeConsumers = this.consumers
+                    .OrderBy(consumer => consumer.Consumption.Min)
+                    .GroupBy(consumer => consumer.Consumption.Min)
+                    .Where(
+                        grouping =>
+                        {
+                            var range = grouping.First().Consumption;
+                            var totalMinConsumption = range.Min * grouping.Count();
+
+                            if (totalMinConsumption <= availableEnergy)
+                            {
+                                availableEnergy -= totalMinConsumption;
+
+                                foreach (var consumer in grouping)
+                                {
+                                    consumer.GivenEnergy += range.Min;
+                                }
+
+                                return true;
+                            }
+
+                            return false;
+                        }
+                    )
+                    .SelectMany(grouping => grouping)
+                    .ToArray();
+
+                int requiredEnergy = int.MaxValue;
+
+                while (availableEnergy > 0 && requiredEnergy != 0)
+                {
+                    requiredEnergy = 0;
+
+                    var dissatisfiedConsumers = activeConsumers
+                        .Where(consumer => consumer.Consumption.Max > consumer.GivenEnergy)
+                        .ToArray();
+
+                    var numberOfDissatisfiedConsumers = dissatisfiedConsumers.Count();
+
+                    if (numberOfDissatisfiedConsumers == 0)
                     {
                         break;
                     }
 
-                    var giveableEnergy = Math.Min(distributableEnergy, consumer.Consumption.Max - consumer.GivenEnergy);
+                    int distributableEnergy = Math.Max(1, availableEnergy / numberOfDissatisfiedConsumers);
 
-                    availableEnergy -= giveableEnergy;
-                    consumer.GivenEnergy += giveableEnergy;
+                    foreach (var consumer in dissatisfiedConsumers)
+                    {
+                        if (availableEnergy == 0)
+                        {
+                            break;
+                        }
 
-                    requiredEnergy += consumer.Consumption.Max - consumer.GivenEnergy;
+                        var giveableEnergy = Math.Min(distributableEnergy, consumer.Consumption.Max - consumer.GivenEnergy);
+
+                        availableEnergy -= giveableEnergy;
+                        consumer.GivenEnergy += giveableEnergy;
+
+                        requiredEnergy += consumer.Consumption.Max - consumer.GivenEnergy;
+                    }
                 }
+
+                foreach (var consumer in this.consumers)
+                {
+                    consumer.ElectricConsumer.Consume(consumer.GivenEnergy);
+                }
+
+                network.Production = production;
+                network.Consumption = production - availableEnergy;
+
+                StoreOverflowInAccumulators(network);
+
+                */
             }
-
-            foreach (var consumer in this.consumers)
-            {
-                consumer.ElectricConsumer.Consume(consumer.GivenEnergy);
-            }
-
-            network.Production = production;
-            network.Consumption = production - availableEnergy;
-
-            StoreOverflowInAccumulators(network);
+            speedOfElectricity = 0;   //временно тут
         }
+            
     }
 
     private static void StoreOverflowInAccumulators(Network network)
@@ -771,7 +842,7 @@ public class ElectricityAddon : ModSystem
     }
 }
 
-internal class Network
+public class Network
 {
     public readonly HashSet<IElectricAccumulator> Accumulators = new();
     public readonly HashSet<IElectricConsumer> Consumers = new();
@@ -850,6 +921,6 @@ internal class Consumer
     public Consumer(IElectricConsumer electricConsumer)
     {
         this.ElectricConsumer = electricConsumer;
-        this.Consumption = electricConsumer.ConsumptionRange;
+        this.Consumption = electricConsumer.ConsumptionRange;   //возможно удалим
     }
 }

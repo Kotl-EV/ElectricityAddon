@@ -115,7 +115,6 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                 system.SetConsumer(this.Blockentity.Pos, this.consumer); 
                 system.SetProducer(this.Blockentity.Pos, this.producer);
                 system.SetAccumulator(this.Blockentity.Pos, this.accumulator);
-                //system.SetElectricParams(this.Blockentity.Pos, Eparams);       //тут закидываем электрические параметры 
 
                 if (system.Update(this.Blockentity.Pos, this.connection & ~this.interruption, Eparams))
                 {
@@ -136,6 +135,9 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         this.System?.Remove(this.Blockentity.Pos);
     }
 
+    /// <summary>
+    /// Подсказка при наведении на блок
+    /// </summary>
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);

@@ -287,4 +287,14 @@ public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
         stringBuilder.AppendLine();
 
     }
+
+    public float Consume_request()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Consume_receive(float amount)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -43,4 +43,14 @@ public class BEBehaviorEStove : BlockEntityBehavior, IElectricConsumer
         stringBuilder.AppendLine("└ " + Lang.Get("Temperature") + stoveTemperature + "°");
         stringBuilder.AppendLine();
     }
+
+    public float Consume_request()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Consume_receive(float amount)
+    {
+        throw new System.NotImplementedException();
+    }
 }

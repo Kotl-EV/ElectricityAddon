@@ -62,6 +62,16 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
 
     }
 
+    public void Consume_receive(float amount)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float Consume_request()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);

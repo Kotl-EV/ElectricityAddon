@@ -159,7 +159,7 @@ public class ElectricityAddon : ModSystem
         }
 
         //тут очистка всех элементов цепи 
-        Cleaner(true);
+        Cleaner(false);
 
 
         return true;
@@ -199,8 +199,9 @@ public class ElectricityAddon : ModSystem
 
                 foreach (var consumer in this.consumers)     //работаем со всеми потребителями в этой сети
                 {
-                    var varr = consumer.ElectricConsumer.Consume_request();      //вызываем, чтобы обновить ентити
+                    
                     consumer.ElectricConsumer.Consume_receive(0.0F);      //обнуляем 
+                    var varr = consumer.ElectricConsumer.Consume_request();      //вызываем, чтобы обновить ентити
 
                 }
 
@@ -257,7 +258,7 @@ public class ElectricityAddon : ModSystem
 
                         float recieveEnergy = Math.Min(this.parts[consumPos].eparams[1], requestedEnergy); //выдаем энергии сколько есть сейчас внутри
                         this.parts[consumPos].eparams[1] -= recieveEnergy;                                 //обновляем пакет
-                        this.parts[consumPos].eparams[6] = requestedEnergy;                               //делаем в линию запрос необходимой энергии
+                        this.parts[consumPos].eparams[6] += requestedEnergy;                                //делаем в линию запрос необходимой энергии
                         consumer.ElectricConsumer.Consume_receive(recieveEnergy);                          //выдаем потребителю
 
                     }
@@ -311,7 +312,7 @@ public class ElectricityAddon : ModSystem
                                     {
                                         //this.parts[child.Position].eparams[6] += requestedEnergy/ (float)node.Children.Count; //одинаковые запросы детям
                                         this.parts[child.Position].eparams[1] = 0;                                              //мы и так все забрали
-                                        this.parts[child.Position].eparams[6] = requestedEnergy;                               //просим у детей по максимуму
+                                        this.parts[child.Position].eparams[6] += requestedEnergy;                               //просим у детей по максимуму
 
                                     }
                                 }
@@ -328,7 +329,7 @@ public class ElectricityAddon : ModSystem
 
                                         this.parts[child.Position].eparams[1] -= requestedEnergy * avalaibleChildren[k] / avalaibleEnergy; //забираем энергию пропорционально доступности                                           //мы и так все забрали
 
-                                        this.parts[child.Position].eparams[6] = requestedEnergy * avalaibleChildren[k] / avalaibleEnergy; //запрос пропорционально потреблению
+                                        this.parts[child.Position].eparams[6] += requestedEnergy * avalaibleChildren[k] / avalaibleEnergy; //запрос пропорционально потреблению
                                         k++;
                                     }
                                 }
@@ -344,20 +345,36 @@ public class ElectricityAddon : ModSystem
                     this.producers.Add(producer);      //создаем список с производителями
                 }
 
-
-                foreach (var producer in this.producers)     //работаем со всеми производителями в этой сети
+                if (startPositions != null)
                 {
-                    var producePos = producer.ElectricProducer.Pos;
-                    if (this.parts.TryGetValue(producePos, out var part))
+                    foreach (var producer in this.producers)     //работаем со всеми производителями в этой сети
                     {
-                        float orderEnergy = this.parts[producePos].eparams[6];                              //берем запрос энергии
-                        producer.ElectricProducer.Produce_order(orderEnergy);                               //передаем запрос производителю
-                        float giveEnergy = producer.ElectricProducer.Produce_give();                        //проивзодитель выдает энергию
-                        this.parts[producePos].eparams[1] = giveEnergy;                                     //обновляем пакет
-                        this.parts[producePos].eparams[6] -= giveEnergy;                                    //обновляем запрос необходимой энергии в линии
+                        var producePos = producer.ElectricProducer.Pos;
+                        if (this.parts.TryGetValue(producePos, out var part))
+                        {
+                            float orderEnergy = this.parts[producePos].eparams[6];                              //берем запрос энергии
+                            producer.ElectricProducer.Produce_order(orderEnergy);                               //передаем запрос производителю
+                            float giveEnergy = producer.ElectricProducer.Produce_give();                        //проивзодитель выдает энергию
+                            this.parts[producePos].eparams[1] += giveEnergy;                                     //обновляем пакет
+                            this.parts[producePos].eparams[6] -= giveEnergy;                                    //обновляем запрос необходимой энергии в линии
+
+                        }
 
                     }
 
+                }
+                else
+                {
+                    foreach (var producer in this.producers)     //работаем со всеми производителями в этой сети
+                    {
+                        var producePos = producer.ElectricProducer.Pos;
+                        if (this.parts.TryGetValue(producePos, out var part))
+                        {                            
+                            producer.ElectricProducer.Produce_order(0.0F);                               //передаем запрос производителю
+                            float giveEnergy = producer.ElectricProducer.Produce_give();                 //проивзодитель выдает энергию                            
+                        }
+
+                    }
                 }
 
                 /*

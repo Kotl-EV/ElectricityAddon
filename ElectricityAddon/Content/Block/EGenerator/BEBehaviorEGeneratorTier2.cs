@@ -206,6 +206,8 @@ public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
         stringBuilder.AppendLine();
     }
 
+
+
     public void Produce_order(float amount)
     {
         throw new NotImplementedException();

@@ -134,6 +134,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     /// </summary>
     public void Consume_receive(float amount)
     {
+
         if (this.powerReceive != amount)
         {
             this.powerReceive = amount;
@@ -192,21 +193,21 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
 
         torque = 0f;                            // Текущий крутящий момент
         resistance = Resistance(speed);         // Вычисляем текущее сопротивление двигателя    
-        I_value = I_min;                        // Ток потребления
+        I_value = 0;                        // Ток потребления
 
         float I_amount = this.powerReceive;     // Доступно тока/энергии 
 
-        if (I_amount < I_min)                   // Если ток меньше минимального, двигатель не работает
+        if (I_amount <= I_min)                   // Если ток меньше минимального, двигатель не работает
             return torque;
 
         I_value = Math.Min(I_amount, I_max);    // Берем, что дают
 
 
-        torque = Math.Min(Network.NetworkResistance, torque_max);           // Рассчитываем момент для компенсации сопротивления
-        float torque2 = torque_max * (I_value - I_min) / (I_max - I_min);   // Рассчитываем момент линейно от тока
-        torque = (torque + torque2) / 2;                                    // Выдаем момент среднее между вычисленных
+        //torque = Math.Min(Network.NetworkResistance, torque_max);           // Рассчитываем момент для компенсации сопротивления
+        //float torque2 = torque_max * (I_value - I_min) / (I_max - I_min);   // Рассчитываем момент линейно от тока
+        //torque = (torque + torque2) / 2;                                    // Выдаем момент среднее между вычисленных
 
-        //torque = torque_max * (I_value - I_min) / (I_max - I_min);        // Берем максимум момента из всей энергии, что нам дают
+        torque = torque_max * (I_value - I_min) / (I_max - I_min);        // Берем максимум момента из всей энергии, что нам дают
 
         I_value = torque * constanta / KPD(torque) + I_min;                 // Ток потребления с учетом КПД
 
@@ -214,9 +215,10 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         float torque_down = 0;                                              
         int k = 0;
         I_value2 = I_value;
-        while (I_value2 > I_value)                                          // Проверка, чтобы ток не превышал максимальное значение I_max и I_amount
+        while (I_value > I_max || I_value > I_amount)                                           // Проверка, чтобы ток не превышал максимальное значение I_max и I_amount
         {
             k++;
+            
             // Пропорционально снижаем крутящий момент
             torque_down = torque * (1 - (0.02F * k));                       // Уменьшаем крутящий момент на 2%
 
@@ -226,7 +228,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
                 break;
             }
             
-            I_value2 = torque_down * constanta / KPD(torque_down) + I_min;  // Ток потребления с учетом КПД
+            I_value = torque_down * constanta / KPD(torque_down) + I_min;  // Ток потребления с учетом КПД
 
         }
 
@@ -234,7 +236,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
             torque = torque_down;                                           // Отдаем новое значение момента
            
 
-        this.powerRequest = I_value;                                        // Запрашиваем энергии столько, сколько нужно реально для работы
+        this.powerRequest = I_max;                                        // Запрашиваем энергии столько, сколько нужно  для работы
 
 
         return this.propagationDir == this.OutFacingForNetworkDiscovery     // Возвращаем все значения

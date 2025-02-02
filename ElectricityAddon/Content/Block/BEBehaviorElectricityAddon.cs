@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿ using System.Text;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
@@ -149,10 +149,11 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                         // .AppendLine("├ Number of producers: " + networkInformation?.NumberOfProducers)
                         // .AppendLine("├ Number of accumulators: " + networkInformation?.NumberOfAccumulators)
                         // .AppendLine("├ Block: " + networkInformation?.NumberOfBlocks)
-            .AppendLine("├ " + "Макс. передача: " + networkInformation?.eParamsInNetwork[0] + " Eu/линию")
-            .AppendLine("├ " + "В пакете/ах: " + networkInformation?.eParamsInNetwork[1] + " Eu")
-            .AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " %Eu/блок")
-            .AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " шт")
+            .AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0] + " Eu/t")
+            .AppendLine("├ " + "Ток: " + networkInformation?.eParamsInNetwork[1] + " Eu/t")
+            .AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " Eu/t/блок")
+            .AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед")
+            .AppendLine("├ " + "Нужно тока: " + networkInformation?.eParamsInNetwork[6] + " Eu/t")
             .AppendLine("├ " + Lang.Get("Production") + networkInformation?.Production + " Eu")
             .AppendLine("├ " + Lang.Get("Consumption") + networkInformation?.Consumption + " Eu")
             .AppendLine("└ " + Lang.Get("Overflow") + networkInformation?.Overflow + " Eu");

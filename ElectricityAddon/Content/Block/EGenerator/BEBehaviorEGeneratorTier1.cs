@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
+using Newtonsoft.Json.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -57,7 +58,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
             return BlockFacing.NORTH;
         }
     }
-
+    public BlockPos Pos => this.Position;
     public override int[] AxisSign => this.OutFacingForNetworkDiscovery.Index switch
     {
         0 => new[]
@@ -110,10 +111,13 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     /// </summary>
     public void Produce_order(float amount)
     {
+
         if (this.powerOrder != amount)
         {
             this.powerOrder = amount;
-            this.Blockentity.MarkDirty(true);
+            
+                this.Blockentity.MarkDirty(true);
+            
         }
     }
 
@@ -122,6 +126,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     /// </summary>
     public float Produce_give()
     {
+        
         float speed = this.network?.Speed ?? 0.0F;
 
         float b = 1f;                                                                       // Положение вершины кривой
@@ -135,9 +140,13 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
         if (power != this.powerGive)
         {
             this.powerGive = power;
-            this.Blockentity.MarkDirty(true);
+           
+                this.Blockentity.MarkDirty(true);
+            
         }
 
+             
+        
         return power;
     }
 
@@ -147,6 +156,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     /// </summary>
     public override float GetResistance()
     {
+
         float spd = this.Network.Speed;
         return (Math.Abs(spd) > speed_max)                                                                                      // Если скорость превышает максимальную, рассчитываем сопротивление как квадратичную
             ? resistance_load * (powerOrder / I_max) + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              

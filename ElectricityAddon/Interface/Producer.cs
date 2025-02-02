@@ -1,7 +1,10 @@
+using Vintagestory.API.MathTools;
+
 namespace ElectricityAddon.Interface;
 
 public interface IElectricProducer
 {
+    public BlockPos Pos { get; }
     /// <summary>
     /// Система запрашивает у генератора сколько ей нужно в данный момент выдать
     /// </summary>

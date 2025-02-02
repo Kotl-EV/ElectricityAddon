@@ -215,4 +215,14 @@ public class BEBehaviorEGeneratorTier3 : BEBehaviorMPBase, IElectricProducer
     {
         throw new NotImplementedException();
     }
+
+    public void Produce_order(float amount, bool update = false)
+    {
+        throw new NotImplementedException();
+    }
+
+    public float Produce_give(bool update = false)
+    {
+        throw new NotImplementedException();
+    }
 }

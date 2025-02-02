@@ -23,7 +23,7 @@ public class ChainTreeBuilder
     public static List<List<TreeNode>> BuildTree(Network network, BlockPos[] startPositions)
     {
         var tree = new List<List<TreeNode>>(); // Список уровней дерева
-        var visited = new HashSet<BlockPos>(); // Посещенные узлы
+        var visited = new HashSet<BlockPos>(); // Посещенные узлы на всех уровнях
         var queue = new Queue<TreeNode>();     // Очередь для BFS
 
         // Инициализация: добавляем начальные позиции в первый уровень
@@ -40,46 +40,34 @@ public class ChainTreeBuilder
         }
         tree.Add(initialLevel); // Добавляем первый уровень в дерево
 
-        // Обход в ширину (BFS)
+        // Обход в ширину (BFS) только по общим граням
         while (queue.Count > 0)
         {
             var currentLevelSize = queue.Count; // Количество узлов на текущем уровне
             var nextLevel = new List<TreeNode>(); // Узлы следующего уровня
+            var visitedThisLevel = new HashSet<BlockPos>(); // Посещенные узлы на текущем уровне
 
             for (int i = 0; i < currentLevelSize; i++)
             {
                 var currentNode = queue.Dequeue();
 
-                // Сначала проверяем соседей с общей гранью (высший приоритет)
-                var faceNeighbors = GetFaceNeighbors(currentNode.Position);
-                bool hasFaceNeighbor = false;
-
-                foreach (var neighborPos in faceNeighbors)
+                // Проверяем соседей с общей гранью
+                foreach (var neighborPos in GetFaceNeighbors(currentNode.Position))
                 {
                     if (network.PartPositions.Contains(neighborPos) && !visited.Contains(neighborPos))
                     {
                         visited.Add(neighborPos);
+                        visitedThisLevel.Add(neighborPos);
                         var neighborNode = new TreeNode(neighborPos);
                         currentNode.Children.Add(neighborNode); // Добавляем в дочерние узлы
                         queue.Enqueue(neighborNode);
                         nextLevel.Add(neighborNode); // Добавляем в следующий уровень
-                        hasFaceNeighbor = true;
                     }
-                }
-
-                // Если есть соседи по грани, пропускаем соседей по ребрам
-                if (hasFaceNeighbor) continue;
-
-                // Затем проверяем соседей с общим ребром (низший приоритет)
-                foreach (var neighborPos in GetEdgeNeighbors(currentNode.Position))
-                {
-                    if (network.PartPositions.Contains(neighborPos) && !visited.Contains(neighborPos))
+                    else if (network.PartPositions.Contains(neighborPos) && visitedThisLevel.Contains(neighborPos))
                     {
-                        visited.Add(neighborPos);
+                        // Если узел был посещен на текущем уровне, добавляем его в Children
                         var neighborNode = new TreeNode(neighborPos);
-                        currentNode.Children.Add(neighborNode); // Добавляем в дочерние узлы
-                        queue.Enqueue(neighborNode);
-                        nextLevel.Add(neighborNode); // Добавляем в следующий уровень
+                        currentNode.Children.Add(neighborNode);
                     }
                 }
             }
@@ -103,24 +91,5 @@ public class ChainTreeBuilder
         yield return new BlockPos(pos.X, pos.Y - 1, pos.Z);
         yield return new BlockPos(pos.X, pos.Y, pos.Z + 1);
         yield return new BlockPos(pos.X, pos.Y, pos.Z - 1);
-    }
-
-    private static IEnumerable<BlockPos> GetEdgeNeighbors(BlockPos pos)
-    {
-        // Соседи по ребрам (12 штук)
-        yield return new BlockPos(pos.X + 1, pos.Y + 1, pos.Z);
-        yield return new BlockPos(pos.X + 1, pos.Y - 1, pos.Z);
-        yield return new BlockPos(pos.X - 1, pos.Y + 1, pos.Z);
-        yield return new BlockPos(pos.X - 1, pos.Y - 1, pos.Z);
-
-        yield return new BlockPos(pos.X + 1, pos.Y, pos.Z + 1);
-        yield return new BlockPos(pos.X + 1, pos.Y, pos.Z - 1);
-        yield return new BlockPos(pos.X - 1, pos.Y, pos.Z + 1);
-        yield return new BlockPos(pos.X - 1, pos.Y, pos.Z - 1);
-
-        yield return new BlockPos(pos.X, pos.Y + 1, pos.Z + 1);
-        yield return new BlockPos(pos.X, pos.Y + 1, pos.Z - 1);
-        yield return new BlockPos(pos.X, pos.Y - 1, pos.Z + 1);
-        yield return new BlockPos(pos.X, pos.Y - 1, pos.Z - 1);
     }
 }

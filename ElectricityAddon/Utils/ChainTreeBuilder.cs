@@ -22,61 +22,67 @@ public class ChainTreeBuilder
 {
     public static List<List<TreeNode>> BuildTree(Network network, BlockPos[] startPositions)
     {
-        var tree = new List<List<TreeNode>>(); // Список уровней дерева
-        var visited = new HashSet<BlockPos>(); // Посещенные узлы на всех уровнях
-        var queue = new Queue<TreeNode>();     // Очередь для BFS
+        var tree = new List<List<TreeNode>>();
+        var visited = new HashSet<BlockPos>();
+        var queue = new Queue<TreeNode>();
+        var nodeMap = new Dictionary<BlockPos, TreeNode>(); // Хранит все созданные узлы
 
-        // Инициализация: добавляем начальные позиции в первый уровень
+        // Инициализация начальных узлов
         var initialLevel = new List<TreeNode>();
-        foreach (var startPos in startPositions)
+        foreach (var pos in startPositions)
         {
-            if (network.PartPositions.Contains(startPos) && !visited.Contains(startPos))
+            if (network.PartPositions.Contains(pos))
             {
-                var startNode = new TreeNode(startPos);
-                queue.Enqueue(startNode);
-                visited.Add(startPos);
-                initialLevel.Add(startNode);
+                var node = new TreeNode(pos);
+                nodeMap[pos] = node;
+                queue.Enqueue(node);
+                initialLevel.Add(node);
             }
         }
-        tree.Add(initialLevel); // Добавляем первый уровень в дерево
+        tree.Add(initialLevel);
 
-        // Обход в ширину (BFS) только по общим граням
+        // Связываем начальные узлы-соседи
+        foreach (var node in initialLevel)
+        {
+            visited.Add(node.Position);
+            foreach (var neighborPos in GetFaceNeighbors(node.Position))
+            {
+                if (nodeMap.TryGetValue(neighborPos, out var neighborNode) &&
+                    network.PartPositions.Contains(neighborPos))
+                {
+                    node.Children.Add(neighborNode);
+                }
+            }
+        }
+
+        // Обход BFS для остальных узлов
         while (queue.Count > 0)
         {
-            var currentLevelSize = queue.Count; // Количество узлов на текущем уровне
-            var nextLevel = new List<TreeNode>(); // Узлы следующего уровня
-            var visitedThisLevel = new HashSet<BlockPos>(); // Посещенные узлы на текущем уровне
+            var currentLevelSize = queue.Count;
+            var nextLevel = new List<TreeNode>();
 
             for (int i = 0; i < currentLevelSize; i++)
             {
                 var currentNode = queue.Dequeue();
 
-                // Проверяем соседей с общей гранью
                 foreach (var neighborPos in GetFaceNeighbors(currentNode.Position))
                 {
-                    if (network.PartPositions.Contains(neighborPos) && !visited.Contains(neighborPos))
-                    {
-                        visited.Add(neighborPos);
-                        visitedThisLevel.Add(neighborPos);
-                        var neighborNode = new TreeNode(neighborPos);
-                        currentNode.Children.Add(neighborNode); // Добавляем в дочерние узлы
-                        queue.Enqueue(neighborNode);
-                        nextLevel.Add(neighborNode); // Добавляем в следующий уровень
-                    }
-                    else if (network.PartPositions.Contains(neighborPos) && visitedThisLevel.Contains(neighborPos))
-                    {
-                        // Если узел был посещен на текущем уровне, добавляем его в Children
-                        var neighborNode = new TreeNode(neighborPos);
-                        currentNode.Children.Add(neighborNode);
-                    }
+                    if (!network.PartPositions.Contains(neighborPos) || visited.Contains(neighborPos))
+                        continue;
+
+                    // Создаем новый узел и связываем
+                    var neighborNode = new TreeNode(neighborPos);
+                    nodeMap[neighborPos] = neighborNode;
+                    currentNode.Children.Add(neighborNode);
+
+                    visited.Add(neighborPos);
+                    queue.Enqueue(neighborNode);
+                    nextLevel.Add(neighborNode);
                 }
             }
 
-            // Если следующий уровень не пуст, добавляем его в дерево
             if (nextLevel.Count > 0)
-            {
                 tree.Add(nextLevel);
-            }
         }
 
         return tree;
@@ -84,7 +90,6 @@ public class ChainTreeBuilder
 
     private static IEnumerable<BlockPos> GetFaceNeighbors(BlockPos pos)
     {
-        // Соседи по граням (6 штук)
         yield return new BlockPos(pos.X + 1, pos.Y, pos.Z);
         yield return new BlockPos(pos.X - 1, pos.Y, pos.Z);
         yield return new BlockPos(pos.X, pos.Y + 1, pos.Z);

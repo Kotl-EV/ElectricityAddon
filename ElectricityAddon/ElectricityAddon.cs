@@ -199,7 +199,7 @@ public class ElectricityAddon : ModSystem
 
                 foreach (var consumer in this.consumers)     //работаем со всеми потребителями в этой сети
                 {
-                    
+
                     consumer.ElectricConsumer.Consume_receive(0.0F);      //обнуляем 
                     var varr = consumer.ElectricConsumer.Consume_request();      //вызываем, чтобы обновить ентити
 
@@ -230,56 +230,69 @@ public class ElectricityAddon : ModSystem
         speedOfElectricity = 1;                                 //временно тут
         while (speedOfElectricity >= 1)
         {
+            Cleaner();
+
             foreach (var network in this.networks)              //каждую сеть считаем
             {
-                Cleaner();                                      //обязательно чистим eparams
+                //Этап 1 - очистка мусора---------------------------------------------------------------------------------------------//
+                                                      //обязательно чистим eparams
 
-
+                this.producers.Clear();                         //очистка списка всех производителей, потому как для каждой network список свой
                 this.consumers.Clear();                         //очистка списка всех потребителей, потому как для каждой network список свой
 
 
+
+
+                //Этап 2 - сбор запросов от потребителей---------------------------------------------------------------------------------------//
                 foreach (var consumer in network.Consumers.Select(electricConsumer => new Consumer(electricConsumer)))  //выбираем всех потребителей из этой сети
                 {
                     this.consumers.Add(consumer);      //создаем список с потребителями
                 }
 
 
-                // работаем с потребителями цепи
                 BlockPos[] startPositions = null;
-
                 foreach (var consumer in this.consumers)     //работаем со всеми потребителями в этой сети
                 {
                     float requestedEnergy = consumer.ElectricConsumer.Consume_request();      //этому потребителю нужно столько энергии
+                    if (requestedEnergy == 0)                                                 //если ему не надо энергии, то смотрим следующего
+                        continue;
 
                     var consumPos = consumer.ElectricConsumer.Pos;
                     startPositions = startPositions.AddToArray<BlockPos>(consumPos);     //сохраняем начальные позиции потребителей
                     if (this.parts.TryGetValue(consumPos, out var part))
                     {
-
-                        float recieveEnergy = Math.Min(this.parts[consumPos].eparams[1], requestedEnergy); //выдаем энергии сколько есть сейчас внутри
-                        this.parts[consumPos].eparams[1] -= recieveEnergy;                                 //обновляем пакет
+                        //float recieveEnergy = Math.Min(this.parts[consumPos].eparams[1], requestedEnergy); //выдаем энергии сколько есть сейчас внутри
+                        //this.parts[consumPos].eparams[1] -= recieveEnergy;                                 //обновляем пакет
                         this.parts[consumPos].eparams[6] += requestedEnergy;                                //делаем в линию запрос необходимой энергии
-                        consumer.ElectricConsumer.Consume_receive(recieveEnergy);                          //выдаем потребителю
+                        //consumer.ElectricConsumer.Consume_receive(recieveEnergy);                          //выдаем потребителю
 
                     }
                 }
 
-                //if (startPositions == null)                                                         //если нет потребителей, то зачем считать вообще?
-                //    return;
+                bool generate=true;                                                                 //генерировать?
+                if (startPositions == null)                                                         //если нет потребителей 
+                    generate=false;
 
-                if (startPositions != null)
+
+
+                //Этап 3 - Построение дерева от потребителей---------------------------------------------------------------------------------------//
+                List<List<TreeNode>> tree=null;
+                if (generate)
+                    tree = ChainTreeBuilder.BuildTree(network, startPositions);                     //строит дерево для цепи, где в корнях потребители
+                
+
+
+                //Этап 4 - Распространение запросов ВВЕРХ---------------------------------------------------------------------------------------//
+                if (generate)
                 {
-                    var tree = ChainTreeBuilder.BuildTree(network, startPositions);                     //строит дерево для цепи, где в корнях потребители
-
                     // работаем с деревом
                     for (int level = 0; level < tree.Count; level++)                                    //перебор по уровням удаления
                     {
-                        //Console.WriteLine($"Level {level}:");
                         foreach (var node in tree[level])                                               //перебор по нодам на этом уровне
                         {
                             if (this.parts.TryGetValue(node.Position, out var part))                        //извлекаем элемент цепи нода
                             {
-                                if (node.Children.Count == 0)                                                 //в этом ноде нет соседей - идем к следующему
+                                if (node.Children.Count == 0)                                              //в этом ноде нет соседей - идем к следующему
                                     continue;
 
                                 float requestedEnergy = part.eparams[6];                                    //сколько же нужно энергии этому ноду?
@@ -287,10 +300,17 @@ public class ElectricityAddon : ModSystem
                                 if (requestedEnergy == 0)                                                 //в этом ноде нет потребления? идем к следующему
                                     continue;
 
-                                float avalaibleEnergy = 0;
+                                //float avalaibleEnergy = 0;
 
-                                var avalaibleChildren = new float[node.Children.Count];                       //храним доступные энергии соседей
-                                int k = 0;
+                                //var avalaibleChildren = new float[node.Children.Count];                       //храним доступные энергии соседей
+                               // int k = 0;
+
+                                foreach (var child in node.Children)                                        //перебор по соседям, конкретно этого нода
+                                {
+                                    this.parts[child.Position].eparams[6] += requestedEnergy;                //просим у детей по максимуму
+                                }
+
+                                /*
                                 //считаем сколько у соседей нода доступные энергии
                                 foreach (var child in node.Children)                                        //перебор по соседям, конкретно этого нода
                                 {
@@ -301,6 +321,7 @@ public class ElectricityAddon : ModSystem
                                         k++;
                                     }
                                 }
+                                
 
                                 if (avalaibleEnergy < requestedEnergy || avalaibleEnergy == 0) //если энергии у соседей меньше, чем надо
                                 {
@@ -333,19 +354,23 @@ public class ElectricityAddon : ModSystem
                                         k++;
                                     }
                                 }
+                                */
+
+
                             }
 
                         }
                     }
                 }
-                this.producers.Clear();                         //очистка списка всех производителей, потому как для каждой network список свой
 
+                //Этап 5 - Генерация энергии---------------------------------------------------------------------------------------//
                 foreach (var producer in network.Producers.Select(electricProducer => new Producer(electricProducer)))  //выбираем всех производителей из этой сети
                 {
                     this.producers.Add(producer);      //создаем список с производителями
                 }
 
-                if (startPositions != null)
+
+                if (generate)
                 {
                     foreach (var producer in this.producers)     //работаем со всеми производителями в этой сети
                     {
@@ -357,11 +382,8 @@ public class ElectricityAddon : ModSystem
                             float giveEnergy = producer.ElectricProducer.Produce_give();                        //проивзодитель выдает энергию
                             this.parts[producePos].eparams[1] += giveEnergy;                                     //обновляем пакет
                             this.parts[producePos].eparams[6] -= giveEnergy;                                    //обновляем запрос необходимой энергии в линии
-
                         }
-
                     }
-
                 }
                 else
                 {
@@ -369,17 +391,22 @@ public class ElectricityAddon : ModSystem
                     {
                         var producePos = producer.ElectricProducer.Pos;
                         if (this.parts.TryGetValue(producePos, out var part))
-                        {                            
-                            producer.ElectricProducer.Produce_order(0.0F);                               //передаем запрос производителю
-                            float giveEnergy = producer.ElectricProducer.Produce_give();                 //проивзодитель выдает энергию                            
+                        {
+                            producer.ElectricProducer.Produce_order(0.0F);                               //передаем запрос производителю- незачем работать
+                            float giveEnergy = producer.ElectricProducer.Produce_give();                 //проивзодитель выдает энергию в пустоту, чтобы обновляло энтити                            
                         }
-
                     }
                 }
 
-               
-            }
+                //Этап 6 - Передача энергии ВНИЗ---------------------------------------------------------------------------------------//
 
+
+
+
+
+
+
+            }
 
             speedOfElectricity--;   //временно тут
         }

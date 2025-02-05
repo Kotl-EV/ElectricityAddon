@@ -9,12 +9,13 @@ namespace ElectricityUnofficial.Utils
     public class Customer
     {
         public int Id { get; }
-        public int Required { get; }
-        public Dictionary<Store, double> StoreDistances { get; }
-        public Dictionary<Store, int> Received { get; } = new Dictionary<Store, int>();
+        public float Required { get; }
+        public Dictionary<Store, float> StoreDistances { get; }
+        public Dictionary<Store, float> Received { get; } = new Dictionary<Store, float>();
+
         private IEnumerable<Store> _orderedStores;
 
-        public Customer(int id, int required, Dictionary<Store, double> distances)
+        public Customer(int id, float required, Dictionary<Store, float> distances)
         {
             Id = id;
             Required = required;
@@ -22,7 +23,7 @@ namespace ElectricityUnofficial.Utils
             UpdateOrderedStores();
         }
 
-        public int Remaining => Required - Received.Sum(r => r.Value);
+        public float Remaining => Required - Received.Sum(r => r.Value);
         public double TotalDistance => Received.Sum(kvp => kvp.Key.DistanceTo(this) * kvp.Value);
 
         public void UpdateOrderedStores()

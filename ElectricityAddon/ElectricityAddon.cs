@@ -186,7 +186,7 @@ public class ElectricityAddon : ModSystem
             foreach (var pos in network.PartPositions)              //каждую позицию подчищаем
             {
                 if (this.parts[pos].eparams != null)
-                    this.parts[pos].eparams[6] = 0;
+                    this.parts[pos].eparams[6] = 0;  //сделать eparams лампам
                 else
                     this.parts[pos].eparams = new float[7];
             }
@@ -224,11 +224,14 @@ public class ElectricityAddon : ModSystem
         }
     }
 
-
-    //просчет сетей в этом тике
+    /// <summary>
+    /// Просчет сетей в этом тике
+    /// </summary>
     private void OnGameTick(float _)
     {
-        //var accumulators = new List<IElectricAccumulator>();
+        //var accumulators = new List<IElectricAccumulator>();          //пригодится
+
+
         speedOfElectricity = 1;                                 //временно тут
         while (speedOfElectricity >= 1)
         {
@@ -250,8 +253,8 @@ public class ElectricityAddon : ModSystem
                 }
 
 
-                BlockPos[] consumerPositions = null;
-                float[] consumerRequests = null;
+                BlockPos[] consumerPositions = Array.Empty<BlockPos>();
+                float[] consumerRequests = Array.Empty<float>(); 
                 foreach (var consumer in this.consumers)     //работаем со всеми потребителями в этой сети
                 {
                     float requestedEnergy = consumer.ElectricConsumer.Consume_request();      //этому потребителю нужно столько энергии
@@ -274,14 +277,14 @@ public class ElectricityAddon : ModSystem
                 }
 
 
-                BlockPos[] producerPositions = null;
-                float[] producerRequests = null;
+                BlockPos[] producerPositions = Array.Empty<BlockPos>();
+                float[] producerGive = Array.Empty<float>();
                 foreach (var producer in this.producers)     //работаем со всеми генераторами в этой сети
                 {
                     float giveEnergy = producer.ElectricProducer.Produce_give();            //этот генератор выдал столько энергии
                     var producePos = producer.ElectricProducer.Pos;
                     producerPositions = producerPositions.AddToArray<BlockPos>(producePos);  //сохраняем позиции генераторов
-                    producerRequests = producerRequests.AddToArray<float>(giveEnergy);       //сохраняем выданную энергию генераторов 
+                    producerGive = producerGive.AddToArray<float>(giveEnergy);       //сохраняем выданную энергию генераторов 
                 }
 
 
@@ -291,14 +294,14 @@ public class ElectricityAddon : ModSystem
                 //Этап 4 - Работаем с цепью как с невзвешенным графом. Ищем расстояния и пути ----------------------------------------------------------------------//
                 var pathFinder = new PathFinder();
 
-                float[][] distances= new float[this.consumers2.Count][];                 //сохраняем сюда расстояния от всех потребителей ко всем генераторам (потом надо будет убрать. Нужно для отладки кода)
-                List<BlockPos>[][] paths= new List<BlockPos>[this.consumers2.Count][];   //сохраняем сюда пути от всех потребителей ко всем генераторам
-                int i=0,j;
+                float[][] distances = new float[this.consumers2.Count][];                 //сохраняем сюда расстояния от всех потребителей ко всем генераторам (потом надо будет убрать. Нужно для отладки кода)
+                List<BlockPos>[][] paths = new List<BlockPos>[this.consumers2.Count][];   //сохраняем сюда пути от всех потребителей ко всем генераторам
+                int i = 0, j;  //индексы -__-
                 foreach (var consumer in this.consumers2)     //работаем со всеми потребителями в этой сети
                 {
                     j = 0;
                     var start = consumerPositions[i];
-                    distances[i]= new float[this.producers.Count];
+                    distances[i] = new float[this.producers.Count];
                     paths[i] = new List<BlockPos>[this.producers.Count];
                     foreach (var producer in this.producers)     //работаем со всеми генераторами в этой сети
                     {
@@ -306,7 +309,7 @@ public class ElectricityAddon : ModSystem
                         var path = pathFinder.FindShortestPath(start, end, network.PartPositions);  //извлекаем путь и расстояние
                         if (path == null)                                                           //Путь не найден!
                         {
-                            return;
+                            return;                                                                //возможно потом continue тут должно быть!!
                         }
                         distances[i][j] = path.Count;                                               //сохраняем длину пути
                         paths[i][j] = path;                                                         //сохраняем пути
@@ -318,43 +321,75 @@ public class ElectricityAddon : ModSystem
 
 
                 //Этап 5 - Распределение запросов и энергии---------------------------------------------------------------------------------------//
-                //Этап 5.1 - Инициализация задачи логистики энергии---------------------------------------------------------------------------------------//
-                var storeA = new Store(1, 0);
-                var storeB = new Store(2, 100);
-                var storeC = new Store(3, 200);
-
-                var customer1 = new Customer(1, 50, new Dictionary<Store, double>
+                //Этап 5.1 - Инициализация задачи логистики энергии: магазины - покупатели---------------------------------------------------------//
+                Store[] stores = new Store[producerPositions.Count()];
+                for (j = 0; j < producerPositions.Count(); j++)             //работаем со всеми генераторами в этой сети                    
                 {
-                    [storeA] = 2.0,
-                    [storeB] = 5.0,
-                    [storeC] = 10.0
-                });
+                    stores[j] = new Store(j + 1, producerGive[j]);            //создаем магазин со своими запасами
+                }
 
-                var customer2 = new Customer(2, 100, new Dictionary<Store, double>
+                Customer[] customers = new Customer[consumerPositions.Count()];
+                for (i = 0; i < consumerPositions.Count(); i++)                         //работаем со всеми потребителями в этой сети
                 {
-                    [storeA] = 2.0,
-                    [storeB] = 5.0,
-                    [storeC] = 10.0
-                });
+                    Dictionary<Store, float> distFromCustomerToStore = new Dictionary<Store, float>();
+                    for (j = 0; j < producerPositions.Count(); j++)                     //работаем со всеми генераторами в этой сети                    
+                    {
+                        distFromCustomerToStore.Add(stores[j], distances[i][j]);       //записываем расстояния до каждого магазина от этого потребителя
+                    }
 
-                var sim = new Simulation();
-                sim.Stores.AddRange(new[] { storeA, storeB, storeC });
-                sim.Customers.AddRange(new[] { customer1, customer2 });
+                    customers[i] = new Customer(j + 1, consumerRequests[i], distFromCustomerToStore);        //создаем покупателя со своими потребностями
+                }
+
+
+
+
 
                 //Этап 5.2 - Собственно сама реализация "жадного алгоритма" ---------------------------------------------------------------------------------------//
-                sim.Run();  //инициализировать явно!!!
+                List<Customer> Customers = new List<Customer>();
+                List<Store> Stores = new List<Store>();
+                var sim = new Simulation();
+                sim.Stores.AddRange(stores);
+                sim.Customers.AddRange(customers);
 
-
-
-
-
-
+                sim.Run();                  //распределение происходит тут
 
 
                 //Этап 6 - Перенос энергии ---------------------------------------------------------------------------------------//
 
 
+
+
                 //Этап 7 - Получение энергии потребителями ---------------------------------------------------------------------------------------//
+                
+                // мгновенная выдача энергии по воздуху минуя провода
+                i = 0;
+                foreach (var consumer in this.consumers2)     //работаем со всеми потребителями в этой сети
+                {
+                    var totalGive = sim.Customers[i].Required - sim.Customers[i].Remaining;  //потребитель получил столько энергии
+                    
+                    consumer.ElectricConsumer.Consume_receive(totalGive);   //выдаем энергию потребителю 
+
+                    i++;
+                }
+
+
+                //Этап 8 - Сообщение генераторам о нужном количестве энергии ---------------------------------------------------------------------------------------//
+
+                j = 0;
+                foreach (var producer in this.producers)     //работаем со всеми генераторами в этой сети
+                {
+                    var totalOrder = sim.Stores[j].totalRequest;  //у генератора все просили столько
+
+                    producer.ElectricProducer.Produce_order(totalOrder);   //говорим генератору сколько просят с него (нагрузка сети)
+
+                    j++;
+                }
+
+
+
+
+                //Этап 8 - Получение энергии потребителями ---------------------------------------------------------------------------------------//
+
 
                 //Этап 8 - Работа с аккумуляторами.... ---------------------------------------------------------------------------------------//
 
@@ -371,7 +406,8 @@ public class ElectricityAddon : ModSystem
 
     }
 
-   
+
+
 
     private Network MergeNetworks(HashSet<Network> networks)
     {

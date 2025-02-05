@@ -10,56 +10,53 @@ namespace ElectricityUnofficial.Utils
     {
         public List<Customer> Customers { get; } = new List<Customer>();
         public List<Store> Stores { get; } = new List<Store>();
-
+        
         public void Run()
         {
-            bool hasChanges;
+            foreach (var store in Stores)                //работаем со всеми генераторами в этой сети                    
+            {
+                store.totalRequest = 0;                 //инициализируем суммарное выпрашенное число энергии
+            }
+
+
+            bool hasChanges;                                            //поменялось ли что-то?
             do
             {
-                Customers.ForEach(c => c.UpdateOrderedStores());
-                Stores.ForEach(s => s.ResetRequests());
+                Customers.ForEach(c => c.UpdateOrderedStores());        //обновляет пройденный путь и купленное уже покупателями
+                Stores.ForEach(s => s.ResetRequests());                 //сбрасывает список запросов магазинам
 
-                foreach (var customer in Customers.Where(c => c.Remaining > 0))
+                foreach (var customer in Customers.Where(c => c.Remaining > 0))     //в цикле выбирает только тех покупателей, кому еще нужна энергия
                 {
-                    int remaining = customer.Remaining;
-                    foreach (var store in customer.GetAvailableStores())
+                    float remaining = customer.Remaining;
+                    foreach (var store in customer.GetAvailableStores()) //вынести перед циклом выборку !!!
                     {
-                        if (store.Stock <= 0) continue;
+                        if (store.Stock <= 0 && store.ImNull)           //если у магазина уже ноль и он был обработан, то пропускаем
+                            continue;
 
-                        int requested = Math.Min(remaining, store.Stock);
-                        store.CurrentRequests[customer] = requested;
+                        //float requested = Math.Min(remaining, store.Stock);
+                        float requested = remaining;
+                        store.CurrentRequests[customer] = requested;        //покупатель просит столько
                         remaining -= requested;
 
-                        if (remaining <= 0) break;
+                        if (remaining <= 0)    //покупатель отправил запросы везде?
+                            break;
                     }
                 }
 
-                int prevStock = Stores.Sum(s => s.Stock);
-                Stores.ForEach(s => s.ProcessRequests());
+                float prevStock = Stores.Sum(s => s.Stock);             // товара во всех магазинах сейчас
+                
+                foreach (var store in Stores)
+                {                    
+                    store.ProcessRequests();                    // обработка запросов магазинами
+                    
+                }
+
                 hasChanges = Stores.Sum(s => s.Stock) != prevStock;
 
-            } while (hasChanges && Customers.Any(c => c.Remaining > 0));
+            } while (hasChanges && Stores.All(s => s.ImNull) && Customers.Any(c => c.Remaining > 0));
 
-            //PrintResults();
         }
 
-        private void PrintResults()
-        {
-            Console.WriteLine("\nFinal results:");
-            foreach (var customer in Customers)
-            {
-                Console.WriteLine($"Customer {customer.Id}: " +
-                    $"{customer.Received.Sum(r => r.Value)}/{customer.Required}, " +
-                    $"Distance: {customer.TotalDistance:F1} km");
-            }
 
-            Console.WriteLine("\nStore statistics:");
-            foreach (var store in Stores)
-            {
-                Console.WriteLine($"Store {store.Id}: " +
-                    $"{store.FailedRequests} failed requests, " +
-                    $"{store.Stock} remaining stock");
-            }
-        }
     }
 }

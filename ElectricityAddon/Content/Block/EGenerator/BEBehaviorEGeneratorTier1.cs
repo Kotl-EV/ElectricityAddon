@@ -145,8 +145,8 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
             
         }
 
-             
-        
+
+        //return 100; //временно!!!-----------------------------------------------------
         return power;
     }
 
@@ -159,8 +159,13 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 
         float spd = this.Network.Speed;
         return (Math.Abs(spd) > speed_max)                                                                                      // Если скорость превышает максимальную, рассчитываем сопротивление как квадратичную
-            ? resistance_load * (powerOrder / I_max) + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
-            : resistance_load * (powerOrder / I_max) + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
+           // ? resistance_load * (powerOrder / I_max) + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
+           // : resistance_load * (powerOrder / I_max) + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
+            
+            //в таком виде будет лучше, иначе система выработки может встать колом, когда потребления больше выработки
+            ? resistance_load * (Math.Min(powerOrder, I_max) / I_max) + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
+            : resistance_load * (Math.Min(powerOrder, I_max) / I_max) + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
+
         // сопротивление генератора также напрямую зависит от нагрузки в электрической цепи powerOrder 
     }
 

@@ -30,43 +30,15 @@ namespace ElectricityAddon.Content.Block.ELamp
             return bufHSV;
         }
 
-        public int LightLevel { get; private set; }
+        public float LightLevel { get; private set; }
 
         public ConsumptionRange ConsumptionRange => new(0, maxConsumption);
 
 
 
-        public void Consume(int lightLevel)
+        public void Consume(int lightLevel)  // можно удалить
         {
-            if (this.Api is { } api)
-            {
-                if (lightLevel != this.LightLevel)
-                {
-                    switch (this.LightLevel)         //меняем ассеты горящей и не горящей лампы
-                    {
-                        case 0 when lightLevel > 0:
-                            {
-                                api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
-                                break;
-                            }
-                        case > 0 when lightLevel == 0:
-                            {
-                                api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
-                                break;
-                            }
-                    }
-
-                    //применяем цвет и яркость
-                    this.Blockentity.Block.LightHsv = new[] {
-                            (byte)this.HSV[0],
-                            (byte)this.HSV[1],
-                            (byte)FloatHelper.Remap(lightLevel, 0, maxConsumption, 0, this.HSV[2])
-                        };
-
-                    this.Blockentity.MarkDirty(true);
-                    this.LightLevel = lightLevel;
-                }
-            }
+            
         }
 
 
@@ -81,12 +53,40 @@ namespace ElectricityAddon.Content.Block.ELamp
 
         public float Consume_request()
         {
-            throw new NotImplementedException();
+            return maxConsumption;
         }
 
         public void Consume_receive(float amount)
         {
-            throw new NotImplementedException();
+            if (this.Api is { } api)
+            {
+                if (amount != this.LightLevel)
+                {
+                    switch (this.LightLevel)         //меняем ассеты горящей и не горящей лампы
+                    {
+                        case 0 when amount > 0:
+                            {
+                                api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
+                                break;
+                            }
+                        case > 0 when amount == 0:
+                            {
+                                api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
+                                break;
+                            }
+                    }
+
+                    //применяем цвет и яркость
+                    this.Blockentity.Block.LightHsv = new[] {
+                            (byte)this.HSV[0],
+                            (byte)this.HSV[1],
+                            (byte)FloatHelper.Remap(amount, 0, maxConsumption, 0, this.HSV[2])
+                        };
+
+                    this.Blockentity.MarkDirty(true);
+                    this.LightLevel = amount;
+                }
+            }
         }
     }
 }

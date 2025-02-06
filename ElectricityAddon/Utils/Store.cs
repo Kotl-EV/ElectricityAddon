@@ -55,10 +55,10 @@ namespace ElectricityUnofficial.Utils
             }
             else
             {
-                double ratio = (double)Stock / totalRequested;
+                float ratio = Stock / totalRequested;
                 foreach (var (customer, amount) in CurrentRequests.ToList())
                 {
-                    int allocated = (int)Math.Floor(amount * ratio);
+                    float allocated = amount * ratio;
                     customer.Received[this] = allocated;
                     Stock -= allocated;
                 }

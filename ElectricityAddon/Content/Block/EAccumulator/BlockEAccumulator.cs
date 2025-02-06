@@ -62,8 +62,8 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
     {
         BlockEntityEAccumulator? be = world.BlockAccessor.GetBlockEntity(pos) as BlockEntityEAccumulator;
         ItemStack item = new ItemStack(world.BlockAccessor.GetBlock(pos));
-        if (be != null) item.Attributes.SetInt("electricity:energy", be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
-        if (be != null) item.Attributes.SetInt("durability", 100 * be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity() / maxcapacity);
+        if (be != null) item.Attributes.SetInt("electricity:energy", (int)be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
+        if (be != null) item.Attributes.SetInt("durability", (int)(100 * be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity() / maxcapacity));
         return new ItemStack[] { item };
     }
 
@@ -71,8 +71,8 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
     {
         BlockEntityEAccumulator? be = world.BlockAccessor.GetBlockEntity(pos) as BlockEntityEAccumulator;
         ItemStack item = new ItemStack(world.BlockAccessor.GetBlock(pos));
-        if (be != null) item.Attributes.SetInt("electricity:energy", be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
-        if (be != null) item.Attributes.SetInt("durability", 100 * be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity() / maxcapacity);
+        if (be != null) item.Attributes.SetInt("electricity:energy", (int)be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
+        if (be != null) item.Attributes.SetInt("durability", (int)(100 * be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity() / maxcapacity));
         return item;
     }
 

@@ -42,7 +42,10 @@ public class ElectricityAddon : ModSystem
 {
     private readonly List<Consumer> consumers = new();
     private readonly List<Consumer> consumers2 = new();
+    private readonly List<Consumer> consumers3 = new();
     private readonly List<Producer> producers = new();
+    private readonly List<Producer> producers2 = new();
+    private readonly List<Accumulator> accums = new();
     private readonly HashSet<Network> networks = new();
     private readonly Dictionary<BlockPos, NetworkPart> parts = new(); //хранит все элементы всех цепей
     public static bool combatoverhaul = false;                        //установлен ли combatoverhaul
@@ -122,11 +125,15 @@ public class ElectricityAddon : ModSystem
     }
 
 
-    //в цепи изменения, значит обновить все соединения
+    /// <summary>
+    /// D цепи изменения, значит нужно обновить все соединения
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="facing"></param>
+    /// <param name="setEparams"></param>
+    /// <returns></returns>
     public bool Update(BlockPos position, Facing facing, float[] setEparams)
     {
-
-
 
         if (!this.parts.TryGetValue(position, out var part))     //смотрим, есть ли такой элемент уже в этом блоке
         {
@@ -167,7 +174,12 @@ public class ElectricityAddon : ModSystem
         return true;
     }
 
-    //удаляет элемент в этом блоке
+
+
+    /// <summary>
+    /// Удаляет элемент цепи в этом блоке
+    /// </summary>
+    /// <param name="position"></param>
     public void Remove(BlockPos position)
     {
         if (this.parts.TryGetValue(position, out var part))
@@ -178,6 +190,7 @@ public class ElectricityAddon : ModSystem
     }
 
 
+
     public void Cleaner(bool all = false)
     {
         //тут очистка пакетов в parts c током и запросами 
@@ -185,8 +198,8 @@ public class ElectricityAddon : ModSystem
         {
             foreach (var pos in network.PartPositions)              //каждую позицию подчищаем
             {
-                if (this.parts[pos].eparams != null)
-                    this.parts[pos].eparams[6] = 0;  //сделать eparams лампам
+                if (this.parts[pos].eparams != null && this.parts[pos].eparams.Length>0)   //бывает всякое
+                    this.parts[pos].eparams[6] = 0;         //сделать eparams лампам
                 else
                     this.parts[pos].eparams = new float[7];
             }
@@ -224,6 +237,7 @@ public class ElectricityAddon : ModSystem
         }
     }
 
+
     /// <summary>
     /// Просчет сетей в этом тике
     /// </summary>
@@ -242,9 +256,10 @@ public class ElectricityAddon : ModSystem
                 //Этап 1 - Очистка мусора---------------------------------------------------------------------------------------------//                                                    
 
                 this.producers.Clear();                         //очистка списка всех производителей, потому как для каждой network список свой
+                this.producers2.Clear();                         //очистка списка всех производителей, потому как для каждой network список свой
                 this.consumers.Clear();                         //очистка списка всех потребителей, потому как для каждой network список свой
                 this.consumers2.Clear();                        //очистка списка всех ненулевых потребителей, потому как для каждой network список свой
-
+                this.consumers3.Clear();                        //очистка списка всех ненулевых потребителей после первого распределения, потому как для каждой network список свой
 
                 //Этап 2 - Сбор запросов от потребителей---------------------------------------------------------------------------------------//
                 foreach (var consumer in network.Consumers.Select(electricConsumer => new Consumer(electricConsumer)))  //выбираем всех потребителей из этой сети
@@ -297,10 +312,10 @@ public class ElectricityAddon : ModSystem
                 float[][] distances = new float[this.consumers2.Count][];                 //сохраняем сюда расстояния от всех потребителей ко всем генераторам (потом надо будет убрать. Нужно для отладки кода)
                 List<BlockPos>[][] paths = new List<BlockPos>[this.consumers2.Count][];   //сохраняем сюда пути от всех потребителей ко всем генераторам
                 int i = 0, j;  //индексы -__-
-                foreach (var consumer in this.consumers2)     //работаем со всеми потребителями в этой сети
+                foreach (var cP in consumerPositions)     //работаем со всеми потребителями в этой сети
                 {
                     j = 0;
-                    var start = consumerPositions[i];
+                    var start = cP;
                     distances[i] = new float[this.producers.Count];
                     paths[i] = new List<BlockPos>[this.producers.Count];
                     foreach (var producer in this.producers)     //работаем со всеми генераторами в этой сети
@@ -323,7 +338,7 @@ public class ElectricityAddon : ModSystem
                 //Этап 5 - Распределение запросов и энергии---------------------------------------------------------------------------------------//
                 //Этап 5.1 - Инициализация задачи логистики энергии: магазины - покупатели---------------------------------------------------------//
                 Store[] stores = new Store[producerPositions.Count()];
-                for (j = 0; j < producerPositions.Count(); j++)             //работаем со всеми генераторами в этой сети                    
+                for (j = 0; j < producerPositions.Count(); j++)                 //работаем со всеми генераторами в этой сети                    
                 {
                     stores[j] = new Store(j + 1, producerGive[j]);            //создаем магазин со своими запасами
                 }
@@ -359,18 +374,154 @@ public class ElectricityAddon : ModSystem
 
 
 
+                //Этап 7 - Смотрим всем хватило ли ---------------------------------------------------------------------------------------//   
+                i = 0;
+                bool enough = true;                             //хватило ли всем энергии?
+                foreach (var consumer in this.consumers2)       //работаем со всеми потребителями в этой сети
+                {
+                    if (sim.Customers[i].Remaining > 0)
+                        enough = false;                         //значит не хватило энергии всем
+                    i++;
+                }
+
+
+                //Этап 8 - Аккумуляторы довыдают энергию нуждающимся -------------------------------------------------------------------------------------//
+                if (!enough)
+                {
+                    BlockPos[] consumer2Positions = Array.Empty<BlockPos>();
+                    float[] consumer2Requests = Array.Empty<float>();
+                    
+                    i = 0;
+                    foreach (var consumer in this.consumers2)                                                       //выбираем всех потребителей из этой сети
+                    {
+                        if (sim.Customers[i].Remaining > 0)
+                        {
+                            this.consumers3.Add(consumer);                                                          //создаем список с потребителями
+                            var consumPos = consumer.ElectricConsumer.Pos;
+                            consumer2Positions = consumer2Positions.AddToArray<BlockPos>(consumPos);                //сохраняем позиции потребителей
+                            consumer2Requests = consumer2Requests.AddToArray<float>(sim.Customers[i].Remaining);    //сохраняем запросы потребителей   
+                        }
+                        i++;
+                    }
+
+                                       
+
+
+                    foreach (var accum in network.Accumulators.Select(electricAccum => new Accumulator(electricAccum)))  //выбираем все аккумы в этой сети
+                    {
+                        this.accums.Add(accum);      //создаем список с аккумами
+                    }
+
+                    BlockPos[] accumPositions = Array.Empty<BlockPos>();
+                    float[] accumGive = Array.Empty<float>();
+                    foreach (var accum in this.accums)                                         //работаем со всеми аккумами в этой сети
+                    {
+                        float giveEnergy = accum.ElectricAccum.Release();                      //этот аккум выдал столько энергии
+                        var accumPos = accum.ElectricAccum.Pos;
+                        accumPositions = accumPositions.AddToArray<BlockPos>(accumPos);  //сохраняем позиции аккумов
+                        accumGive = accumGive.AddToArray<float>(giveEnergy);       //сохраняем выданную энергию аккумов
+                    }
+
+
+
+                    pathFinder = new PathFinder();
+
+                    float[][] distances2 = new float[this.consumers3.Count][];                 //сохраняем сюда расстояния от всех потребителей ко всем аккумам (потом надо будет убрать. Нужно для отладки кода)
+
+                    List<BlockPos>[][] paths2 = new List<BlockPos>[this.consumers3.Count][];   //сохраняем сюда пути от всех потребителей ко всем генераторам
+                    i = 0;  //индексы -__-
+                    foreach (var c2P in consumer2Positions)     //работаем со всеми потребителями в этой сети
+                    {
+                        j = 0;
+                        var start = c2P;
+                        distances2[i] = new float[this.accums.Count];
+                        paths2[i] = new List<BlockPos>[this.accums.Count];
+                        foreach (var accum in this.accums)     //работаем со всеми генераторами в этой сети
+                        {
+                            var end = accumPositions[j];
+                            var path = pathFinder.FindShortestPath(start, end, network.PartPositions);  //извлекаем путь и расстояние
+                            if (path == null)                                                           //Путь не найден!
+                            {
+                                return;                                                                //возможно потом continue тут должно быть!!
+                            }
+                            distances2[i][j] = path.Count;                                               //сохраняем длину пути
+                            paths2[i][j] = path;                                                         //сохраняем пути
+                            j++;
+                        }
+
+                        i++;
+                    }
+
+
+
+
+                    stores = new Store[accumPositions.Count()];
+                    for (j = 0; j < accumPositions.Count(); j++)                 //работаем со всеми аккумами в этой сети                    
+                    {
+                        stores[j] = new Store(j + 1, accumGive[j]);            //создаем магазин со своими запасами
+                    }
+
+                    customers = new Customer[consumer2Positions.Count()];
+                    for (i = 0; i < consumer2Positions.Count(); i++)                         //работаем со всеми потребителями в этой сети
+                    {
+                        Dictionary<Store, float> distFromCustomerToStore = new Dictionary<Store, float>();
+                        for (j = 0; j < accumPositions.Count(); j++)                     //работаем со всеми аккумами в этой сети                    
+                        {
+                            distFromCustomerToStore.Add(stores[j], distances2[i][j]);       //записываем расстояния до каждого магазина от этого потребителя
+                        }
+
+                        customers[i] = new Customer(j + 1, consumer2Requests[i], distFromCustomerToStore);        //создаем покупателя со своими потребностями
+                    }
+
+
+
+                    
+                    var sim2 = new Simulation();
+                    sim2.Stores.AddRange(stores);
+                    sim2.Customers.AddRange(customers);
+
+                    sim2.Run();                  //распределение происходит тут
+
+
+
+                    i = 0;
+                    foreach (var accum in this.accums)       //работаем со всеми аккумами в этой сети
+                    {
+                        if (sim2.Stores[i].Stock > 0)
+                        {
+                            accum.ElectricAccum.Store(sim2.Stores[i].Stock);   //возвращаем аккумам то, что не расходовано
+                        }
+                        i++;
+                    }
+
+
+
+
+                }
+
+
+
+
+                /*
+
+
                 //Этап 7 - Получение энергии потребителями ---------------------------------------------------------------------------------------//
-                
+
                 // мгновенная выдача энергии по воздуху минуя провода
                 i = 0;
-                foreach (var consumer in this.consumers2)     //работаем со всеми потребителями в этой сети
+                bool enough = true;                             //хватило ли всем энергии?
+                foreach (var consumer in this.consumers2)       //работаем со всеми потребителями в этой сети
                 {
-                    var totalGive = sim.Customers[i].Required - sim.Customers[i].Remaining;  //потребитель получил столько энергии
-                    
-                    consumer.ElectricConsumer.Consume_receive(totalGive);   //выдаем энергию потребителю 
+                    var totalGive = sim.Customers[i].Required - sim.Customers[i].Remaining;  //потребитель получил столько энергии                    
+                    consumer.ElectricConsumer.Consume_receive(totalGive);                    //выдаем энергию потребителю 
+
+                    if (sim.Customers[i].Remaining > 0)
+                        enough = false;                                                      //значит не хватило энергии всем
 
                     i++;
                 }
+
+
 
 
                 //Этап 8 - Сообщение генераторам о нужном количестве энергии ---------------------------------------------------------------------------------------//
@@ -385,8 +536,8 @@ public class ElectricityAddon : ModSystem
                     j++;
                 }
 
-
-
+                */
+                //учесть те генераторы, к которым не обратились, иначе они будут жрать механическую мощность зря
 
                 //Этап 8 - Получение энергии потребителями ---------------------------------------------------------------------------------------//
 
@@ -408,7 +559,11 @@ public class ElectricityAddon : ModSystem
 
 
 
-
+    /// <summary>
+    /// Обьединение цепей
+    /// </summary>
+    /// <param name="networks"></param>
+    /// <returns></returns>
     private Network MergeNetworks(HashSet<Network> networks)
     {
         Network? outNetwork = null;
@@ -499,7 +654,10 @@ public class ElectricityAddon : ModSystem
     }
 
 
-    //создаем новую цепь
+    /// <summary>
+    /// Cоздаем новую цепь
+    /// </summary>
+    /// <returns></returns>
     private Network CreateNetwork()
     {
         var network = new Network();
@@ -753,7 +911,9 @@ public class ElectricityAddon : ModSystem
         }
     }
 
-    //собирает информацию по цепям
+    /// <summary>
+    /// Cобирает информацию по цепи
+    /// </summary>
     public NetworkInformation GetNetworks(BlockPos position, Facing facing)
     {
         var result = new NetworkInformation();
@@ -806,6 +966,9 @@ public class ElectricityAddon : ModSystem
     }
 }
 
+/// <summary>
+/// Электрическая цепь
+/// </summary>
 public class Network
 {
     public readonly HashSet<IElectricAccumulator> Accumulators = new();
@@ -818,6 +981,9 @@ public class Network
     public int Production;
 }
 
+/// <summary>
+/// Один элемент цепи
+/// </summary>
 internal class NetworkPart                       //элемент цепи
 {
     public readonly Network?[] Networks = {      //в какие стороны провода направлены
@@ -829,7 +995,7 @@ internal class NetworkPart                       //элемент цепи
             null
         };
 
-    public float[] eparams = null;         //похоже тут хватит одного
+    public float[] eparams = null;              //похоже тут хватит одного
 
     /*
         {
@@ -856,6 +1022,9 @@ internal class NetworkPart                       //элемент цепи
     }
 }
 
+/// <summary>
+/// Информация о конкретной сети
+/// </summary>
 public class NetworkInformation             //информация о конкретной цепи
 {
     public int Consumption;                 //потреблении
@@ -869,19 +1038,26 @@ public class NetworkInformation             //информация о конкр
     public float[] eParamsInNetwork = new float[7];       //параметрах конкретно этого блока в этой цепи
 }
 
+/// <summary>
+/// Потребитель энергии
+/// </summary>
 internal class Consumer
 {
-    public readonly ConsumptionRange Consumption;       //возможно удалим
+    public readonly ConsumptionRange Consumption;               //удалим!!!    
+    
+
     public readonly IElectricConsumer ElectricConsumer;
-    public int GivenEnergy;                               //возможно удалим
 
     public Consumer(IElectricConsumer electricConsumer)
     {
         this.ElectricConsumer = electricConsumer;
-        this.Consumption = electricConsumer.ConsumptionRange;   //возможно удалим
+        this.Consumption = electricConsumer.ConsumptionRange;   //удалим!!
     }
 }
 
+/// <summary>
+/// Источник энергии
+/// </summary>
 internal class Producer
 {
     public readonly IElectricProducer ElectricProducer;
@@ -889,5 +1065,18 @@ internal class Producer
     public Producer(IElectricProducer electricProducer)
     {
         this.ElectricProducer = electricProducer;
+    }
+}
+
+/// <summary>
+/// Аккумулятор энергии
+/// </summary>
+internal class Accumulator
+{
+    public readonly IElectricAccumulator ElectricAccum;
+
+    public Accumulator(IElectricAccumulator electricAccum)
+    {
+        this.ElectricAccum = electricAccum;
     }
 }

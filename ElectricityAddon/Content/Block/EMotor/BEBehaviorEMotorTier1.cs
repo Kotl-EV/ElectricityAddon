@@ -117,7 +117,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     /// <summary>
     /// Диапазон потребления
     /// </summary>
-    public ConsumptionRange ConsumptionRange => new(0, (int)I_max);
+    public ConsumptionRange ConsumptionRange => new(0, (int)I_max);  //удалить
 
     public BlockPos Pos => this.Position;
 

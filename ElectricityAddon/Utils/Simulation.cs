@@ -47,8 +47,7 @@ namespace ElectricityUnofficial.Utils
                 
                 foreach (var store in Stores)
                 {                    
-                    store.ProcessRequests();                    // обработка запросов магазинами
-                    
+                    store.ProcessRequests();                    // обработка запросов магазинами                    
                 }
 
                 hasChanges = Stores.Sum(s => s.Stock) != prevStock;

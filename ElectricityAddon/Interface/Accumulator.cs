@@ -1,13 +1,39 @@
+using System.Runtime.InteropServices;
+using Vintagestory.API.MathTools;
+
 namespace ElectricityAddon.Interface;
 
 public interface IElectricAccumulator
 {
-    public int GetMaxCapacity();
+    public BlockPos Pos { get; }
 
-    public int GetCapacity();
+    /// <summary>
+    /// Максимальный ток отдачи/сохранения
+    /// </summary>
+    public float maxCurrent { get; }
 
-    public void Store(int amount);
+    /// <summary>
+    /// Максимальная емкость аккумулятора
+    /// </summary>
+    /// <returns></returns>
+    public float GetMaxCapacity();
 
-    public void Release(int amount);
+    /// <summary>
+    /// Текущая емкость аккумулятора
+    /// </summary>
+    /// <returns></returns>
+    public float GetCapacity();
+
+    /// <summary>
+    /// Сохранить энергию
+    /// </summary>
+    /// <param name="amount"></param>
+    public void Store(float amount);
+
+    /// <summary>
+    /// Выдать энергию
+    /// </summary>
+    /// <param name="amount"></param>
+    public float Release();
 }
 

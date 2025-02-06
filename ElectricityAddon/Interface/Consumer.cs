@@ -1,7 +1,7 @@
 using Vintagestory.API.MathTools;
 
 namespace ElectricityAddon.Interface;
-public struct ConsumptionRange {                                 //тоже потом отвалится за ненадобностью
+public struct ConsumptionRange {                                 //тоже потом удалить
     public readonly int Min;
     public readonly int Max;
 
@@ -10,13 +10,13 @@ public struct ConsumptionRange {                                 //тоже потом от
         this.Max = max;
     }
 
-}
+}                                                               //тоже потом удалить
 
 
 
 public interface IElectricConsumer
 {
-    public ConsumptionRange ConsumptionRange { get; }
+    public ConsumptionRange ConsumptionRange { get; } // удалить!
 
     public BlockPos Pos { get; }
     /// <summary>
@@ -28,6 +28,8 @@ public interface IElectricConsumer
     /// Система выдает энергию потребителю 
     /// </summary>
     public void Consume_receive(float amount);      
+
+
 
     public void Consume(int amount);                //удалить можно 
 }

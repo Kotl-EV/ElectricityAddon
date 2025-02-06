@@ -8,6 +8,13 @@ namespace ElectricityAddon.Utils;
 
 public class PathFinder
 {
+    /// <summary>
+    /// Реализует обход в ширину для поиска кратчайшего пути
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <param name="network"></param>
+    /// <returns></returns>
     public List<BlockPos> FindShortestPath(BlockPos start, BlockPos end, HashSet<BlockPos> network)
     {
         if (!network.Contains(start) || !network.Contains(end))
@@ -39,6 +46,12 @@ public class PathFinder
         return ReconstructPath(start, end, cameFrom);
     }
 
+    /// <summary>
+    /// Вычисляет позиции соседей от текущего значения
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="network"></param>
+    /// <returns></returns>
     private IEnumerable<BlockPos> GetNeighbors(BlockPos pos, HashSet<BlockPos> network)
     {
         return new[]
@@ -52,6 +65,13 @@ public class PathFinder
         }.Where(network.Contains);
     }
 
+    /// <summary>
+    /// Реконструирует путь, который был найден
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <param name="cameFrom"></param>
+    /// <returns></returns>
     private List<BlockPos> ReconstructPath(BlockPos start, BlockPos end, Dictionary<BlockPos, BlockPos> cameFrom)
     {
         if (!cameFrom.ContainsKey(end))

@@ -31,9 +31,22 @@ public interface IElectricAccumulator
     public void Store(float amount);
 
     /// <summary>
+    /// Может сохранить энергии за раз
+    /// </summary>
+    /// <param name="amount"></param>
+    public float canStore();
+
+    /// <summary>
     /// Выдать энергию
     /// </summary>
     /// <param name="amount"></param>
-    public float Release();
+    public float Release(float amount);
+
+
+    /// <summary>
+    /// Может выдать энергии за раз
+    /// </summary>
+    /// <param name="amount"></param>
+    public float canRelease();
 }
 

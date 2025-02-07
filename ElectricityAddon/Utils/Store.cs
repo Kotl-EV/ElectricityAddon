@@ -29,7 +29,7 @@ namespace ElectricityUnofficial.Utils
 
         public void ProcessRequests()  
         {
-            //StoresOrders[store] += give;                        // сохраняем запросы к этим магазинам
+            
 
             float totalRequested = CurrentRequests.Sum(r => r.Value);   //обязательно говорим сумму попрошенного у каждого магазина
 

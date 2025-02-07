@@ -43,17 +43,14 @@ namespace ElectricityUnofficial.Utils
                     }
                 }
 
-                float prevStock = Stores.Sum(s => s.Stock);             // товара во всех магазинах сейчас
-                
-                foreach (var store in Stores)
-                {                    
-                    store.ProcessRequests();                    // обработка запросов магазинами                    
-                }
+                //float prevStock = Stores.Sum(s => s.Stock);             // товара во всех магазинах сейчас
 
-                hasChanges = Stores.Sum(s => s.Stock) != prevStock;
+                Stores.ForEach(s => s.ProcessRequests());
 
-            } while (hasChanges && Stores.All(s => s.ImNull) && Customers.Any(c => c.Remaining > 0));
+                //hasChanges = Stores.Sum(s => s.Stock) != prevStock;
 
+            //} while (hasChanges & Stores.All(s => s.ImNull) & Customers.Any(c => c.Remaining > 0));
+            } while (Stores.Any(s => !s.ImNull) && Customers.Any(c => c.Remaining > 0));
         }
 
 

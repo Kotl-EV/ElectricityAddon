@@ -30,15 +30,33 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator 
         return capacity;
     }
 
+
+
     public void Store(float amount)
-    {        
-        capacity += Math.Min(amount,maxCurrent);  //не позволяем одним пакетом сохранить больше максимального тока. В теории такого превышения и не должно случиться
+    {
+        var buf = Math.Min(Math.Min(amount, maxCurrent), GetMaxCapacity()-capacity);
+
+        capacity += buf;  //не позволяем одним пакетом сохранить больше максимального тока. В теории такого превышения и не должно случиться
     }
 
-    public float Release()
+    public float Release(float amount)
     {
-        return Math.Min(capacity, maxCurrent);   //выдаем пакет c учетом ток и запасов
+        var buf= Math.Min(capacity, Math.Min(amount, maxCurrent));
+        capacity -= buf;
+        return buf;                                                 //выдаем пакет c учетом тока и запасов
     }
+
+
+    public float canStore()
+    {
+        return Math.Min( maxCurrent, GetMaxCapacity() - capacity);
+    }
+
+    public float canRelease()
+    {
+        return Math.Min(capacity, maxCurrent);
+    }
+
 
     public override void ToTreeAttributes(ITreeAttribute tree) {
         base.ToTreeAttributes(tree);
@@ -57,4 +75,6 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator 
         stringBuilder.AppendLine("└ " + Lang.Get("Storage") + GetCapacity() + "/" + GetMaxCapacity() + " Eu");
         stringBuilder.AppendLine();
     }
+
+
 }

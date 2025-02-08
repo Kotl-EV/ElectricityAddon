@@ -297,4 +297,9 @@ public class BEBehaviorEMotorTier2 : BEBehaviorMPBase, IElectricConsumer
     {
         throw new NotImplementedException();
     }
+
+    public void Update()
+    {
+        throw new NotImplementedException();
+    }
 }

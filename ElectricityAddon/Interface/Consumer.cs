@@ -27,8 +27,11 @@ public interface IElectricConsumer
     /// <summary>
     /// Система выдает энергию потребителю 
     /// </summary>
-    public void Consume_receive(float amount);      
+    public void Consume_receive(float amount);
 
+
+
+    public void Update();
 
 
     public void Consume(int amount);                //удалить можно 

@@ -22,7 +22,7 @@ using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.MathTools;
 using HarmonyLib;
-using ElectricityUnofficial.Utils;
+
 
 [assembly: ModDependency("game", "1.20.0")]
 [assembly: ModInfo(
@@ -42,7 +42,6 @@ public class ElectricityAddon : ModSystem
 {
     private readonly List<Consumer> consumers = new();
     private readonly List<Consumer> consumers2 = new();
-    private readonly List<Consumer> consumers3 = new();
     private readonly List<Producer> producers = new();
     private readonly List<Producer> producers2 = new();
     private readonly List<Accumulator> accums = new();
@@ -342,7 +341,6 @@ public class ElectricityAddon : ModSystem
                 this.producers2.Clear();                        //очистка списка всех производителей, потому как для каждой network список свой
                 this.consumers.Clear();                         //очистка списка всех потребителей, потому как для каждой network список свой
                 this.consumers2.Clear();                        //очистка списка всех ненулевых потребителей, потому как для каждой network список свой
-                this.consumers3.Clear();                        //очистка списка всех ненулевых потребителей после первого распределения, потому как для каждой network список свой
                 this.accums.Clear();
                 this.accums2.Clear();
 
@@ -477,6 +475,7 @@ public class ElectricityAddon : ModSystem
 
                 }
 
+                
 
                 //Этап  - высасываем у генераторов остатки ---------------------------------------------------------------------------------------//
                 List<BlockPos> producer2Positions = new List<BlockPos>();
@@ -515,14 +514,21 @@ public class ElectricityAddon : ModSystem
 
 
                 //Этап  - Заряжаем аккумы ---------------------------------------------------------------------------------------//
+
                 i = 0;
                 foreach (var accum in this.accums2)       //работаем со всеми аккумами в этой сети
                 {                    
                     var totalGive = sim2.Customers[i].Required - sim2.Customers[i].Remaining;       //аккум получил столько энергии                    
                     accum.ElectricAccum.Store(totalGive);                                           //выдаем энергию аккумам 
-                                        
+
                     i++;
                 }
+
+
+                //обновляем энтити все
+                accums.ForEach(a => a.ElectricAccum.Update());
+                producers.ForEach(a => a.ElectricProducer.Update());
+                consumers.ForEach(a => a.ElectricConsumer.Update());
 
 
                 //*/

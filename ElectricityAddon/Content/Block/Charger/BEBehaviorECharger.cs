@@ -79,4 +79,9 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
         stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Eu");
         stringBuilder.AppendLine();
     }
+
+    public void Update()
+    {
+        throw new System.NotImplementedException();
+    }
 }

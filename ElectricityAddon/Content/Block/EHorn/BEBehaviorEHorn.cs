@@ -57,4 +57,9 @@ public class BEBehaviorEHorn : BlockEntityBehavior, IElectricConsumer
     {
         throw new System.NotImplementedException();
     }
+
+    public void Update()
+    {
+        throw new System.NotImplementedException();
+    }
 }

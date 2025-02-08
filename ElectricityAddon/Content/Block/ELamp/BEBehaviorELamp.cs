@@ -4,6 +4,7 @@ using System.Text;
 using ElectricityAddon.Interface;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 
 namespace ElectricityAddon.Content.Block.ELamp
 {
@@ -32,27 +33,34 @@ namespace ElectricityAddon.Content.Block.ELamp
 
         public float LightLevel { get; private set; }
 
-        public ConsumptionRange ConsumptionRange => new(0, maxConsumption);  //удалим
+        public ConsumptionRange ConsumptionRange => new(0, maxConsumption);  //удалить
 
 
 
         public void Consume(int lightLevel)  // можно удалить
         {
-            
+
         }
 
 
-        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+        public override void ToTreeAttributes(ITreeAttribute tree)
         {
-            base.GetBlockInfo(forPlayer, stringBuilder);
-
-            stringBuilder.AppendLine(StringHelper.Progressbar(this.LightLevel * 100.0f / maxConsumption));
-            stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.LightLevel + "/" + maxConsumption + " Eu");
-            stringBuilder.AppendLine();
+            base.ToTreeAttributes(tree);
+            tree.SetFloat("electricityaddon:LightLevel", LightLevel);
         }
+
+        public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
+        {
+            base.FromTreeAttributes(tree, worldAccessForResolve);
+            LightLevel = tree.GetFloat("electricityaddon:LightLevel");
+        }
+
+
+
 
         public float Consume_request()
         {
+
             return maxConsumption;
         }
 
@@ -62,19 +70,17 @@ namespace ElectricityAddon.Content.Block.ELamp
             {
                 if (amount != this.LightLevel)
                 {
-                    switch (this.LightLevel)         //меняем ассеты горящей и не горящей лампы
+
+                    if (amount >= 1 && this.Block.Code.ToString().Contains("disabled"))
                     {
-                        case 0 when amount > 0:
-                            {
-                                api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
-                                break;
-                            }
-                        case > 0 when amount == 0:
-                            {
-                                api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
-                                break;
-                            }
+                        api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
                     }
+                    else if (amount < 1 && this.Block.Code.ToString().Contains("enabled"))
+                    {
+                        api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
+                    }
+
+
 
                     //применяем цвет и яркость
                     this.Blockentity.Block.LightHsv = new[] {
@@ -85,8 +91,25 @@ namespace ElectricityAddon.Content.Block.ELamp
 
                     this.Blockentity.MarkDirty(true);
                     this.LightLevel = amount;
+
                 }
             }
+        }
+
+
+        public void Update()
+        {
+            //this.Blockentity.MarkDirty(true);
+        }
+
+
+        public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+        {
+            base.GetBlockInfo(forPlayer, stringBuilder);
+
+            stringBuilder.AppendLine(StringHelper.Progressbar(this.LightLevel * 100.0f / maxConsumption));
+            stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.LightLevel + "/" + maxConsumption + " Eu");
+            stringBuilder.AppendLine();
         }
     }
 }

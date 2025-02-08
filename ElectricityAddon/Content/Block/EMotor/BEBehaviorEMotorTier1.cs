@@ -6,6 +6,7 @@ using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent.Mechanics;
 
@@ -15,10 +16,17 @@ namespace ElectricityAddon.Content.Block.EMotor;
 public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
 {
 
+
+    public BEBehaviorEMotorTier1(BlockEntity blockEntity) : base(blockEntity)
+    {
+        GetParams();
+    }
+
+
     private static CompositeShape? compositeShape;
 
-    private float powerRequest = I_max;         // Нужно энергии
-    private float powerReceive = 0;             // Дали энергии
+    private float powerRequest=I_max;         // Нужно энергии (сохраняется)
+    private float powerReceive=0;             // Дали энергии  (сохраняется)
 
     // Константы двигателя
     private static float I_min;                 // Минимальный ток
@@ -37,6 +45,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
 
     private static float constanta = (I_max - I_min) / torque_max;
 
+
     /// <summary>
     /// Извлекаем параметры из ассетов
     /// </summary>
@@ -51,10 +60,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         resistance_factor = Params[5];
     }
 
-    public BEBehaviorEMotorTier1(BlockEntity blockEntity) : base(blockEntity)
-    {
-        GetParams();
-    }
+
 
 
 
@@ -119,7 +125,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     /// </summary>
     public ConsumptionRange ConsumptionRange => new(0, (int)I_max);  //удалить
 
-    public BlockPos Pos => this.Position;
+    public new BlockPos Pos => this.Position;
 
     /// <summary>
     /// Запрашивает энергию
@@ -134,13 +140,16 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     /// </summary>
     public void Consume_receive(float amount)
     {
-
-        if (this.powerReceive != amount)
-        {
-            this.powerReceive = amount;
-            this.Blockentity.MarkDirty(true);
-        }
+        this.powerReceive = amount;
     }
+
+
+    public void Update()
+    {
+        this.Blockentity.MarkDirty(true);
+    }
+
+
 
 
     public void Consume(int amount)                //удалить можно---------------------------
@@ -149,6 +158,11 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     }
 
 
+
+    public override void WasPlaced(BlockFacing connectedOnFacing)
+    {
+         
+    }
 
 
     // не удалять
@@ -169,6 +183,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
             : resistance_factor * Math.Abs(spd) / speed_max;                        // Линейное сопротивление для обычных скоростей
     }
 
+
     /// <summary>
     /// Рассчитываем КПД
     /// </summary>
@@ -181,8 +196,6 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         float buf = kpd_max * (1 - a * (float)Math.Pow(tor / torque_max - b, 2));   // Параболическая зависимость
         return Math.Max(0.01f, buf);                                                // Минимальное значение КПД
     }
-
-
 
 
     /// <summary>
@@ -234,7 +247,9 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
 
         if (k > 0)
             torque = torque_down;                                           // Отдаем новое значение момента
-           
+
+
+        
 
         this.powerRequest = I_max;                                        // Запрашиваем энергии столько, сколько нужно  для работы
 
@@ -245,9 +260,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     }
 
 
-    public override void WasPlaced(BlockFacing connectedOnFacing)
-    {
-    }
+
 
 
     protected override CompositeShape? GetShape()
@@ -308,6 +321,22 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tesselator)
     {
         return false;
+    }
+
+
+
+    public override void ToTreeAttributes(ITreeAttribute tree)
+    {
+        base.ToTreeAttributes(tree);
+        tree.SetFloat("electricityaddon:powerRequest", powerRequest);
+        tree.SetFloat("electricityaddon:powerReceive", powerReceive);
+    }
+
+    public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
+    {
+        base.FromTreeAttributes(tree, worldAccessForResolve);
+        powerRequest = tree.GetFloat("electricityaddon:powerRequest");
+        powerReceive = tree.GetFloat("electricityaddon:powerReceive");
     }
 
 

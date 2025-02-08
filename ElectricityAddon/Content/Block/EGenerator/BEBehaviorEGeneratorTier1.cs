@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ElectricityAddon.Interface;
@@ -7,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent.Mechanics;
 
@@ -15,8 +17,8 @@ namespace ElectricityAddon.Content.Block.EGenerator;
 public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 {
     private static CompositeShape? compositeShape;
-    private float powerOrder = 0;           // Просят столько энергии
-    private float powerGive = I_max;        // Отдаем столько энергии
+    private float powerOrder;           // Просят столько энергии (сохраняется)
+    private float powerGive;           // Отдаем столько энергии  (сохраняется)
 
     // Константы генератора
     private static float I_max;                 // Максимальный ток
@@ -26,6 +28,16 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 
     private float[] def_Params = { 100.0F, 0.5F, 0.1F, 0.25F };          //заглушка
     public float[] Params = { 0, 0, 0, 0 };                              //сюда берем параметры из ассетов
+
+
+
+    // Или с прямым указанием коэффициента (например, 0.2)
+    public ExponentialMovingAverage emaFilter = new ExponentialMovingAverage(0.05);
+
+
+
+    public float AVGpowerOrder;
+
 
 
     /// <summary>
@@ -39,11 +51,16 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
         speed_max = Params[1];
         resistance_factor = Params[2];
         resistance_load = Params[3];
+
+        
+
+        AVGpowerOrder = 0;
     }
 
     public BEBehaviorEGeneratorTier1(BlockEntity blockEntity) : base(blockEntity)
     {
         GetParams();
+        
     }
 
     public override BlockFacing OutFacingForNetworkDiscovery
@@ -58,7 +75,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
             return BlockFacing.NORTH;
         }
     }
-    public BlockPos Pos => this.Position;
+    public new BlockPos Pos => this.Position;
     public override int[] AxisSign => this.OutFacingForNetworkDiscovery.Index switch
     {
         0 => new[]
@@ -111,14 +128,9 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     /// </summary>
     public void Produce_order(float amount)
     {
+        this.powerOrder = amount;
 
-        if (this.powerOrder != amount)
-        {
-            this.powerOrder = amount;
-            
-                this.Blockentity.MarkDirty(true);
-            
-        }
+        AVGpowerOrder = (float)emaFilter.Update(amount);
     }
 
     /// <summary>
@@ -137,16 +149,8 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 
         power = Math.Max(0, power);                                                         // Чтобы уж точно не ниже нуля
 
-        if (power != this.powerGive)
-        {
-            this.powerGive = power;
-           
-                this.Blockentity.MarkDirty(true);
-            
-        }
-
-
-        //return 100; //временно!!!-----------------------------------------------------
+       
+        this.powerGive = power;    
         return power;
     }
 
@@ -159,12 +163,12 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 
         float spd = this.Network.Speed;
         return (Math.Abs(spd) > speed_max)                                                                                      // Если скорость превышает максимальную, рассчитываем сопротивление как квадратичную
-           // ? resistance_load * (powerOrder / I_max) + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
-           // : resistance_load * (powerOrder / I_max) + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
-            
-            //в таком виде будет лучше, иначе система выработки может встать колом, когда потребления больше выработки
-            ? resistance_load * (Math.Min(powerOrder, I_max) / I_max) + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
-            : resistance_load * (Math.Min(powerOrder, I_max) / I_max) + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
+        //    ? resistance_load  + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
+        //    : resistance_load  + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
+
+        //в таком виде будет лучше, иначе система выработки может встать колом, когда потребления больше выработки
+            ? resistance_load * (Math.Min(AVGpowerOrder, I_max) / I_max) + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
+            : resistance_load * (Math.Min(AVGpowerOrder, I_max) / I_max) + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
 
         // сопротивление генератора также напрямую зависит от нагрузки в электрической цепи powerOrder 
     }
@@ -235,14 +239,37 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
         return false;
     }
 
+
+    public void Update()
+    {
+        this.Blockentity.MarkDirty(true);
+    }
+
+
+    public override void ToTreeAttributes(ITreeAttribute tree)
+    {
+        base.ToTreeAttributes(tree);
+        tree.SetFloat("electricityaddon:powerOrder", powerOrder);
+        tree.SetFloat("electricityaddon:powerGive", powerGive);
+    }
+
+    public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
+    {
+        base.FromTreeAttributes(tree, worldAccessForResolve);
+        powerOrder = tree.GetFloat("electricityaddon:powerOrder");
+        powerGive = tree.GetFloat("electricityaddon:powerGive");
+    }
+
+
+
     /// <summary>
     /// Подсказка при наведении на блок
     /// </summary>
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerGive / I_max * 100));
-        stringBuilder.AppendLine("└ " + Lang.Get("Production") + powerGive + "/" + I_max + " Eu");
+        stringBuilder.AppendLine(StringHelper.Progressbar(Math.Min(powerGive,powerOrder) / I_max * 100));
+        stringBuilder.AppendLine("└ " + Lang.Get("Production") + Math.Min(powerGive, powerOrder) + "/" + I_max + " Eu");
         stringBuilder.AppendLine();
     }
 }

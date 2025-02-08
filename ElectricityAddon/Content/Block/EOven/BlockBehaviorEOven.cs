@@ -88,4 +88,9 @@ public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer
     {
         throw new System.NotImplementedException();
     }
+
+    public void Update()
+    {
+        throw new System.NotImplementedException();
+    }
 }

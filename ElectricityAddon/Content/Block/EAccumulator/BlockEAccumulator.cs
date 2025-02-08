@@ -82,7 +82,7 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
         if (byItemStack != null)
         {
             BlockEntityEAccumulator? be = world.BlockAccessor.GetBlockEntity(blockPos) as BlockEntityEAccumulator;
-            be.GetBehavior<BEBehaviorEAccumulator>().Store(byItemStack.Attributes.GetInt("electricity:energy", 0));
+            be!.GetBehavior<BEBehaviorEAccumulator>().Store(byItemStack.Attributes.GetInt("electricity:energy", 0));
         }
     }
 }

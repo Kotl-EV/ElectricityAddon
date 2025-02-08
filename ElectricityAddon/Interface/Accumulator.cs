@@ -48,5 +48,8 @@ public interface IElectricAccumulator
     /// </summary>
     /// <param name="amount"></param>
     public float canRelease();
+
+
+    public void Update();
 }
 

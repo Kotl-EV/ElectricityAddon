@@ -42,4 +42,9 @@ public class BEBehaviorEFreezer : BlockEntityBehavior, IElectricConsumer
         stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerSetting + "/" + 100 + " Eu");
         stringBuilder.AppendLine();
     }
+
+    public void Update()
+    {
+        throw new System.NotImplementedException();
+    }
 }

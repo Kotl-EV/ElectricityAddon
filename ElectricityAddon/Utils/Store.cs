@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Vintagestory.API.MathTools;
 
-namespace ElectricityUnofficial.Utils
+namespace ElectricityAddon.Utils
 {
     public class Store
     {
@@ -34,8 +34,10 @@ namespace ElectricityUnofficial.Utils
             float totalRequested = CurrentRequests.Sum(r => r.Value);   //обязательно говорим сумму попрошенного у каждого магазина
 
             totalRequest += totalRequested;
-            if (Stock <= 0)
+            if (Stock <= 0.001F)
             {
+
+                Stock = 0.0F;
                 ImNull = true;   //если магазин был изначально нулевой и принял запросы
                 ResetRequests();
                 return;
@@ -66,8 +68,9 @@ namespace ElectricityUnofficial.Utils
                 
             }
 
-            if (Stock <= 0) //если после всех раздач имеется ноль
+            if (Stock <= 0.001F) //если после всех раздач имеется ноль
             {
+                Stock = 0.0F;
                 ImNull = true;   //магазин теперь пуст  и он принимал запросы
             }
 

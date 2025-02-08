@@ -225,4 +225,9 @@ public class BEBehaviorEGeneratorTier3 : BEBehaviorMPBase, IElectricProducer
     {
         throw new NotImplementedException();
     }
+
+    public void Update()
+    {
+        throw new NotImplementedException();
+    }
 }

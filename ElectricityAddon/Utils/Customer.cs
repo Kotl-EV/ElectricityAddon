@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectricityUnofficial.Utils
+namespace ElectricityAddon.Utils
 {
     public class Customer
     {

@@ -14,19 +14,20 @@ using Vintagestory.API.Util;
 
 namespace ElectricityAddon.Content.Item;
 
-  public class EDrill1 : Vintagestory.API.Common.Item,IEnergyStorageItem
-  {
+public class EDrill1 : Vintagestory.API.Common.Item, IEnergyStorageItem
+{
     public virtual int MultiBreakQuantity => 8;
 
     public virtual bool CanMultiBreak(Vintagestory.API.Common.Block block)
     {
-      if (block.BlockMaterial == EnumBlockMaterial.Soil || block.BlockMaterial == EnumBlockMaterial.Gravel ||
-          block.BlockMaterial == EnumBlockMaterial.Ore || block.BlockMaterial == EnumBlockMaterial.Stone)
-      {
-        return true;
-      }return false;
+        if (block.BlockMaterial == EnumBlockMaterial.Soil || block.BlockMaterial == EnumBlockMaterial.Gravel ||
+            block.BlockMaterial == EnumBlockMaterial.Ore || block.BlockMaterial == EnumBlockMaterial.Stone)
+        {
+            return true;
+        }
+        return false;
     }
-    
+
     public SkillItem[] toolModes;
     int consume;
     int maxcapacity;
@@ -39,7 +40,7 @@ namespace ElectricityAddon.Content.Item;
         consume = MyMiniLib.GetAttributeInt(this, "consume", 20);
         maxcapacity = MyMiniLib.GetAttributeInt(this, "maxcapacity", 20000);
         Durability = maxcapacity / consume;
-        ICoreClientAPI capi = api as ICoreClientAPI;
+        ICoreClientAPI capi = (api as ICoreClientAPI)!;
         if (capi == null)
             return;
         toolModes = ObjectCacheUtil.GetOrCreate(api, "drillToolModes", () => new SkillItem[2]
@@ -79,7 +80,7 @@ namespace ElectricityAddon.Content.Item;
         int toolMode)
     {
         ItemSlot mouseItemSlot = byPlayer.InventoryManager.MouseItemSlot;
-        if (!mouseItemSlot.Empty && mouseItemSlot.Itemstack.Block != null )
+        if (!mouseItemSlot.Empty && mouseItemSlot.Itemstack.Block != null)
         {
             api.Event.PushEvent("keepopentoolmodedlg");
         }
@@ -102,7 +103,7 @@ namespace ElectricityAddon.Content.Item;
         }
         itemslot.MarkDirty();
     }
-    
+
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
@@ -126,10 +127,10 @@ namespace ElectricityAddon.Content.Item;
       float dt,
       int counter)
     {
-      float num = base.OnBlockBreaking(player, blockSel, itemslot, remainingResistance, dt, counter);
-      int remainingDurability = itemslot.Itemstack.Collectible.GetRemainingDurability(itemslot.Itemstack);
-      this.DamageNearbyBlocks(player, blockSel, remainingResistance - num, remainingDurability,itemslot);
-      return num;
+        float num = base.OnBlockBreaking(player, blockSel, itemslot, remainingResistance, dt, counter);
+        int remainingDurability = itemslot.Itemstack.Collectible.GetRemainingDurability(itemslot.Itemstack);
+        this.DamageNearbyBlocks(player, blockSel, remainingResistance - num, remainingDurability, itemslot);
+        return num;
     }
 
     private void DamageNearbyBlocks(
@@ -138,22 +139,22 @@ namespace ElectricityAddon.Content.Item;
       float damage,
       int leftDurability, ItemSlot itemslot)
     {
-      if (!this.CanMultiBreak(player.Entity.World.BlockAccessor.GetBlock(blockSel.Position)))
-        return;
-      Vec3d hitPos = blockSel.Position.ToVec3d().Add(blockSel.HitPosition);
-      IEnumerable<BlockPos> blockPoses = this.GetNearblyMultibreakables(player.Entity.World, blockSel.Position, hitPos).OrderBy<KeyValuePair<BlockPos, float>, float>((System.Func<KeyValuePair<BlockPos, float>, float>) (x => x.Value)).Select<KeyValuePair<BlockPos, float>, BlockPos>((System.Func<KeyValuePair<BlockPos, float>, BlockPos>) (x => x.Key));
-      int num = Math.Min(this.MultiBreakQuantity, leftDurability);
-      foreach (BlockPos pos in blockPoses)
-      {
-        if (num == 0)
-          break;
-        BlockFacing opposite = BlockFacing.FromNormal(player.Entity.ServerPos.GetViewVector()).Opposite;
-        if (player.Entity.World.Claims.TryAccess(player, pos, EnumBlockAccessFlags.BuildOrBreak) && itemslot.Itemstack.Collectible.GetRemainingDurability(itemslot.Itemstack)>1 && GetToolMode(itemslot,player,blockSel) == 1)
+        if (!this.CanMultiBreak(player.Entity.World.BlockAccessor.GetBlock(blockSel.Position)))
+            return;
+        Vec3d hitPos = blockSel.Position.ToVec3d().Add(blockSel.HitPosition);
+        IEnumerable<BlockPos> blockPoses = this.GetNearblyMultibreakables(player.Entity.World, blockSel.Position, hitPos).OrderBy<KeyValuePair<BlockPos, float>, float>((System.Func<KeyValuePair<BlockPos, float>, float>)(x => x.Value)).Select<KeyValuePair<BlockPos, float>, BlockPos>((System.Func<KeyValuePair<BlockPos, float>, BlockPos>)(x => x.Key));
+        int num = Math.Min(this.MultiBreakQuantity, leftDurability);
+        foreach (BlockPos pos in blockPoses)
         {
-          player.Entity.World.BlockAccessor.DamageBlock(pos, opposite, damage);
-          --num;
+            if (num == 0)
+                break;
+            BlockFacing opposite = BlockFacing.FromNormal(player.Entity.ServerPos.GetViewVector()).Opposite;
+            if (player.Entity.World.Claims.TryAccess(player, pos, EnumBlockAccessFlags.BuildOrBreak) && itemslot.Itemstack.Collectible.GetRemainingDurability(itemslot.Itemstack) > 1 && GetToolMode(itemslot, player, blockSel) == 1)
+            {
+                player.Entity.World.BlockAccessor.DamageBlock(pos, opposite, damage);
+                --num;
+            }
         }
-      }
     }
 
     public override bool OnBlockBrokenWith(
@@ -163,44 +164,44 @@ namespace ElectricityAddon.Content.Item;
       BlockSelection blockSel,
       float dropQuantityMultiplier = 1f)
     {
-      Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockSel.Position);
-      if(itemslot.Itemstack.Collectible.GetRemainingDurability(itemslot.Itemstack)<=1)
-          return false;
-      if (!(byEntity is EntityPlayer) || itemslot.Itemstack == null)
-        return true;
-      IPlayer player = world.PlayerByUid((byEntity as EntityPlayer).PlayerUID);
-      this.breakMultiBlock(blockSel.Position, player);
-      if (!this.CanMultiBreak(block))
-        return true;
-      Vec3d hitPos = blockSel.Position.ToVec3d().Add(blockSel.HitPosition);
-      IOrderedEnumerable<KeyValuePair<BlockPos, float>> orderedEnumerable = this.GetNearblyMultibreakables(world, blockSel.Position, hitPos).OrderBy<KeyValuePair<BlockPos, float>, float>((System.Func<KeyValuePair<BlockPos, float>, float>) (x => x.Value));
-      itemslot.Itemstack.Collectible.GetRemainingDurability(itemslot.Itemstack);
-      int num = 0;
-      foreach (KeyValuePair<BlockPos, float> keyValuePair in (IEnumerable<KeyValuePair<BlockPos, float>>) orderedEnumerable)
-      {
-        if (player.Entity.World.Claims.TryAccess(player, keyValuePair.Key, EnumBlockAccessFlags.BuildOrBreak))
-        { 
-          this.DamageItem(world, byEntity, itemslot);
-          if(GetToolMode(itemslot,player,blockSel) == 0)
-                break;
-          this.breakMultiBlock(keyValuePair.Key, player);
-          ++num;
-          if (num < this.MultiBreakQuantity)
-          {
-            if (itemslot.Itemstack == null)
-              break;
-          }
-          else
-            break;
+        Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockSel.Position);
+        if (itemslot.Itemstack.Collectible.GetRemainingDurability(itemslot.Itemstack) <= 1)
+            return false;
+        if (!(byEntity is EntityPlayer) || itemslot.Itemstack == null)
+            return true;
+        IPlayer player = world.PlayerByUid((byEntity as EntityPlayer)!.PlayerUID);
+        this.breakMultiBlock(blockSel.Position, player);
+        if (!this.CanMultiBreak(block))
+            return true;
+        Vec3d hitPos = blockSel.Position.ToVec3d().Add(blockSel.HitPosition);
+        IOrderedEnumerable<KeyValuePair<BlockPos, float>> orderedEnumerable = this.GetNearblyMultibreakables(world, blockSel.Position, hitPos).OrderBy<KeyValuePair<BlockPos, float>, float>((System.Func<KeyValuePair<BlockPos, float>, float>)(x => x.Value));
+        itemslot.Itemstack.Collectible.GetRemainingDurability(itemslot.Itemstack);
+        int num = 0;
+        foreach (KeyValuePair<BlockPos, float> keyValuePair in (IEnumerable<KeyValuePair<BlockPos, float>>)orderedEnumerable)
+        {
+            if (player.Entity.World.Claims.TryAccess(player, keyValuePair.Key, EnumBlockAccessFlags.BuildOrBreak))
+            {
+                this.DamageItem(world, byEntity, itemslot);
+                if (GetToolMode(itemslot, player, blockSel) == 0)
+                    break;
+                this.breakMultiBlock(keyValuePair.Key, player);
+                ++num;
+                if (num < this.MultiBreakQuantity)
+                {
+                    if (itemslot.Itemstack == null)
+                        break;
+                }
+                else
+                    break;
+            }
         }
-      }
-      return true;
+        return true;
     }
 
     protected virtual void breakMultiBlock(BlockPos pos, IPlayer plr)
     {
-      this.api.World.BlockAccessor.BreakBlock(pos, plr);
-      this.api.World.BlockAccessor.MarkBlockDirty(pos);
+        this.api.World.BlockAccessor.BreakBlock(pos, plr);
+        this.api.World.BlockAccessor.MarkBlockDirty(pos);
     }
 
     private OrderedDictionary<BlockPos, float> GetNearblyMultibreakables(
@@ -208,22 +209,22 @@ namespace ElectricityAddon.Content.Item;
       BlockPos pos,
       Vec3d hitPos)
     {
-      OrderedDictionary<BlockPos, float> nearblyMultibreakables = new OrderedDictionary<BlockPos, float>();
-      for (int dx = -1; dx <= 1; ++dx)
-      {
-        for (int dy = -1; dy <= 1; ++dy)
+        OrderedDictionary<BlockPos, float> nearblyMultibreakables = new OrderedDictionary<BlockPos, float>();
+        for (int dx = -1; dx <= 1; ++dx)
         {
-          for (int dz = -1; dz <= 1; ++dz)
-          {
-            if (dx != 0 || dy != 0 || dz != 0)
+            for (int dy = -1; dy <= 1; ++dy)
             {
-              BlockPos blockPos = pos.AddCopy(dx, dy, dz);
-              if (this.CanMultiBreak(world.BlockAccessor.GetBlock(blockPos)))
-                nearblyMultibreakables.Add(blockPos, hitPos.DistanceTo((double) blockPos.X + 0.7, (double) blockPos.Y + 0.7, (double) blockPos.Z + 0.7));
+                for (int dz = -1; dz <= 1; ++dz)
+                {
+                    if (dx != 0 || dy != 0 || dz != 0)
+                    {
+                        BlockPos blockPos = pos.AddCopy(dx, dy, dz);
+                        if (this.CanMultiBreak(world.BlockAccessor.GetBlock(blockPos)))
+                            nearblyMultibreakables.Add(blockPos, hitPos.DistanceTo((double)blockPos.X + 0.7, (double)blockPos.Y + 0.7, (double)blockPos.Z + 0.7));
+                    }
+                }
             }
-          }
         }
-      }
-      return nearblyMultibreakables;
+        return nearblyMultibreakables;
     }
-  }
+}

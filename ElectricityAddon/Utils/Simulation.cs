@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElectricityUnofficial.Utils
+namespace ElectricityAddon.Utils
 {
     public class Simulation
     {
@@ -19,7 +19,7 @@ namespace ElectricityUnofficial.Utils
             }
 
 
-            bool hasChanges;                                            //поменялось ли что-то?
+            //bool hasChanges;                                            //поменялось ли что-то?
             do
             {
                 Customers.ForEach(c => c.UpdateOrderedStores());        //обновляет пройденный путь и купленное уже покупателями
@@ -30,7 +30,7 @@ namespace ElectricityUnofficial.Utils
                     float remaining = customer.Remaining;
                     foreach (var store in customer.GetAvailableStores()) //вынести перед циклом выборку !!!
                     {
-                        if (store.Stock <= 0 && store.ImNull)           //если у магазина уже ноль и он был обработан, то пропускаем
+                        if (store.Stock <= 0.001F && store.ImNull)           //если у магазина уже ноль и он был обработан, то пропускаем
                             continue;
 
                         //float requested = Math.Min(remaining, store.Stock);

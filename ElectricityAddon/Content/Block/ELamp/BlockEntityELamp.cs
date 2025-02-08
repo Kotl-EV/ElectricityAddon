@@ -17,8 +17,8 @@ namespace ElectricityAddon.Content.Block.ELamp
         //передает значения из Block в BEBehaviorElectricityAddon
         public float[] Eparams
         {
-            get => this.ElectricityAddon.Eparams;
-            set => this.ElectricityAddon.Eparams = value;
+            get => this.ElectricityAddon!.Eparams;
+            set => this.ElectricityAddon!.Eparams = value;
         }
 
         public Facing Facing
@@ -30,23 +30,26 @@ namespace ElectricityAddon.Content.Block.ELamp
                 {
                     if (this.Block.Code.ToString().Contains("small"))                           //смотрим какая все же лампочка вызвала
                     {
-                        this.ElectricityAddon.Connection = this.facing = value;                      //если лампа маленькая
+                        //если лампа маленькая                    
+                        this.ElectricityAddon!.Connection = value;
+                        this.facing = value;
                     }
                     else
                     {
-                        this.ElectricityAddon.Connection = FacingHelper.FullFace(this.facing = value);  //если лампа обычная
+                        //если лампа обычная
+                        this.ElectricityAddon!.Connection = FacingHelper.FullFace(this.facing = value);  
                     }
                 }
             }
         }
 
-        public bool IsEnabled => this.Behavior.LightLevel > 0;
+        public bool IsEnabled => this.Behavior.LightLevel >= 1;
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
 
-            tree.SetBytes("electricity:facing", SerializerUtil.Serialize(this.facing));
+            tree.SetBytes("electricityaddon:facing", SerializerUtil.Serialize(this.facing));
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
@@ -55,7 +58,7 @@ namespace ElectricityAddon.Content.Block.ELamp
 
             try
             {
-                this.facing = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricity:facing"));
+                this.facing = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricityaddon:facing"));
             }
             catch (Exception exception)
             {

@@ -16,5 +16,7 @@ public interface IElectricProducer
     public float Produce_give();
 
 
+    public void Update();
+
     public int Produce();                    //можно удалить
 }

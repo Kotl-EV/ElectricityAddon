@@ -70,5 +70,10 @@ namespace Electricity.Content.Block.Entity.Behavior
             stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.HeatLevel + "/" + 8 + "Eu");
             stringBuilder.AppendLine();
         }
+
+        public void Update()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

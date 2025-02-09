@@ -117,7 +117,7 @@ public class FlyToggleEvent : ModSystem
                                 ((IServerPlayer)allOnlinePlayer).BroadcastPlayerData();
                             }
                         }
-                        else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative && ownInventory[(int)EnumCharacterDressType.Waist]?.Itemstack?.Item.FirstCodePart().Contains("angelbelt") != true)
+                        else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Spectator && ownInventory[(int)EnumCharacterDressType.Waist]?.Itemstack?.Item.FirstCodePart().Contains("angelbelt") != true)
                         {
                             if (allOnlinePlayer.WorldData.FreeMove)
                             {
@@ -132,7 +132,7 @@ public class FlyToggleEvent : ModSystem
                             }
                         }
                         
-                }else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative && ownInventory[(int)EnumCharacterDressType.Waist]?.Itemstack?.Item.FirstCodePart().Contains("angelbelt") != true)
+                }else if (itemSlot.Inventory.CanPlayerAccess(allOnlinePlayer, allOnlinePlayer.Entity.Pos) && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Creative && allOnlinePlayer.WorldData.CurrentGameMode != EnumGameMode.Spectator && ownInventory[(int)EnumCharacterDressType.Waist]?.Itemstack?.Item.FirstCodePart().Contains("angelbelt") != true)
                 {
                     if (allOnlinePlayer.WorldData.FreeMove)
                     {

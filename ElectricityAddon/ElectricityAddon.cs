@@ -33,7 +33,7 @@ using ElectricityAddon.Content.Block.EHeater;
     "electricityaddon",
     Website = "https://github.com/Kotl-EV/ElectricityAddon",
     Description = "Brings electricity into the game!",
-    Version = "0.0.17",
+    Version = "0.0.18",
     Authors = new[] {
         "Kotl",
         "Tehtelev"

@@ -394,7 +394,8 @@ public class ElectricityAddon : ModSystem
                 var sim = new Simulation();
                 logisticalTask(network, consumerPositions, consumerRequests, producerPositions, producerGive, ref sim, out var paths);
 
-
+                //if (sim.Stores.Count ==0 || sim.Customers.Count == 0)  //бывают чудеса из-за несовершенства посика пути
+                //    continue;
 
 
                 if (!instant)  // медленная передача
@@ -497,7 +498,8 @@ public class ElectricityAddon : ModSystem
                 logisticalTask(network, consumer2Positions, consumer2Requests, producer2Positions, producer2Give, ref sim2, out var paths2);
 
 
-
+                //if (sim2.Stores.Count == 0 || sim2.Customers.Count == 0)  //бывают чудеса из-за несовершенства посика пути
+                //    continue;
 
 
                 if (!instant)  // медленная передача
@@ -579,12 +581,18 @@ public class ElectricityAddon : ModSystem
 
 
 
+
+
+
             if (!instant)  // медленная передача
             {
-                //Этап  - Потребление энергии уже имеющейся в пакете тут ---------------------------------------------------------------------------------------//
+                //Этап  - Потребление энергии уже имеющейся в пакете  ---------------------------------------------------------------------------------------//
 
+                Dictionary<BlockPos, float> sumEnergy = new Dictionary<BlockPos, float>();
                 List<energyPacket> toRemovePacket = new List<energyPacket>();
                 List<BlockPos> toRemovePos = new List<BlockPos>();
+
+
                 foreach (var part in parts)  //перебираем все элементы
                 {
                     int count = 0;
@@ -595,21 +603,21 @@ public class ElectricityAddon : ModSystem
                         {
                             if (item.path[0] == part.Key)  //если первый элемент пути пакета имеет те же координаты, что и текущмй элемент, значит пакет можно забирать
                             {
-                                if (part.Value.Consumer != null)                            //это потребитель?
-                                {
-                                    part.Value.Consumer.Consume_receive(item.energy);       //выдали потребителю   
-                                }
-                                else if (part.Value.Accumulator != null)                    //это аккумулятор?
-                                {
-                                    part.Value.Accumulator.Store(item.energy);              //выдали аккуму
-
-                                }
-
                                 count++;
 
+                                //записываем пакеты, которые нужно будет удалить
                                 toRemovePos.Add(part.Key);
                                 toRemovePacket.Add(item);
 
+                                //суммируем все полученные пакеты данным потребителем
+                                if (sumEnergy.TryGetValue(part.Key, out var value))
+                                {
+                                    sumEnergy[part.Key] += item.energy;
+                                }
+                                else
+                                {
+                                    sumEnergy.Add(part.Key, item.energy);
+                                }
 
                             }
 
@@ -621,16 +629,36 @@ public class ElectricityAddon : ModSystem
                     {
                         if (part.Value.Consumer != null)                            //это потребитель?
                         {
-                            part.Value.Consumer.Consume_receive(0);       //выдали потребителю   
+                            part.Value.Consumer.Consume_receive(0);                 //выдали потребителю   
                         }
                         else if (part.Value.Accumulator != null)                    //это аккумулятор?
                         {
-                            part.Value.Accumulator.Store(0);              //выдали аккуму
-
+                            part.Value.Accumulator.Store(0);                        //выдали аккуму
                         }
                     }
                 }
 
+
+
+                //выдаем каждому потребителю сумму поглощенных пакетов
+                foreach (var pair in sumEnergy)
+                {
+                    if (parts[pair.Key].Consumer != null)                            //это потребитель?
+                    {
+                        parts[pair.Key].Consumer!.Consume_receive(pair.Value);       //выдали потребителю   
+                    }
+                    else if (parts[pair.Key].Accumulator != null)                    //это аккумулятор?
+                    {
+                        parts[pair.Key].Accumulator!.Store(pair.Value);              //выдали аккуму
+                    }
+                }
+
+                sumEnergy.Clear();
+
+
+
+
+                //удаляем все расходованные пакеты
                 for (i = 0; i < toRemovePos.Count; i++)
                 {
                     parts[toRemovePos[i]].energyPackets.Remove(toRemovePacket[i]);                 //удаляем ненужный пакет
@@ -657,7 +685,7 @@ public class ElectricityAddon : ModSystem
                                 if (parts.TryGetValue(moveTo, out var partt))
                                     parts[moveTo].energyPackets.Add(item);                  //копируем пакет, только если элемент там еще есть
 
-
+                                //пакет в любом случае уничтожится, если не сможет переместиться
                                 toRemovePos.Add(part.Key);
                                 toRemovePacket.Add(item);
 
@@ -679,7 +707,7 @@ public class ElectricityAddon : ModSystem
             }
 
 
-            speedOfElectricity--;   //временно тут
+            speedOfElectricity--;                   //временно тут
         }
 
     }

@@ -249,14 +249,18 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
             torque = torque_down;                                           // Отдаем новое значение момента
 
 
+
+
+        this.powerRequest = I_max;                                        // Запрашиваем энергии столько, сколько нужно  для работы (работает как положено)
         
 
-        this.powerRequest = I_max;                                        // Запрашиваем энергии столько, сколько нужно  для работы
-
+        //return this.propagationDir == this.OutFacingForNetworkDiscovery     // Возвращаем все значения
+        //    ? 1f * torque
+        //    : -1f * torque;
 
         return this.propagationDir == this.OutFacingForNetworkDiscovery     // Возвращаем все значения
-            ? 1f * torque
-            : -1f * torque;
+            ? -1f * torque
+            : 1f * torque;
     }
 
 

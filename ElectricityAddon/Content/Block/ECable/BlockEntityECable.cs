@@ -12,25 +12,25 @@ namespace Electricity.Content.Block.Entity {
         private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 
         public Facing Connection {
-            get => this.ElectricityAddon.Connection;
-            set => this.ElectricityAddon.Connection = value;
+            get => this.ElectricityAddon!.Connection;
+            set => this.ElectricityAddon!.Connection = value;
         }
 
         //передает значения из Block в BEBehaviorElectricityAddon
         public float[] Eparams
         {
-            get => this.ElectricityAddon.Eparams;
-            set => this.ElectricityAddon.Eparams = value;
+            get => this.ElectricityAddon!.Eparams;
+            set => this.ElectricityAddon!.Eparams = value;
         }
 
         public Facing Switches {
             get => this.switches;
-            set => this.ElectricityAddon.Interruption &= this.switches = value;
+            set => this.ElectricityAddon!.Interruption &= this.switches = value;
         }
 
         public Facing SwitchesState {
-            get => ~this.ElectricityAddon.Interruption;
-            set => this.ElectricityAddon.Interruption = this.switches & ~value;
+            get => ~this.ElectricityAddon!.Interruption;
+            set => this.ElectricityAddon!.Interruption = this.switches & ~value;
         }
 
         public override void ToTreeAttributes(ITreeAttribute tree) {

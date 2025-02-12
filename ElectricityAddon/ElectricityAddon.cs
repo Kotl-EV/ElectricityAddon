@@ -245,7 +245,7 @@ public class ElectricityAddon : ModSystem
 
                 //var path = pathFinder.FindShortestPath(start, end, network.PartPositions);  //извлекаем путь и расстояние
 
-                var path = pathFinder.FindShortestPath(cP, pP, network.PartPositions);       //извлекаем путь и расстояние
+                var path = pathFinder.FindShortestPath(cP, pP, network.PartPositions, ref parts);       //извлекаем путь и расстояние
 
                 if (path == null)                                                           //Путь не найден!
                     return;                                                                 //возможно потом continue тут должно быть
@@ -929,6 +929,10 @@ public class ElectricityAddon : ModSystem
                 part.eparams = setEparams;       //аналогично с параметрами электричества
         }
 
+        
+
+
+
         foreach (var direction in FacingHelper.Directions(part.Connection))
         {
             var directionFilter = FacingHelper.FromDirection(direction);
@@ -1102,26 +1106,10 @@ public class ElectricityAddon : ModSystem
         return result;
     }
 
-    // Local Struct to Store Accumulator Data for Overflow
-    // Note: Will NOT Update Capacity Fields
-    private struct AccumulatorTuple
-    {
-        public readonly IElectricAccumulator Accumulator; // Accumulator Object
-        public readonly int MaxCapacity; // Max Capacity of Accumulator
-        public readonly int CurrentCapacity; // Current Capacity of Accumulator
-        public readonly int AvailableCapacity; // Available Capacity of Accumulator
 
-        public AccumulatorTuple(IElectricAccumulator accumulator, int maxCapacity, int currentCapacity)
-        {
-            this.Accumulator = accumulator;
-            this.MaxCapacity = maxCapacity;
-            this.CurrentCapacity = currentCapacity;
-            this.AvailableCapacity = this.MaxCapacity - this.CurrentCapacity;
-        }
-    }
 }
 
-struct energyPacket
+public struct energyPacket
 {
     public List<BlockPos> path;
     public float energy;
@@ -1146,7 +1134,7 @@ public class Network
 /// <summary>
 /// Один элемент цепи
 /// </summary>
-internal class NetworkPart                       //элемент цепи
+public class NetworkPart                       //элемент цепи
 {
     public readonly Network?[] Networks = {      //в какие стороны провода направлены
             null,
@@ -1157,9 +1145,10 @@ internal class NetworkPart                       //элемент цепи
             null
         };
 
-    public float[] eparams = null;              //похоже тут хватит одного
+    public float[] eparams = null!;              //похоже тут хватит одного
 
     public List<energyPacket> energyPackets;
+    
     /*
         {
             0,                                  //максимальный размер пакета энергии (максим ток), которое может пройти по одной линии этого элемента цепи

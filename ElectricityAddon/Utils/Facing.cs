@@ -91,6 +91,8 @@ public static class FacingHelper
         return FromFace(face) & FromDirection(direction);
     }
 
+
+    //вычисляет противоположные направления
     public static Facing OppositeDirection(Facing self)
     {
         var result = Facing.None;
@@ -174,6 +176,24 @@ public static class FacingHelper
         result |= (self & Facing.DownWest) != 0
             ? Facing.DownEast
             : Facing.None;
+
+
+        result |= (self & Facing.WestNorth) != 0
+            ? Facing.WestSouth
+            : Facing.None;
+
+        result |= (self & Facing.WestSouth) != 0
+            ? Facing.WestNorth
+            : Facing.None;
+
+        result |= (self & Facing.WestUp) != 0
+            ? Facing.WestDown
+            : Facing.None;
+
+        result |= (self & Facing.WestDown) != 0
+            ? Facing.WestUp
+            : Facing.None;
+
 
         return result;
     }

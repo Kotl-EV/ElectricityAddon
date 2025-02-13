@@ -234,18 +234,14 @@ public class ElectricityAddon : ModSystem
         foreach (var cP in consumerPositions)                                           //работаем со всеми потребителями в этой сети
         {
             j = 0;
-            //var start = cP;
 
             distances[i] = new float[producerPositions.Count];
             paths[i] = new List<BlockPos>[producerPositions.Count];
 
             foreach (var pP in producerPositions)                                    //работаем со всеми источниками в этой сети
             {
-                //var end = producerPositions[j];
 
-                //var path = pathFinder.FindShortestPath(start, end, network.PartPositions);  //извлекаем путь и расстояние
-
-                var path = pathFinder.FindShortestPath(cP, pP, network.PartPositions, ref parts);       //извлекаем путь и расстояние
+                var path = pathFinder.FindShortestPath(cP, pP, network, parts);       //извлекаем путь и расстояние
 
                 if (path == null)                                                           //Путь не найден!
                     return;                                                                 //возможно потом continue тут должно быть

@@ -165,6 +165,17 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
     }
 
 
+    public float getPowerReceive()
+    {
+        return this.powerReceive;
+    }
+
+    public float getPowerRequest()
+    {
+        return this.powerRequest;
+    }
+
+
     // не удалять
     // никто не обращается к этой функции, когда работает GetTorque, но быть должна
     public override float GetResistance()
@@ -254,13 +265,15 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         this.powerRequest = I_max;                                        // Запрашиваем энергии столько, сколько нужно  для работы (работает как положено)
         
 
-        //return this.propagationDir == this.OutFacingForNetworkDiscovery     // Возвращаем все значения
-        //    ? 1f * torque
-        //    : -1f * torque;
-
         return this.propagationDir == this.OutFacingForNetworkDiscovery     // Возвращаем все значения
-            ? -1f * torque
-            : 1f * torque;
+            ? 1f * torque
+            : -1f * torque;
+
+        //return this.propagationDir == this.OutFacingForNetworkDiscovery     // Возвращаем все значения
+        //    ? -1f * torque
+        //    : 1f * torque;
+
+        //return torque;
     }
 
 
@@ -358,4 +371,6 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         stringBuilder.AppendLine();
 
     }
+
+
 }

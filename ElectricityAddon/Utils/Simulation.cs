@@ -19,7 +19,6 @@ namespace ElectricityAddon.Utils
             }
 
 
-            //bool hasChanges;                                            //поменялось ли что-то?
             do
             {
                 Customers.ForEach(c => c.UpdateOrderedStores());        //обновляет пройденный путь и купленное уже покупателями
@@ -33,7 +32,6 @@ namespace ElectricityAddon.Utils
                         if (store.Stock <= 0.001F && store.ImNull)           //если у магазина уже ноль и он был обработан, то пропускаем
                             continue;
 
-                        //float requested = Math.Min(remaining, store.Stock);
                         float requested = remaining;
                         store.CurrentRequests[customer] = requested;        //покупатель просит столько
                         remaining -= requested;
@@ -43,13 +41,10 @@ namespace ElectricityAddon.Utils
                     }
                 }
 
-                //float prevStock = Stores.Sum(s => s.Stock);             // товара во всех магазинах сейчас
 
                 Stores.ForEach(s => s.ProcessRequests());
 
-                //hasChanges = Stores.Sum(s => s.Stock) != prevStock;
 
-            //} while (hasChanges & Stores.All(s => s.ImNull) & Customers.Any(c => c.Remaining > 0));
             } while (Stores.Any(s => !s.ImNull) && Customers.Any(c => c.Remaining > 0));
         }
 

@@ -230,4 +230,14 @@ public class BEBehaviorEGeneratorTier3 : BEBehaviorMPBase, IElectricProducer
     {
         throw new NotImplementedException();
     }
+
+    public float getPowerGive()
+    {
+        throw new NotImplementedException();
+    }
+
+    public float getPowerOrder()
+    {
+        throw new NotImplementedException();
+    }
 }

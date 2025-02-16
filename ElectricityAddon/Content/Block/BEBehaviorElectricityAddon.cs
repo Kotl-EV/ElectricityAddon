@@ -24,6 +24,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     public BEBehaviorElectricityAddon(BlockEntity blockEntity)
         : base(blockEntity)
     {
+
     }
 
     public global::ElectricityAddon.ElectricityAddon? System =>
@@ -77,6 +78,10 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         this.Update();
     }
 
+    /// <summary>
+    /// Что-тов цепи поменялось
+    /// </summary>
+    /// <param name="force"></param>
     public void Update(bool force = false)
     {
         if (this.dirty || force)
@@ -111,7 +116,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                     }
                 }
                 
-                //тут собственно передаем и обновляем элемент сети
+
                 system.SetConsumer(this.Blockentity.Pos, this.consumer); 
                 system.SetProducer(this.Blockentity.Pos, this.producer);
                 system.SetAccumulator(this.Blockentity.Pos, this.accumulator);
@@ -128,12 +133,14 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
             }
         }
     }
+    
 
     public override void OnBlockRemoved()
     {
         base.OnBlockRemoved();
         this.System?.Remove(this.Blockentity.Pos);
     }
+
 
     /// <summary>
     /// Подсказка при наведении на блок
@@ -142,23 +149,22 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
         var networkInformation = this.System?.GetNetworks(this.Blockentity.Pos, this.Connection);      //получаем информацию о сети
-        
+
         stringBuilder
             .AppendLine(Lang.Get("Electricity"))
-                        // .AppendLine("├ Number of consumers: " + networkInformation?.NumberOfConsumers)
-                        // .AppendLine("├ Number of producers: " + networkInformation?.NumberOfProducers)
-                        // .AppendLine("├ Number of accumulators: " + networkInformation?.NumberOfAccumulators)
-                        // .AppendLine("├ Block: " + networkInformation?.NumberOfBlocks)
+            .AppendLine("├ Потребителей: " + networkInformation?.NumberOfConsumers)
+            .AppendLine("├ Генераторов: " + networkInformation?.NumberOfProducers)
+            .AppendLine("├ Аккумуляторов: " + networkInformation?.NumberOfAccumulators)
+            .AppendLine("├ Блоков: " + networkInformation?.NumberOfBlocks)
             .AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0] + " Eu/t")
             .AppendLine("├ " + "Ток: " + networkInformation?.eParamsInNetwork[1] + " Eu/t")
             .AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " Eu/t/блок")
             .AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед")
-            .AppendLine("├ " + "Нужно тока: " + networkInformation?.eParamsInNetwork[6] + " Eu/t")
-            .AppendLine("├ " + Lang.Get("Production") + networkInformation?.Production + " Eu")
-            .AppendLine("├ " + Lang.Get("Consumption") + networkInformation?.Consumption + " Eu")
-            .AppendLine("└ " + Lang.Get("Overflow") + networkInformation?.Overflow + " Eu");
-
-
+            .AppendLine("├ " + "Напряжение: " + networkInformation?.eParamsInNetwork[6] + " V")
+            .AppendLine("├ Генерация: " + networkInformation?.Production + " Eu")
+            .AppendLine("├ Потребление: " + networkInformation?.Consumption + " Eu")
+            .AppendLine("├ Дефицит: " + networkInformation?.Lack + " Eu");
+        //.AppendLine("└ " + Lang.Get("Overflow") + networkInformation?.Overflow + " Eu");
     }
 
 

@@ -86,7 +86,7 @@ public class BlockEMotorTier1 : Vintagestory.API.Common.Block, IMechanicalPowerB
                             1,                                  //количество линий элемента цепи/провода
                             0,                                  //напряжение (возможно будет про запас)
                             0,                                  //сгорел или нет
-                            0                                   //сколько блок хотел бы энергии
+                            32                                  //напряжение
                         };
 
 

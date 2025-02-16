@@ -1,6 +1,7 @@
 using Vintagestory.API.MathTools;
 
 namespace ElectricityAddon.Interface;
+
 public struct ConsumptionRange {                                 //тоже потом удалить
     public readonly int Min;
     public readonly int Max;
@@ -16,8 +17,9 @@ public struct ConsumptionRange {                                 //тоже потом уд
 
 public interface IElectricConsumer
 {
-    public ConsumptionRange ConsumptionRange { get; } // удалить!
-
+    /// <summary>
+    /// Координата аккумулятора
+    /// </summary>
     public BlockPos Pos { get; }
     /// <summary>
     /// Система запрашивает у потребителя сколько ей нужно в данный момент энергии
@@ -30,9 +32,30 @@ public interface IElectricConsumer
     public void Consume_receive(float amount);
 
 
-
+    /// <summary>
+    /// Обновляем Entity
+    /// </summary>
     public void Update();
 
 
+    /// <summary>
+    /// Сколько получает в данный момент потребитель
+    /// </summary>
+    /// <returns></returns>
+    public float getPowerReceive();
+
+
+    /// <summary>
+    /// Сколько требует в данный момент потребитель
+    /// </summary>
+    /// <returns></returns>
+    public float getPowerRequest();
+
+
+
     public void Consume(int amount);                //удалить можно 
+    public ConsumptionRange ConsumptionRange { get; } // удалить!
+
+
+
 }

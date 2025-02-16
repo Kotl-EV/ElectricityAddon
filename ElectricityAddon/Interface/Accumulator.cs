@@ -5,6 +5,9 @@ namespace ElectricityAddon.Interface;
 
 public interface IElectricAccumulator
 {
+    /// <summary>
+    /// Координата аккумулятора
+    /// </summary>
     public BlockPos Pos { get; }
 
     /// <summary>
@@ -23,6 +26,18 @@ public interface IElectricAccumulator
     /// </summary>
     /// <returns></returns>
     public float GetCapacity();
+
+    /// <summary>
+    /// Предыдущее значение емкости аккумулятора
+    /// </summary>
+    /// <returns></returns>
+    public float GetLastCapacity();
+
+    /// <summary>
+    /// Задает сразу емкость аккумулятору (вызывать только при установке аккумулятора)
+    /// </summary>
+    /// <returns></returns>
+    public void SetCapacity(float value);
 
     /// <summary>
     /// Сохранить энергию
@@ -49,7 +64,9 @@ public interface IElectricAccumulator
     /// <param name="amount"></param>
     public float canRelease();
 
-
+    /// <summary>
+    /// Обновляем Entity
+    /// </summary>
     public void Update();
 }
 

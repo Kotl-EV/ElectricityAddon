@@ -17,11 +17,14 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
     {
     }
 
+
+    public float lastCapacity=0;  //предыдущее значение емкости
+
     public float capacity;  //текущая емкость (сохраняется)
 
     public new BlockPos Pos => this.Blockentity.Pos;
 
-    public float maxCurrent => 200.0F;   //ограничение по току!!!!!!!
+    public float maxCurrent => 200.0F;   //ограничение по энергии в тик(току)!!!!!!!
 
     public float GetMaxCapacity()
     {
@@ -33,6 +36,16 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
         return capacity;
     }
 
+    /// <summary>
+    /// Задает сразу емкость аккумулятору (вызывать только при установке аккумулятора)
+    /// </summary>
+    /// <returns></returns>
+    public void SetCapacity(float value)
+    {
+        capacity = (value > GetMaxCapacity())
+            ? GetMaxCapacity()
+            : value;
+    }
 
 
     public void Store(float amount)
@@ -62,10 +75,14 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
         return Math.Min(capacity, maxCurrent);
     }
 
-
+    public float GetLastCapacity()
+    {
+        return this.lastCapacity;
+    }
 
     public void Update()
     {
+        lastCapacity = capacity;
         this.Blockentity.MarkDirty(true);
     }
 
@@ -90,5 +107,6 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
         stringBuilder.AppendLine("└ " + Lang.Get("Storage") + GetCapacity() + "/" + GetMaxCapacity() + " Eu");
         stringBuilder.AppendLine();
     }
+
 
 }

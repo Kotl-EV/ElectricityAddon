@@ -31,7 +31,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 
 
 
-    // Или с прямым указанием коэффициента (например, 0.2)
+    // задает коэффициент сглаживания фильтра
     public ExponentialMovingAverage emaFilter = new ExponentialMovingAverage(0.05);
 
 
@@ -51,8 +51,6 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
         speed_max = Params[1];
         resistance_factor = Params[2];
         resistance_load = Params[3];
-
-        
 
         AVGpowerOrder = 0;
     }
@@ -124,7 +122,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     }
 
     /// <summary>
-    /// Запрашивают энергию у генератора
+    /// Сеть запрашивает энергию у генератора
     /// </summary>
     public void Produce_order(float amount)
     {
@@ -155,7 +153,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     }
 
 
-    /// </summary>
+    /// <summary>
     /// Механическая сеть берет отсюда сопротивление этого генератора
     /// </summary>
     public override float GetResistance()
@@ -173,6 +171,16 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
         // сопротивление генератора также напрямую зависит от нагрузки в электрической цепи powerOrder 
     }
 
+
+    public float getPowerGive()
+    {
+        return this.powerGive;
+    }
+
+    public float getPowerOrder()
+    {
+        return this.powerOrder;
+    }
 
     public override void WasPlaced(BlockFacing connectedOnFacing)
     {
@@ -272,4 +280,6 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
         stringBuilder.AppendLine("└ " + Lang.Get("Production") + Math.Min(powerGive, powerOrder) + "/" + I_max + " Eu");
         stringBuilder.AppendLine();
     }
+
+
 }

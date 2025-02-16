@@ -21,9 +21,9 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
 
     public int receiveEnergy(ItemStack itemstack, int maxReceive)
     {
-        int energy = itemstack.Attributes.GetInt("electricity:energy", 0);
+        int energy = itemstack.Attributes.GetInt("electricityaddon:energy", 0);
         int received = Math.Min(maxcapacity - energy, maxReceive);
-        itemstack.Attributes.SetInt("electricity:energy", energy + received);
+        itemstack.Attributes.SetInt("electricityaddon:energy", energy + received);
         int durab = (energy + received) / (maxcapacity / GetMaxDurability(itemstack));
         itemstack.Attributes.SetInt("durability", durab);
         return received;
@@ -55,14 +55,14 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
-        dsc.AppendLine(Lang.Get("Storage") + inSlot.Itemstack.Attributes.GetInt("electricity:energy", 0) + "/" + maxcapacity + " Eu");
+        dsc.AppendLine(Lang.Get("Storage") + inSlot.Itemstack.Attributes.GetInt("electricityaddon:energy", 0) + "/" + maxcapacity + " Eu");
     }
 
     public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
     {
         BlockEntityEAccumulator? be = world.BlockAccessor.GetBlockEntity(pos) as BlockEntityEAccumulator;
         ItemStack item = new ItemStack(world.BlockAccessor.GetBlock(pos));
-        if (be != null) item.Attributes.SetInt("electricity:energy", (int)be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
+        if (be != null) item.Attributes.SetInt("electricityaddon:energy", (int)be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
         if (be != null) item.Attributes.SetInt("durability", (int)(100 * be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity() / maxcapacity));
         return new ItemStack[] { item };
     }
@@ -71,7 +71,7 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
     {
         BlockEntityEAccumulator? be = world.BlockAccessor.GetBlockEntity(pos) as BlockEntityEAccumulator;
         ItemStack item = new ItemStack(world.BlockAccessor.GetBlock(pos));
-        if (be != null) item.Attributes.SetInt("electricity:energy", (int)be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
+        if (be != null) item.Attributes.SetInt("electricityaddon:energy", (int)be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
         if (be != null) item.Attributes.SetInt("durability", (int)(100 * be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity() / maxcapacity));
         return item;
     }
@@ -82,7 +82,7 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
         if (byItemStack != null)
         {
             BlockEntityEAccumulator? be = world.BlockAccessor.GetBlockEntity(blockPos) as BlockEntityEAccumulator;
-            be!.GetBehavior<BEBehaviorEAccumulator>().Store(byItemStack.Attributes.GetInt("electricity:energy", 0));
+            be!.GetBehavior<BEBehaviorEAccumulator>().SetCapacity(byItemStack.Attributes.GetInt("electricityaddon:energy", 0));
         }
     }
 }

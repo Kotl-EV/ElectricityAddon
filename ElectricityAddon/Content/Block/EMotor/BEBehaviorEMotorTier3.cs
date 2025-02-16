@@ -302,4 +302,14 @@ public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
     {
         throw new NotImplementedException();
     }
+
+    public float getPowerReceive()
+    {
+        throw new NotImplementedException();
+    }
+
+    public float getPowerRequest()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -43,6 +43,16 @@ public class BEBehaviorEFreezer : BlockEntityBehavior, IElectricConsumer
         stringBuilder.AppendLine();
     }
 
+    public float getPowerReceive()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float getPowerRequest()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void Update()
     {
         throw new System.NotImplementedException();

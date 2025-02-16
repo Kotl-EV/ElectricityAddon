@@ -19,7 +19,7 @@ namespace ElectricityAddon.Content.Block.ELamp
 
         private int[] null_HSV = { 0, 0, 0 };   //заглушка
         public int[] HSV = { 0, 0, 0 };         //сюда берем цвет
-        public int maxConsumption;            //максимальное потребление
+        public int maxConsumption;              //максимальное потребление
 
         //извлекаем цвет
         public int[] GetHSV()
@@ -60,9 +60,11 @@ namespace ElectricityAddon.Content.Block.ELamp
 
         public float Consume_request()
         {
-
             return maxConsumption;
         }
+
+
+
 
         public void Consume_receive(float amount)
         {
@@ -71,11 +73,11 @@ namespace ElectricityAddon.Content.Block.ELamp
                 if (amount != this.LightLevel)
                 {
 
-                    if (amount >= 1 && this.Block.Code.ToString().Contains("disabled"))
+                    if (amount >= 1 && this.Block.Code.ToString().Contains("disabled"))                               //включаем если питание больше 1
                     {
                         api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
                     }
-                    else if (amount < 1 && this.Block.Code.ToString().Contains("enabled"))
+                    else if (amount < 1 && this.Block.Code.ToString().Contains("enabled"))                            //гасим если питание меньше 1
                     {
                         api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
                     }
@@ -97,6 +99,16 @@ namespace ElectricityAddon.Content.Block.ELamp
         }
 
 
+        public float getPowerReceive()
+        {
+            return this.LightLevel;
+        }
+
+        public float getPowerRequest()
+        {
+            return maxConsumption;
+        }
+
         public void Update()
         {
             //this.Blockentity.MarkDirty(true);
@@ -111,5 +123,7 @@ namespace ElectricityAddon.Content.Block.ELamp
             stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.LightLevel + "/" + maxConsumption + " Eu");
             stringBuilder.AppendLine();
         }
+
+
     }
 }

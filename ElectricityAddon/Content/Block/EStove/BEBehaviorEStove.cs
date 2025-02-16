@@ -58,4 +58,14 @@ public class BEBehaviorEStove : BlockEntityBehavior, IElectricConsumer
     {
         throw new System.NotImplementedException();
     }
+
+    public float getPowerReceive()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public float getPowerRequest()
+    {
+        throw new System.NotImplementedException();
+    }
 }

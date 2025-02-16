@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Cairo.Freetype;
 using Electricity.Content.Block.Entity;
 using ElectricityAddon.Content.Block.ESwitch;
 using ElectricityAddon.Utils;
@@ -89,7 +90,7 @@ namespace Electricity.Content.Block
                             1,                                  //количество линий элемента цепи/провода
                             0,                                  //напряжение (возможно будет про запас)
                             0,                                  //сгорел или нет
-                            0                                   //сколько блок хотел бы энергии
+                            32                                   //напряжение
                         };
 
 
@@ -138,9 +139,22 @@ namespace Electricity.Content.Block
                             Facing.None,
                             (current, selectionFacing) =>
                                 current | selectionFacing
-                        );
+                    );
 
-                    var selectedSwitches = entity.Switches & selectedFacing;
+                    //определяем какой выключатель ломать
+                    Facing faceSelect=Facing.None;
+                    Facing selectedSwitches;
+                    if (selectedFacing != Facing.None)
+                    {
+                        faceSelect = FacingHelper.FromFace(FacingHelper.Faces(selectedFacing).First());
+                        selectedSwitches = entity.Switches & faceSelect;
+                    }
+                    else
+                    {
+                        selectedSwitches = Facing.None;
+                    }
+
+
 
                     if (selectedSwitches != Facing.None)
                     {
@@ -148,7 +162,7 @@ namespace Electricity.Content.Block
 
                         if (stackSize > 0)
                         {
-                            entity.Switches &= ~selectedFacing;
+                            entity.Switches &= ~faceSelect;
                             entity.MarkDirty(true);
 
                             if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
@@ -218,13 +232,16 @@ namespace Electricity.Content.Block
                 var blockFacing = BlockFacing.FromVector(neibpos.X - pos.X, neibpos.Y - pos.Y, neibpos.Z - pos.Z);
                 var selectedFacing = FacingHelper.FromFace(blockFacing);
 
+                bool delayreturn = false;
                 if ((entity.Connection & ~selectedFacing) == Facing.None)
                 {
                     world.BlockAccessor.BreakBlock(pos, null);
 
-                    return;
+                    delayreturn = true;
+                    //return;
                 }
 
+               
                 var selectedSwitches = entity.Switches & selectedFacing;
 
                 if (selectedSwitches != Facing.None)
@@ -240,7 +257,11 @@ namespace Electricity.Content.Block
                     }
 
                     entity.Switches &= ~selectedFacing;
+                    
                 }
+
+                if (delayreturn)
+                    return;
 
                 var selectedConnection = entity.Connection & selectedFacing;
 
@@ -354,6 +375,7 @@ namespace Electricity.Content.Block
 
             return base.GetSelectionBoxes(blockAccessor, position);
         }
+
 
         public override void OnJsonTesselation(ref MeshData sourceMesh, ref int[] lightRgbsByCorner, BlockPos position, Vintagestory.API.Common.Block[] chunkExtBlocks, int extIndex3d)
         {

@@ -4,7 +4,7 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <OutputPath>bin\$(Configuration)\Mods\mod</OutputPath>
         <Nullable>enable</Nullable>
-        <RootNamespace>ElectricityUnofficial</RootNamespace>
+        <RootNamespace>ElectricityAddon</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="protobuf-net">

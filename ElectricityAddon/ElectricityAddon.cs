@@ -13,6 +13,7 @@ using ElectricityAddon.Content.Block.EOven;
 using ElectricityAddon.Content.Item;
 using Vintagestory.API.Common;
 
+
 [assembly: ModDependency("game", "1.20.0")]
 [assembly: ModDependency("electricity", "0.0.11")]
 [assembly: ModInfo(
@@ -31,10 +32,21 @@ namespace ElectricityAddon;
 public class ElectricityAddon : ModSystem
 {
     public static bool combatoverhaul = false;
+
+    private readonly string[] _targetFiles =
+    {
+        "itemtypes/armor/static-armor.json",
+        "itemtypes/armor/static-boots.json",
+        "itemtypes/armor/static-helmet.json"
+    };
+
+
     public override void Start(ICoreAPI api)
     {
         base.Start(api);
         
+
+
         api.RegisterBlockClass("BlockEHorn", typeof(BlockEHorn));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEHorn", typeof(BEBehaviorEHorn));
         api.RegisterBlockEntityClass("BlockEntityEHorn", typeof(BlockEntityEHorn));
@@ -92,5 +104,14 @@ public class ElectricityAddon : ModSystem
         
         if(api.ModLoader.IsModEnabled("combatoverhaul"))
             combatoverhaul = true;
+
+
+        //патч бронм для CO
+        if (combatoverhaul)
+        {
+            var processor = new ArmorAssetProcessor(api);
+            processor.ProcessAssets("electricityaddon", _targetFiles);
+        }
+            
     }
 }

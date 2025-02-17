@@ -62,6 +62,16 @@ public class ElectricityAddon : ModSystem
     private ICoreAPI api = null!;
     private ICoreClientAPI capi = null!;
 
+    public static bool combatoverhaul = false;
+
+    private readonly string[] _targetFiles =
+    {
+        "itemtypes/armor/static-armor.json",
+        "itemtypes/armor/static-boots.json",
+        "itemtypes/armor/static-helmet.json"
+    };
+
+
     public override void Start(ICoreAPI api)
     {
         base.Start(api);
@@ -139,6 +149,15 @@ public class ElectricityAddon : ModSystem
 
         if (api.ModLoader.IsModEnabled("combatoverhaul"))
             combatoverhaul = true;
+
+
+        //патч бронм для CO
+        if (combatoverhaul)
+        {
+            var processor = new ArmorAssetProcessor(api);
+            processor.ProcessAssets("electricityaddon", _targetFiles);
+        }
+            
     }
 
 

@@ -577,8 +577,7 @@ public class ElectricityAddon : ModSystem
                 //обновляем информацию этой цепи
                 network.Consumption = consumers.Sum<Consumer>(c => c.ElectricConsumer.getPowerReceive());
                 network.Consumption += accums
-                    .Where<Accumulator>(a => (a.ElectricAccum.GetCapacity() - a.ElectricAccum.GetLastCapacity()) > 0)
-                    .Sum<Accumulator>(a => a.ElectricAccum.GetCapacity() - a.ElectricAccum.GetLastCapacity());
+                    .Sum<Accumulator>(a => Math.Max(a.ElectricAccum.GetCapacity() - a.ElectricAccum.GetLastCapacity(), 0.0F));
 
                 network.Production = producers.Sum<Producer>(p => Math.Min(p.ElectricProducer.getPowerGive(), p.ElectricProducer.getPowerOrder()));
 
@@ -677,7 +676,7 @@ public class ElectricityAddon : ModSystem
 
                                 parts[part.Key].energyPackets[parts[part.Key].energyPackets.IndexOf(item)].path.RemoveAt(item.path.Count - 1);   //удаляем последний элемент
 
-                                if (parts.TryGetValue(moveTo, out var partt))           //копируем пакет, только если элемент там еще есть
+                                if (parts.TryGetValue(moveTo, out var partt) && networks.Any(n => n.PartPositions.Contains(moveTo)))      //копируем пакет, только если элемент там еще есть и эта сеть есть
                                 {
                                     parts[moveTo].energyPackets.Add(item);
                                 }

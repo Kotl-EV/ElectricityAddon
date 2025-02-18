@@ -41,10 +41,10 @@ namespace ElectricityAddon.Utils
                     }
                 }
 
-
+                //обработка запросов
                 Stores.ForEach(s => s.ProcessRequests());
 
-
+                //продолжать пока есть ненулевые или пока потребность еще есть
             } while (Stores.Any(s => !s.ImNull) && Customers.Any(c => c.Remaining > 0));
         }
 

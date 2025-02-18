@@ -52,6 +52,8 @@ public class ElectricityAddon : ModSystem
     public static bool combatoverhaul = false;                        //установлен ли combatoverhaul
     public int speedOfElectricity = 1;                                //скорость электричетсва в проводах при одном обновлении сети (блоков в тик)
     public bool instant = false;                                      //расчет мгновенно?
+    private PathFinder pathFinder = new PathFinder();
+
     public override void Start(ICoreAPI api)
     {
         base.Start(api);
@@ -225,32 +227,40 @@ public class ElectricityAddon : ModSystem
     /// <summary>
     /// Решается задача распределения энергии
     /// </summary>
-    private void logisticalTask(Network network, List<BlockPos> consumerPositions, List<float> consumerRequests, List<BlockPos> producerPositions, List<float> producerGive, ref Simulation sim, out List<BlockPos>[][] paths)
-    {
+    private void logisticalTask(Network network, List<BlockPos> consumerPositions, List<float> consumerRequests, List<BlockPos> producerPositions, List<float> producerGive, ref Simulation sim, out List<BlockPos>[][] paths, out List<int>[][] facingFrom)
+    {        
         //ищем все пути и расстояния
-        var pathFinder = new PathFinder();
+        //var pathFinder = new PathFinder();
 
-        float[][] distances = new float[consumerPositions.Count][];                    //сохраняем сюда расстояния от всех потребителей ко всем источникам 
+        float[][] distances = new float[consumerPositions.Count][];                     //сохраняем сюда расстояния от всех потребителей ко всем источникам 
         paths = new List<BlockPos>[consumerPositions.Count][];                          //сохраняем сюда пути от всех потребителей ко всем источникам
+        facingFrom= new List<int>[consumerPositions.Count][];                           //сохраняем сюда грань следующей позиции от всех потребителей ко всем источникам
+        //nowProcessedFaces = new List<bool[]>[consumerPositions.Count][];                //сохраняем сюда грани, которые обработаны в этой позиции
+                                                                                        //
         int i = 0, j;                                                                   //индексы -__-
-
         foreach (var cP in consumerPositions)                                           //работаем со всеми потребителями в этой сети
         {
             j = 0;
 
             distances[i] = new float[producerPositions.Count];
             paths[i] = new List<BlockPos>[producerPositions.Count];
+            facingFrom[i] = new List<int>[producerPositions.Count];
+            //nowProcessedFaces[i] = new List<bool[]>[producerPositions.Count];
 
             foreach (var pP in producerPositions)                                    //работаем со всеми источниками в этой сети
             {
 
-                var path = pathFinder.FindShortestPath(cP, pP, network, parts);       //извлекаем путь и расстояние
+                var (buf1,buf2) = pathFinder.FindShortestPath(cP, pP, network, parts);       //извлекаем путь и расстояние
 
-                if (path == null)                                                           //Путь не найден!
+                if (buf1 == null)                                                           //Путь не найден!
                     return;                                                                 //возможно потом continue тут должно быть
 
-                distances[i][j] = path.Count;                                               //сохраняем длину пути
-                paths[i][j] = path;                                                         //сохраняем пути
+                
+                paths[i][j] = buf1;                                                         //сохраняем пути
+                distances[i][j] = buf1.Count;                                               //сохраняем длину пути
+                facingFrom[i][j] = buf2;                                                    //сохраняем грани соседей
+                //nowProcessedFaces[i][j] = buf3;                                             //сохраняем обработанные грани
+
                 j++;
             }
 
@@ -397,7 +407,7 @@ public class ElectricityAddon : ModSystem
 
                 //Этап 4 - Распределяем энергию ----------------------------------------------------------------------//                 
                 var sim = new Simulation();
-                logisticalTask(network, consumerPositions, consumerRequests, producerPositions, producerGive, ref sim, out var paths);
+                logisticalTask(network, consumerPositions, consumerRequests, producerPositions, producerGive, ref sim, out var paths, out var facingFrom);
 
 
 
@@ -420,7 +430,8 @@ public class ElectricityAddon : ModSystem
                                     var packet = new energyPacket();
                                     packet.energy = value;
                                     packet.path = paths[indexCustomer][indexStore];
-                                    // packet.Network = network;                     //плохая идея
+                                    packet.facingFrom = facingFrom[indexCustomer][indexStore];
+                                    //packet.nowProcessedFaces = nowProcessedFaces[indexCustomer][indexStore];
                                     parts[posStore].energyPackets.Add(packet);
                                 }
                             }
@@ -460,7 +471,7 @@ public class ElectricityAddon : ModSystem
 
 
 
-                //Этап  - Хотим зарядить аккумы  ---------------------------------------------------------------------------------------//
+                //Этап 5  - Хотим зарядить аккумы  ---------------------------------------------------------------------------------------//
                 this.accums2.Clear();
 
                 List<BlockPos> consumer2Positions = new List<BlockPos>();
@@ -499,7 +510,7 @@ public class ElectricityAddon : ModSystem
 
                 //Этап  - Распределяем энергию снова ----------------------------------------------------------------------//                 
                 var sim2 = new Simulation();
-                logisticalTask(network, consumer2Positions, consumer2Requests, producer2Positions, producer2Give, ref sim2, out var paths2);
+                logisticalTask(network, consumer2Positions, consumer2Requests, producer2Positions, producer2Give, ref sim2, out var paths2,out var facingFrom2);
 
 
                 if (!instant)  // медленная передача
@@ -522,7 +533,9 @@ public class ElectricityAddon : ModSystem
                                     packet.energy = value;
                                     packet.path = paths2[indexCustomer][indexStore];
 
-                                    //packet.Network = new Network();  //плохая идея
+                                    packet.path = paths2[indexCustomer][indexStore];
+                                    packet.facingFrom = facingFrom2[indexCustomer][indexStore];
+                                    //packet.nowProcessedFaces = nowProcessedFaces2[indexCustomer][indexStore];
 
                                     parts[posStore].energyPackets.Add(packet);
                                 }
@@ -670,14 +683,16 @@ public class ElectricityAddon : ModSystem
 
                         foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
                         {
-                            if (item.path.Count >= 2)
+                            if (item.path.Count >= 2)            //пропускаем тех, кто уже пришел к получателю
                             {
-                                var moveTo = item.path[item.path.Count - 2];            //координата предпоследнего элемента
+                                //var moveTo = item.path[item.path.Count - 2];            //координата предпоследнего элемента
 
-                                parts[part.Key].energyPackets[parts[part.Key].energyPackets.IndexOf(item)].path.RemoveAt(item.path.Count - 1);   //удаляем последний элемент
+                                item.path.RemoveAt(item.path.Count - 1);                //удаляем последний элемент
+                                var moveTo = item.path.Last();                          //координата теперь последнего элемента
 
-                                if (parts.TryGetValue(moveTo, out var partt) && networks.Any(n => n.PartPositions.Contains(moveTo)))      //копируем пакет, только если элемент там еще есть и эта сеть есть
+                                if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key,parts,item.facingFrom.Last(), moveTo))      //копируем пакет, только если элемент там еще есть и пакет может туда пройти
                                 {
+                                    item.facingFrom.RemoveAt(item.facingFrom.Count - 1);                //удаляем последний элемент
                                     parts[moveTo].energyPackets.Add(item);
                                 }
 
@@ -1218,7 +1233,8 @@ public struct energyPacket
 {
     public List<BlockPos> path;
     public float energy;
-    public Network Network;
+    public List<int> facingFrom;
+    public List<bool[]> nowProcessedFaces;
 }
 
 

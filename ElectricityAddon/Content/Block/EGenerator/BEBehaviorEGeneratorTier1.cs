@@ -280,7 +280,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
         base.GetBlockInfo(forPlayer, stringBuilder);
         stringBuilder.AppendLine(StringHelper.Progressbar(Math.Min(powerGive,powerOrder) / I_max * 100));
         stringBuilder.AppendLine("└ " + Lang.Get("Production") + Math.Min(powerGive, powerOrder) + "/" + I_max + " Eu");
-        stringBuilder.AppendLine(powerOrder.ToString()); //для дебага
+        //stringBuilder.AppendLine(powerOrder.ToString()); //для дебага
         stringBuilder.AppendLine();
     }
 

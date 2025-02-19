@@ -17,6 +17,12 @@ public class PathFinder
     public (List<BlockPos>, List<int>) FindShortestPath(BlockPos start, BlockPos end, Network network, Dictionary<BlockPos, NetworkPart> parts)
     {
 
+        //проверяем наличие начальной и конечной точки в этой цепи
+        var networkPositions = network.PartPositions;
+        if (!networkPositions.Contains(start) || !networkPositions.Contains(end))
+            return (null!, null!);
+
+
         //смотрим с какой грани начинать
         var startConnection = parts[start].Connection;
         var startBlockFacing = new List<int>();
@@ -25,18 +31,25 @@ public class PathFinder
             startBlockFacing.Add(face.Index);
         }
 
-        //проверяем наличие начальной и конечной точки в этой цепи
-        var networkPositions = network.PartPositions;
-        if (!networkPositions.Contains(start) || !networkPositions.Contains(end))
-            return (null!, null!);
+        //смотрим с какой грани заканчивать
+        var endConnection = parts[end].Connection;
+        var endBlockFacing = new List<int>();
+        foreach (var face in FacingHelper.Faces(endConnection))
+        {
+            endBlockFacing.Add(face.Index);
+        }
 
         //очередь обработки
         var queue = new Queue<BlockPos>();
         queue.Enqueue(start);
 
+        //хранит цепочку пути и грань
+        var cameFrom = new Dictionary<(BlockPos, int), (BlockPos, int)>();
+        cameFrom[(start, startBlockFacing[0])]=(null!, 0);
+
         //хранит цепочку пути (для вывода наружу)
-        var cameFrom = new List<BlockPos>();
-        cameFrom.Add(start);
+        var cameFromList = new List<BlockPos>();
+        cameFromList.Add(start);
 
         //хранит номер задействованной грани соседа 
         var facingFrom = new Dictionary<BlockPos, int>();
@@ -44,7 +57,7 @@ public class PathFinder
 
         //хранит номер задействованной грани соседа (для вывода наружу)
         var facingFromList = new List<int>();
-        
+
         //хранит для каждого кусочка цепи посещенные грани в данный момент
         var nowProcessedFaces = new Dictionary<BlockPos, bool[]>();
 
@@ -78,14 +91,17 @@ public class PathFinder
             int i = 0;
             foreach (var neighbor in buf1)
             {
-                if (!processedFaces[neighbor][buf2[i]])  //если соседская грань уже учавствовала в расчете, то пропускаем этого соседа
+                if (!processedFaces[neighbor][buf2[i]] && !cameFrom.ContainsKey((neighbor, buf2[i])))  //если соседская грань уже учавствовала в расчете, то пропускаем этого соседа
                 {
                     queue.Enqueue(neighbor);
-                    cameFrom.Add(neighbor);
+
+                    cameFrom[(neighbor, buf2[i])] = (current,facingFrom[current]);
+                    cameFromList.Add(neighbor);
+
                     facingFrom[neighbor] = buf2[i];
-                    facingFromList.Add(buf2[i]);
+                    //facingFromList.Add(buf2[i]);
+
                     nowProcessedFaces[neighbor] = buf3;
-                    //nowProcessedFacesList.Add(buf3);
                 }
 
                 i++;
@@ -95,16 +111,17 @@ public class PathFinder
             first = false; //сбросили маркер
         }
 
+        if (!cameFromList.Contains(end))
+            return (null!,null!);
 
-        //проверяем, что начальная и конечная точки есть в маршруте
-        if (!cameFrom.Contains(end))
-            return (null!, null!);
+        var path = ReconstructPath(start, end, endBlockFacing[0], cameFrom);
 
-        if (!cameFrom.Contains(start))
-            return (null!, null!);
+        foreach(var pos in path)
+        {
+            facingFromList.Add(facingFrom[pos]);
+        }
 
-
-        return (cameFrom, facingFromList);
+        return (path, facingFromList);
     }
 
 
@@ -306,9 +323,9 @@ public class PathFinder
         var part = parts[pos];                     //текущий элемент
         var Connections = part.Connection;         //соединения этого элемента
 
-        int i = 0;       
+        int i = 0;
 
-        Facing hereConnections = part.Connection;        
+        Facing hereConnections = part.Connection;
 
         // нужно выяснить с какой гранью мы работаем и соединены ли грани одной цепи
         int startFaceIndex = startFace;
@@ -415,11 +432,33 @@ public class PathFinder
             }
         }
 
-        
+
 
         //возвращаем координаты соседей, котактирующую грань соседа, задействованные грани в этой точке сейчас, все обработанные грани этой цепи в этой точке 
         return (Neighbors.Contains(nextPos));
     }
 
 
+    /// <summary>
+    /// Реконструирует маршрут
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    /// <param name="endFacing"></param>
+    /// <param name="cameFrom"></param>
+    /// <returns></returns>
+    private List<BlockPos> ReconstructPath(BlockPos start, BlockPos end, int endFacing, Dictionary<(BlockPos, int), (BlockPos, int)> cameFrom)
+    {        
+        var path = new List<BlockPos>();
+        var current = (end, endFacing);
+
+        while (current.end != null)
+        {
+            path.Add(current.end);
+            current = cameFrom[current];
+        }
+
+        path.Reverse();
+        return path[0].Equals(start) ? path : null!;
+    }
 }

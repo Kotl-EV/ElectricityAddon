@@ -150,23 +150,28 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         base.GetBlockInfo(forPlayer, stringBuilder);
         var networkInformation = this.System?.GetNetworks(this.Blockentity.Pos, this.Connection);      //получаем информацию о сети
 
-        stringBuilder
-            .AppendLine(Lang.Get("Electricity"))
-            .AppendLine("├ Потребителей: " + networkInformation?.NumberOfConsumers)
-            .AppendLine("├ Генераторов: " + networkInformation?.NumberOfProducers)
-            .AppendLine("├ Аккумуляторов: " + networkInformation?.NumberOfAccumulators)
-            .AppendLine("├ Блоков: " + networkInformation?.NumberOfBlocks)
-            .AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0] + " Eu/t")
-            .AppendLine("├ " + "Ток: " + networkInformation?.eParamsInNetwork[1] + " Eu/t")
-            .AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " Eu/t/блок")
-            .AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед")
-            .AppendLine("├ " + "Напряжение: " + networkInformation?.eParamsInNetwork[6] + " V")
-            .AppendLine("├ Генерация: " + networkInformation?.Production + " Eu")
-            .AppendLine("├ Потребление: " + networkInformation?.Consumption + " Eu")
-            .AppendLine("├ Дефицит: " + networkInformation?.Lack + " Eu");
-        //.AppendLine("└ " + Lang.Get("Overflow") + networkInformation?.Overflow + " Eu");
-    }
+        stringBuilder.AppendLine(Lang.Get("Electricity"));
 
+        if (this.System!.AltPressed)
+        {
+            stringBuilder.AppendLine("├ Потребителей: " + networkInformation?.NumberOfConsumers);
+            stringBuilder.AppendLine("├ Генераторов: " + networkInformation?.NumberOfProducers);
+            stringBuilder.AppendLine("├ Аккумуляторов: " + networkInformation?.NumberOfAccumulators);
+            stringBuilder.AppendLine("├ Блоков: " + networkInformation?.NumberOfBlocks);
+            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0] + " Eu/t");
+            stringBuilder.AppendLine("├ " + "Ток: " + networkInformation?.eParamsInNetwork[1] + " Eu/t");
+            stringBuilder.AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " Eu/t/блок");
+            stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед");
+            stringBuilder.AppendLine("├ " + "Напряжение: " + networkInformation?.eParamsInNetwork[6] + " V");
+        }
+
+        stringBuilder.AppendLine("├ Генерация: " + networkInformation?.Production + " Eu");
+        stringBuilder.AppendLine("├ Потребление: " + networkInformation?.Consumption + " Eu");
+        stringBuilder.AppendLine("└ Дефицит: " + networkInformation?.Lack + " Eu");
+
+        if (!this.System!.AltPressed)  stringBuilder.AppendLine("Press Alt for details");
+        
+    }
 
     public override void ToTreeAttributes(ITreeAttribute tree)
     {

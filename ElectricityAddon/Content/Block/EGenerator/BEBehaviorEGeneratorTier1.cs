@@ -282,6 +282,8 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
         stringBuilder.AppendLine("└ " + Lang.Get("Production") + Math.Min(powerGive, powerOrder) + "/" + I_max + " Eu");
         //stringBuilder.AppendLine(powerOrder.ToString()); //для дебага
         stringBuilder.AppendLine();
+
+        
     }
 
 

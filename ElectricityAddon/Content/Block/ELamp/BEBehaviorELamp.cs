@@ -122,6 +122,7 @@ namespace ElectricityAddon.Content.Block.ELamp
             stringBuilder.AppendLine(StringHelper.Progressbar(this.LightLevel * 100.0f / maxConsumption));
             stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.LightLevel + "/" + maxConsumption + " Eu");
             stringBuilder.AppendLine();
+            
         }
 
 

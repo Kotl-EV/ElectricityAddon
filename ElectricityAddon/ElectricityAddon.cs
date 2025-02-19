@@ -22,6 +22,8 @@ using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Config;
+using ElectricityAddon.Net;
+using Vintagestory.API.Client;
 
 
 
@@ -33,7 +35,8 @@ using Vintagestory.API.Config;
     Description = "Brings electricity into the game!",
     Version = "0.0.15",
     Authors = new[] {
-        "Kotl"
+        "Kotl",
+        "Tehtelev"
     }
 )]
 
@@ -52,11 +55,16 @@ public class ElectricityAddon : ModSystem
     public static bool combatoverhaul = false;                        //установлен ли combatoverhaul
     public int speedOfElectricity = 1;                                //скорость электричетсва в проводах при одном обновлении сети (блоков в тик)
     public bool instant = false;                                      //расчет мгновенно?
-    private PathFinder pathFinder = new PathFinder();
+    public bool AltPressed = false;                                   //зажата кнопка Alt
+    private PathFinder pathFinder = new PathFinder();                 //инициализация модуля поиска путей
+    private ICoreAPI api;
+    private ICoreClientAPI capi;
 
     public override void Start(ICoreAPI api)
     {
         base.Start(api);
+
+        this.api = api;
 
         api.RegisterBlockClass("BlockECable", typeof(BlockECable));
         api.RegisterBlockEntityClass("BlockEntityECable", typeof(BlockEntityECable));
@@ -126,6 +134,45 @@ public class ElectricityAddon : ModSystem
         if (api.ModLoader.IsModEnabled("combatoverhaul"))
             combatoverhaul = true;
     }
+
+
+
+
+    public override void StartClientSide(ICoreClientAPI api)
+    {
+        base.StartClientSide(api);
+        this.capi = api;
+        RegisterAltKeys();
+
+    }
+
+
+    /// <summary>
+    /// Отслеживает заэатую кнопку Alt
+    /// </summary>
+    /// <param name="comb"></param>
+    /// <returns></returns>
+    private bool OnAltKeyPressed(KeyCombination comb)
+    {
+        if (api.Side != EnumAppSide.Client)
+            return false;
+
+        AltPressed = true;
+
+        return false;
+    }
+
+    /// <summary>
+    /// Регистрируем кнопку для подробной информации о сети
+    /// </summary>
+    private void RegisterAltKeys()
+    {
+        base.Mod.Logger.VerboseDebug("AltPressForNetwork: hotkey handler for Alt");
+        this.capi.Input.RegisterHotKey("AltPressForNetwork", "Output of detailed information about the network", GlKeys.Unknown, HotkeyType.CharacterControls,true);
+        this.capi.Input.SetHotKeyHandler("AltPressForNetwork", OnAltKeyPressed);
+        
+    }
+
 
 
     /// <summary>
@@ -228,38 +275,34 @@ public class ElectricityAddon : ModSystem
     /// Решается задача распределения энергии
     /// </summary>
     private void logisticalTask(Network network, List<BlockPos> consumerPositions, List<float> consumerRequests, List<BlockPos> producerPositions, List<float> producerGive, ref Simulation sim, out List<BlockPos>[][] paths, out List<int>[][] facingFrom)
-    {        
+    {
         //ищем все пути и расстояния
-        //var pathFinder = new PathFinder();
 
         float[][] distances = new float[consumerPositions.Count][];                     //сохраняем сюда расстояния от всех потребителей ко всем источникам 
         paths = new List<BlockPos>[consumerPositions.Count][];                          //сохраняем сюда пути от всех потребителей ко всем источникам
-        facingFrom= new List<int>[consumerPositions.Count][];                           //сохраняем сюда грань следующей позиции от всех потребителей ко всем источникам
-        //nowProcessedFaces = new List<bool[]>[consumerPositions.Count][];                //сохраняем сюда грани, которые обработаны в этой позиции
-                                                                                        //
+        facingFrom = new List<int>[consumerPositions.Count][];                           //сохраняем сюда грань следующей позиции от всех потребителей ко всем источникам
+
+        //
         int i = 0, j;                                                                   //индексы -__-
         foreach (var cP in consumerPositions)                                           //работаем со всеми потребителями в этой сети
         {
             j = 0;
-
             distances[i] = new float[producerPositions.Count];
             paths[i] = new List<BlockPos>[producerPositions.Count];
             facingFrom[i] = new List<int>[producerPositions.Count];
-            //nowProcessedFaces[i] = new List<bool[]>[producerPositions.Count];
+
 
             foreach (var pP in producerPositions)                                    //работаем со всеми источниками в этой сети
             {
 
-                var (buf1,buf2) = pathFinder.FindShortestPath(cP, pP, network, parts);       //извлекаем путь и расстояние
+                var (buf1, buf2) = pathFinder.FindShortestPath(cP, pP, network, parts);       //извлекаем путь и расстояние
 
                 if (buf1 == null)                                                           //Путь не найден!
                     return;                                                                 //возможно потом continue тут должно быть
 
-                
                 paths[i][j] = buf1;                                                         //сохраняем пути
                 distances[i][j] = buf1.Count;                                               //сохраняем длину пути
                 facingFrom[i][j] = buf2;                                                    //сохраняем грани соседей
-                //nowProcessedFaces[i][j] = buf3;                                             //сохраняем обработанные грани
 
                 j++;
             }
@@ -291,7 +334,6 @@ public class ElectricityAddon : ModSystem
 
 
 
-
         //Собственно сама реализация "жадного алгоритма" ---------------------------------------------------------------------------------------//
         List<Customer> Customers = new List<Customer>();
         List<Store> Stores = new List<Store>();
@@ -313,7 +355,6 @@ public class ElectricityAddon : ModSystem
     /// </summary>
     private void OnGameTick(float _)
     {
-        //var accumulators = new List<IElectricAccumulator>();          //пригодится
         int i = 0, j = 0;
 
         //разбираемся со скоростью и режимами расчета
@@ -329,14 +370,15 @@ public class ElectricityAddon : ModSystem
 
             foreach (var network in this.networks)              //каждую сеть считаем
             {
-                //Этап 1 - Очистка мусора---------------------------------------------------------------------------------------------//                                                    
 
+                //Этап 1 - Очистка мусора---------------------------------------------------------------------------------------------//    
                 this.producers.Clear();                         //очистка списка всех производителей, потому как для каждой network список свой
                 this.producers2.Clear();                        //очистка списка всех производителей, потому как для каждой network список свой
                 this.consumers.Clear();                         //очистка списка всех потребителей, потому как для каждой network список свой
                 this.consumers2.Clear();                        //очистка списка всех ненулевых потребителей, потому как для каждой network список свой
                 this.accums.Clear();
                 this.accums2.Clear();
+
 
                 //Этап 2 - Сбор запросов от потребителей---------------------------------------------------------------------------------------//
                 foreach (var consumer in network.Consumers.Select(electricConsumer => new Consumer(electricConsumer)))  //выбираем всех потребителей из этой сети
@@ -510,7 +552,7 @@ public class ElectricityAddon : ModSystem
 
                 //Этап  - Распределяем энергию снова ----------------------------------------------------------------------//                 
                 var sim2 = new Simulation();
-                logisticalTask(network, consumer2Positions, consumer2Requests, producer2Positions, producer2Give, ref sim2, out var paths2,out var facingFrom2);
+                logisticalTask(network, consumer2Positions, consumer2Requests, producer2Positions, producer2Give, ref sim2, out var paths2, out var facingFrom2);
 
 
                 if (!instant)  // медленная передача
@@ -597,12 +639,13 @@ public class ElectricityAddon : ModSystem
                 network.Lack = Math.Max(consumers.Sum<Consumer>(c => c.ElectricConsumer.getPowerRequest()) - network.Consumption, 0);
 
 
-
+                
                 //обновляем энтити все
                 accums.ForEach(a => a.ElectricAccum.Update());
                 producers.ForEach(a => a.ElectricProducer.Update());
                 consumers.ForEach(a => a.ElectricConsumer.Update());
 
+                
 
             }
 
@@ -690,7 +733,7 @@ public class ElectricityAddon : ModSystem
                                 item.path.RemoveAt(item.path.Count - 1);                //удаляем последний элемент
                                 var moveTo = item.path.Last();                          //координата теперь последнего элемента
 
-                                if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key,parts,item.facingFrom.Last(), moveTo))      //копируем пакет, только если элемент там еще есть и пакет может туда пройти
+                                if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item.facingFrom.Last(), moveTo))      //копируем пакет, только если элемент там еще есть и пакет может туда пройти
                                 {
                                     item.facingFrom.RemoveAt(item.facingFrom.Count - 1);                //удаляем последний элемент
                                     parts[moveTo].energyPackets.Add(item);
@@ -716,6 +759,7 @@ public class ElectricityAddon : ModSystem
             ticks--;                   //временно тут
         }
 
+        AltPressed = false;            //сбрасываем зажатость кнопки альт
     }
 
 
@@ -783,6 +827,7 @@ public class ElectricityAddon : ModSystem
 
         return outNetwork ?? this.CreateNetwork();
     }
+
 
 
     /// <summary>
@@ -989,104 +1034,6 @@ public class ElectricityAddon : ModSystem
     }
 
 
-    /*  можно удалить
-    public void SetConsumer(BlockPos position, IElectricConsumer? consumer)
-    {
-        if (!this.parts.TryGetValue(position, out var part))
-        {
-            if (consumer == null)
-            {
-                return;
-            }
-
-            part = this.parts[position] = new NetworkPart(position);
-        }
-
-        if (part.Consumer != consumer)
-        {
-            foreach (var network in part.Networks)
-            {
-                if (part.Consumer is not null)
-                {
-                    network?.Consumers.Remove(part.Consumer);
-                }
-
-                if (consumer is not null)
-                {
-                    network?.Consumers.Add(consumer);
-                }
-            }
-
-            part.Consumer = consumer;
-        }
-    }
-
-
-
-    public void SetProducer(BlockPos position, IElectricProducer? producer)
-    {
-        if (!this.parts.TryGetValue(position, out var part))
-        {
-            if (producer == null)
-            {
-                return;
-            }
-
-            part = this.parts[position] = new NetworkPart(position);
-        }
-
-        if (part.Producer != producer)
-        {
-            foreach (var network in part.Networks)
-            {
-                if (part.Producer is not null)
-                {
-                    network?.Producers.Remove(part.Producer);
-                }
-
-                if (producer is not null)
-                {
-                    network?.Producers.Add(producer);
-                }
-            }
-
-            part.Producer = producer;
-        }
-    }
-
-    public void SetAccumulator(BlockPos position, IElectricAccumulator? accumulator)
-    {
-        if (!this.parts.TryGetValue(position, out var part))
-        {
-            if (accumulator == null)
-            {
-                return;
-            }
-
-            part = this.parts[position] = new NetworkPart(position);
-        }
-
-        if (part.Accumulator != accumulator)
-        {
-            foreach (var network in part.Networks)
-            {
-                if (part.Accumulator is not null)
-                {
-                    network?.Accumulators.Remove(part.Accumulator);
-                }
-
-                if (accumulator is not null)
-                {
-                    network?.Accumulators.Add(accumulator);
-                }
-            }
-
-            part.Accumulator = accumulator;
-        }
-    }
-
-
-    */
 
 
     /// <summary>
@@ -1309,11 +1256,11 @@ public class NetworkInformation             //информация о конкр
     public float Production;                  //проивзодстве
     public float Lack;                        //дефицит
 
-    public Facing Facing = Facing.None;     //направлений
-    public int NumberOfAccumulators;        //аккумуляторах
-    public int NumberOfBlocks;              //блоков
-    public int NumberOfConsumers;           //потребителй
-    public int NumberOfProducers;           //источников
+    public Facing Facing = Facing.None;       //направлений
+    public int NumberOfAccumulators;          //аккумуляторах
+    public int NumberOfBlocks;                //блоков
+    public int NumberOfConsumers;             //потребителй
+    public int NumberOfProducers;             //источников
 
     public float[] eParamsInNetwork = new float[7];       //параметрах конкретно этого блока в этой цепи
 

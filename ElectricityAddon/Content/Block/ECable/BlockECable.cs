@@ -15,15 +15,15 @@ namespace Electricity.Content.Block
     {
         private readonly static ConcurrentDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> CollisionBoxesCache = new();
 
-        private readonly static Dictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> SelectionBoxesCache = new();
+        public readonly static Dictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> SelectionBoxesCache = new();
 
-        private readonly static Dictionary<CacheDataKey, MeshData> MeshDataCache = new();
+        public readonly static Dictionary<CacheDataKey, MeshData> MeshDataCache = new();
 
-        private BlockVariant? disabledSwitchVariant;
+        public BlockVariant? disabledSwitchVariant;
 
-        private BlockVariant? dotVariant;
-        private BlockVariant? enabledSwitchVariant;
-        private BlockVariant? partVariant;
+        public BlockVariant? dotVariant;
+        public BlockVariant? enabledSwitchVariant;
+        public BlockVariant? partVariant;
 
         public override void OnUnloaded(ICoreAPI api)
         {
@@ -111,6 +111,7 @@ namespace Electricity.Content.Block
                 return;
             }
 
+
             if (world.BlockAccessor.GetBlockEntity(position) is BlockEntityECable entity)
             {
                 if (byPlayer is { CurrentBlockSelection: { } blockSelection })
@@ -118,28 +119,9 @@ namespace Electricity.Content.Block
                     var key = CacheDataKey.FromEntity(entity);
                     var hitPosition = blockSelection.HitPosition;
 
-                    var selectedFacing = (
-                            from keyValuePair in CalculateBoxes(
-                                key,
-                                BlockECable.SelectionBoxesCache,
-                                this.dotVariant!.SelectionBoxes,
-                                this.partVariant!.SelectionBoxes,
-                                this.enabledSwitchVariant!.SelectionBoxes,
-                                this.disabledSwitchVariant!.SelectionBoxes
-                            )
-                            let selectionFacing = keyValuePair.Key
-                            let selectionBoxes = keyValuePair.Value
-                            from selectionBox in selectionBoxes
-                            where selectionBox.Clone()
-                                .OmniGrowBy(0.01f)
-                                .Contains(hitPosition.X, hitPosition.Y, hitPosition.Z)
-                            select selectionFacing
-                        )
-                        .Aggregate(
-                            Facing.None,
-                            (current, selectionFacing) =>
-                                current | selectionFacing
-                    );
+                    var sf = new SelectionFacingCable();
+                    var selectedFacing = sf.SelectionFacing(key, hitPosition, this);  //выделяем напрвление для слома под курсором
+
 
                     //определяем какой выключатель ломать
                     Facing faceSelect=Facing.None;
@@ -155,7 +137,7 @@ namespace Electricity.Content.Block
                     }
 
 
-
+                    //тут ломаем переключатель
                     if (selectedSwitches != Facing.None)
                     {
                         var stackSize = FacingHelper.Faces(selectedSwitches).Count();
@@ -177,8 +159,8 @@ namespace Electricity.Content.Block
                         }
                     }
 
+                    //здесь уже ломаем кабеля
                     var connection = entity.Connection & ~selectedFacing;
-
                     if (connection != Facing.None)
                     {
                         var stackSize = FacingHelper.Count(selectedFacing);
@@ -282,6 +264,13 @@ namespace Electricity.Content.Block
             }
         }
 
+        /// <summary>
+        /// взаимодействие с переключателем
+        /// </summary>
+        /// <param name="world"></param>
+        /// <param name="byPlayer"></param>
+        /// <param name="blockSel"></param>
+        /// <returns></returns>
         public override bool OnBlockInteractStart(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
         {
             if (this.api is ICoreClientAPI)
@@ -289,35 +278,17 @@ namespace Electricity.Content.Block
                 return true;
             }
 
-            var hitPosition = blockSel.HitPosition;
 
+            //это кабель?
             if (world.BlockAccessor.GetBlockEntity(blockSel.Position) is BlockEntityECable entity)
             {
                 var key = CacheDataKey.FromEntity(entity);
+                var hitPosition = blockSel.HitPosition;
 
-                var selectedFacing = (
-                        from keyValuePair in CalculateBoxes(
-                            key,
-                            BlockECable.SelectionBoxesCache,
-                            this.dotVariant!.SelectionBoxes,
-                            this.partVariant!.SelectionBoxes,
-                            this.enabledSwitchVariant!.SelectionBoxes,
-                            this.disabledSwitchVariant!.SelectionBoxes
-                        )
-                        let selectionFacing = keyValuePair.Key
-                        let selectionBoxes = keyValuePair.Value
-                        from selectionBox in selectionBoxes
-                        where selectionBox.Clone()
-                            .OmniGrowBy(0.005f)
-                            .Contains(hitPosition.X, hitPosition.Y, hitPosition.Z)
-                        select selectionFacing
-                    )
-                    .Aggregate(Facing.None, (current, selectionFacing) => current | selectionFacing);
+                var sf = new SelectionFacingCable();
+                var selectedFacing = sf.SelectionFacing(key,hitPosition,this);  //выделяем грань выключателя
 
-                foreach (var face in FacingHelper.Faces(selectedFacing))
-                {
-                    selectedFacing |= FacingHelper.FromFace(face);
-                }
+                
 
                 var selectedSwitches = selectedFacing & entity.Switches;
 
@@ -331,6 +302,8 @@ namespace Electricity.Content.Block
 
             return base.OnBlockInteractStart(world, byPlayer, blockSel);
         }
+
+
 
         public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos position)
         {
@@ -892,7 +865,8 @@ namespace Electricity.Content.Block
             base.OnJsonTesselation(ref sourceMesh, ref lightRgbsByCorner, position, chunkExtBlocks, extIndex3d);
         }
 
-        private static Dictionary<Facing, Cuboidf[]> CalculateBoxes(CacheDataKey key, IDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> boxesCache,
+
+        public static Dictionary<Facing, Cuboidf[]> CalculateBoxes(CacheDataKey key, IDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> boxesCache,
             Cuboidf[] dotBoxes, Cuboidf[] partBoxes,
             Cuboidf[] enabledSwitchBoxes, Cuboidf[] disabledSwitchBoxes)
         {
@@ -1377,7 +1351,7 @@ namespace Electricity.Content.Block
             }
         }
 
-        internal struct CacheDataKey
+        public struct CacheDataKey
         {
             public readonly Facing Connection;
             public readonly Facing Switches;

@@ -1,10 +1,15 @@
-﻿ using System.Text;
+﻿using System.Linq;
+using System.Text;
+using Electricity.Content.Block;
+using Electricity.Content.Block.Entity;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
+using Vintagestory.GameContent;
+using static Electricity.Content.Block.BlockECable;
 
 namespace ElectricityAddon.Content.Block;
 
@@ -17,7 +22,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     private bool dirty = true;
     private Facing interruption;
     private IElectricProducer? producer;
-    public float[] eparams;               
+    public float[] eparams;
 
 
 
@@ -115,9 +120,9 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                             break;
                     }
                 }
-                
 
-                system.SetConsumer(this.Blockentity.Pos, this.consumer); 
+
+                system.SetConsumer(this.Blockentity.Pos, this.consumer);
                 system.SetProducer(this.Blockentity.Pos, this.producer);
                 system.SetAccumulator(this.Blockentity.Pos, this.accumulator);
 
@@ -133,7 +138,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
             }
         }
     }
-    
+
 
     public override void OnBlockRemoved()
     {
@@ -148,9 +153,38 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        var networkInformation = this.System?.GetNetworks(this.Blockentity.Pos, this.Connection);      //получаем информацию о сети
+
+        Facing selectedFacing=Facing.None; //храним направления проводов в этом блоке
+
 
         stringBuilder.AppendLine(Lang.Get("Electricity"));
+
+        //если это кабель, то мы можем вывести только информацию о сети на одной грани
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable entity)
+        {
+            if (forPlayer is { CurrentBlockSelection: { } blockSelection })
+            {
+                var key = CacheDataKey.FromEntity(entity);
+                var hitPosition = blockSelection.HitPosition;
+
+                var sf = new SelectionFacingCable();
+                selectedFacing = sf.SelectionFacing(key, hitPosition, (BlockECable)this.Api.World.BlockAccessor.GetBlock(this.Blockentity.Pos));  //выделяем напрвление для слома под курсором
+
+                if (selectedFacing != Facing.None)
+                    selectedFacing = FacingHelper.FromFace(FacingHelper.Faces(selectedFacing).First());  //выбираем одну грань, если даже их там вдруг окажется больше
+                else
+                    return;
+
+            }
+        }
+        else    //для не кабелей берем все что есть
+        {
+            selectedFacing = this.Connection;
+        }
+
+
+        var networkInformation = this.System?.GetNetworks(this.Blockentity.Pos, selectedFacing);      //получаем информацию о сети
+
 
         if (this.System!.AltPressed)
         {
@@ -158,32 +192,39 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
             stringBuilder.AppendLine("├ Генераторов: " + networkInformation?.NumberOfProducers);
             stringBuilder.AppendLine("├ Аккумуляторов: " + networkInformation?.NumberOfAccumulators);
             stringBuilder.AppendLine("├ Блоков: " + networkInformation?.NumberOfBlocks);
-            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0] + " Eu/t");
-            stringBuilder.AppendLine("├ " + "Ток: " + networkInformation?.eParamsInNetwork[1] + " Eu/t");
-            stringBuilder.AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " Eu/t/блок");
-            stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед");
-            stringBuilder.AppendLine("├ " + "Напряжение: " + networkInformation?.eParamsInNetwork[6] + " V");
         }
 
         stringBuilder.AppendLine("├ Генерация: " + networkInformation?.Production + " Eu");
         stringBuilder.AppendLine("├ Потребление: " + networkInformation?.Consumption + " Eu");
         stringBuilder.AppendLine("└ Дефицит: " + networkInformation?.Lack + " Eu");
 
-        if (!this.System!.AltPressed)  stringBuilder.AppendLine("Press Alt for details");
-        
+        if (!this.System!.AltPressed) stringBuilder.AppendLine("Press Alt for details");
+
+        if (this.System!.AltPressed)
+        {
+            stringBuilder.AppendLine("Блок");
+            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0] + " Eu/t");
+            stringBuilder.AppendLine("├ " + "Ток: " + networkInformation?.eParamsInNetwork[1] + " Eu/t");
+            stringBuilder.AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " Eu/t/блок");
+            stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед");
+            stringBuilder.AppendLine("└ " + "Напряжение: " + networkInformation?.eParamsInNetwork[6] + " V");
+        }
+
+
+
     }
 
     public override void ToTreeAttributes(ITreeAttribute tree)
     {
         base.ToTreeAttributes(tree);
 
-        
+
         tree.SetBytes("electricity:connection", SerializerUtil.Serialize(this.connection));
         tree.SetBytes("electricity:interruption", SerializerUtil.Serialize(this.interruption));
 
         //var networkInformation = this.System?.GetNetworks(this.Blockentity.Pos, this.Connection);      //получаем информацию о сети
         //tree.SetBytes("electricity:eparams", SerializerUtil.Serialize(networkInformation?.eParamsInNetwork));
-        
+
         tree.SetBytes("electricity:eparams", SerializerUtil.Serialize(this.eparams));
     }
 

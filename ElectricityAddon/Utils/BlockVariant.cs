@@ -4,7 +4,7 @@ using Vintagestory.API.MathTools;
 
 namespace ElectricityAddon.Utils;
 
-internal class BlockVariant
+public class BlockVariant
 {
     public readonly Cuboidf[] CollisionBoxes;
     public readonly MeshData? MeshData;

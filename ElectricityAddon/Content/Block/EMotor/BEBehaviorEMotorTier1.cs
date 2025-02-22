@@ -269,11 +269,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
             ? 1f * torque
             : -1f * torque;
 
-        //return this.propagationDir == this.OutFacingForNetworkDiscovery     // Возвращаем все значения
-        //    ? -1f * torque
-        //    : 1f * torque;
 
-        //return torque;
     }
 
 
@@ -365,7 +361,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         base.GetBlockInfo(forPlayer, stringBuilder);
 
         stringBuilder.AppendLine(StringHelper.Progressbar(powerReceive / I_max * 100));
-        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerReceive + "/" + I_max + " Eu");
+        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerReceive + "/" + I_max + " Вт");
         //stringBuilder.AppendLine("└ " + "КПД " + this.kpd*100F + "%/" + this.kpd_max*100+"%");
         //stringBuilder.AppendLine("└ " + "Реальный ток " + I_value + "/" + this.I_max);
         stringBuilder.AppendLine();

@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
-using Newtonsoft.Json.Linq;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
@@ -279,7 +277,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
         stringBuilder.AppendLine(StringHelper.Progressbar(Math.Min(powerGive,powerOrder) / I_max * 100));
-        stringBuilder.AppendLine("└ " + Lang.Get("Production") + Math.Min(powerGive, powerOrder) + "/" + I_max + " Eu");
+        stringBuilder.AppendLine("└ " + Lang.Get("Production") + Math.Min(powerGive, powerOrder) + "/" + I_max + " Вт");
         //stringBuilder.AppendLine(powerOrder.ToString()); //для дебага
         stringBuilder.AppendLine();
 

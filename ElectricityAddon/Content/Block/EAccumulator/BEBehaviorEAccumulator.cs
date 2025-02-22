@@ -24,7 +24,7 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
 
     public new BlockPos Pos => this.Blockentity.Pos;
 
-    public float maxCurrent => 200.0F;   //ограничение по энергии в тик(току)!!!!!!!
+    public float maxCurrent => 200.0F;   //ограничение по энергии в тик(ток*напряж)!!!!!!!
 
     public float GetMaxCapacity()
     {
@@ -104,7 +104,7 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
         stringBuilder.AppendLine(StringHelper.Progressbar(GetCapacity() * 100.0f / GetMaxCapacity()));
-        stringBuilder.AppendLine("└ " + Lang.Get("Storage") + GetCapacity() + "/" + GetMaxCapacity() + " Eu");
+        stringBuilder.AppendLine("└ " + Lang.Get("Storage") + GetCapacity() + "/" + GetMaxCapacity() + " Вт*t");
         stringBuilder.AppendLine();
     }
 

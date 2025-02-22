@@ -1,15 +1,14 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Cairo.Freetype;
-using Electricity.Content.Block.Entity;
+using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Content.Block.ESwitch;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Electricity.Content.Block
+namespace ElectricityAddon.Content.Block.ECable
 {
     public class BlockECable : Vintagestory.API.Common.Block
     {
@@ -25,6 +24,8 @@ namespace Electricity.Content.Block
         public BlockVariant? enabledSwitchVariant;
         public BlockVariant? partVariant;
 
+        public float res;
+
         public override void OnUnloaded(ICoreAPI api)
         {
             base.OnUnloaded(api);
@@ -36,6 +37,8 @@ namespace Electricity.Content.Block
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api);
+
+            res=MyMiniLib.GetAttributeFloat(this, "res", 3);
 
             /* preload switch-assets */
             {
@@ -84,13 +87,13 @@ namespace Electricity.Content.Block
                     entity.Connection = facing;       //сообщаем направление
                     entity.Eparams = new float[7]
                         {
-                            400,                                //максимальный размер пакета энергии, которое может пройти по одной линии этого элемента цепи
-                            0,                                  //текущий размер энергии в пакете/ах, который проходит в элементе цепи
-                            1,                                  //потери энергии в элементе цепи
+                            10,                                 //максимальный ток
+                            0,                                  //----
+                            res,                                  //потери энергии в элементе цепи
                             1,                                  //количество линий элемента цепи/провода
                             0,                                  //напряжение (возможно будет про запас)
                             0,                                  //сгорел или нет
-                            32                                   //напряжение
+                            32                                  //напряжение
                         };
 
 
@@ -192,7 +195,7 @@ namespace Electricity.Content.Block
         {
             if (world.BlockAccessor.GetBlockEntity(position) is BlockEntityECable entity)
             {
-                var assetLocation = new AssetLocation("electricityaddon:cable-dot");
+                var assetLocation = new AssetLocation("electricityaddon:cable-dot");//тут ощибка
                 var block = world.BlockAccessor.GetBlock(assetLocation);
                 var stackSize = FacingHelper.Count(entity.Connection);
                 var itemStack = new ItemStack(block, stackSize);
@@ -253,7 +256,7 @@ namespace Electricity.Content.Block
 
                     if (stackSize > 0)
                     {
-                        var assetLocation = new AssetLocation("electricityaddon:cable-dot");
+                        var assetLocation = new AssetLocation("electricityaddon:cable-dot");  //тут тоже ошибка будет
                         var block = world.BlockAccessor.GetBlock(assetLocation);
                         var itemStack = new ItemStack(block, stackSize);
                         world.SpawnItemEntity(itemStack, pos.ToVec3d());
@@ -1364,7 +1367,7 @@ namespace Electricity.Content.Block
                 this.SwitchesState = switchesState;
             }
 
-            public static CacheDataKey FromEntity(Entity.BlockEntityECable entityE)
+            public static CacheDataKey FromEntity(BlockEntityECable entityE)
             {
                 return new CacheDataKey(
                     entityE.Connection,

@@ -1,11 +1,9 @@
-﻿using Electricity.Content.Block;
-using System;
-using System.Collections.Generic;
+﻿using ElectricityAddon.Content.Block;
+using ElectricityAddon.Content.Block.ECable;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Vintagestory.API.MathTools;
-using static Electricity.Content.Block.BlockECable;
+using static ElectricityAddon.Content.Block.ECable.BlockECable;
+
 
 namespace ElectricityAddon.Utils
 {

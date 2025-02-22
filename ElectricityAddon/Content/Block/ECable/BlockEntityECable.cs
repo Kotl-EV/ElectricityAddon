@@ -1,11 +1,11 @@
 using System;
-using ElectricityAddon.Content.Block;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 
-namespace Electricity.Content.Block.Entity {
+namespace ElectricityAddon.Content.Block.ECable
+{
     public class BlockEntityECable : BlockEntity {
         private Facing switches = Facing.None;
 

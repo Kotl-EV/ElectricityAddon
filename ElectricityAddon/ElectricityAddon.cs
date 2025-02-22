@@ -14,16 +14,14 @@ using Vintagestory.API.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Electricity.Content.Block;
-using Electricity.Content.Block.Entity;
 using ElectricityAddon.Content.Block;
 using ElectricityAddon.Content.Block.ESwitch;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.MathTools;
-using Vintagestory.API.Config;
-using ElectricityAddon.Net;
 using Vintagestory.API.Client;
+using Vintagestory.API.Util;
+using ElectricityAddon.Content.Block.ECable;
 
 
 
@@ -261,6 +259,7 @@ public class ElectricityAddon : ModSystem
                 if (this.parts[pos].energyPackets == null)   //бывает всякое
                     this.parts[pos].energyPackets = new List<energyPacket>();
 
+                //this.parts[pos].current= new float[6];
 
             }
 
@@ -473,7 +472,8 @@ public class ElectricityAddon : ModSystem
                                     packet.energy = value;
                                     packet.path = paths[indexCustomer][indexStore];
                                     packet.facingFrom = facingFrom[indexCustomer][indexStore];
-                                    //packet.nowProcessedFaces = nowProcessedFaces[indexCustomer][indexStore];
+                                    packet.voltage = (int)part.eparams[6];
+
                                     parts[posStore].energyPackets.Add(packet);
                                 }
                             }
@@ -577,7 +577,7 @@ public class ElectricityAddon : ModSystem
 
                                     packet.path = paths2[indexCustomer][indexStore];
                                     packet.facingFrom = facingFrom2[indexCustomer][indexStore];
-                                    //packet.nowProcessedFaces = nowProcessedFaces2[indexCustomer][indexStore];
+                                    packet.voltage = (int)part.eparams[6];
 
                                     parts[posStore].energyPackets.Add(packet);
                                 }
@@ -630,13 +630,17 @@ public class ElectricityAddon : ModSystem
 
                 //Этап  - Сбор информации и обновление всего  (порядок не менять)----------------------------------------------------------------------------------------------//
                 //обновляем информацию этой цепи
+
+                //потребление
                 network.Consumption = consumers.Sum<Consumer>(c => c.ElectricConsumer.getPowerReceive());
                 network.Consumption += accums
                     .Sum<Accumulator>(a => Math.Max(a.ElectricAccum.GetCapacity() - a.ElectricAccum.GetLastCapacity(), 0.0F));
 
+                //генерация
                 network.Production = producers.Sum<Producer>(p => Math.Min(p.ElectricProducer.getPowerGive(), p.ElectricProducer.getPowerOrder()));
 
-                network.Lack = Math.Max(consumers.Sum<Consumer>(c => c.ElectricConsumer.getPowerRequest()) - network.Consumption, 0);
+                //дефицит
+                network.Lack = Math.Max(consumers.Sum<Consumer>(c => c.ElectricConsumer.getPowerRequest() - c.ElectricConsumer.getPowerReceive()), 0);
 
 
                 
@@ -718,6 +722,8 @@ public class ElectricityAddon : ModSystem
 
 
                 //Этап  - Двигаем пакеты ---------------------------------------------------------------------------------------//
+                parts.Foreach(p => p.Value.current = new float[6]);  //сразу чистим ток (не трогать)
+
                 foreach (var part in parts)  //перебираем все элементы
                 {
                     if (part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)
@@ -729,14 +735,19 @@ public class ElectricityAddon : ModSystem
                             if (item.path.Count >= 2)            //пропускаем тех, кто уже пришел к получателю
                             {
                                 //var moveTo = item.path[item.path.Count - 2];            //координата предпоследнего элемента
+                                var item2 = new energyPacket();
+                                item2 = item;
 
-                                item.path.RemoveAt(item.path.Count - 1);                //удаляем последний элемент
-                                var moveTo = item.path.Last();                          //координата теперь последнего элемента
+                                item2.path.RemoveAt(item2.path.Count - 1);                //удаляем последний элемент
+                                var moveTo = item2.path.Last();                          //координата теперь последнего элемента
 
-                                if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item.facingFrom.Last(), moveTo))      //копируем пакет, только если элемент там еще есть и пакет может туда пройти
+                                if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item2.facingFrom.Last(), moveTo))      //копируем пакет, только если элемент там еще есть и пакет может туда пройти
                                 {
-                                    item.facingFrom.RemoveAt(item.facingFrom.Count - 1);                //удаляем последний элемент
-                                    parts[moveTo].energyPackets.Add(item);
+                                    item2.facingFrom.RemoveAt(item2.facingFrom.Count - 1);                     //удаляем последний элемент facing
+                                    item2.energy = item2.energy * ((100 - part.Value.eparams[2]) / 100.0F);    //потери на сопротивление
+                                    parts[moveTo].energyPackets.Add(item2);                                   //копируем пакет на новую позицию
+
+                                    parts[moveTo].current[item2.facingFrom.Last()] += item2.energy*(1.0F) / item2.voltage;  //считаем ток
                                 }
 
 
@@ -1151,6 +1162,7 @@ public class ElectricityAddon : ModSystem
                     networks.Add(networkk);                                     //выдаем найденную цепь
                     result.Facing |= FacingHelper.FromFace(blockFacing);        //выдаем ее направления
                     result.eParamsInNetwork = part.eparams;                     //выдаем ее текущие параметры
+                    result.current = part.current[blockFacing.Index];
                 }
             }
 
@@ -1180,8 +1192,10 @@ public struct energyPacket
 {
     public List<BlockPos> path;
     public float energy;
+    public int voltage;
     public List<int> facingFrom;
-    public List<bool[]> nowProcessedFaces;
+    
+
 }
 
 
@@ -1232,6 +1246,16 @@ public class NetworkPart                       //элемент цепи
     */
 
 
+    public float[] current = new float[6] 
+    {
+        0.0F,
+        0.0F,
+        0.0F,
+        0.0F,
+        0.0F,
+        0.0F
+    };              
+
     public List<energyPacket> energyPackets;
 
     public readonly BlockPos Position;           //позиция
@@ -1263,8 +1287,7 @@ public class NetworkInformation             //информация о конкр
     public int NumberOfProducers;             //источников
 
     public float[] eParamsInNetwork = new float[7];       //параметрах конкретно этого блока в этой цепи
-
-
+    internal float current;
 }
 
 /// <summary>

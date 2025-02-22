@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Electricity.Content.Block.Entity;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
-namespace Electricity.Content.Block {
+namespace ElectricityAddon.Content.Block.EHeater {
     public class BlockEHeater : Vintagestory.API.Common.Block {
         private readonly static Dictionary<CacheDataKey, MeshData> MeshDataCache = new();
         private readonly static Dictionary<CacheDataKey, Cuboidf[]> SelectionBoxesCache = new();

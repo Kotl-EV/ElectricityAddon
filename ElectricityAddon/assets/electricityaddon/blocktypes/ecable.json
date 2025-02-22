@@ -9,6 +9,23 @@
   ],
   "variantGroups": [
     {
+      "code": "material",
+      "states": [
+        "copper",
+        "silver",
+        "lead"
+      ]
+    },
+    {
+      "code": "quantity",
+      "states": [
+        "single",
+        "double",
+        "triple",
+        "quadruple"
+      ]
+    },
+    {
       "code": "type",
       "states": [
         "dot",
@@ -24,17 +41,49 @@
       "*-dot"
     ]
   },
-  "shapeInventory": {
-    "base": "block/cable"
-  },
-  "shapeByType": {
-    "*-dot": {
-      "base": "block/cable-dot"
+
+  "shapeInventoryByType": {
+    "cable-copper-single": {
+      "base": "block/cable-single/cable-copper-single"
     },
-    "*-part": {
-      "base": "block/cable-part"
+    "cable-copper-double": {
+      "base": "block/cable-double/cable-copper-double"
+    },
+    "cable-copper-triple": {
+      "base": "block/cable-triple/cable-copper-triple"
+    },
+    "cable-copper-quadruple": {
+      "base": "block/cable-quadruple/cable-copper-quadruple"
     }
   },
+
+  "shapeByType": {
+    "cable-copper-single-dot": {
+      "base": "block/cable-single/cable-copper-single-dot"
+    },
+    "cable-copper-double-dot": {
+      "base": "block/cable-double/cable-copper-double-dot"
+    },
+    "cable-copper-triple-dot": {
+      "base": "block/cable-triple/cable-copper-triple-dot"
+    },
+    "cable-copper-quadruple-dot": {
+      "base": "block/cable-quadruple/cable-copper-quadruple-dot"
+    },
+    "cable-copper-single-part": {
+      "base": "block/cable-single/cable-copper-single-part"
+    },
+    "cable-copper-double-part": {
+      "base": "block/cable-double/cable-copper-double-part"
+    },
+    "cable-copper-triple-part": {
+      "base": "block/cable-triple/cable-copper-triple-part"
+    },
+    "cable-copper-quadruple-part": {
+      "base": "block/cable-quadruple/cable-copper-quadruple-part"
+    }
+  },
+
   "collisionSelectionBoxesByType": {
     "*-dot": [
       {
@@ -62,6 +111,13 @@
   "lightAbsorption": 0.0,
   "faceCullMode": "NeverCull",
   "renderPass": "OpaqueNoCull",
+
+  "attributesByType": {
+    "*-copper-*": { "res": 1 },
+    "*-silver-*": { "res": 0.5 },
+    "*-lead-*": { "res": 3 }
+  },
+
   "emitSideAo": {
     "all": false
   },

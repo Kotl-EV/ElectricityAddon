@@ -36,6 +36,10 @@
         <Content Include="assets\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+        <Compile Remove="assets\electricityaddon\shapes\block\single\**" />
+        <Content Remove="assets\electricityaddon\shapes\block\single\**" />
+        <EmbeddedResource Remove="assets\electricityaddon\shapes\block\single\**" />
+        <None Remove="assets\electricityaddon\shapes\block\single\**" />
         <Content Include="modinfo.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>

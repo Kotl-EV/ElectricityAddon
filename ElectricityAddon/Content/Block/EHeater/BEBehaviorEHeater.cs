@@ -4,7 +4,7 @@ using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 
-namespace Electricity.Content.Block.Entity.Behavior
+namespace ElectricityAddon.Content.Block.EHeater
 {
     public class BEBehaviorEHeater : BlockEntityBehavior, IElectricConsumer
     {

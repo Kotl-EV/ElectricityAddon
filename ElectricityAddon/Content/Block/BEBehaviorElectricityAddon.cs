@@ -1,15 +1,16 @@
 ﻿using System.Linq;
 using System.Text;
-using Electricity.Content.Block;
-using Electricity.Content.Block.Entity;
+using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
-using Vintagestory.GameContent;
-using static Electricity.Content.Block.BlockECable;
+using static ElectricityAddon.Content.Block.ECable.BlockECable;
+
+
+
 
 namespace ElectricityAddon.Content.Block;
 
@@ -194,20 +195,24 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
             stringBuilder.AppendLine("├ Блоков: " + networkInformation?.NumberOfBlocks);
         }
 
-        stringBuilder.AppendLine("├ Генерация: " + networkInformation?.Production + " Eu");
-        stringBuilder.AppendLine("├ Потребление: " + networkInformation?.Consumption + " Eu");
-        stringBuilder.AppendLine("└ Дефицит: " + networkInformation?.Lack + " Eu");
+        stringBuilder.AppendLine("├ Генерация: " + networkInformation?.Production + " Вт");
+        stringBuilder.AppendLine("├ Потребление: " + networkInformation?.Consumption + " Вт");
+        stringBuilder.AppendLine("└ Дефицит: " + networkInformation?.Lack + " Вт");
 
         if (!this.System!.AltPressed) stringBuilder.AppendLine("Press Alt for details");
 
         if (this.System!.AltPressed)
         {
             stringBuilder.AppendLine("Блок");
-            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0] + " Eu/t");
-            stringBuilder.AppendLine("├ " + "Ток: " + networkInformation?.eParamsInNetwork[1] + " Eu/t");
-            stringBuilder.AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " Eu/t/блок");
-            stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед");
-            stringBuilder.AppendLine("└ " + "Напряжение: " + networkInformation?.eParamsInNetwork[6] + " V");
+            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0] + " А");
+            stringBuilder.AppendLine("├ " + "Ток: " + networkInformation?.current + " А");
+
+            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable) //если кабель!
+            {
+                stringBuilder.AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " %А/блок");
+                stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед");
+            }
+            stringBuilder.AppendLine("└ " + "Макс напряжение: " + networkInformation?.eParamsInNetwork[6] + " В");
         }
 
 

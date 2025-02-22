@@ -1,5 +1,4 @@
 using System;
-using ElectricityAddon.Content.Block;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
@@ -7,13 +6,13 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
 using Vintagestory.GameContent;
 
-namespace Electricity.Content.Block.Entity {
+namespace ElectricityAddon.Content.Block.EHeater {
     public class BlockEntityEHeater : BlockEntity, IHeatSource {
         private Facing facing = Facing.None;
 
         private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 
-        private Behavior.BEBehaviorEHeater Behavior => this.GetBehavior<Behavior.BEBehaviorEHeater>();
+        private BEBehaviorEHeater Behavior => this.GetBehavior<BEBehaviorEHeater>();
 
         public Facing Facing {
             get => this.facing;

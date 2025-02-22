@@ -1,4 +1,4 @@
-﻿using Electricity.Content.Block.Entity;
+﻿using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 

@@ -78,7 +78,7 @@ public class BlockEMotorTier1 : Vintagestory.API.Common.Block, IMechanicalPowerB
         )
         {
             entity.Facing = facing;                             //сообщаем направление
-            entity.Eparams = new float[7]
+            entity.Eparams = (new float[7]
                         {
                             10,                                 //максимальный ток
                             0,                                  //----
@@ -87,7 +87,8 @@ public class BlockEMotorTier1 : Vintagestory.API.Common.Block, IMechanicalPowerB
                             0,                                  //напряжение (возможно будет про запас)
                             0,                                  //сгорел или нет
                             32                                  //напряжение
-                        };
+                         },
+                        FacingHelper.Faces(facing).First().Index);
 
 
             var blockFacing = FacingHelper.Directions(entity.Facing).First();

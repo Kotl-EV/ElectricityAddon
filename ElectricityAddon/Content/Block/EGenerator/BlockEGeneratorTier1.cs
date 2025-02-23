@@ -89,7 +89,7 @@ public class BlockEGeneratorTier1 : Vintagestory.API.Common.Block, IMechanicalPo
         )
         {
             entity.Facing = facing;                             //сообщаем направление
-            entity.Eparams = new float[7]
+            entity.Eparams = (new float[7]
                         {
                             10,                                 //максимальный ток
                             0,                                  //----
@@ -98,7 +98,8 @@ public class BlockEGeneratorTier1 : Vintagestory.API.Common.Block, IMechanicalPo
                             0,                                  //напряжение (возможно будет про запас)
                             0,                                  //сгорел или нет
                             32                                  //напряжение
-                        };
+                         },
+                        FacingHelper.Faces(facing).First().Index);
 
 
             var blockFacing = FacingHelper.Directions(entity.Facing).First();

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Interface;
@@ -8,6 +9,7 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
 using static ElectricityAddon.Content.Block.ECable.BlockECable;
+using Newtonsoft.Json;
 
 
 
@@ -21,11 +23,12 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     private Facing connection;
     private IElectricConsumer? consumer;
     private bool dirty = true;
+    private bool paramsSet = false;
     private Facing interruption;
     private IElectricProducer? producer;
     public float[] eparams;
-
-
+    public int eparamsFace;
+    private float[][] allEparams;
 
     public BEBehaviorElectricityAddon(BlockEntity blockEntity)
         : base(blockEntity)
@@ -45,19 +48,38 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
             {
                 this.connection = value;
                 this.dirty = true;
+                this.paramsSet = false;
                 this.Update();
             }
         }
     }
 
-    public float[] Eparams
+    public float[][] AllEparams
     {
-        get => this.eparams;
+        get => this.allEparams;
         set
         {
-            if (this.eparams != value)
+            if (this.allEparams != value)
             {
-                this.eparams = value;
+                this.allEparams = value;
+                this.dirty = true;
+                //this.paramsSet = false;
+                this.Update();
+            }
+        }
+    }
+
+
+    public (float[],int) Eparams
+    {
+        get => (this.eparams,this.eparamsFace);
+        set
+        {
+            if (this.eparams != value.Item1 || this.eparamsFace != value.Item2)
+            {
+                this.eparams = value.Item1;
+                this.eparamsFace = value.Item2;
+                this.paramsSet = true;
                 this.dirty = true;
                 this.Update();
             }
@@ -127,11 +149,22 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                 system.SetProducer(this.Blockentity.Pos, this.producer);
                 system.SetAccumulator(this.Blockentity.Pos, this.accumulator);
 
-                if (system.Update(this.Blockentity.Pos, this.connection & ~this.interruption, Eparams))
+
+                //если обновляется connection или interrupt, то нафиг присваивать параметры
+                (float[], int) Epar;
+                if (!this.paramsSet)
+                    Epar = (null!, 0);
+                else
+                    Epar = Eparams;
+
+
+                if (system.Update(this.Blockentity.Pos, this.connection & ~this.interruption, Epar,ref this.allEparams))
                 {
                     this.Blockentity.MarkDirty(true);
                 }
 
+                
+                
             }
             else
             {
@@ -204,7 +237,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         if (this.System!.AltPressed)
         {
             stringBuilder.AppendLine("Блок");
-            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0] + " А");
+            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0]* networkInformation?.eParamsInNetwork[3]+"/"+ networkInformation?.eParamsInNetwork[0] + " А");
             stringBuilder.AppendLine("├ " + "Ток: " + networkInformation?.current + " А");
 
             if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable) //если кабель!
@@ -224,29 +257,32 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         base.ToTreeAttributes(tree);
 
 
-        tree.SetBytes("electricity:connection", SerializerUtil.Serialize(this.connection));
-        tree.SetBytes("electricity:interruption", SerializerUtil.Serialize(this.interruption));
+        tree.SetBytes("electricityaddon:connection", SerializerUtil.Serialize(this.connection));
+        tree.SetBytes("electricityaddon:interruption", SerializerUtil.Serialize(this.interruption));
 
         //var networkInformation = this.System?.GetNetworks(this.Blockentity.Pos, this.Connection);      //получаем информацию о сети
         //tree.SetBytes("electricity:eparams", SerializerUtil.Serialize(networkInformation?.eParamsInNetwork));
 
-        tree.SetBytes("electricity:eparams", SerializerUtil.Serialize(this.eparams));
+        //массив массивов приходится сохранять через newtonsoftjson
+        tree.SetBytes("electricityaddon:allEparams", Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this.allEparams)));
+        
     }
 
     public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
     {
         base.FromTreeAttributes(tree, worldAccessForResolve);
 
-        var connection = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricity:connection"));
-        var interruption = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricity:interruption"));
+        var connection = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricityaddon:connection"));
+        var interruption = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricityaddon:interruption"));
 
-        var eparams = SerializerUtil.Deserialize<float[]>(tree.GetBytes("electricity:eparams"));
+        //массив массивов приходится считывать через newtonsoftjson
+        var AllEparamss = JsonConvert.DeserializeObject<float[][]>(Encoding.UTF8.GetString(tree.GetBytes("electricityaddon:allEparams")));
 
         if (connection != this.connection || interruption != this.interruption)
         {
             this.interruption = interruption;
             this.connection = connection;
-            this.eparams = eparams;
+            this.allEparams = AllEparamss;
             this.dirty = true;
             this.Update();
         }

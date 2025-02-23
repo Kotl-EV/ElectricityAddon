@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using ElectricityAddon.Content.Block.ECable;
@@ -18,11 +19,12 @@ namespace ElectricityAddon.Content.Block.ECable
 
         public readonly static Dictionary<CacheDataKey, MeshData> MeshDataCache = new();
 
+        public BlockVariant? enabledSwitchVariant;
         public BlockVariant? disabledSwitchVariant;
 
-        public BlockVariant? dotVariant;
-        public BlockVariant? enabledSwitchVariant;
-        public BlockVariant? partVariant;
+
+        public BlockVariants? dotVariant;
+        public BlockVariants? partVariant;
 
         public float res;
 
@@ -38,9 +40,9 @@ namespace ElectricityAddon.Content.Block.ECable
         {
             base.OnLoaded(api);
 
-            res=MyMiniLib.GetAttributeFloat(this, "res", 3);
+            res = MyMiniLib.GetAttributeFloat(this, "res", 3);
 
-            /* preload switch-assets */
+            // предзагрузка ассетов
             {
                 var assetLocation = new AssetLocation("electricityaddon:switch-enabled");
                 var block = api.World.BlockAccessor.GetBlock(assetLocation);
@@ -49,8 +51,8 @@ namespace ElectricityAddon.Content.Block.ECable
                 this.disabledSwitchVariant = new BlockVariant(api, block, "disabled");
             }
 
-            this.dotVariant = new BlockVariant(api, this, "dot");
-            this.partVariant = new BlockVariant(api, this, "part");
+            this.dotVariant = new BlockVariants(api, this, 0,1,0);
+            this.partVariant = new BlockVariants(api, this, 0, 1, 1);
         }
 
         public override bool IsReplacableBy(Vintagestory.API.Common.Block block)
@@ -59,25 +61,77 @@ namespace ElectricityAddon.Content.Block.ECable
         }
 
 
+
         public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSelection, ItemStack byItemStack)
         {
             var selection = new Selection(blockSelection);
             var facing = FacingHelper.From(selection.Face, selection.Direction);
 
             // обновляем текущий блок с кабелем 
-            {
-                if (world.BlockAccessor.GetBlockEntity(blockSelection.Position) is BlockEntityECable entity)
+            {//кавычка тут специально
+                if (world.BlockAccessor.GetBlockEntity(blockSelection.Position) is BlockEntityECable entity) //это кабель?
                 {
-                    if ((entity.Connection & facing) != 0)
+                    var lines = entity.AllEparams[FacingHelper.Faces(facing).First().Index][3]; //сколько линий на грани уже?
+
+                    
+
+
+                    if ((entity.Connection & facing) != 0)  //мы навелись уже на существующий кабель?
                     {
-                        return false;
+                           //byItemStack.Block.Code
+
+                        if (lines >= 1 && lines < 4) //линий 1-3 имеется
+                        {
+                            lines++;  //приращиваем линии                            
+                            entity.AllEparams[FacingHelper.Faces(facing).First().Index][3] = lines; //применяем линии
+                            entity.MarkDirty(true);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
+                    else
+                    {
+                        entity.Connection |= facing;
 
-                    entity.Connection |= facing;
+                        
+                        //линий 0? Значит грань была пустая    
+                        if (lines == 0)
+                        {
+                            entity.Eparams = (new float[7]
+                                {
+                                10,                                 //максимальный ток
+                                0,                                  //индекс материала?!!!
+                                res,                                //потери энергии в элементе цепи
+                                1,                                  //количество линий элемента цепи/провода
+                                0,                                  //-------
+                                0,                                  //сгорел или нет
+                                32                                  //напряжение
+                                },
+                                FacingHelper.Faces(facing).First().Index);
+                        }
+                        else   //линий не 0, значитуже что-то там есть на грани
+                        {
+                            entity.Eparams = (new float[7]
+                                {
+                                10,                                 //максимальный ток
+                                0,                                  //индекс материала?!!!
+                                res,                                //потери энергии в элементе цепи
+                                lines,                            //количество линий элемента цепи/провода
+                                0,                                  //-------
+                                0,                                  //сгорел или нет
+                                32                                  //напряжение
+                                },
+                                FacingHelper.Faces(facing).First().Index);
+                        }
 
+                    }
                     return true;
                 }
             }
+
 
             // если установка все же успешна
             if (base.DoPlaceBlock(world, byPlayer, blockSelection, byItemStack))
@@ -85,16 +139,17 @@ namespace ElectricityAddon.Content.Block.ECable
                 if (world.BlockAccessor.GetBlockEntity(blockSelection.Position) is BlockEntityECable entity)
                 {
                     entity.Connection = facing;       //сообщаем направление
-                    entity.Eparams = new float[7]
+                    entity.Eparams = (new float[7]
                         {
                             10,                                 //максимальный ток
-                            0,                                  //----
-                            res,                                  //потери энергии в элементе цепи
+                            0,                                  //индекс материала?!!!
+                            res,                                //потери энергии в элементе цепи
                             1,                                  //количество линий элемента цепи/провода
-                            0,                                  //напряжение (возможно будет про запас)
+                            0,                                  //-------
                             0,                                  //сгорел или нет
                             32                                  //напряжение
-                        };
+                        },
+                        FacingHelper.Faces(facing).First().Index);
 
 
 
@@ -106,6 +161,8 @@ namespace ElectricityAddon.Content.Block.ECable
 
             return false;
         }
+
+
 
         public override void OnBlockBroken(IWorldAccessor world, BlockPos position, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
@@ -127,7 +184,7 @@ namespace ElectricityAddon.Content.Block.ECable
 
 
                     //определяем какой выключатель ломать
-                    Facing faceSelect=Facing.None;
+                    Facing faceSelect = Facing.None;
                     Facing selectedSwitches;
                     if (selectedFacing != Facing.None)
                     {
@@ -226,7 +283,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     //return;
                 }
 
-               
+
                 var selectedSwitches = entity.Switches & selectedFacing;
 
                 if (selectedSwitches != Facing.None)
@@ -242,7 +299,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     }
 
                     entity.Switches &= ~selectedFacing;
-                    
+
                 }
 
                 if (delayreturn)
@@ -289,9 +346,9 @@ namespace ElectricityAddon.Content.Block.ECable
                 var hitPosition = blockSel.HitPosition;
 
                 var sf = new SelectionFacingCable();
-                var selectedFacing = sf.SelectionFacing(key,hitPosition,this);  //выделяем грань выключателя
+                var selectedFacing = sf.SelectionFacing(key, hitPosition, this);  //выделяем грань выключателя
 
-                
+
 
                 var selectedSwitches = selectedFacing & entity.Switches;
 
@@ -363,158 +420,183 @@ namespace ElectricityAddon.Content.Block.ECable
                 {
                     var origin = new Vec3f(0.5f, 0.5f, 0.5f);
 
-                    // Connections
+                    // соединения
                     if ((key.Connection & Facing.NorthAll) != 0)
                     {
-                        AddMeshData(ref meshData, this.dotVariant?.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
+
+                        var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][1]; //индекс материала этой грани
+                        var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][3]; //индекс линий этой грани
+
+                        //ставим точку
+                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
 
                         if ((key.Connection & Facing.NorthEast) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.NorthWest) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.NorthUp) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.NorthDown) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
                         }
                     }
 
                     if ((key.Connection & Facing.EastAll) != 0)
                     {
-                        AddMeshData(ref meshData, this.dotVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD));
+                        var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][1]; //индекс материала этой грани
+                        var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][3]; //индекс линий этой грани
+
+                        //ставим точку
+                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD));
 
                         if ((key.Connection & Facing.EastNorth) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.EastSouth) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.EastUp) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.EastDown) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
                         }
                     }
 
                     if ((key.Connection & Facing.SouthAll) != 0)
                     {
-                        AddMeshData(ref meshData, this.dotVariant?.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
+                        var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][1]; //индекс материала этой грани
+                        var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][3]; //индекс линий этой грани
+
+                        //ставим точку
+                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
 
                         if ((key.Connection & Facing.SouthEast) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.SouthWest) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.SouthUp) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.SouthDown) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
                         }
                     }
 
                     if ((key.Connection & Facing.WestAll) != 0)
                     {
-                        AddMeshData(ref meshData, this.dotVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD));
+                        var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][1]; //индекс материала этой грани
+                        var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][3]; //индекс линий этой грани
+
+                        //ставим точку
+                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD));
 
                         if ((key.Connection & Facing.WestNorth) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.WestSouth) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.WestUp) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.WestDown) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
                         }
                     }
 
                     if ((key.Connection & Facing.UpAll) != 0)
                     {
-                        AddMeshData(ref meshData, this.dotVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD));
+                        var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][1]; //индекс материала этой грани
+                        var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][3]; //индекс линий этой грани
+
+                        //ставим точку
+                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD));
 
                         if ((key.Connection & Facing.UpNorth) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.UpEast) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.UpSouth) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.UpWest) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
                         }
                     }
 
                     if ((key.Connection & Facing.DownAll) != 0)
                     {
-                        AddMeshData(ref meshData, this.dotVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 0.0f));
+                        var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][1]; //индекс материала этой грани
+                        var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][3]; //индекс линий этой грани
+
+                        //ставим точку
+                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 0.0f));
 
                         if ((key.Connection & Facing.DownNorth) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.DownEast) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.DownSouth) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.DownWest) != 0)
                         {
-                            AddMeshData(ref meshData, this.partVariant?.MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f));
                         }
                     }
 
-                    // Switches
+                    // Переключатели
                     if ((key.Switches & Facing.NorthEast) != 0)
                     {
                         AddMeshData(
@@ -873,7 +955,7 @@ namespace ElectricityAddon.Content.Block.ECable
             Cuboidf[] dotBoxes, Cuboidf[] partBoxes,
             Cuboidf[] enabledSwitchBoxes, Cuboidf[] disabledSwitchBoxes)
         {
-            if (!boxesCache.TryGetValue(key, out var boxes))
+            if (! boxesCache.TryGetValue(key, out var boxes))
             {
                 var origin = new Vec3d(0.5, 0.5, 0.5);
 
@@ -1354,27 +1436,146 @@ namespace ElectricityAddon.Content.Block.ECable
             }
         }
 
+
+
+
+        /// <summary>
+        /// Структура для хранения ключей для словарей
+        /// </summary>
+        public struct CacheDataKey : IEquatable<CacheDataKey>
+        {
+            public readonly Facing Connection;
+            public readonly Facing Switches;
+            public readonly Facing SwitchesState;
+            public readonly float[][] AllEparams;
+
+            public CacheDataKey(Facing connection, Facing switches, Facing switchesState, float[][] allEparams)
+            {
+                Connection = connection;
+                Switches = switches;
+                SwitchesState = switchesState;
+                AllEparams = allEparams;
+            }
+
+            // Метод FromEntity остаётся здесь!
+            public static CacheDataKey FromEntity(BlockEntityECable entityE)
+            {
+                float[][] bufAllEparams = entityE.AllEparams
+                    .Select(subArray => subArray?.ToArray())
+                    .ToArray();
+
+                return new CacheDataKey(
+                    entityE.Connection,
+                    entityE.Switches,
+                    entityE.SwitchesState,
+                    bufAllEparams
+                );
+            }
+
+            // Реализация Equals и GetHashCode
+            public bool Equals(CacheDataKey other)
+            {
+                return Connection.Equals(other.Connection) &&
+                       Switches.Equals(other.Switches) &&
+                       SwitchesState.Equals(other.SwitchesState) &&
+                       ArraysEqual(AllEparams, other.AllEparams);
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is CacheDataKey other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    int hash = 17;
+                    hash = hash * 31 + Connection.GetHashCode();
+                    hash = hash * 31 + Switches.GetHashCode();
+                    hash = hash * 31 + SwitchesState.GetHashCode();
+                    hash = hash * 31 + GetArraysHashCode(AllEparams);
+                    return hash;
+                }
+            }
+
+            private static bool ArraysEqual(float[][] a1, float[][] a2)
+            {
+                if (ReferenceEquals(a1, a2)) return true;
+                if (a1 == null || a2 == null) return false;
+                if (a1.Length != a2.Length) return false;
+
+                for (int i = 0; i < a1.Length; i++)
+                {
+                    if (a1[i] == null || a2[i] == null)
+                    {
+                        if (a1[i] != a2[i]) return false;
+                        continue;
+                    }
+
+                    if (!a1[i].SequenceEqual(a2[i])) return false;
+                }
+                return true;
+            }
+
+            private static int GetArraysHashCode(float[][] arrays)
+            {
+                if (arrays == null) return 0;
+                int hash = 17;
+                foreach (var array in arrays)
+                {
+                    if (array == null)
+                    {
+                        hash = hash * 31;
+                        continue;
+                    }
+                    foreach (float val in array)
+                    {
+                        hash = hash * 31 + val.GetHashCode();
+                    }
+                }
+                return hash;
+            }
+        }
+
+
+        /*  можно удалить
+        /// <summary>
+        /// Ключ для CacheDataKey
+        /// </summary>
         public struct CacheDataKey
         {
             public readonly Facing Connection;
             public readonly Facing Switches;
             public readonly Facing SwitchesState;
+            public readonly float[][] AllEparams;
 
-            public CacheDataKey(Facing connection, Facing switches, Facing switchesState)
+            public CacheDataKey(Facing connection, Facing switches, Facing switchesState, float[][] allEparams)
             {
-                this.Connection = connection;
-                this.Switches = switches;
-                this.SwitchesState = switchesState;
+                Connection = connection;
+                Switches = switches;
+                SwitchesState = switchesState;
+                AllEparams = allEparams;
             }
+
+
 
             public static CacheDataKey FromEntity(BlockEntityECable entityE)
             {
+                //безопасно копируем
+
+                float[][] bufAllEparams = entityE.AllEparams
+                    .Select(subArray => subArray?.ToArray())
+                    .ToArray();
+
                 return new CacheDataKey(
                     entityE.Connection,
                     entityE.Switches,
-                    entityE.SwitchesState
+                    entityE.SwitchesState,
+                    bufAllEparams
                 );
             }
         }
+        */
     }
 }

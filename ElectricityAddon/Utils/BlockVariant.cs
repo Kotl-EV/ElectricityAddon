@@ -1,4 +1,5 @@
-﻿using Vintagestory.API.Client;
+﻿using System.Collections.Generic;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 
@@ -10,8 +11,11 @@ public class BlockVariant
     public readonly MeshData? MeshData;
     public readonly Cuboidf[] SelectionBoxes;
 
+
     public BlockVariant(ICoreAPI api, CollectibleObject baseBlock, string variant)
     {
+
+
         var assetLocation = baseBlock.CodeWithVariant("type", variant);
         var block = api.World.GetBlock(assetLocation);
 

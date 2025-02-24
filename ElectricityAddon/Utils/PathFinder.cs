@@ -14,13 +14,13 @@ public class PathFinder
     /// <param name="end"></param>
     /// <param name="networkPositions"></param>
     /// <returns></returns>
-    public (List<BlockPos>, List<int>) FindShortestPath(BlockPos start, BlockPos end, Network network, Dictionary<BlockPos, NetworkPart> parts)
+    public (List<BlockPos>, List<int>, List<bool[]>) FindShortestPath(BlockPos start, BlockPos end, Network network, Dictionary<BlockPos, NetworkPart> parts)
     {
 
         //проверяем наличие начальной и конечной точки в этой цепи
         var networkPositions = network.PartPositions;
         if (!networkPositions.Contains(start) || !networkPositions.Contains(end))
-            return (null!, null!);
+            return (null!, null!,null!);
 
 
         //смотрим с какой грани начинать
@@ -60,9 +60,12 @@ public class PathFinder
 
         //хранит для каждого кусочка цепи посещенные грани в данный момент
         var nowProcessedFaces = new Dictionary<BlockPos, bool[]>();
+        nowProcessedFaces[start] = new bool[6] { false, false, false, false, false, false };
+        nowProcessedFaces[start][startBlockFacing[0]] = true ;
 
         //хранит для каждого кусочка цепи посещенные грани в данный момент (для вывода наружу)
-        //var nowProcessedFacesList = new List<bool[]>();
+        var nowProcessedFacesList = new List<bool[]>();
+        
 
         //хранит для каждого кусочка цепи все посещенные грани
         var processedFaces = new Dictionary<BlockPos, bool[]>();
@@ -99,7 +102,6 @@ public class PathFinder
                     cameFromList.Add(neighbor);
 
                     facingFrom[neighbor] = buf2[i];
-                    //facingFromList.Add(buf2[i]);
 
                     nowProcessedFaces[neighbor] = buf3;
                 }
@@ -111,17 +113,18 @@ public class PathFinder
             first = false; //сбросили маркер
         }
 
-        if (!cameFromList.Contains(end))
-            return (null!,null!);
+        if (!cameFromList.Contains(end))        //не нашли конец?
+            return (null!,null!,null!);
 
-        var path = ReconstructPath(start, end, endBlockFacing[0], cameFrom);
+        var path = ReconstructPath(start, end, endBlockFacing[0], cameFrom);    //реконструкция маршрута
 
-        foreach(var pos in path)
+        foreach(var pos in path)                                //подготавливаем дополнительные данные
         {
             facingFromList.Add(facingFrom[pos]);
+            nowProcessedFacesList.Add(nowProcessedFaces[pos]);
         }
 
-        return (path, facingFromList);
+        return (path, facingFromList,nowProcessedFacesList);
     }
 
 
@@ -323,7 +326,6 @@ public class PathFinder
         var part = parts[pos];                     //текущий элемент
         var Connections = part.Connection;         //соединения этого элемента
 
-        int i = 0;
 
         Facing hereConnections = part.Connection;
 

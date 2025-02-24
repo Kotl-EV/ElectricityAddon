@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using ElectricityAddon.Content.Block.ECable;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -10,30 +10,6 @@ public class BlockVariants
     public readonly Cuboidf[] CollisionBoxes;
     public readonly MeshData? MeshData;
     public readonly Cuboidf[] SelectionBoxes;
-
-    public readonly Dictionary<int, string> materials = new Dictionary< int, string>
-        {
-            { 0, "copper" },
-            { 1, "silver" },
-            { 2, "lead" }
-        };
-
-    public readonly Dictionary<int, string> quantitys = new Dictionary<int, string>
-        {
-            { 1, "single" },
-            { 2, "double" },
-            { 3, "triple" },
-            { 4, "quadruple"}
-        };
-
-    public readonly Dictionary<int, string> types = new Dictionary<int, string>
-        {
-            { 0, "dot" },
-            { 1, "part" },
-            { 2, "block" }
-        };
-
-
 
     /// <summary>
     /// Извлекаем нужный вариант блока провода
@@ -52,9 +28,9 @@ public class BlockVariants
         t[1] = "quantity";
         t[2] = "type";
 
-        v[0] = materials[indexMaterial];
-        v[1] = quantitys[indexQuantity];
-        v[2] = types[indexType];
+        v[0] = BlockECable.materials[indexMaterial];
+        v[1] = BlockECable.quantitys[indexQuantity];
+        v[2] = BlockECable.types[indexType];
 
         var assetLocation = baseBlock.CodeWithVariants(t, v);
         var block = api.World.GetBlock(assetLocation);

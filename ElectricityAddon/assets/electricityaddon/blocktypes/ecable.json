@@ -37,10 +37,10 @@
 
   "creativeInventory": {
     "general": [
-      "*-single-block"
+      "*-single-dot"
     ],
     "electricity": [
-      "*-single-block"
+      "*-single-dot"
     ]
   },
 

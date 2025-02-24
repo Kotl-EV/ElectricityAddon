@@ -14,8 +14,6 @@ public class BlockVariant
 
     public BlockVariant(ICoreAPI api, CollectibleObject baseBlock, string variant)
     {
-
-
         var assetLocation = baseBlock.CodeWithVariant("type", variant);
         var block = api.World.GetBlock(assetLocation);
 

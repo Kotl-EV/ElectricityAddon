@@ -282,7 +282,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         {
             this.interruption = interruption;
             this.connection = connection;
-            this.allEparams = AllEparamss;
+            this.allEparams = AllEparamss!;
             this.dirty = true;
             this.Update();
         }

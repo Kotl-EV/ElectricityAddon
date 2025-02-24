@@ -5,6 +5,7 @@ using System.Linq;
 using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Content.Block.ESwitch;
 using ElectricityAddon.Utils;
+using HarmonyLib;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
@@ -27,6 +28,30 @@ namespace ElectricityAddon.Content.Block.ECable
         public BlockVariants? partVariant;
 
         public float res;
+
+
+        public static readonly Dictionary<int, string> materials = new Dictionary<int, string>
+        {
+            { 0, "copper" },
+            { 1, "silver" },
+            { 2, "lead" }
+        };
+
+        public static Dictionary<int, string> quantitys = new Dictionary<int, string>
+        {
+            { 1, "single" },
+            { 2, "double" },
+            { 3, "triple" },
+            { 4, "quadruple"}
+        };
+
+        public static Dictionary<int, string> types = new Dictionary<int, string>
+        {
+            { 0, "dot" },
+            { 1, "part" },
+            { 2, "block" }
+        };
+
 
         public override void OnUnloaded(ICoreAPI api)
         {
@@ -51,7 +76,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 this.disabledSwitchVariant = new BlockVariant(api, block, "disabled");
             }
 
-            this.dotVariant = new BlockVariants(api, this, 0,1,0);
+            this.dotVariant = new BlockVariants(api, this, 0, 1, 0);
             this.partVariant = new BlockVariants(api, this, 0, 1, 1);
         }
 
@@ -73,12 +98,12 @@ namespace ElectricityAddon.Content.Block.ECable
                 {
                     var lines = entity.AllEparams[FacingHelper.Faces(facing).First().Index][3]; //сколько линий на грани уже?
 
-                    
+
 
 
                     if ((entity.Connection & facing) != 0)  //мы навелись уже на существующий кабель?
                     {
-                           //byItemStack.Block.Code
+                        //byItemStack.Block.Code
 
                         if (lines >= 1 && lines < 4) //линий 1-3 имеется
                         {
@@ -96,7 +121,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     {
                         entity.Connection |= facing;
 
-                        
+
                         //линий 0? Значит грань была пустая    
                         if (lines == 0)
                         {
@@ -180,7 +205,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     var hitPosition = blockSelection.HitPosition;
 
                     var sf = new SelectionFacingCable();
-                    var selectedFacing = sf.SelectionFacing(key, hitPosition, this);  //выделяем напрвление для слома под курсором
+                    var selectedFacing = sf.SelectionFacing(key, hitPosition, this);  //выделяем направление для слома под курсором
 
 
                     //определяем какой выключатель ломать
@@ -220,24 +245,36 @@ namespace ElectricityAddon.Content.Block.ECable
                     }
 
                     //здесь уже ломаем кабеля
-                    var connection = entity.Connection & ~selectedFacing;
+                    var connection = entity.Connection & ~selectedFacing;      //отнимает выбранные соединения
+
                     if (connection != Facing.None)
                     {
-                        var stackSize = FacingHelper.Count(selectedFacing);
+                        var stackSize = FacingHelper.Count(selectedFacing);    //соединений выделено
 
                         if (stackSize > 0)
                         {
                             entity.Connection = connection;
                             entity.MarkDirty(true);
 
-                            if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
-                            {
-                                var assetLocation = new AssetLocation("electricityaddon:cable-dot");
-                                var block = world.BlockAccessor.GetBlock(assetLocation);
-                                var itemStack = new ItemStack(block, stackSize);
 
-                                world.SpawnItemEntity(itemStack, position.ToVec3d());
+                            if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)     //если у игрока не креатив
+                            {
+                                foreach (var face in FacingHelper.Faces(selectedFacing))         //перебираем все грани выделенных кабелей
+                                {
+                                    var indexM = (int)entity.AllEparams[face.Index][1];          //индекс материала этой грани
+                                    var indexQ = (int)entity.AllEparams[face.Index][3];          //индекс линий этой грани
+
+                                    var block = new GetCableAsset().CableAsset(api, this, indexM, 1, 0); //берем ассет блока кабеля
+
+                                    connection = selectedFacing & FacingHelper.FromFace(face);                   //берем направления только в этой грани
+                                    stackSize = FacingHelper.Count(connection)* indexQ;          //сколько на этой грани проводов выронить
+
+                                    var itemStack = new ItemStack(block, stackSize);
+
+                                    world.SpawnItemEntity(itemStack, position.ToVec3d());
+                                }
                             }
+
 
                             return;
                         }
@@ -248,18 +285,40 @@ namespace ElectricityAddon.Content.Block.ECable
             base.OnBlockBroken(world, position, byPlayer, dropQuantityMultiplier);
         }
 
+
+        /// <summary>
+        /// Роняем все соединения этого блока?
+        /// </summary>
+        /// <param name="world"></param>
+        /// <param name="position"></param>
+        /// <param name="byPlayer"></param>
+        /// <param name="dropQuantityMultiplier"></param>
+        /// <returns></returns>
         public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos position, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
             if (world.BlockAccessor.GetBlockEntity(position) is BlockEntityECable entity)
             {
-                var assetLocation = new AssetLocation("electricityaddon:cable-dot");//тут ощибка
-                var block = world.BlockAccessor.GetBlock(assetLocation);
-                var stackSize = FacingHelper.Count(entity.Connection);
-                var itemStack = new ItemStack(block, stackSize);
+                ItemStack[] itemStacks= new ItemStack[] {};
 
-                return new[] {
-                    itemStack
-                };
+                var connection = entity.Connection;
+
+                foreach (var face in FacingHelper.Faces(entity.Connection))         //перебираем все грани выделенных кабелей
+                {
+                    var indexM = (int)entity.AllEparams[face.Index][1];          //индекс материала этой грани
+                    var indexQ = (int)entity.AllEparams[face.Index][3];          //индекс линий этой грани
+
+                    var block = new GetCableAsset().CableAsset(api, this, indexM, 1, 0); //берем ассет блока кабеля
+
+                    connection = entity.Connection & FacingHelper.FromFace(face);                   //берем направления только в этой грани
+                    var stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
+
+                    var itemStack = new ItemStack(block, stackSize);
+
+                    itemStacks = itemStacks.AddToArray<ItemStack>(itemStack);
+                }
+
+
+                return itemStacks;
             }
 
             return base.GetDrops(world, position, byPlayer, dropQuantityMultiplier);
@@ -427,27 +486,31 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][3]; //индекс линий этой грани
 
+                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+
                         //ставим точку
-                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
+                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
+
 
                         if ((key.Connection & Facing.NorthEast) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.NorthWest) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.NorthUp) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.NorthDown) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
                         }
                     }
 
@@ -456,27 +519,30 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][3]; //индекс линий этой грани
 
+                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+
                         //ставим точку
-                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD));
+                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD));
 
                         if ((key.Connection & Facing.EastNorth) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.EastSouth) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.EastUp) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.EastDown) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
                         }
                     }
 
@@ -485,27 +551,30 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][3]; //индекс линий этой грани
 
+                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+
                         //ставим точку
-                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
+                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
 
                         if ((key.Connection & Facing.SouthEast) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.SouthWest) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.SouthUp) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.SouthDown) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
                         }
                     }
 
@@ -514,27 +583,30 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][3]; //индекс линий этой грани
 
+                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+
                         //ставим точку
-                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD));
+                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD));
 
                         if ((key.Connection & Facing.WestNorth) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.WestSouth) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.WestUp) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.WestDown) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
                         }
                     }
 
@@ -543,27 +615,30 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][3]; //индекс линий этой грани
 
+                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+
                         //ставим точку
-                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD));
+                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD));
 
                         if ((key.Connection & Facing.UpNorth) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.UpEast) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.UpSouth) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
                         }
 
                         if ((key.Connection & Facing.UpWest) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
                         }
                     }
 
@@ -572,27 +647,30 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][3]; //индекс линий этой грани
 
+                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+
                         //ставим точку
-                        AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 0).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 0.0f));
+                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 0.0f));
 
                         if ((key.Connection & Facing.DownNorth) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.DownEast) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.DownSouth) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 0.0f));
                         }
 
                         if ((key.Connection & Facing.DownWest) != 0)
                         {
-                            AddMeshData(ref meshData, new BlockVariants(api, this, indexM, indexQ, 1).MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f));
                         }
                     }
 
@@ -955,7 +1033,7 @@ namespace ElectricityAddon.Content.Block.ECable
             Cuboidf[] dotBoxes, Cuboidf[] partBoxes,
             Cuboidf[] enabledSwitchBoxes, Cuboidf[] disabledSwitchBoxes)
         {
-            if (! boxesCache.TryGetValue(key, out var boxes))
+            if (!boxesCache.TryGetValue(key, out var boxes))
             {
                 var origin = new Vec3d(0.5, 0.5, 0.5);
 

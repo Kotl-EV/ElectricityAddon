@@ -56,8 +56,8 @@ public class ElectricityAddon : ModSystem
     public bool instant = false;                                      //расчет мгновенно?
     public bool AltPressed = false;                                   //зажата кнопка Alt
     private PathFinder pathFinder = new PathFinder();                 //инициализация модуля поиска путей
-    private ICoreAPI api;
-    private ICoreClientAPI capi;
+    private ICoreAPI api=null!;
+    private ICoreClientAPI capi = null!;
 
     public override void Start(ICoreAPI api)
     {
@@ -291,15 +291,16 @@ public class ElectricityAddon : ModSystem
     /// <summary>
     /// Решается задача распределения энергии
     /// </summary>
-    private void logisticalTask(Network network, List<BlockPos> consumerPositions, List<float> consumerRequests, List<BlockPos> producerPositions, List<float> producerGive, ref Simulation sim, out List<BlockPos>[][] paths, out List<int>[][] facingFrom)
+    private void logisticalTask(Network network, List<BlockPos> consumerPositions, List<float> consumerRequests,
+        List<BlockPos> producerPositions, List<float> producerGive, ref Simulation sim, out List<BlockPos>[][] paths, out List<int>[][] facingFrom, out List<bool[]>[][] nowProcessedFaces)
     {
         //ищем все пути и расстояния
-
         float[][] distances = new float[consumerPositions.Count][];                     //сохраняем сюда расстояния от всех потребителей ко всем источникам 
         paths = new List<BlockPos>[consumerPositions.Count][];                          //сохраняем сюда пути от всех потребителей ко всем источникам
-        facingFrom = new List<int>[consumerPositions.Count][];                           //сохраняем сюда грань следующей позиции от всех потребителей ко всем источникам
+        facingFrom = new List<int>[consumerPositions.Count][];                          //сохраняем сюда грань следующей позиции от всех потребителей ко всем источникам
+        nowProcessedFaces= new List<bool[]>[consumerPositions.Count][];                 //сохраняем сюда просчитанные грани
 
-        //
+        
         int i = 0, j;                                                                   //индексы -__-
         foreach (var cP in consumerPositions)                                           //работаем со всеми потребителями в этой сети
         {
@@ -307,19 +308,20 @@ public class ElectricityAddon : ModSystem
             distances[i] = new float[producerPositions.Count];
             paths[i] = new List<BlockPos>[producerPositions.Count];
             facingFrom[i] = new List<int>[producerPositions.Count];
+            nowProcessedFaces[i] = new List<bool[]>[producerPositions.Count];
 
-
-            foreach (var pP in producerPositions)                                    //работаем со всеми источниками в этой сети
+            foreach (var pP in producerPositions)                                                   //работаем со всеми источниками в этой сети
             {
 
-                var (buf1, buf2) = pathFinder.FindShortestPath(cP, pP, network, parts);       //извлекаем путь и расстояние
+                var (buf1, buf2, buf3) = pathFinder.FindShortestPath(cP, pP, network, parts);       //извлекаем путь и расстояние
 
-                if (buf1 == null)                                                           //Путь не найден!
-                    return;                                                                 //возможно потом continue тут должно быть
+                if (buf1 == null)                                                                   //Путь не найден!
+                    return;                                                                         //возможно потом continue тут должно быть
 
-                paths[i][j] = buf1;                                                         //сохраняем пути
-                distances[i][j] = buf1.Count;                                               //сохраняем длину пути
-                facingFrom[i][j] = buf2;                                                    //сохраняем грани соседей
+                paths[i][j] = buf1;                                                                 //сохраняем пути
+                distances[i][j] = buf1.Count;                                                       //сохраняем длину пути
+                facingFrom[i][j] = buf2;                                                            //сохраняем грани соседей
+                nowProcessedFaces[i][j] = buf3;                                                     //сохраняем посчитанные грани
 
                 j++;
             }
@@ -331,24 +333,22 @@ public class ElectricityAddon : ModSystem
         //Распределение запросов и энергии
         //Инициализация задачи логистики энергии: магазины - покупатели
         Store[] stores = new Store[producerPositions.Count];
-        for (j = 0; j < producerPositions.Count; j++)                 //работаем со всеми источниками в этой сети                    
+        for (j = 0; j < producerPositions.Count; j++)                       //работаем со всеми источниками в этой сети                    
         {
-            stores[j] = new Store(j + 1, producerGive[j]);            //создаем магазин со своими запасами
+            stores[j] = new Store(j + 1, producerGive[j]);                  //создаем магазин со своими запасами
         }
 
         Customer[] customers = new Customer[consumerPositions.Count];
-        for (i = 0; i < consumerPositions.Count; i++)                         //работаем со всеми потребителями в этой сети
+        for (i = 0; i < consumerPositions.Count; i++)                       //работаем со всеми потребителями в этой сети
         {
             Dictionary<Store, float> distFromCustomerToStore = new Dictionary<Store, float>();
-            for (j = 0; j < producerPositions.Count; j++)                     //работаем со всеми генераторами в этой сети                    
+            for (j = 0; j < producerPositions.Count; j++)                   //работаем со всеми генераторами в этой сети                    
             {
-                distFromCustomerToStore.Add(stores[j], distances[i][j]);       //записываем расстояния до каждого магазина от этого потребителя
+                distFromCustomerToStore.Add(stores[j], distances[i][j]);    //записываем расстояния до каждого магазина от этого потребителя
             }
 
             customers[i] = new Customer(j + 1, consumerRequests[i], distFromCustomerToStore);        //создаем покупателя со своими потребностями
         }
-
-
 
 
         //Собственно сама реализация "жадного алгоритма" ---------------------------------------------------------------------------------------//
@@ -358,8 +358,7 @@ public class ElectricityAddon : ModSystem
         sim.Stores.AddRange(stores);
         sim.Customers.AddRange(customers);
 
-        sim.Run();                  //распределение происходит тут
-
+        sim.Run();                                                          //распределение происходит тут
     }
 
 
@@ -443,21 +442,21 @@ public class ElectricityAddon : ModSystem
 
                 foreach (var accum in network.Accumulators.Select(electricAccum => new Accumulator(electricAccum)))  //выбираем все аккумы в этой сети
                 {
-                    this.accums.Add(accum);      //создаем список с аккумами
+                    this.accums.Add(accum);                                            //создаем список с аккумами
                 }
 
 
-                foreach (var accum in this.accums)                                         //работаем со всеми аккумами в этой сети
+                foreach (var accum in this.accums)                                     //работаем со всеми аккумами в этой сети
                 {
-                    float giveEnergy = accum.ElectricAccum.canRelease();                      //этот аккум может выдать столько энергии
-                    if (giveEnergy == 0)                                                   //если у этого аккума пусто
+                    float giveEnergy = accum.ElectricAccum.canRelease();               //этот аккум может выдать столько энергии
+                    if (giveEnergy == 0)                                               //если у этого аккума пусто
                         continue;
 
                     this.accums2.Add(accum);
 
                     var accumPos = accum.ElectricAccum.Pos;
-                    producerPositions.Add(accumPos);    //сохраняем позиции аккумов
-                    producerGive.Add(giveEnergy);       //сохраняем выданную энергию аккумов
+                    producerPositions.Add(accumPos);                                   //сохраняем позиции аккумов
+                    producerGive.Add(giveEnergy);                                      //сохраняем выданную энергию аккумов
                 }
 
 
@@ -466,7 +465,7 @@ public class ElectricityAddon : ModSystem
 
                 //Этап 4 - Распределяем энергию ----------------------------------------------------------------------//                 
                 var sim = new Simulation();
-                logisticalTask(network, consumerPositions, consumerRequests, producerPositions, producerGive, ref sim, out var paths, out var facingFrom);
+                logisticalTask(network, consumerPositions, consumerRequests, producerPositions, producerGive, ref sim, out var paths, out var facingFrom, out var nowProcessedFaces);
 
 
 
@@ -490,7 +489,7 @@ public class ElectricityAddon : ModSystem
                                     packet.energy = value;
                                     packet.path = paths[indexCustomer][indexStore];
                                     packet.facingFrom = facingFrom[indexCustomer][indexStore];
-                                                                       
+                                    packet.nowProcessed = nowProcessedFaces[indexCustomer][indexStore];
                                     packet.voltage = (int)part.eparams[packet.facingFrom.Last()][6];
 
                                     parts[posStore].energyPackets.Add(packet);
@@ -571,7 +570,7 @@ public class ElectricityAddon : ModSystem
 
                 //Этап  - Распределяем энергию снова ----------------------------------------------------------------------//                 
                 var sim2 = new Simulation();
-                logisticalTask(network, consumer2Positions, consumer2Requests, producer2Positions, producer2Give, ref sim2, out var paths2, out var facingFrom2);
+                logisticalTask(network, consumer2Positions, consumer2Requests, producer2Positions, producer2Give, ref sim2, out var paths2, out var facingFrom2, out var nowProcessedFaces2);
 
 
                 if (!instant)  // медленная передача
@@ -596,7 +595,7 @@ public class ElectricityAddon : ModSystem
 
                                     packet.path = paths2[indexCustomer][indexStore];
                                     packet.facingFrom = facingFrom2[indexCustomer][indexStore];
-
+                                    packet.nowProcessed = nowProcessedFaces2[indexCustomer][indexStore];
                                     packet.voltage = (int)part.eparams[packet.facingFrom.Last()][6];
 
                                     parts[posStore].energyPackets.Add(packet);
@@ -759,23 +758,34 @@ public class ElectricityAddon : ModSystem
                                 item2 = item;
 
                                 item2.path.RemoveAt(item2.path.Count - 1);                //удаляем последний элемент
-                                var moveTo = item2.path.Last();                          //координата теперь последнего элемента
+                                var moveTo = item2.path.Last();                           //координата теперь последнего элемента
 
                                 if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item2.facingFrom.Last(), moveTo))      //копируем пакет, только если элемент там еще есть и пакет может туда пройти
                                 {
                                     
                                     item2.energy = item2.energy * ((100 - part.Value.eparams[item2.facingFrom.Last()][2]) / 100.0F);    //потери на сопротивление
-                                    item2.facingFrom.RemoveAt(item2.facingFrom.Count - 1);                     //удаляем последний элемент facing
-                                    parts[moveTo].energyPackets.Add(item2);                                   //копируем пакет на новую позицию
 
-                                    parts[moveTo].current[item2.facingFrom.Last()] += item2.energy*(1.0F) / item2.voltage;  //считаем ток
+                                    var current= item2.energy * (1.0F) / item2.voltage;  //считаем ток
+                                    i = 0;
+                                    foreach (var face in item2.nowProcessed.Last())      //выбираем все просчитанные грани 
+                                    {
+                                        if (face)
+                                        {
+                                            parts[moveTo].current[i] += current;        //добавляем просчитанным граням ток
+                                        }
+                                        i++;
+                                    }
+
+                                    item2.facingFrom.RemoveAt(item2.facingFrom.Count - 1);                     //удаляем последний элемент facing
+                                    item2.nowProcessed.RemoveAt(item2.nowProcessed.Count - 1);                 //удаляем последний элемент nowProcessed
+
+                                    parts[moveTo].energyPackets.Add(item2);                                   //копируем пакет на новую позицию
                                 }
 
 
                                 //пакет в любом случае уничтожится, если не сможет переместиться
                                 //удаляем пакеты
                                 parts[part.Key].energyPackets.Remove(item);
-
                             }
 
                         }
@@ -1225,12 +1235,11 @@ public class ElectricityAddon : ModSystem
 /// </summary>
 public struct energyPacket
 {
-    public List<BlockPos> path;
-    public float energy;
-    public int voltage;
-    public List<int> facingFrom;
-    
-
+    public List<BlockPos> path;     //маршрут по блокам
+    public float energy;            //энергия которую он несет
+    public int voltage;             //напряжение пакета
+    public List<int> facingFrom;    //конечная грань в данном блоке маршрута
+    public List<bool[]> nowProcessed;  //все пройденные грани в данном блоке маршрута
 }
 
 
@@ -1264,7 +1273,7 @@ public class NetworkPart                       //элемент цепи
             null
         };
 
-    public float[][] eparams = {      //в какие стороны провода направлены
+    public float[][] eparams = {                //параметры цепи по граням
             null!,
             null!,
             null!,

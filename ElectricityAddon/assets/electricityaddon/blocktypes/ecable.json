@@ -53,13 +53,7 @@
     "base": "block/cable-{quantity}/cable-{material}-{quantity}-{type}"
   },
 
-  "texturesByType": {
-    "*": {
-      "all": {
-        "base": "block/{material}"
-      }
-    }
-  },
+  
 
   "collisionSelectionBoxesByType": {
     "*-dot": [

@@ -29,7 +29,7 @@ public class BlockVariants
         t[2] = "type";
 
         v[0] = BlockECable.materials[indexMaterial];
-        v[1] = BlockECable.quantitys[indexQuantity];
+        v[1] = BlockECable.quantitys[indexQuantity];  //ошибка при размешении в соседней пустой грани!!!
         v[2] = BlockECable.types[indexType];
 
         var assetLocation = baseBlock.CodeWithVariants(t, v);

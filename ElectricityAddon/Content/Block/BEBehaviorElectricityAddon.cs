@@ -242,7 +242,8 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
 
             if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable) //если кабель!
             {
-                stringBuilder.AppendLine("├ " + "Потери: " + networkInformation?.eParamsInNetwork[2] + " %А/блок");
+                stringBuilder.AppendLine("├ " + "Уд. сопр: " + networkInformation?.eParamsInNetwork[2] + " Ом/линию");
+                stringBuilder.AppendLine("├ " + "Сопротивление: " + networkInformation?.eParamsInNetwork[2]/ networkInformation?.eParamsInNetwork[3] + " Ом");
                 stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед");
             }
             stringBuilder.AppendLine("└ " + "Макс напряжение: " + networkInformation?.eParamsInNetwork[6] + " В");

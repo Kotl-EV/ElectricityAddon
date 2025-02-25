@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Content.Block.ESwitch;
@@ -9,6 +10,7 @@ using HarmonyLib;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using Vintagestory.GameContent;
 
 namespace ElectricityAddon.Content.Block.ECable
 {
@@ -35,6 +37,13 @@ namespace ElectricityAddon.Content.Block.ECable
             { 0, "copper" },
             { 1, "silver" },
             { 2, "lead" }
+        };
+
+        public static readonly Dictionary<string, int> materialsInvert = new Dictionary<string, int>
+        {
+            { "copper", 0 },
+            { "silver", 1 },
+            { "lead", 2  }
         };
 
         public static Dictionary<int, string> quantitys = new Dictionary<int, string>
@@ -80,6 +89,7 @@ namespace ElectricityAddon.Content.Block.ECable
             this.partVariant = new BlockVariants(api, this, 0, 1, 1);
         }
 
+
         public override bool IsReplacableBy(Vintagestory.API.Common.Block block)
         {
             return base.IsReplacableBy(block) || block is BlockECable || block is BlockESwitch;
@@ -99,36 +109,62 @@ namespace ElectricityAddon.Content.Block.ECable
                     var lines = entity.AllEparams[FacingHelper.Faces(facing).First().Index][3]; //сколько линий на грани уже?
 
 
-
-
                     if ((entity.Connection & facing) != 0)  //мы навелись уже на существующий кабель?
                     {
-                        //byItemStack.Block.Code
 
-                        if (lines >= 1 && lines < 4) //линий 1-3 имеется
+                        var faceCoonections = entity.Connection & FacingHelper.FromFace(FacingHelper.Faces(facing).First()); //какие соединения уже есть на грани?
+
+                        //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
+                        if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(materials[(int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][1]])
+                            && byItemStack.StackSize >= FacingHelper.Count(faceCoonections))
                         {
-                            lines++;  //приращиваем линии                            
-                            entity.AllEparams[FacingHelper.Faces(facing).First().Index][3] = lines; //применяем линии
-                            entity.MarkDirty(true);
-                            return true;
+                            if (lines >= 1.0F && lines < 4.0F)                                          //линий 1-3 имеется
+                            {
+                                lines++;                                                                //приращиваем линии
+                                if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)        //чтобы в креативе не уменьшало стак
+                                {
+                                    byItemStack.StackSize -= FacingHelper.Count(faceCoonections) - 1;   //отнимаем у игрока столько же, сколько установили
+                                }
+                                entity.AllEparams[FacingHelper.Faces(facing).First().Index][3] = lines; //применяем линии
+                                entity.MarkDirty(true);
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                         else
                         {
                             return false;
                         }
+
+
+
+
                     }
                     else
                     {
-                        entity.Connection |= facing;
+                             
+                        //определяем индекс материала
+                        int indexM = 0;
+                        foreach (var index in materialsInvert)
+                        {
+                            if (entity.Block.Code.ToString().Contains(index.Key))
+                            {
+                                indexM = index.Value;
+                                break;
+                            }
+                        }
 
 
                         //линий 0? Значит грань была пустая    
-                        if (lines == 0)
+                        if (lines == 0.0F)
                         {
                             entity.Eparams = (new float[7]
                                 {
                                 10,                                 //максимальный ток
-                                0,                                  //индекс материала?!!!
+                                indexM,                             //индекс материала?!!!
                                 res,                                //потери энергии в элементе цепи
                                 1,                                  //количество линий элемента цепи/провода
                                 0,                                  //-------
@@ -139,18 +175,34 @@ namespace ElectricityAddon.Content.Block.ECable
                         }
                         else   //линий не 0, значитуже что-то там есть на грани
                         {
-                            entity.Eparams = (new float[7]
+                            //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
+                            if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(materials[(int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][1]])
+                                && byItemStack.StackSize >= (int)lines)
+                            {
+                                if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative) //чтобы в креативе не уменьшало стак
+                                {
+                                    byItemStack.StackSize -= (int)lines - 1;          //отнимаем у игрока столько же, сколько установили
+                                }
+
+                                entity.Eparams = (new float[7]
                                 {
                                 10,                                 //максимальный ток
-                                0,                                  //индекс материала?!!!
+                                indexM,                             //индекс материала?!!!
                                 res,                                //потери энергии в элементе цепи
-                                lines,                            //количество линий элемента цепи/провода
+                                lines,                              //количество линий элемента цепи/провода
                                 0,                                  //-------
                                 0,                                  //сгорел или нет
                                 32                                  //напряжение
                                 },
                                 FacingHelper.Faces(facing).First().Index);
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
+
+                        entity.Connection |= facing;
 
                     }
                     return true;
@@ -163,12 +215,24 @@ namespace ElectricityAddon.Content.Block.ECable
             {
                 if (world.BlockAccessor.GetBlockEntity(blockSelection.Position) is BlockEntityECable entity)
                 {
+                    //определяем индекс материала
+                    int indexM = 0;
+                    foreach (var index in materialsInvert)
+                    {
+                        if (entity.Block.Code.ToString().Contains(index.Key))
+                        {
+                            indexM = index.Value;
+                            break;
+                        }
+                    }
+
+
                     entity.Connection = facing;       //сообщаем направление
                     entity.Eparams = (new float[7]
                         {
                             10,                                 //максимальный ток
-                            0,                                  //индекс материала?!!!
-                            res,                                //потери энергии в элементе цепи
+                            indexM,                             //индекс материала?!!!
+                            res,                                //удельное сопротивление
                             1,                                  //количество линий элемента цепи/провода
                             0,                                  //-------
                             0,                                  //сгорел или нет
@@ -267,7 +331,7 @@ namespace ElectricityAddon.Content.Block.ECable
                                     var block = new GetCableAsset().CableAsset(api, this, indexM, 1, 0); //берем ассет блока кабеля
 
                                     connection = selectedFacing & FacingHelper.FromFace(face);                   //берем направления только в этой грани
-                                    stackSize = FacingHelper.Count(connection)* indexQ;          //сколько на этой грани проводов выронить
+                                    stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
 
                                     var itemStack = new ItemStack(block, stackSize);
 
@@ -298,7 +362,7 @@ namespace ElectricityAddon.Content.Block.ECable
         {
             if (world.BlockAccessor.GetBlockEntity(position) is BlockEntityECable entity)
             {
-                ItemStack[] itemStacks= new ItemStack[] {};
+                ItemStack[] itemStacks = new ItemStack[] { };
 
                 var connection = entity.Connection;
 
@@ -324,6 +388,14 @@ namespace ElectricityAddon.Content.Block.ECable
             return base.GetDrops(world, position, byPlayer, dropQuantityMultiplier);
         }
 
+
+
+        /// <summary>
+        /// Обновился соседний блок
+        /// </summary>
+        /// <param name="world"></param>
+        /// <param name="pos"></param>
+        /// <param name="neibpos"></param>
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
         {
             base.OnNeighbourBlockChange(world, pos, neibpos);
@@ -343,6 +415,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 }
 
 
+                //ломаем выключатели
                 var selectedSwitches = entity.Switches & selectedFacing;
 
                 if (selectedSwitches != Facing.None)
@@ -364,11 +437,13 @@ namespace ElectricityAddon.Content.Block.ECable
                 if (delayreturn)
                     return;
 
+                //ломаем провода
                 var selectedConnection = entity.Connection & selectedFacing;
 
                 if (selectedConnection != Facing.None)
                 {
-                    var stackSize = FacingHelper.Count(selectedConnection);
+                    /*
+                    //var stackSize = FacingHelper.Count(selectedConnection);
 
                     if (stackSize > 0)
                     {
@@ -379,6 +454,35 @@ namespace ElectricityAddon.Content.Block.ECable
 
                         entity.Connection &= ~selectedConnection;
                     }
+
+                    ////////
+                    */
+
+                    var stackSize = FacingHelper.Count(selectedConnection);    //соединений выделено
+
+                    if (stackSize > 0)
+                    {
+                        foreach (var face in FacingHelper.Faces(selectedConnection))         //перебираем все грани выделенных кабелей
+                        {
+                            var indexM = (int)entity.AllEparams[face.Index][1];          //индекс материала этой грани
+                            var indexQ = (int)entity.AllEparams[face.Index][3];          //индекс линий этой грани
+
+                            var block = new GetCableAsset().CableAsset(api, this, indexM, 1, 0); //берем ассет блока кабеля
+
+                            var connection = selectedConnection & FacingHelper.FromFace(face);                   //берем направления только в этой грани
+                            stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
+
+                            var itemStack = new ItemStack(block, stackSize);
+
+                            world.SpawnItemEntity(itemStack, pos.ToVec3d());
+
+
+                        }
+
+                        entity.Connection &= ~selectedConnection;
+
+                    }
+
                 }
             }
         }

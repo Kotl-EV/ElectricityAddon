@@ -1,0 +1,42 @@
+{
+	"editor": {
+		"allAngles": false,
+		"entityTextureMode": false
+	},
+	"textureWidth": 16,
+	"textureHeight": 16,
+	"textureSizes": {
+	},
+	"textures": {
+		"silver": "block/silver"
+	},
+	"elements": [
+		{
+			"name": "Cube",
+			"from": [ 6.9, -0.5, 7.5 ],
+			"to": [ 7.9, 0.5, 8.5 ],
+			"rotationOrigin": [ 8.0, 8.0, 8.0 ],
+			"faces": {
+				"north": { "texture": "#silver", "uv": [ 14.0, 2.5, 15.0, 3.5 ] },
+				"east": { "texture": "#silver", "uv": [ 3.5, 4.0, 4.5, 5.0 ] },
+				"south": { "texture": "#silver", "uv": [ 11.5, 5.5, 12.5, 6.5 ] },
+				"west": { "texture": "#silver", "uv": [ 7.5, 4.0, 8.5, 5.0 ] },
+				"up": { "texture": "#silver", "uv": [ 14.0, 5.0, 15.0, 6.0 ] },
+				"down": { "texture": "#silver", "uv": [ 6.5, 5.5, 7.5, 6.5 ] }
+			}
+		},
+		{
+			"name": "Cube2",
+			"from": [ 8.1, -0.5, 7.5 ],
+			"to": [ 9.1, 0.5, 8.5 ],
+			"rotationOrigin": [ 8.0, 8.0, 8.0 ],
+			"faces": {
+				"north": { "texture": "#silver", "uv": [ 12.0, 9.5, 13.0, 10.5 ] },
+				"east": { "texture": "#silver", "uv": [ 4.5, 6.0, 5.5, 7.0 ] },
+				"south": { "texture": "#silver", "uv": [ 11.0, 7.5, 12.0, 8.5 ] },
+				"west": { "texture": "#silver", "uv": [ 8.0, 5.5, 9.0, 6.5 ] },
+				"up": { "texture": "#silver", "uv": [ 6.0, 5.0, 7.0, 6.0 ] },
+				"down": { "texture": "#silver", "uv": [ 5.0, 5.5, 6.0, 6.5 ] }
+			}
+		}
+	]}

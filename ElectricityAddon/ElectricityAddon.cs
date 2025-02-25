@@ -760,28 +760,39 @@ public class ElectricityAddon : ModSystem
                                 item2.path.RemoveAt(item2.path.Count - 1);                //удаляем последний элемент
                                 var moveTo = item2.path.Last();                           //координата теперь последнего элемента
 
-                                if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item2.facingFrom.Last(), moveTo))      //копируем пакет, только если элемент там еще есть и пакет может туда пройти
-                                {
-                                    
-                                    item2.energy = item2.energy * ((100 - part.Value.eparams[item2.facingFrom.Last()][2]) / 100.0F);    //потери на сопротивление
+                                if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item2.facingFrom.Last(), moveTo))   //копируем пакет, только если элемент там еще есть и пакет может туда пройти
+                                {                                    
+                                    float resistance = part.Value.eparams[item2.facingFrom.Last()][2] / part.Value.eparams[item2.facingFrom.Last()][3];      //сопротивление проводника 
+                                    float current = item2.energy * (1.0F) / item2.voltage;  //считаем ток
+                                    float lossEnergy = current * current * resistance;      //считаем потери в этом вроде по закону Лжоуля-Ленца
 
-                                    var current= item2.energy * (1.0F) / item2.voltage;  //считаем ток
-                                    i = 0;
-                                    foreach (var face in item2.nowProcessed.Last())      //выбираем все просчитанные грани 
+                                    item2.energy -= lossEnergy;                             //снижаем энергию пакету
+                                    current = item2.energy * (1.0F) / item2.voltage;        //пересчитаем ток
+
+                                    if (item2.energy <= 0.001)                              //если у пакета очень мало энергии - обнуляем
                                     {
-                                        if (face)
-                                        {
-                                            parts[moveTo].current[i] += current;        //добавляем просчитанным граням ток
-                                        }
-                                        i++;
+                                        item2.energy = 0.0F;
                                     }
+                                    else                                                    //двигаем пакеты если энергия не 0
+                                    {
+                                        i = 0;
+                                        foreach (var face in item2.nowProcessed.Last())      //выбираем все просчитанные грани 
+                                        {
+                                            if (face)
+                                            {
+                                                parts[moveTo].current[i] += current;        //добавляем просчитанным граням ток
+                                            }
+                                            i++;
+                                        }
 
-                                    item2.facingFrom.RemoveAt(item2.facingFrom.Count - 1);                     //удаляем последний элемент facing
-                                    item2.nowProcessed.RemoveAt(item2.nowProcessed.Count - 1);                 //удаляем последний элемент nowProcessed
+                                        item2.facingFrom.RemoveAt(item2.facingFrom.Count - 1);                     //удаляем последний элемент facing
+                                        item2.nowProcessed.RemoveAt(item2.nowProcessed.Count - 1);                 //удаляем последний элемент nowProcessed
 
-                                    parts[moveTo].energyPackets.Add(item2);                                   //копируем пакет на новую позицию
+                                        parts[moveTo].energyPackets.Add(item2);                                    //копируем пакет на новую позицию
+                                    }
+                                    
+                                    
                                 }
-
 
                                 //пакет в любом случае уничтожится, если не сможет переместиться
                                 //удаляем пакеты
@@ -1285,11 +1296,11 @@ public class NetworkPart                       //элемент цепи
 
 /*
     {
-        0,                                  //максимальный размер пакета энергии (максим ток), которое может пройти по одной линии этого элемента цепи
+        0,                                  //максим ток, которое может пройти по одной линии этого элемента цепи
         0,                                  //текущий (ток), который проходит в элементе цепи
-        0,                                  //потери энергии в элементе цепи
+        0,                                  //потери энергии в элементе цепи (удельное сопротивление)
         0,                                  //количество линий элемента цепи/провода
-        0,                                  //напряжение макс (возможно будет про запас)
+        0,                                  //------------------------------------
         0,                                  //сгорел или нет
         0                                   //напряжение
     },

@@ -58,7 +58,8 @@ namespace ElectricityAddon.Content.Block.ECable
         {
             { 0, "dot" },
             { 1, "part" },
-            { 2, "block" }
+            { 2, "block" },
+            { 3, "burned" }
         };
 
 
@@ -172,6 +173,9 @@ namespace ElectricityAddon.Content.Block.ECable
                                 32                                  //напряжение
                                 },
                                 FacingHelper.Faces(facing).First().Index);
+
+                            entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
+                            entity.MarkDirty(true);
                         }
                         else   //линий не 0, значитуже что-то там есть на грани
                         {
@@ -195,6 +199,9 @@ namespace ElectricityAddon.Content.Block.ECable
                                 32                                  //напряжение
                                 },
                                 FacingHelper.Faces(facing).First().Index);
+
+                                entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
+                                entity.MarkDirty(true);
                             }
                             else
                             {
@@ -240,7 +247,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         },
                         FacingHelper.Faces(facing).First().Index);
 
-
+                    entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
+                    entity.MarkDirty(true);
 
                     //сообщаем параметры пока только кабелю
                 }

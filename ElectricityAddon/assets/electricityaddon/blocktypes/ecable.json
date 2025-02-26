@@ -30,17 +30,18 @@
       "states": [
         "dot",
         "part",
-        "block"
+        "block",
+        "burned"
       ]
     }
   ],
 
   "creativeInventory": {
     "general": [
-      "*-single-dot"
+      "*-single-*"
     ],
     "electricity": [
-      "*-single-dot"
+      "*-single-*"
     ]
   },
 
@@ -53,7 +54,11 @@
     "base": "block/cable-{quantity}/cable-{material}-{quantity}-{type}"
   },
 
-  
+  "textures": {
+    "coke": { "base": "block/coke" },
+    "copper": { "base": "block/copper" }
+  },
+
 
   "collisionSelectionBoxesByType": {
     "*-dot": [

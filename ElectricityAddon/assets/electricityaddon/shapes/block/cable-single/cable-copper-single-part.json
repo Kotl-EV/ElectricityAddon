@@ -7,9 +7,7 @@
 	"textureHeight": 16,
 	"textureSizes": {
 	},
-	"textures": {
-		"copper": "block/copper"
-	},
+
 	"elements": [
 		{
 			"name": "Cube",

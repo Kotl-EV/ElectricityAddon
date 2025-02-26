@@ -19,7 +19,7 @@ namespace ElectricityAddon.Content.Block.ECable
         //передает значения из Block в BEBehaviorElectricityAddon
         public (float[],int) Eparams
         {
-            //get => this.ElectricityAddon!.Eparams;
+            get => this.ElectricityAddon!.Eparams;
             set => this.ElectricityAddon!.Eparams = value;
         }
 

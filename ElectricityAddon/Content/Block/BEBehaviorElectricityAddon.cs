@@ -232,19 +232,20 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         stringBuilder.AppendLine("├ Потребление: " + networkInformation?.Consumption + " Вт");
         stringBuilder.AppendLine("└ Дефицит: " + networkInformation?.Lack + " Вт");
 
-        if (!this.System!.AltPressed) stringBuilder.AppendLine("Press Alt for details");
+        if (!this.System!.AltPressed) stringBuilder.AppendLine("Нажми Alt для подробностей");
 
         if (this.System!.AltPressed)
         {
             stringBuilder.AppendLine("Блок");
-            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0]* networkInformation?.eParamsInNetwork[3]+"/"+ networkInformation?.eParamsInNetwork[0] + " А");
+            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0]* networkInformation?.eParamsInNetwork[3] + " А");
             stringBuilder.AppendLine("├ " + "Ток: " + networkInformation?.current + " А");
 
             if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable) //если кабель!
             {
                 stringBuilder.AppendLine("├ " + "Уд. сопр: " + networkInformation?.eParamsInNetwork[2] + " Ом/линию");
-                stringBuilder.AppendLine("├ " + "Сопротивление: " + networkInformation?.eParamsInNetwork[2]/ networkInformation?.eParamsInNetwork[3] + " Ом");
-                stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " ед");
+                stringBuilder.AppendLine("├ " + "Сопротивление: " + networkInformation?.eParamsInNetwork[2]/ ( networkInformation?.eParamsInNetwork[3]* networkInformation?.eParamsInNetwork[4]) + " Ом");
+                stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " шт.");
+                stringBuilder.AppendLine("├ " + "Пл. сечения: " + networkInformation?.eParamsInNetwork[4]* networkInformation?.eParamsInNetwork[3] + " у.ед.");
             }
             stringBuilder.AppendLine("└ " + "Макс напряжение: " + networkInformation?.eParamsInNetwork[6] + " В");
         }

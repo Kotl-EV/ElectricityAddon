@@ -50,10 +50,10 @@
 
   "creativeInventory": {
     "general": [
-      "*-single-dot"
+      "*-single-part"
     ],
     "electricity": [
-      "*-single-dot"
+      "*-single-part"
     ]
   },
 
@@ -105,10 +105,39 @@
   "renderPass": "OpaqueNoCull",
 
   "attributesByType": {
-    "*-copper-*": { "res": 1 },
-    "*-silver-*": { "res": 0.5 },
-    "*-lead-*": { "res": 3 }
+    "*-32v-copper-*": {
+      "res": 1,
+      "maxCurrent": 5,
+      "crosssectional": 1
+    },
+    "*-32v-silver-*": {
+      "res": 0.95,
+      "maxCurrent": 6,
+      "crosssectional": 1
+    },
+    "*-32v-lead-*": {
+      "res": 4,
+      "maxCurrent": 2,
+      "crosssectional": 1
+    },
+
+    "*-128v-copper-*": {
+      "res": 1,
+      "maxCurrent": 10,
+      "crosssectional": 2
+    },
+    "*-128v-silver-*": {
+      "res": 0.95,
+      "maxCurrent": 12,
+      "crosssectional": 2
+    },
+    "*-128v-lead-*": {
+      "res": 4,
+      "maxCurrent": 4,
+      "crosssectional": 2
+    }
   },
+
 
   "emitSideAo": {
     "all": false

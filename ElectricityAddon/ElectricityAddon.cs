@@ -762,7 +762,7 @@ public class ElectricityAddon : ModSystem
 
                                 if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item2.facingFrom.Last(), moveTo))   //копируем пакет, только если элемент там еще есть и пакет может туда пройти
                                 {                                    
-                                    float resistance = part.Value.eparams[item2.facingFrom.Last()][2] / part.Value.eparams[item2.facingFrom.Last()][3];      //сопротивление проводника 
+                                    float resistance = part.Value.eparams[item2.facingFrom.Last()][2] / (part.Value.eparams[item2.facingFrom.Last()][3]* part.Value.eparams[item2.facingFrom.Last()][4]);    //сопротивление проводника 
                                     float current = item2.energy * (1.0F) / item2.voltage;  //считаем ток
                                     float lossEnergy = current * current * resistance;      //считаем потери в этом вроде по закону Лжоуля-Ленца
 

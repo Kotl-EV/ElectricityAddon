@@ -20,20 +20,22 @@ namespace ElectricityAddon.Utils
         /// <param name="indexMaterial"></param>
         /// <param name="indexQuantity"></param>
         /// <param name="indexType"></param>
-        public Block CableAsset(ICoreAPI api, CollectibleObject baseBlock, int indexMaterial, int indexQuantity, int indexType)
+        public Block CableAsset(ICoreAPI api, CollectibleObject baseBlock, int indexVoltage, int indexMaterial, int indexQuantity, int indexType)
         {
-            string[] t = new string[3];
-            string[] v = new string[3];
+            string[] t = new string[4];
+            string[] v = new string[4];
 
-            t[0] = "material";
-            t[1] = "quantity";
-            t[2] = "type";
+            t[0] = "voltage";
+            t[1] = "material";
+            t[2] = "quantity";
+            t[3] = "type";
 
-            v[0] = BlockECable.materials[indexMaterial];
-            v[1] = BlockECable.quantitys[indexQuantity];
-            v[2] = BlockECable.types[indexType];
+            v[0] = BlockECable.voltages[indexVoltage];
+            v[1] = BlockECable.materials[indexMaterial];
+            v[2] = BlockECable.quantitys[indexQuantity];
+            v[3] = BlockECable.types[indexType];
 
-            
+
             var assetLocation = baseBlock.CodeWithVariants(t, v);
 
             return api.World.GetBlock(assetLocation);

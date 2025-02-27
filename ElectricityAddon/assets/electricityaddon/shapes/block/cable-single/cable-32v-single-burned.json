@@ -56,32 +56,32 @@
 					"rotationOrigin": [ 0.0509, -0.1226, 0.0 ],
 					"faces": {
 						"north": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"east": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"south": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"west": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"up": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"down": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						}
@@ -322,32 +322,32 @@
 					"rotationOrigin": [ 0.0509, -0.1226, 3.3063 ],
 					"faces": {
 						"north": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"east": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"south": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"west": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"up": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"down": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						}
@@ -360,32 +360,32 @@
 					"rotationOrigin": [ -0.45, -0.1231, 3.3063 ],
 					"faces": {
 						"north": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"east": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"south": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"west": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"up": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"down": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						}
@@ -474,32 +474,32 @@
 					"rotationOrigin": [ 0.0509, 0.1245, 2.2072 ],
 					"faces": {
 						"north": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"east": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"south": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"west": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"up": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"down": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						}
@@ -512,32 +512,32 @@
 					"rotationOrigin": [ -0.45, 0.1241, 5.4881 ],
 					"faces": {
 						"north": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"east": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"south": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"west": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"up": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						},
 						"down": {
-							"texture": "#copper",
+							"texture": "#material",
 							"uv": [ 0.0, 0.0, 4.0, 4.0 ],
 							"autoUv": false
 						}

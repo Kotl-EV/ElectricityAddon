@@ -32,6 +32,18 @@ namespace ElectricityAddon.Content.Block.ECable
         public float res;
 
 
+        public static readonly Dictionary<int, string> voltages = new Dictionary<int, string>
+        {
+            { 32, "32v" },
+            { 128, "128v" }
+        };
+
+        public static readonly Dictionary<string, int> voltagesInvert = new Dictionary<string, int>
+        {
+            { "32v", 32 },
+            { "128v", 128 }
+        };
+
         public static readonly Dictionary<int, string> materials = new Dictionary<int, string>
         {
             { 0, "copper" },
@@ -86,8 +98,8 @@ namespace ElectricityAddon.Content.Block.ECable
                 this.disabledSwitchVariant = new BlockVariant(api, block, "disabled");
             }
 
-            this.dotVariant = new BlockVariants(api, this, 0, 1, 0);
-            this.partVariant = new BlockVariants(api, this, 0, 1, 1);
+            this.dotVariant = new BlockVariants(api, this, 32, 0, 1, 0);
+            this.partVariant = new BlockVariants(api, this, 32, 0, 1, 1);
         }
 
 
@@ -117,15 +129,16 @@ namespace ElectricityAddon.Content.Block.ECable
 
                         //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
                         if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(materials[(int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][1]])
-                            && byItemStack.StackSize >= FacingHelper.Count(faceCoonections))
+                            && (byItemStack.StackSize >= FacingHelper.Count(faceCoonections) | byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative))
                         {
                             if (lines >= 1.0F && lines < 4.0F)                                          //линий 1-3 имеется
                             {
                                 lines++;                                                                //приращиваем линии
                                 if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)        //чтобы в креативе не уменьшало стак
                                 {
-                                    byItemStack.StackSize -= FacingHelper.Count(faceCoonections) - 1;   //отнимаем у игрока столько же, сколько установили
+                                    byItemStack!.StackSize -= FacingHelper.Count(faceCoonections) - 1;   //отнимаем у игрока столько же, сколько установили
                                 }
+
                                 entity.AllEparams[FacingHelper.Faces(facing).First().Index][3] = lines; //применяем линии
                                 entity.MarkDirty(true);
                                 return true;
@@ -158,6 +171,16 @@ namespace ElectricityAddon.Content.Block.ECable
                             }
                         }
 
+                        //определяем индекс напряжение
+                        int indexV = 0;
+                        foreach (var index in voltagesInvert)
+                        {
+                            if (entity.Block.Code.ToString().Contains(index.Key))
+                            {
+                                indexV = index.Value;
+                                break;
+                            }
+                        }
 
                         //линий 0? Значит грань была пустая    
                         if (lines == 0.0F)
@@ -170,7 +193,7 @@ namespace ElectricityAddon.Content.Block.ECable
                                 1,                                  //количество линий элемента цепи/провода
                                 0,                                  //-------
                                 0,                                  //сгорел или нет
-                                32                                  //напряжение
+                                indexV                              //напряжение
                                 },
                                 FacingHelper.Faces(facing).First().Index);
 
@@ -181,7 +204,7 @@ namespace ElectricityAddon.Content.Block.ECable
                         {
                             //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
                             if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(materials[(int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][1]])
-                                && byItemStack.StackSize >= (int)lines)
+                                && (byItemStack.StackSize >= (int)lines | byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative))
                             {
                                 if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative) //чтобы в креативе не уменьшало стак
                                 {
@@ -196,7 +219,7 @@ namespace ElectricityAddon.Content.Block.ECable
                                 lines,                              //количество линий элемента цепи/провода
                                 0,                                  //-------
                                 0,                                  //сгорел или нет
-                                32                                  //напряжение
+                                indexV                              //напряжение
                                 },
                                 FacingHelper.Faces(facing).First().Index);
 
@@ -233,6 +256,18 @@ namespace ElectricityAddon.Content.Block.ECable
                         }
                     }
 
+                    //определяем индекс напряжение
+                    int indexV = 0;
+                    foreach (var index in voltagesInvert)
+                    {
+                        if (entity.Block.Code.ToString().Contains(index.Key))
+                        {
+                            indexV = index.Value;
+                            break;
+                        }
+                    }
+
+
 
                     entity.Connection = facing;       //сообщаем направление
                     entity.Eparams = (new float[7]
@@ -243,7 +278,7 @@ namespace ElectricityAddon.Content.Block.ECable
                             1,                                  //количество линий элемента цепи/провода
                             0,                                  //-------
                             0,                                  //сгорел или нет
-                            32                                  //напряжение
+                            indexV                              //напряжение
                         },
                         FacingHelper.Faces(facing).First().Index);
 
@@ -333,10 +368,11 @@ namespace ElectricityAddon.Content.Block.ECable
                             {
                                 foreach (var face in FacingHelper.Faces(selectedFacing))         //перебираем все грани выделенных кабелей
                                 {
+                                    var indexV = (int)entity.AllEparams[face.Index][6];          //индекс материала этой грани
                                     var indexM = (int)entity.AllEparams[face.Index][1];          //индекс материала этой грани
                                     var indexQ = (int)entity.AllEparams[face.Index][3];          //индекс линий этой грани
 
-                                    var block = new GetCableAsset().CableAsset(api, this, indexM, 1, 0); //берем ассет блока кабеля
+                                    var block = new GetCableAsset().CableAsset(api, this, indexV, indexM, 1, 0); //берем ассет блока кабеля
 
                                     connection = selectedFacing & FacingHelper.FromFace(face);                   //берем направления только в этой грани
                                     stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
@@ -376,10 +412,11 @@ namespace ElectricityAddon.Content.Block.ECable
 
                 foreach (var face in FacingHelper.Faces(entity.Connection))         //перебираем все грани выделенных кабелей
                 {
+                    var indexV = (int)entity.AllEparams[face.Index][6];          //индекс материала этой грани
                     var indexM = (int)entity.AllEparams[face.Index][1];          //индекс материала этой грани
                     var indexQ = (int)entity.AllEparams[face.Index][3];          //индекс линий этой грани
 
-                    var block = new GetCableAsset().CableAsset(api, this, indexM, 1, 0); //берем ассет блока кабеля
+                    var block = new GetCableAsset().CableAsset(api, this, indexV, indexM, 1, 0); //берем ассет блока кабеля
 
                     connection = entity.Connection & FacingHelper.FromFace(face);                   //берем направления только в этой грани
                     var stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
@@ -450,32 +487,17 @@ namespace ElectricityAddon.Content.Block.ECable
 
                 if (selectedConnection != Facing.None)
                 {
-                    /*
-                    //var stackSize = FacingHelper.Count(selectedConnection);
-
-                    if (stackSize > 0)
-                    {
-                        var assetLocation = new AssetLocation("electricityaddon:cable-dot");  //тут тоже ошибка будет
-                        var block = world.BlockAccessor.GetBlock(assetLocation);
-                        var itemStack = new ItemStack(block, stackSize);
-                        world.SpawnItemEntity(itemStack, pos.ToVec3d());
-
-                        entity.Connection &= ~selectedConnection;
-                    }
-
-                    ////////
-                    */
-
                     var stackSize = FacingHelper.Count(selectedConnection);    //соединений выделено
 
                     if (stackSize > 0)
                     {
                         foreach (var face in FacingHelper.Faces(selectedConnection))         //перебираем все грани выделенных кабелей
                         {
+                            var indexV = (int)entity.AllEparams[face.Index][6];          //индекс материала этой грани
                             var indexM = (int)entity.AllEparams[face.Index][1];          //индекс материала этой грани
                             var indexQ = (int)entity.AllEparams[face.Index][3];          //индекс линий этой грани
 
-                            var block = new GetCableAsset().CableAsset(api, this, indexM, 1, 0); //берем ассет блока кабеля
+                            var block = new GetCableAsset().CableAsset(api, this, indexV, indexM, 1, 0); //берем ассет блока кабеля
 
                             var connection = selectedConnection & FacingHelper.FromFace(face);                   //берем направления только в этой грани
                             stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
@@ -594,12 +616,12 @@ namespace ElectricityAddon.Content.Block.ECable
                     // соединения
                     if ((key.Connection & Facing.NorthAll) != 0)
                     {
-
+                        var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][3]; //индекс линий этой грани
 
-                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
                         //ставим точку
                         AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
@@ -628,11 +650,12 @@ namespace ElectricityAddon.Content.Block.ECable
 
                     if ((key.Connection & Facing.EastAll) != 0)
                     {
+                        var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][3]; //индекс линий этой грани
 
-                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
                         //ставим точку
                         AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD));
@@ -660,11 +683,12 @@ namespace ElectricityAddon.Content.Block.ECable
 
                     if ((key.Connection & Facing.SouthAll) != 0)
                     {
+                        var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][3]; //индекс линий этой грани
 
-                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
                         //ставим точку
                         AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
@@ -692,11 +716,12 @@ namespace ElectricityAddon.Content.Block.ECable
 
                     if ((key.Connection & Facing.WestAll) != 0)
                     {
+                        var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][3]; //индекс линий этой грани
 
-                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
                         //ставим точку
                         AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD));
@@ -724,11 +749,12 @@ namespace ElectricityAddon.Content.Block.ECable
 
                     if ((key.Connection & Facing.UpAll) != 0)
                     {
+                        var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][3]; //индекс линий этой грани
 
-                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
                         //ставим точку
                         AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD));
@@ -756,11 +782,12 @@ namespace ElectricityAddon.Content.Block.ECable
 
                     if ((key.Connection & Facing.DownAll) != 0)
                     {
+                        var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][3]; //индекс линий этой грани
 
-                        var dotVariant = new BlockVariants(api, this, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexM, indexQ, 1);  //получаем шейп нужного кабеля
+                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
+                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
                         //ставим точку
                         AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 0.0f));

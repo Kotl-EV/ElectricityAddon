@@ -9,6 +9,13 @@
   ],
   "variantGroups": [
     {
+      "code": "voltage",
+      "states": [
+        "32v",
+        "128v"
+      ]
+    },
+    {
       "code": "material",
       "states": [
         "copper",
@@ -36,27 +43,36 @@
     }
   ],
 
+  "skipVariants": [
+    "*-128v-*-triple-*",
+    "*-128v-*-quadruple-*"
+  ],
+
   "creativeInventory": {
     "general": [
-      "*-single-*"
+      "*-single-dot"
     ],
     "electricity": [
-      "*-single-*"
+      "*-single-dot"
     ]
   },
 
-  "shapeInventory": {
-    "base": "block/cable-single/cable-{material}-single-block"
+  "shapeInventoryByType": {
+    "*": {
+      "base": "block/cable-single/cable-{voltage}-single-block"
+    }
   },
 
 
-  "shape": {
-    "base": "block/cable-{quantity}/cable-{material}-{quantity}-{type}"
+  "shapeByType": {
+    "*": {
+      "base": "block/cable-{quantity}/cable-{voltage}-{quantity}-{type}"
+    }
   },
 
   "textures": {
     "coke": { "base": "block/coke" },
-    "copper": { "base": "block/copper" }
+    "material": { "base": "block/{material}" }
   },
 
 

@@ -7,12 +7,13 @@
 	"textureHeight": 16,
 	"textureSizes": {
 	},
-
+	"textures": {
+	},
 	"elements": [
 		{
 			"name": "Cube",
-			"from": [ 7.4, -0.5, 7.5 ],
-			"to": [ 8.6, 0.6, 8.5 ],
+			"from": [ 7.4, -0.6, 7.4 ],
+			"to": [ 8.6, 0.6, 8.6 ],
 			"rotationOrigin": [ 8.0, 8.0, 8.0 ],
 			"faces": {
 				"north": { "texture": "#material", "uv": [ 8.0, 6.0, 9.0, 7.0 ] },

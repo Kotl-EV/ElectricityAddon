@@ -38,7 +38,8 @@
         "dot",
         "part",
         "block",
-        "burned"
+        "burned",
+        "fix"
       ]
     }
   ],
@@ -72,7 +73,8 @@
 
   "textures": {
     "coke": { "base": "block/coke" },
-    "material": { "base": "block/{material}" }
+    "material": { "base": "block/{material}" },
+    "fix": { "base": "block/rubber" }
   },
 
 

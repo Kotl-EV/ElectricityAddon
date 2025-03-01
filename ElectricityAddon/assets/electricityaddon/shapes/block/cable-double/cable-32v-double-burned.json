@@ -1,6 +1,6 @@
 {
 	"editor": {
-		"collapsedPaths": "Root/Cube2.088,Root/Cube2.89,Root/Cube2.041",
+		"collapsedPaths": "Root/Cube2.088,Root/Cube2.89",
 		"allAngles": false,
 		"entityTextureMode": false
 	},
@@ -8,13 +8,14 @@
 	"textureHeight": 16,
 	"textureSizes": {
 	},
-
+	"textures": {
+	},
 	"elements": [
 		{
 			"name": "Cube2.041",
-			"from": [ 8.1, 0.2445, 8.9115 ],
-			"to": [ 8.6, 0.4926, 10.0373 ],
-			"rotationOrigin": [ 7.65, 0.3686, 8.9115 ],
+			"from": [ 8.1, 0.2445, 0.41 ],
+			"to": [ 8.6, 0.4926, 1.5358 ],
+			"rotationOrigin": [ 7.65, 0.3686, -0.0885 ],
 			"faces": {
 				"north": { "texture": "#coke", "uv": [ 0.0, 0.0, 4.0, 4.0 ], "autoUv": false },
 				"east": { "texture": "#coke", "uv": [ 0.0, 0.0, 4.0, 4.0 ], "autoUv": false },
@@ -209,7 +210,7 @@
 				{
 					"name": "Cube2.074",
 					"from": [ 0.5009, 5.0E-4, 5.4881 ],
-					"to": [ 1.0009, 0.2486, 7.0878 ],
+					"to": [ 0.5009, 0.2486, 7.0878 ],
 					"rotationOrigin": [ 0.0509, 0.1245, 5.4881 ],
 					"faces": {
 						"north": { "texture": "#coke", "uv": [ 0.0, 0.0, 4.0, 4.0 ], "autoUv": false },
@@ -350,9 +351,9 @@
 		},
 		{
 			"name": "Cube2.088",
-			"from": [ 6.8997, 3.0E-4, 7.9324 ],
-			"to": [ 7.3997, 0.2512, 9.0549 ],
-			"rotationOrigin": [ 6.4497, 0.1258, 7.9324 ],
+			"from": [ 6.8997, 3.0E-4, -0.57 ],
+			"to": [ 7.3997, 0.2512, 0.5525 ],
+			"rotationOrigin": [ 6.4497, 0.1258, -0.0676 ],
 			"faces": {
 				"north": { "texture": "#material", "uv": [ 0.0, 0.0, 4.0, 4.0 ], "autoUv": false },
 				"east": { "texture": "#material", "uv": [ 0.0, 0.0, 4.0, 4.0 ], "autoUv": false },

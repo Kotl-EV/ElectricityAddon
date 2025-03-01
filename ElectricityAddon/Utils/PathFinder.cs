@@ -20,7 +20,7 @@ public class PathFinder
         //проверяем наличие начальной и конечной точки в этой цепи
         var networkPositions = network.PartPositions;
         if (!networkPositions.Contains(start) || !networkPositions.Contains(end))
-            return (null!, null!,null!);
+            return (null!, null!, null!);
 
 
         //смотрим с какой грани начинать
@@ -40,32 +40,32 @@ public class PathFinder
         }
 
         //очередь обработки
-        var queue = new Queue<BlockPos>();
-        queue.Enqueue(start);
+        var queue = new Queue<(BlockPos, int)>();
+        queue.Enqueue((start, startBlockFacing[0]));
 
         //хранит цепочку пути и грань
         var cameFrom = new Dictionary<(BlockPos, int), (BlockPos, int)>();
-        cameFrom[(start, startBlockFacing[0])]=(null!, 0);
+        cameFrom[(start, startBlockFacing[0])] = (null!, 0);
 
         //хранит цепочку пути (для вывода наружу)
         var cameFromList = new List<BlockPos>();
         cameFromList.Add(start);
 
         //хранит номер задействованной грани соседа 
-        var facingFrom = new Dictionary<BlockPos, int>();
-        facingFrom[start] = startBlockFacing[0];
+        var facingFrom = new Dictionary<(BlockPos, int), int>();
+        facingFrom[(start, startBlockFacing[0])] = startBlockFacing[0];
 
         //хранит номер задействованной грани соседа (для вывода наружу)
         var facingFromList = new List<int>();
 
         //хранит для каждого кусочка цепи посещенные грани в данный момент
-        var nowProcessedFaces = new Dictionary<BlockPos, bool[]>();
-        nowProcessedFaces[start] = new bool[6] { false, false, false, false, false, false };
-        nowProcessedFaces[start][startBlockFacing[0]] = true ;
+        var nowProcessedFaces = new Dictionary<(BlockPos, int), bool[]>();
+        nowProcessedFaces[(start, startBlockFacing[0])] = new bool[6] { false, false, false, false, false, false };
+        nowProcessedFaces[(start, startBlockFacing[0])][startBlockFacing[0]] = true;
 
         //хранит для каждого кусочка цепи посещенные грани в данный момент (для вывода наружу)
         var nowProcessedFacesList = new List<bool[]>();
-        
+
 
         //хранит для каждого кусочка цепи все посещенные грани
         var processedFaces = new Dictionary<BlockPos, bool[]>();
@@ -78,32 +78,32 @@ public class PathFinder
 
         while (queue.Count > 0)                 //пока очередь не опустеет
         {
-            var current = queue.Dequeue();
+            var (currentPos, currentFace) = queue.Dequeue();
 
-            if (current.Equals(end))            //достигли конца и прекращаем просчет
+            if (currentPos.Equals(end))            //достигли конца и прекращаем просчет
                 break;
 
 
             //собственно сам поиск соседа данной точке
-            var (buf1, buf2, buf3, buf4) = GetNeighbors(current, network, parts, first, processedFaces[current], facingFrom[current]);
+            var (buf1, buf2, buf3, buf4) = GetNeighbors(currentPos, network, parts, first, processedFaces[currentPos], facingFrom[(currentPos, currentFace)]);
 
 
 
-            processedFaces[current] = buf4;    //обновляем информацию о всех просчитанных гранях     
+            processedFaces[currentPos] = buf4;    //обновляем информацию о всех просчитанных гранях     
 
             int i = 0;
             foreach (var neighbor in buf1)
             {
                 if (!processedFaces[neighbor][buf2[i]] && !cameFrom.ContainsKey((neighbor, buf2[i])))  //если соседская грань уже учавствовала в расчете, то пропускаем этого соседа
                 {
-                    queue.Enqueue(neighbor);
+                    queue.Enqueue((neighbor, buf2[i]));
 
-                    cameFrom[(neighbor, buf2[i])] = (current,facingFrom[current]);
+                    cameFrom[(neighbor, buf2[i])] = (currentPos, facingFrom[(currentPos, currentFace)]);
                     cameFromList.Add(neighbor);
 
-                    facingFrom[neighbor] = buf2[i];
+                    facingFrom[(neighbor, buf2[i])] = buf2[i];
 
-                    nowProcessedFaces[neighbor] = buf3;
+                    nowProcessedFaces[(neighbor, buf2[i])] = buf3;
                 }
 
                 i++;
@@ -114,17 +114,25 @@ public class PathFinder
         }
 
         if (!cameFromList.Contains(end))        //не нашли конец?
-            return (null!,null!,null!);
+            return (null!, null!, null!);
 
-        var path = ReconstructPath(start, end, endBlockFacing[0], cameFrom);    //реконструкция маршрута
+        var (path, faces) = ReconstructPath(start, end, endBlockFacing[0], cameFrom);    //реконструкция маршрута
 
-        foreach(var pos in path)                                //подготавливаем дополнительные данные
+        for (int i = 0; i < path.Count; i++)                                //подготавливаем дополнительные данные
         {
-            facingFromList.Add(facingFrom[pos]);
-            nowProcessedFacesList.Add(nowProcessedFaces[pos]);
+            facingFromList.Add(facingFrom[(path[i], faces[i])]);
+
+
+            //if (i > 0)
+            nowProcessedFacesList.Add(nowProcessedFaces[(path[i], faces[i])]);
+
         }
 
-        return (path, facingFromList,nowProcessedFacesList);
+        //nowProcessedFacesList.Add(new bool[6] { true, true, true, true, true, true });
+
+
+
+        return (path, facingFromList, nowProcessedFacesList);
     }
 
 
@@ -213,8 +221,11 @@ public class PathFinder
             // Перебираем все направления соединений
             foreach (BlockFacing direction in FacingHelper.Directions(connections))
             {
+                
+
                 int targetFaceIndex = direction.Index;
-                if (!processFacesBuf[targetFaceIndex])
+                
+                if (!processFacesBuf[targetFaceIndex] && (hereConnections & FacingHelper.From(direction, currentFace))!=0)
                 {
                     processFacesBuf[targetFaceIndex] = true;
                     queue.Enqueue(targetFaceIndex);
@@ -449,18 +460,21 @@ public class PathFinder
     /// <param name="endFacing"></param>
     /// <param name="cameFrom"></param>
     /// <returns></returns>
-    private List<BlockPos> ReconstructPath(BlockPos start, BlockPos end, int endFacing, Dictionary<(BlockPos, int), (BlockPos, int)> cameFrom)
-    {        
+    private (List<BlockPos>, List<int>) ReconstructPath(BlockPos start, BlockPos end, int endFacing, Dictionary<(BlockPos, int), (BlockPos, int)> cameFrom)
+    {
         var path = new List<BlockPos>();
+        var faces = new List<int>();
         var current = (end, endFacing);
 
         while (current.end != null)
         {
             path.Add(current.end);
+            faces.Add(current.endFacing);
             current = cameFrom[current];
         }
 
         path.Reverse();
-        return path[0].Equals(start) ? path : null!;
+        faces.Reverse();
+        return path[0].Equals(start) ? (path, faces) : (null!, null!);
     }
 }

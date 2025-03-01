@@ -10,6 +10,7 @@ using ElectricityAddon.Utils;
 using HarmonyLib;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
 
@@ -33,6 +34,8 @@ namespace ElectricityAddon.Content.Block.ECable
         public float res;                       //удельное сопротивление из ассета
         public float maxCurrent;                //максимальный ток из ассета
         public float crosssectional;            //площадь сечения из ассета
+
+        private ICoreAPI api;
 
         public static readonly Dictionary<int, string> voltages = new Dictionary<int, string>
         {
@@ -73,7 +76,8 @@ namespace ElectricityAddon.Content.Block.ECable
             { 0, "dot" },
             { 1, "part" },
             { 2, "block" },
-            { 3, "burned" }
+            { 3, "burned" },
+            { 4, "fix" }
         };
 
 
@@ -88,6 +92,8 @@ namespace ElectricityAddon.Content.Block.ECable
         public override void OnLoaded(ICoreAPI api)
         {
             base.OnLoaded(api);
+
+            this.api = api;
 
             //подгружаем некоторые параметры из ассетов
             res = MyMiniLib.GetAttributeFloat(this, "res", 1);
@@ -165,11 +171,30 @@ namespace ElectricityAddon.Content.Block.ECable
                             }
                             else
                             {
+                                //уведомление на экране
+                                if (this.api is ICoreClientAPI apii)  
+                                {
+                                    apii.TriggerIngameError((object)this, "cable", "Линий уже достаточно.");
+                                }
+
                                 return false;
                             }
                         }
                         else
                         {
+                            //уведомление на экране
+                            if (this.api is ICoreClientAPI apii)  
+                            {
+                                if (!byItemStack.Block.Code.ToString().Contains(block.Code))
+                                {
+                                    apii.TriggerIngameError((object)this, "cable", "Кабеля должны быть того же типа.");
+                                }
+                                else if (byItemStack.StackSize < FacingHelper.Count(faceCoonections))
+                                {
+                                    apii.TriggerIngameError((object)this, "cable", "Недостаточно кабелей для размещения.");
+                                }
+                            }
+
                             return false;
                         }
 
@@ -256,6 +281,19 @@ namespace ElectricityAddon.Content.Block.ECable
                             }
                             else
                             {
+                                //уведомление на экране
+                                if (this.api is ICoreClientAPI apii)  
+                                {
+                                    if (!byItemStack.Block.Code.ToString().Contains(block.Code))
+                                    {
+                                        apii.TriggerIngameError((object)this, "cable", "Кабеля должны быть того же типа.");
+                                    }
+                                    else if (byItemStack.StackSize < (int)lines)
+                                    {
+                                        apii.TriggerIngameError((object)this, "cable", "Недостаточно кабелей для размещения.");
+                                    }
+                                }
+
                                 return false;
                             }
                         }
@@ -304,7 +342,7 @@ namespace ElectricityAddon.Content.Block.ECable
                             indexM,                             //индекс материала?!!!
                             res,                                //удельное сопротивление
                             1,                                  //количество линий элемента цепи/провода
-                            crosssectional,                     //площадь сечения одной жилы
+                            crosssectional,                     //площадь сечения одной жилы (def=1)
                             0,                                  //сгорел или нет
                             indexV                              //напряжение
                         },
@@ -630,6 +668,27 @@ namespace ElectricityAddon.Content.Block.ECable
         }
 
 
+
+        /// <summary>
+        /// Помогает рандомизировать шейпы
+        /// </summary>
+        /// <param name="rand"></param>
+        /// <returns></returns>
+        private float RndHelp(ref Random rand)
+        {
+            return (float)((rand.NextDouble() * 0.01F) - 0.005F + 1.0F);
+        }
+
+
+
+        /// <summary>
+        /// Отрисовщик шейпов
+        /// </summary>
+        /// <param name="sourceMesh"></param>
+        /// <param name="lightRgbsByCorner"></param>
+        /// <param name="position"></param>
+        /// <param name="chunkExtBlocks"></param>
+        /// <param name="extIndex3d"></param>
         public override void OnJsonTesselation(ref MeshData sourceMesh, ref int[] lightRgbsByCorner, BlockPos position, Vintagestory.API.Common.Block[] chunkExtBlocks, int extIndex3d)
         {
             if (this.api.World.BlockAccessor.GetBlockEntity(position) is BlockEntityECable entity && entity.Connection != Facing.None && entity.AllEparams!=null)
@@ -639,204 +698,292 @@ namespace ElectricityAddon.Content.Block.ECable
                 if (!BlockECable.MeshDataCache.TryGetValue(key, out var meshData))
                 {
                     var origin = new Vec3f(0.5f, 0.5f, 0.5f);
+                    var origin0 = new Vec3f(0f, 0f, 0f);
 
-                    // соединения
+                    Random rnd = new Random(); //инициализируем рандомайзер системный
+                    
+
+                    // рисуем на северной грани
                     if ((key.Connection & Facing.NorthAll) != 0)
                     {
                         var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][3]; //индекс линий этой грани
+                        var indexB = (int)entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index][5]; //индекс перегорания этой грани
 
                         var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
-                        //ставим точку
-                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
+                        BlockVariants partVariant;
+                        if (indexB != 1)
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля целого
+                        else
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+
+                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+
+                        //ставим точку посередине, если провода не перегорел
+                        if (indexB!=1)
+                            AddMeshData(ref meshData, fixVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
 
 
                         if ((key.Connection & Facing.NorthEast) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f)); //ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f).Translate(0.5F, 0, 0));   //cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.NorthWest) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f).Translate(-0.5F, 0, 0));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.NorthUp) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f).Translate(0, 0.5F, 0));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.NorthDown) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 0.0f).Translate(0, -0.5F, 0));//cтавим крепление на ребре
                         }
+
                     }
 
+                    // рисуем на восточной грани
                     if ((key.Connection & Facing.EastAll) != 0)
                     {
                         var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][3]; //индекс линий этой грани
+                        var indexB = (int)entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index][5]; //индекс перегорания этой грани
 
                         var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
-                        //ставим точку
-                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD));
+                        BlockVariants partVariant;
+                        if (indexB != 1)
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля целого
+                        else
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+
+                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+
+                        //ставим точку посередине, если провода не перегорел
+                        if (indexB != 1)
+                            AddMeshData(ref meshData, fixVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD));
 
                         if ((key.Connection & Facing.EastNorth) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD).Translate(0, 0, -0.5F));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.EastSouth) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD).Translate(0, 0, 0.5F));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.EastUp) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD).Translate(0, 0.5F, 0));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.EastDown) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 90.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 90.0f * GameMath.DEG2RAD).Translate(0, -0.5F, 0));//cтавим крепление на ребре
                         }
                     }
 
+                    // рисуем на южной грани
                     if ((key.Connection & Facing.SouthAll) != 0)
                     {
                         var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][3]; //индекс линий этой грани
+                        var indexB = (int)entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index][5]; //индекс перегорания этой грани
 
                         var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
-                        //ставим точку
-                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
+                        BlockVariants partVariant;
+                        if (indexB != 1)
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля целого
+                        else
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+
+                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+
+                        //ставим точку посередине, если провода не перегорел
+                        if (indexB != 1)
+                            AddMeshData(ref meshData, fixVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f));
 
                         if ((key.Connection & Facing.SouthEast) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 270.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f).Translate(0.5F, 0, 0));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.SouthWest) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 90.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f).Translate(-0.5F, 0, 0));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.SouthUp) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f).Translate(0, 0.5F, 0));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.SouthDown) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 0.0f).Translate(0, -0.5F, 0));//cтавим крепление на ребре
                         }
                     }
 
+                    // рисуем на западной грани
                     if ((key.Connection & Facing.WestAll) != 0)
                     {
                         var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][3]; //индекс линий этой грани
+                        var indexB = (int)entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index][5]; //индекс перегорания этой грани
 
                         var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
-                        //ставим точку
-                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD));
+                        BlockVariants partVariant;
+                        if (indexB != 1)
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля целого
+                        else
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+
+                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+
+                        //ставим точку посередине, если провода не перегорел
+                        if (indexB != 1)
+                            AddMeshData(ref meshData, fixVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD));
 
                         if ((key.Connection & Facing.WestNorth) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD).Translate(0, 0, -0.5F));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.WestSouth) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 180.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD).Translate(0, 0, 0.5F));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.WestUp) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 90.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD).Translate(0, 0.5F, 0));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.WestDown) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 270.0f * GameMath.DEG2RAD, 0.0f, 270.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 270.0f * GameMath.DEG2RAD).Translate(0, -0.5F, 0));//cтавим крепление на ребре
                         }
                     }
 
+                    // рисуем на верхней грани
                     if ((key.Connection & Facing.UpAll) != 0)
                     {
                         var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][3]; //индекс линий этой грани
+                        var indexB = (int)entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index][5]; //индекс перегорания этой грани
 
                         var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
-                        //ставим точку
-                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD));
+                        BlockVariants partVariant;
+                        if (indexB != 1)
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля целого
+                        else
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+
+                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+
+                        //ставим точку посередине, если провода не перегорел
+                        if (indexB != 1)
+                            AddMeshData(ref meshData, fixVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD));
 
                         if ((key.Connection & Facing.UpNorth) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
-                        }
-
-                        if ((key.Connection & Facing.UpEast) != 0)
-                        {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD).Translate(0, 0, -0.5F));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.UpSouth) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD).Translate(0, 0, 0.5F));//cтавим крепление на ребре
+                        }
+
+                        if ((key.Connection & Facing.UpEast) != 0)
+                        {
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD).Translate(0.5F, 0, 0));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.UpWest) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 180.0f * GameMath.DEG2RAD));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 180.0f * GameMath.DEG2RAD).Translate(-0.5F, 0, 0));//cтавим крепление на ребре
                         }
                     }
 
+                    // рисуем на нижней грани
                     if ((key.Connection & Facing.DownAll) != 0)
                     {
                         var indexV = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][6]; //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][1]; //индекс материала этой грани
                         var indexQ = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][3]; //индекс линий этой грани
+                        var indexB = (int)entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index][5]; //индекс перегорания этой грани
 
                         var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 0);   //получаем шейп нужной точки кабеля
-                        var partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля
 
-                        //ставим точку
-                        AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 0.0f));
+                        BlockVariants partVariant;
+                        if (indexB != 1)
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 1);  //получаем шейп нужного кабеля целого
+                        else
+                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+
+                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+
+                        //ставим точку посередине, если провода не перегорел
+                        if (indexB != 1)
+                            AddMeshData(ref meshData, fixVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f, 0.0f));
 
                         if ((key.Connection & Facing.DownNorth) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 0.0f));
-                        }
-
-                        if ((key.Connection & Facing.DownEast) != 0)
-                        {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 0.0f).Translate(0, 0, -0.5F));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.DownSouth) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 0.0f).Translate(0, 0, 0.5F));//cтавим крепление на ребре
+                        }
+
+                        if ((key.Connection & Facing.DownEast) != 0)
+                        {
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 0.0f).Translate(0.5F, 0, 0));//cтавим крепление на ребре
                         }
 
                         if ((key.Connection & Facing.DownWest) != 0)
                         {
-                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f));
+                            AddMeshData(ref meshData, partVariant.MeshData?.Clone().Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f));//ставим кусок
+                            AddMeshData(ref meshData, dotVariant.MeshData?.Clone().Scale(origin0, RndHelp(ref rnd), RndHelp(ref rnd), RndHelp(ref rnd)).Rotate(origin, 0.0f, 0.0f, 0.0f).Translate(-0.5F, 0, 0));//cтавим крепление на ребре
                         }
                     }
 

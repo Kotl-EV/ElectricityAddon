@@ -56,7 +56,7 @@ public class ElectricityAddon : ModSystem
     public bool instant = false;                                      //расчет мгновенно?
     public bool AltPressed = false;                                   //зажата кнопка Alt
     private PathFinder pathFinder = new PathFinder();                 //инициализация модуля поиска путей
-    private ICoreAPI api=null!;
+    private ICoreAPI api = null!;
     private ICoreClientAPI capi = null!;
 
     public override void Start(ICoreAPI api)
@@ -167,9 +167,9 @@ public class ElectricityAddon : ModSystem
     private void RegisterAltKeys()
     {
         base.Mod.Logger.VerboseDebug("AltPressForNetwork: hotkey handler for Alt");
-        this.capi.Input.RegisterHotKey("AltPressForNetwork", "Output of detailed information about the network", GlKeys.Unknown, HotkeyType.CharacterControls,true);
+        this.capi.Input.RegisterHotKey("AltPressForNetwork", "Output of detailed information about the network", GlKeys.Unknown, HotkeyType.CharacterControls, true);
         this.capi.Input.SetHotKeyHandler("AltPressForNetwork", OnAltKeyPressed);
-        
+
     }
 
 
@@ -181,7 +181,7 @@ public class ElectricityAddon : ModSystem
     /// <param name="facing"></param>
     /// <param name="setEparams"></param>
     /// <returns></returns>
-    public bool Update(BlockPos position, Facing facing, (float[],int) setEparams, ref float[][] Eparams)
+    public bool Update(BlockPos position, Facing facing, (float[], int) setEparams, ref float[][] Eparams)
     {
         //Eparams = null!;
 
@@ -255,13 +255,13 @@ public class ElectricityAddon : ModSystem
                 if (this.parts[pos].eparams != null && this.parts[pos].eparams.Length > 0)   //бывает всякое
                 {
                     int i = 0;
-                    foreach(var ams in this.parts[pos].eparams)
+                    foreach (var ams in this.parts[pos].eparams)
                     {
                         if (ams == null)
-                            this.parts[pos].eparams[i]=new float[7];
+                            this.parts[pos].eparams[i] = new float[7];
                         i++;
                     }
-                    
+
                 }
                 else
                     this.parts[pos].eparams = new float[6][]
@@ -277,7 +277,23 @@ public class ElectricityAddon : ModSystem
                 if (this.parts[pos].energyPackets == null)   //бывает всякое
                     this.parts[pos].energyPackets = new List<energyPacket>();
 
-                //this.parts[pos].current= new float[6];
+                //чистим маркеры пакетам
+                if (this.parts[pos].energyPackets.Count > 0)
+                {
+                    var copyEnergyPackets = this.parts[pos].energyPackets.ToList<energyPacket>();
+
+                    foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
+                    {
+                        var item2 = new energyPacket();
+                        item2 = item.DeepCopy();
+                        item2.moved = false;
+                        this.parts[pos].energyPackets.Remove(item);
+                        this.parts[pos].energyPackets.Add(item2);
+                       
+                    }
+                }
+
+
 
             }
 
@@ -298,9 +314,9 @@ public class ElectricityAddon : ModSystem
         float[][] distances = new float[consumerPositions.Count][];                     //сохраняем сюда расстояния от всех потребителей ко всем источникам 
         paths = new List<BlockPos>[consumerPositions.Count][];                          //сохраняем сюда пути от всех потребителей ко всем источникам
         facingFrom = new List<int>[consumerPositions.Count][];                          //сохраняем сюда грань следующей позиции от всех потребителей ко всем источникам
-        nowProcessedFaces= new List<bool[]>[consumerPositions.Count][];                 //сохраняем сюда просчитанные грани
+        nowProcessedFaces = new List<bool[]>[consumerPositions.Count][];                 //сохраняем сюда просчитанные грани
 
-        
+
         int i = 0, j;                                                                   //индексы -__-
         foreach (var cP in consumerPositions)                                           //работаем со всеми потребителями в этой сети
         {
@@ -662,13 +678,13 @@ public class ElectricityAddon : ModSystem
                 network.Lack = Math.Max(consumers.Sum<Consumer>(c => c.ElectricConsumer.getPowerRequest() - c.ElectricConsumer.getPowerReceive()), 0);
 
 
-                
+
                 //обновляем энтити все
                 accums.ForEach(a => a.ElectricAccum.Update());
                 producers.ForEach(a => a.ElectricProducer.Update());
                 consumers.ForEach(a => a.ElectricConsumer.Update());
 
-                
+
 
             }
 
@@ -751,18 +767,21 @@ public class ElectricityAddon : ModSystem
 
                         foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
                         {
-                            if (item.path.Count >= 2)            //пропускаем тех, кто уже пришел к получателю
+                            //пропускаем тех, кто уже пришел к получателю
+                            //и те пакеты, что уже двинули
+                            if (item.path.Count >= 2 && !item.moved)
                             {
-                                //var moveTo = item.path[item.path.Count - 2];            //координата предпоследнего элемента
+                                //делаем глубокую копию пакета
                                 var item2 = new energyPacket();
-                                item2 = item;
+                                item2 = item.DeepCopy();
 
-                                item2.path.RemoveAt(item2.path.Count - 1);                //удаляем последний элемент
+                                item2.path.RemoveAt(item2.path.Count - 1);                //удаляем последний элемент пути
                                 var moveTo = item2.path.Last();                           //координата теперь последнего элемента
 
-                                if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item2.facingFrom.Last(), moveTo))   //копируем пакет, только если элемент там еще есть и пакет может туда пройти
-                                {                                    
-                                    float resistance = part.Value.eparams[item2.facingFrom.Last()][2] / (part.Value.eparams[item2.facingFrom.Last()][3]* part.Value.eparams[item2.facingFrom.Last()][4]);    //сопротивление проводника 
+                                if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item2.facingFrom.Last(), moveTo)
+                                    && parts[moveTo].eparams[item.facingFrom[item.facingFrom.Count - 2]][5] != 1)   //копируем пакет, только если элемент там еще есть и пакет может туда пройти
+                                {
+                                    float resistance = part.Value.eparams[item2.facingFrom.Last()][2] / (part.Value.eparams[item2.facingFrom.Last()][3] * part.Value.eparams[item2.facingFrom.Last()][4]);    //сопротивление проводника 
                                     float current = item2.energy * (1.0F) / item2.voltage;  //считаем ток
                                     float lossEnergy = current * current * resistance;      //считаем потери в этом вроде по закону Лжоуля-Ленца
 
@@ -787,11 +806,12 @@ public class ElectricityAddon : ModSystem
 
                                         item2.facingFrom.RemoveAt(item2.facingFrom.Count - 1);                     //удаляем последний элемент facing
                                         item2.nowProcessed.RemoveAt(item2.nowProcessed.Count - 1);                 //удаляем последний элемент nowProcessed
+                                        item2.moved = true;
 
                                         parts[moveTo].energyPackets.Add(item2);                                    //копируем пакет на новую позицию
                                     }
-                                    
-                                    
+
+
                                 }
 
                                 //пакет в любом случае уничтожится, если не сможет переместиться
@@ -799,10 +819,72 @@ public class ElectricityAddon : ModSystem
                                 parts[part.Key].energyPackets.Remove(item);
                             }
 
+
                         }
                     }
                 }
 
+
+
+
+
+                //Этап  - Палим провода ---------------------------------------------------------------------------------------//
+                foreach (var part in parts)  //перебираем все элементы
+                {
+                    if (part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)
+                    {
+                        var copyEnergyPackets = part.Value.energyPackets.ToList<energyPacket>();
+
+                        foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
+                        {
+                            //пакет превышает напряжение проводника и находится на этой грани?
+                            if (item.voltage > part.Value.eparams[item.facingFrom.Last()][6])
+                            {
+                                parts[part.Key].eparams[item.facingFrom.Last()][5] = 1; //проводок сгорел на этой грани
+
+                                var removedFace = FacingHelper.FromFace(FacingHelper.BlockFacingFromIndex(item.facingFrom.Last()));
+
+                                this.parts.TryGetValue(part.Key, out var part2);
+                                part2.Connection &= ~removedFace; //вычитаем по сути эти соединения
+
+                                this.RemoveConnections(ref part2, removedFace);  // убираем соединение
+
+                                //уничтожаем все пакеты в этой точке грани
+                                parts[part.Key].energyPackets.Remove(item);
+                            }
+                        }
+
+                        i = 0;
+
+                        foreach (var cur in part.Value.current)
+                        {
+                            if (cur > part.Value.eparams[i][0] * part.Value.eparams[i][3]) //ток больше характеристик кабеля?
+                            {
+                                parts[part.Key].eparams[i][5] = 1; //проводок сгорел на этой грани
+
+                                var removedFace = FacingHelper.FromFace(FacingHelper.BlockFacingFromIndex(i));
+
+                                this.parts.TryGetValue(part.Key, out var part2);
+                                part2.Connection &= ~removedFace; //вычитаем по сути эти соединения
+
+                                this.RemoveConnections(ref part2, removedFace);  // убираем соединение
+
+                                //уничтожаем все пакеты в этой точке грани
+                                copyEnergyPackets = part.Value.energyPackets.ToList<energyPacket>();
+
+                                foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
+                                {
+                                    if (item.nowProcessed.Last()[i])
+                                    {
+                                        parts[part.Key].energyPackets.Remove(item);
+                                    }
+                                }
+                            }
+                            i++;
+                        }
+
+                    }
+                }
 
 
 
@@ -911,7 +993,7 @@ public class ElectricityAddon : ModSystem
         {
             if (this.parts.TryGetValue(position, out var part))                 //есть такое соединение?
             {
-                this.AddConnections(ref part, part.Connection, (null!,0));     //добавляем соединения???
+                this.AddConnections(ref part, part.Connection, (null!, 0));     //добавляем соединения???
             }
         }
     }
@@ -1049,7 +1131,7 @@ public class ElectricityAddon : ModSystem
                 i++;
             }
 
-            if (setEparams.Item1 != null && part.eparams[face.Index][0] ==0)
+            if (setEparams.Item1 != null && part.eparams[face.Index][0] == 0)
                 part.eparams[face.Index] = setEparams.Item1;      //аналогично с параметрами электричества
         }
 
@@ -1246,11 +1328,34 @@ public class ElectricityAddon : ModSystem
 /// </summary>
 public struct energyPacket
 {
-    public List<BlockPos> path;     //маршрут по блокам
-    public float energy;            //энергия которую он несет
-    public int voltage;             //напряжение пакета
-    public List<int> facingFrom;    //конечная грань в данном блоке маршрута
-    public List<bool[]> nowProcessed;  //все пройденные грани в данном блоке маршрута
+    public List<BlockPos> path;
+    public float energy;
+    public int voltage;
+    public List<int> facingFrom;
+    public List<bool[]> nowProcessed;
+    public bool moved;
+
+    // Метод для глубокого копирования
+    public energyPacket DeepCopy()
+    {
+        energyPacket copy = new energyPacket();
+
+        // Копируем списки и массивы
+        copy.path = new List<BlockPos>(this.path); // BlockPos — структура, копируется по значению
+
+        copy.energy = this.energy;
+        copy.voltage = this.voltage;
+        copy.moved = this.moved;
+
+        copy.facingFrom = new List<int>(this.facingFrom); // Копируем список int
+
+        // Глубокое копирование nowProcessed (каждый массив копируется отдельно)
+        copy.nowProcessed = this.nowProcessed
+            .Select(arr => arr.ToArray()) // Создаем новый массив для каждого bool[]
+            .ToList();
+
+        return copy;
+    }
 }
 
 
@@ -1294,21 +1399,21 @@ public class NetworkPart                       //элемент цепи
         };
 
 
-/*
-    {
-        0,                                  //максим ток, которое может пройти по одной линии этого элемента цепи
-        0,                                  //текущий (ток), который проходит в элементе цепи
-        0,                                  //потери энергии в элементе цепи (удельное сопротивление)
-        0,                                  //количество линий элемента цепи/провода
-        0,                                  //------------------------------------
-        0,                                  //сгорел или нет
-        0                                   //напряжение
-    },
+    /*
+        {
+            0,                                  //максим ток, которое может пройти по одной линии этого элемента цепи
+            0,                                  //текущий (ток), который проходит в элементе цепи
+            0,                                  //потери энергии в элементе цепи (удельное сопротивление)
+            0,                                  //количество линий элемента цепи/провода
+            0,                                  //площадь сечения одной жилы
+            0,                                  //сгорел или нет
+            0                                   //напряжение
+        },
 
-*/
+    */
 
 
-public float[] current = new float[6] 
+    public float[] current = new float[6]
     {
         0.0F,
         0.0F,
@@ -1316,7 +1421,7 @@ public float[] current = new float[6]
         0.0F,
         0.0F,
         0.0F
-    };              
+    };
 
     public List<energyPacket> energyPackets;
 

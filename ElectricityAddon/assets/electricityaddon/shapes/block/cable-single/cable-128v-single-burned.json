@@ -8,12 +8,15 @@
 	"textureHeight": 16,
 	"textureSizes": {
 	},
+	"textures": {
+	},
 	"elements": [
 		{
 			"name": "Cube2.022",
-			"from": [ 8.0, 0.0, 7.8103 ],
-			"to": [ 8.5, 0.5, 8.9499 ],
-			"rotationOrigin": [ 6.9503, 0.25, 7.8103 ],
+			"from": [ 9.9, 0.0, 6.1 ],
+			"to": [ 10.4, 0.5, 7.2396 ],
+			"rotationOrigin": [ 8.9503, 0.25, 6.8103 ],
+			"rotationY": 180.0,
 			"faces": {
 				"north": { "texture": "#coke", "uv": [ 0.0, 0.0, 4.0, 4.0 ], "autoUv": false },
 				"east": { "texture": "#coke", "uv": [ 0.0, 0.0, 4.0, 4.0 ], "autoUv": false },

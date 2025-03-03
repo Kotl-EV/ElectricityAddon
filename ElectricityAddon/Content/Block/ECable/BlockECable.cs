@@ -149,11 +149,13 @@ namespace ElectricityAddon.Content.Block.ECable
                         //какой блок сейчас здесь находится
                         var indexV = (int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][6];          //индекс напряжения этой грани
                         var indexM = (int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][1];          //индекс материала этой грани
+                        var burn = (int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][5];            //сгорело?
 
                         var block = new GetCableAsset().CableAsset(api, this, indexV, indexM, 1, 1); //берем ассет блока кабеля
                         
                         //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
                         if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(block.Code)
+                            && burn!=1
                             && (byItemStack.StackSize >= FacingHelper.Count(faceCoonections) | byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative))
                         {
                             //для 32V 1-4 линии, для 128V 2 линии
@@ -192,6 +194,10 @@ namespace ElectricityAddon.Content.Block.ECable
                                 else if (byItemStack.StackSize < FacingHelper.Count(faceCoonections))
                                 {
                                     apii.TriggerIngameError((object)this, "cable", "Недостаточно кабелей для размещения.");
+                                }
+                                else if (burn == 1)
+                                {
+                                    apii.TriggerIngameError((object)this, "cable", "Уберите сгоревший кабель сначала.");
                                 }
                             }
 
@@ -251,12 +257,13 @@ namespace ElectricityAddon.Content.Block.ECable
                             //какой блок сейчас здесь находится
                             var indexV2 = (int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][6];          //индекс напряжения этой грани
                             var indexM2 = (int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][1];          //индекс материала этой грани
+                            var burn = (int)entity.AllEparams[FacingHelper.Faces(facing).First().Index][5];            //сгорело?
 
                             var block = new GetCableAsset().CableAsset(api, this, indexV2, indexM2, 1, 1); //берем ассет блока кабеля
 
-
                             //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
                             if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(block.Code)
+                                && burn != 1
                                 && (byItemStack.StackSize >= (int)lines | byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative))
                             {
                                 if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative) //чтобы в креативе не уменьшало стак
@@ -284,13 +291,17 @@ namespace ElectricityAddon.Content.Block.ECable
                                 //уведомление на экране
                                 if (this.api is ICoreClientAPI apii)  
                                 {
-                                    if (!byItemStack.Block.Code.ToString().Contains(block.Code))
+                                    if (!byItemStack!.Block.Code.ToString().Contains(block.Code))
                                     {
                                         apii.TriggerIngameError((object)this, "cable", "Кабеля должны быть того же типа.");
                                     }
                                     else if (byItemStack.StackSize < (int)lines)
                                     {
                                         apii.TriggerIngameError((object)this, "cable", "Недостаточно кабелей для размещения.");
+                                    }
+                                    else if (burn == 1)
+                                    {
+                                        apii.TriggerIngameError((object)this, "cable", "Уберите сгоревший кабель сначала.");
                                     }
                                 }
 
@@ -445,6 +456,7 @@ namespace ElectricityAddon.Content.Block.ECable
                                     var itemStack = new ItemStack(block, stackSize);
 
                                     world.SpawnItemEntity(itemStack, position.ToVec3d());
+                                    
                                 }
                             }
 

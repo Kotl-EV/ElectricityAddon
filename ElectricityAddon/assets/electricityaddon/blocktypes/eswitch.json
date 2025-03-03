@@ -26,6 +26,19 @@
       "base": "block/switch-disabled"
     }
   },
+
+  "textures": {
+    "oak": {
+      "base": "block/oak"
+    },
+    "iron": {
+      "base": "block/iron"
+    },
+    "copper": {
+      "base": "block/copper"
+    }
+   },
+
   "collisionSelectionBoxes": [
     {
       "x1": 0.3125,

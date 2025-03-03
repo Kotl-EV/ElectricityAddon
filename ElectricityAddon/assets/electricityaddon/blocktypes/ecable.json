@@ -7,6 +7,7 @@
       "name": "ElectricityAddon"
     }
   ],
+
   "variantGroups": [
     {
       "code": "voltage",
@@ -39,7 +40,8 @@
         "part",
         "block",
         "burned",
-        "fix"
+        "fix",
+        "isolated"
       ]
     }
   ],
@@ -51,14 +53,20 @@
 
   "creativeInventory": {
     "general": [
-      "*-single-part"
+      "*-single-part",
+      "*-single-isolated"
     ],
     "electricity": [
-      "*-single-part"
+      "*-single-part",
+      "*-single-isolated"
     ]
   },
 
   "shapeInventoryByType": {
+    "*-isolated": {
+      "base": "block/cable-single/cable-{voltage}-single-isolated"
+    },
+
     "*": {
       "base": "block/cable-single/cable-{voltage}-single-block"
     }
@@ -71,134 +79,144 @@
     }
   },
 
-  "textures": {
-    "coke": { "base": "block/coke" },
-    "material": { "base": "block/{material}" },
-    "fix": { "base": "block/rubber" }
-  },
 
-
-  "collisionSelectionBoxesByType": {
-    "*-dot": [
-      {
-        "x1": 0.46875,
-        "y1": -0.03125,
-        "z1": 0.46875,
-        "x2": 0.53125,
-        "y2": 0.03125,
-        "z2": 0.53125
-      }
-    ],
-    "*-part": [
-      {
-        "x1": 0.46875,
-        "y1": -0.03125,
-        "z1": -0.03125,
-        "x2": 0.53125,
-        "y2": 0.03125,
-        "z2": 0.46875
-      }
-    ]
-  },
-  "resistance": 1,
-  "drawType": "JSON",
-  "lightAbsorption": 0.0,
-  "faceCullMode": "NeverCull",
-  "renderPass": "OpaqueNoCull",
-
-  "attributesByType": {
-    "*-32v-copper-*": {
-      "res": 1,
-      "maxCurrent": 5,
-      "crosssectional": 1
+  "texturesByType": {
+    "*-32v-*": {
+      "coke": { "base": "block/coke" },
+      "material": { "base": "block/{material}" },
+      "fix": { "base": "block/rubber" },
+      "isolation": { "base": "block/liquid/dye/gray" }
     },
-    "*-32v-silver-*": {
-      "res": 0.95,
-      "maxCurrent": 6,
-      "crosssectional": 1
-    },
-    "*-32v-lead-*": {
-      "res": 4,
-      "maxCurrent": 2,
-      "crosssectional": 1
-    },
-
-    "*-128v-copper-*": {
-      "res": 1,
-      "maxCurrent": 10,
-      "crosssectional": 2
-    },
-    "*-128v-silver-*": {
-      "res": 0.95,
-      "maxCurrent": 12,
-      "crosssectional": 2
-    },
-    "*-128v-lead-*": {
-      "res": 4,
-      "maxCurrent": 4,
-      "crosssectional": 2
+    "*-128v-*": {
+      "coke": { "base": "block/coke" },
+      "material": { "base": "block/{material}" },
+      "fix": { "base": "block/rubber" },
+      "isolation": { "base": "block/liquid/dye/gray" }
     }
   },
 
 
-  "emitSideAo": {
-    "all": false
-  },
-  "sideAo": {
-    "all": false
-  },
-  "sideOpaque": {
-    "all": false
-  },
-  "sideSolid": {
-    "all": false
-  },
-  "sounds": {
-    "place": "game:block/anvil",
-    "walk": "game:walk/stone"
-  },
-  "fpHandTransform": {
-    "translation": {
-      "x": 0.0,
-      "y": 1.25,
-      "z": 0.0
+    "collisionSelectionBoxesByType": {
+      "*-dot": [
+        {
+          "x1": 0.46875,
+          "y1": -0.03125,
+          "z1": 0.46875,
+          "x2": 0.53125,
+          "y2": 0.03125,
+          "z2": 0.53125
+        }
+      ],
+      "*-part": [
+        {
+          "x1": 0.46875,
+          "y1": -0.03125,
+          "z1": -0.03125,
+          "x2": 0.53125,
+          "y2": 0.03125,
+          "z2": 0.46875
+        }
+      ]
     },
-    "rotation": {
-      "x": 64,
-      "y": -40,
-      "z": 0
+    "resistance": 1,
+    "drawType": "JSON",
+    "lightAbsorption": 0.0,
+    "faceCullMode": "NeverCull",
+    "renderPass": "OpaqueNoCull",
+
+    "attributesByType": {
+      "*-32v-copper-*": {
+        "res": 1,
+        "maxCurrent": 5,
+        "crosssectional": 1
+      },
+      "*-32v-silver-*": {
+        "res": 0.95,
+        "maxCurrent": 6,
+        "crosssectional": 1
+      },
+      "*-32v-lead-*": {
+        "res": 4,
+        "maxCurrent": 2,
+        "crosssectional": 1
+      },
+
+      "*-128v-copper-*": {
+        "res": 1,
+        "maxCurrent": 10,
+        "crosssectional": 2
+      },
+      "*-128v-silver-*": {
+        "res": 0.95,
+        "maxCurrent": 12,
+        "crosssectional": 2
+      },
+      "*-128v-lead-*": {
+        "res": 4,
+        "maxCurrent": 4,
+        "crosssectional": 2
+      }
     },
-    "origin": {
-      "x": 0.5,
-      "y": -0.5,
-      "z": 0.5
+
+
+    "emitSideAo": {
+      "all": false
     },
-    "scale": 1.5
-  },
-  "tpHandTransform": {
-    "translation": {
-      "x": -1.0,
-      "y": -0.076,
-      "z": -0.776
+    "sideAo": {
+      "all": false
     },
-    "rotation": {
-      "x": 35,
-      "y": 84,
-      "z": 41
+    "sideOpaque": {
+      "all": false
     },
-    "origin": {
-      "x": 0.5,
-      "y": 0.0,
-      "z": 0.5
+    "sideSolid": {
+      "all": false
     },
-    "scale": 0.64
-  },
-  "guiTransform": {
-    "origin": {
-      "x": 0.5,
-      "y": 0.05,
-      "z": 0.5
+    "sounds": {
+      "place": "game:block/anvil",
+      "walk": "game:walk/stone"
     },
-    "scale": 2.0
+    "fpHandTransform": {
+      "translation": {
+        "x": 0.0,
+        "y": 1.25,
+        "z": 0.0
+      },
+      "rotation": {
+        "x": 64,
+        "y": -40,
+        "z": 0
+      },
+      "origin": {
+        "x": 0.5,
+        "y": -0.5,
+        "z": 0.5
+      },
+      "scale": 1.5
+    },
+    "tpHandTransform": {
+      "translation": {
+        "x": -1.0,
+        "y": -0.076,
+        "z": -0.776
+      },
+      "rotation": {
+        "x": 35,
+        "y": 84,
+        "z": 41
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.0,
+        "z": 0.5
+      },
+      "scale": 0.64
+    },
+    "guiTransform": {
+      "origin": {
+        "x": 0.5,
+        "y": 0.05,
+        "z": 0.5
+      },
+      "scale": 2.0
+    }
   }
-}

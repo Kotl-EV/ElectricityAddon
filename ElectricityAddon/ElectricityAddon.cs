@@ -181,7 +181,7 @@ public class ElectricityAddon : ModSystem
     /// <param name="facing"></param>
     /// <param name="setEparams"></param>
     /// <returns></returns>
-    public bool Update(BlockPos position, Facing facing, (float[], int) setEparams, ref float[][] Eparams)
+    public bool Update(BlockPos position, Facing facing, (float[], int) setEparams, ref EParams[] Eparams)
     {
         //Eparams = null!;
 
@@ -258,20 +258,20 @@ public class ElectricityAddon : ModSystem
                     foreach (var ams in this.parts[pos].eparams)
                     {
                         if (ams == null)
-                            this.parts[pos].eparams[i] = new float[7];
+                            this.parts[pos].eparams[i] = new EParams();
                         i++;
                     }
 
                 }
                 else
-                    this.parts[pos].eparams = new float[6][]
+                    this.parts[pos].eparams = new EParams[6]
                         {
-                        new float[7],
-                        new float[7],
-                        new float[7],
-                        new float[7],
-                        new float[7],
-                        new float[7]
+                        new EParams(),
+                        new EParams(),
+                        new EParams(),
+                        new EParams(),
+                        new EParams(),
+                        new EParams()
                         };
 
                 if (this.parts[pos].energyPackets == null)   //бывает всякое
@@ -506,7 +506,7 @@ public class ElectricityAddon : ModSystem
                                     packet.path = paths[indexCustomer][indexStore];
                                     packet.facingFrom = facingFrom[indexCustomer][indexStore];
                                     packet.nowProcessed = nowProcessedFaces[indexCustomer][indexStore];
-                                    packet.voltage = (int)part.eparams[packet.facingFrom.Last()][6];
+                                    packet.voltage = part.eparams[packet.facingFrom.Last()].voltage;
 
                                     parts[posStore].energyPackets.Add(packet);
                                 }
@@ -612,7 +612,7 @@ public class ElectricityAddon : ModSystem
                                     packet.path = paths2[indexCustomer][indexStore];
                                     packet.facingFrom = facingFrom2[indexCustomer][indexStore];
                                     packet.nowProcessed = nowProcessedFaces2[indexCustomer][indexStore];
-                                    packet.voltage = (int)part.eparams[packet.facingFrom.Last()][6];
+                                    packet.voltage = (int)part.eparams[packet.facingFrom.Last()].voltage;
 
                                     parts[posStore].energyPackets.Add(packet);
                                 }
@@ -779,9 +779,9 @@ public class ElectricityAddon : ModSystem
                                 var moveTo = item2.path.Last();                           //координата теперь последнего элемента
 
                                 if (parts.TryGetValue(moveTo, out var partt) && pathFinder.ToGetNeighbor(part.Key, parts, item2.facingFrom.Last(), moveTo)
-                                    && parts[moveTo].eparams[item.facingFrom[item.facingFrom.Count - 2]][5] != 1)   //копируем пакет, только если элемент там еще есть и пакет может туда пройти
+                                    && !parts[moveTo].eparams[item.facingFrom[item.facingFrom.Count - 2]].burnout)   //копируем пакет, только если элемент там еще есть и пакет может туда пройти
                                 {
-                                    float resistance = part.Value.eparams[item2.facingFrom.Last()][2] / (part.Value.eparams[item2.facingFrom.Last()][3] * part.Value.eparams[item2.facingFrom.Last()][4]);    //сопротивление проводника 
+                                    float resistance = part.Value.eparams[item2.facingFrom.Last()].resisitivity / (part.Value.eparams[item2.facingFrom.Last()].lines * part.Value.eparams[item2.facingFrom.Last()].crossArea);    //сопротивление проводника 
                                     float current = item2.energy * (1.0F) / item2.voltage;  //считаем ток
                                     float lossEnergy = current * current * resistance;      //считаем потери в этом вроде по закону Лжоуля-Ленца
 
@@ -838,9 +838,9 @@ public class ElectricityAddon : ModSystem
                         foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
                         {
                             //пакет превышает напряжение проводника и находится на этой грани?
-                            if (item.voltage > part.Value.eparams[item.facingFrom.Last()][6])
+                            if (item.voltage > part.Value.eparams[item.facingFrom.Last()].voltage)
                             {
-                                parts[part.Key].eparams[item.facingFrom.Last()][5] = 1; //проводок сгорел на этой грани
+                                parts[part.Key].eparams[item.facingFrom.Last()].burnout = true; //проводок сгорел на этой грани
 
                                 var removedFace = FacingHelper.FromFace(FacingHelper.BlockFacingFromIndex(item.facingFrom.Last()));
 
@@ -858,9 +858,9 @@ public class ElectricityAddon : ModSystem
 
                         foreach (var cur in part.Value.current)
                         {
-                            if (cur > part.Value.eparams[i][0] * part.Value.eparams[i][3]) //ток больше характеристик кабеля?
+                            if (cur > part.Value.eparams[i].maxCurrent * part.Value.eparams[i].lines) //ток больше характеристик кабеля?
                             {
-                                parts[part.Key].eparams[i][5] = 1; //проводок сгорел на этой грани
+                                parts[part.Key].eparams[i].burnout = true; //проводок сгорел на этой грани
 
                                 var removedFace = FacingHelper.FromFace(FacingHelper.BlockFacingFromIndex(i));
 
@@ -1013,7 +1013,7 @@ public class ElectricityAddon : ModSystem
 
 
 
-    private void AddConnections(ref NetworkPart part, Facing addedConnections, (float[], int) setEparams)
+    private void AddConnections(ref NetworkPart part, Facing addedConnections, (EParams, int) setEparams)
     {
         //if (addedConnections == Facing.None)
         //{
@@ -1358,6 +1358,23 @@ public struct energyPacket
     }
 }
 
+/// <summary>
+/// Параметры проводов/приборов как участников электрической цепи
+/// </summary>
+public struct EParams
+{
+    public int voltage;             //напряжение
+    public float maxCurrent;        //максим ток, которое может пройти по одной линии этого элемента цепи
+    public int indexM;              //индекс материала
+    public float resisitivity;      //потери энергии в элементе цепи (удельное сопротивление)
+    public byte lines;              //количество линий элемента цепи/провода
+    public float crossArea;         //площадь сечения одной жилы
+    public bool burnout;            //сгорел или нет?
+    public bool isolated;           //изолирован?
+
+}
+
+
 
 /// <summary>
 /// Электрическая цепь
@@ -1389,28 +1406,7 @@ public class NetworkPart                       //элемент цепи
             null
         };
 
-    public float[][] eparams = {                //параметры цепи по граням
-            null!,
-            null!,
-            null!,
-            null!,
-            null!,
-            null!
-        };
-
-
-    /*
-        {
-            0,                                  //максим ток, которое может пройти по одной линии этого элемента цепи
-            0,                                  //текущий (ток), который проходит в элементе цепи
-            0,                                  //потери энергии в элементе цепи (удельное сопротивление)
-            0,                                  //количество линий элемента цепи/провода
-            0,                                  //площадь сечения одной жилы
-            0,                                  //сгорел или нет
-            0                                   //напряжение
-        },
-
-    */
+    public EParams[] eparams = new EParams[] { }; //параметры по граням
 
 
     public float[] current = new float[6]
@@ -1453,7 +1449,7 @@ public class NetworkInformation             //информация о конкр
     public int NumberOfConsumers;             //потребителй
     public int NumberOfProducers;             //источников
 
-    public float[] eParamsInNetwork = new float[7];       //параметрах конкретно этого блока в этой цепи
+    public EParams eParamsInNetwork = new EParams();       //параметрах конкретно этого блока в этой цепи
     internal float current;
 }
 

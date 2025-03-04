@@ -77,7 +77,9 @@ namespace ElectricityAddon.Content.Block.ECable
             { 1, "part" },
             { 2, "block" },
             { 3, "burned" },
-            { 4, "fix" }
+            { 4, "fix" },
+            { 5, "block_isolated" },
+            { 6, "isolated" }
         };
 
 

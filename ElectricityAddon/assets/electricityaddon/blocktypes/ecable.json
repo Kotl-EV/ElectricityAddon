@@ -41,6 +41,7 @@
         "block",
         "burned",
         "fix",
+        "block_isolated",
         "isolated"
       ]
     }
@@ -64,7 +65,7 @@
 
   "shapeInventoryByType": {
     "*-isolated": {
-      "base": "block/cable-single/cable-{voltage}-single-isolated"
+      "base": "block/cable-single/cable-{voltage}-single-block_isolated"
     },
 
     "*": {

@@ -28,7 +28,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     private IElectricProducer? producer;
     public float[] eparams;
     public int eparamsFace;
-    private float[][] allEparams;
+    private EParams[] allEparams;
 
     public BEBehaviorElectricityAddon(BlockEntity blockEntity)
         : base(blockEntity)
@@ -54,7 +54,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         }
     }
 
-    public float[][] AllEparams
+    public EParams[] AllEparams
     {
         get => this.allEparams;
         set
@@ -237,17 +237,17 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         if (this.System!.AltPressed)
         {
             stringBuilder.AppendLine("Блок");
-            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork[0]* networkInformation?.eParamsInNetwork[3] + " А");
+            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork.maxCurrent* networkInformation?.eParamsInNetwork.lines + " А");
             stringBuilder.AppendLine("├ " + "Ток: " + networkInformation?.current + " А");
 
             if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable) //если кабель!
             {
-                stringBuilder.AppendLine("├ " + "Уд. сопр: " + networkInformation?.eParamsInNetwork[2] + " Ом/линию");
-                stringBuilder.AppendLine("├ " + "Сопротивление: " + networkInformation?.eParamsInNetwork[2]/ ( networkInformation?.eParamsInNetwork[3]* networkInformation?.eParamsInNetwork[4]) + " Ом");
-                stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork[3] + " шт.");
-                stringBuilder.AppendLine("├ " + "Пл. сечения: " + networkInformation?.eParamsInNetwork[4]* networkInformation?.eParamsInNetwork[3] + " у.ед.");
+                stringBuilder.AppendLine("├ " + "Уд. сопр: " + networkInformation?.eParamsInNetwork.resisitivity + " Ом/линию");
+                stringBuilder.AppendLine("├ " + "Сопротивление: " + networkInformation?.eParamsInNetwork.resisitivity/ ( networkInformation?.eParamsInNetwork.lines* networkInformation?.eParamsInNetwork.crossArea) + " Ом");
+                stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork.lines + " шт.");
+                stringBuilder.AppendLine("├ " + "Пл. сечения: " + networkInformation?.eParamsInNetwork.crossArea* networkInformation?.eParamsInNetwork.lines + " у.ед.");
             }
-            stringBuilder.AppendLine("└ " + "Макс напряжение: " + networkInformation?.eParamsInNetwork[6] + " В");
+            stringBuilder.AppendLine("└ " + "Макс напряжение: " + networkInformation?.eParamsInNetwork.voltage + " В");
         }
 
 
@@ -278,7 +278,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         var interruption = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricityaddon:interruption"));
 
         //массив массивов приходится считывать через newtonsoftjson
-        var AllEparamss = JsonConvert.DeserializeObject<float[][]>(Encoding.UTF8.GetString(tree.GetBytes("electricityaddon:allEparams")));
+        var AllEparamss = JsonConvert.DeserializeObject<EParams[]>(Encoding.UTF8.GetString(tree.GetBytes("electricityaddon:allEparams")));
 
         if (connection != this.connection || interruption != this.interruption)
         {

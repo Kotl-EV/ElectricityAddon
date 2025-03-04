@@ -31,9 +31,6 @@
     "oak": {
       "base": "block/oak"
     },
-    "iron": {
-      "base": "block/iron"
-    },
     "copper": {
       "base": "block/copper"
     }

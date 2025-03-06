@@ -26,7 +26,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     private bool paramsSet = false;
     private Facing interruption;
     private IElectricProducer? producer;
-    public float[] eparams;
+    public EParams eparams;
     public int eparamsFace;
     private EParams[] allEparams;
 
@@ -70,12 +70,12 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     }
 
 
-    public (float[],int) Eparams
+    public (EParams, int) Eparams
     {
-        get => (this.eparams,this.eparamsFace);
+        get => (this.eparams, this.eparamsFace);
         set
         {
-            if (this.eparams != value.Item1 || this.eparamsFace != value.Item2)
+            if (!this.eparams.Equals(value.Item1) || this.eparamsFace != value.Item2)
             {
                 this.eparams = value.Item1;
                 this.eparamsFace = value.Item2;
@@ -151,9 +151,9 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
 
 
                 //если обновляется connection или interrupt, то нафиг присваивать параметры
-                (float[], int) Epar;
+                (EParams, int) Epar;
                 if (!this.paramsSet)
-                    Epar = (null!, 0);
+                    Epar = (default(EParams), 0);
                 else
                     Epar = Eparams;
 
@@ -242,8 +242,8 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
 
             if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable) //если кабель!
             {
-                stringBuilder.AppendLine("├ " + "Уд. сопр: " + networkInformation?.eParamsInNetwork.resisitivity + " Ом/линию");
-                stringBuilder.AppendLine("├ " + "Сопротивление: " + networkInformation?.eParamsInNetwork.resisitivity/ ( networkInformation?.eParamsInNetwork.lines* networkInformation?.eParamsInNetwork.crossArea) + " Ом");
+                stringBuilder.AppendLine("├ " + "Уд. сопр: " + networkInformation?.eParamsInNetwork.resisitivity/(networkInformation!.eParamsInNetwork.isolated?2.0F:1.0F) + " Ом/линию");
+                stringBuilder.AppendLine("├ " + "Сопротивление: " + networkInformation?.eParamsInNetwork.resisitivity/ ( networkInformation?.eParamsInNetwork.lines* networkInformation?.eParamsInNetwork.crossArea) / (networkInformation.eParamsInNetwork.isolated ? 2.0F : 1.0F) + " Ом");
                 stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork.lines + " шт.");
                 stringBuilder.AppendLine("├ " + "Пл. сечения: " + networkInformation?.eParamsInNetwork.crossArea* networkInformation?.eParamsInNetwork.lines + " у.ед.");
             }

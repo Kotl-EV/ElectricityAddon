@@ -18,6 +18,12 @@
       ]
     }
   ],
+
+
+  "shapeInventory": {
+    "base": "block/switch-disabled"
+  },
+
   "shapeByType": {
     "*-enabled": {
       "base": "block/switch-enabled"
@@ -34,7 +40,7 @@
     "copper": {
       "base": "block/copper"
     }
-   },
+  },
 
   "collisionSelectionBoxes": [
     {

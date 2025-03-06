@@ -181,7 +181,7 @@ public class ElectricityAddon : ModSystem
     /// <param name="facing"></param>
     /// <param name="setEparams"></param>
     /// <returns></returns>
-    public bool Update(BlockPos position, Facing facing, (float[], int) setEparams, ref EParams[] Eparams)
+    public bool Update(BlockPos position, Facing facing, (EParams, int) setEparams, ref EParams[] Eparams)
     {
         //Eparams = null!;
 
@@ -257,8 +257,10 @@ public class ElectricityAddon : ModSystem
                     int i = 0;
                     foreach (var ams in this.parts[pos].eparams)
                     {
-                        if (ams == null)
+
+                        if (ams.Equals(default(EParams)))
                             this.parts[pos].eparams[i] = new EParams();
+                        
                         i++;
                     }
 
@@ -782,6 +784,11 @@ public class ElectricityAddon : ModSystem
                                     && !parts[moveTo].eparams[item.facingFrom[item.facingFrom.Count - 2]].burnout)   //копируем пакет, только если элемент там еще есть и пакет может туда пройти
                                 {
                                     float resistance = part.Value.eparams[item2.facingFrom.Last()].resisitivity / (part.Value.eparams[item2.facingFrom.Last()].lines * part.Value.eparams[item2.facingFrom.Last()].crossArea);    //сопротивление проводника 
+                                    if (part.Value.eparams[item2.facingFrom.Last()].isolated)  //если проводник изолированный
+                                    {
+                                        resistance /=2.0F;  //снижаем сопротивление в 2 раза
+                                    }
+
                                     float current = item2.energy * (1.0F) / item2.voltage;  //считаем ток
                                     float lossEnergy = current * current * resistance;      //считаем потери в этом вроде по закону Лжоуля-Ленца
 
@@ -993,7 +1000,7 @@ public class ElectricityAddon : ModSystem
         {
             if (this.parts.TryGetValue(position, out var part))                 //есть такое соединение?
             {
-                this.AddConnections(ref part, part.Connection, (null!, 0));     //добавляем соединения???
+                this.AddConnections(ref part, part.Connection, (default, 0));     //добавляем соединения???
             }
         }
     }
@@ -1121,17 +1128,17 @@ public class ElectricityAddon : ModSystem
             int i = 0;
             if (part.eparams == null)
             {
-                part.eparams = new float[6][];
+                part.eparams = new EParams[6];
             }
 
             foreach (var ams in part.eparams)
             {
-                if (ams == null)
-                    part.eparams[i] = new float[7];
+                if (ams.Equals(default))
+                    part.eparams[i] = new EParams();
                 i++;
             }
 
-            if (setEparams.Item1 != null && part.eparams[face.Index][0] == 0)
+            if (!setEparams.Item1.Equals(default) && part.eparams[face.Index].maxCurrent == 0)
                 part.eparams[face.Index] = setEparams.Item1;      //аналогично с параметрами электричества
         }
 
@@ -1372,6 +1379,17 @@ public struct EParams
     public bool burnout;            //сгорел или нет?
     public bool isolated;           //изолирован?
 
+    public EParams(int voltage, float maxCurrent, int indexM, float resisitivity, byte lines, float crossArea, bool burnout, bool isolated)
+    {
+        this.voltage= voltage;
+        this.maxCurrent =maxCurrent;
+        this.indexM= indexM;
+        this.resisitivity= resisitivity;
+        this.lines= lines;
+        this.crossArea= crossArea;
+        this.burnout= burnout;
+        this.isolated= isolated;          
+    }
 }
 
 

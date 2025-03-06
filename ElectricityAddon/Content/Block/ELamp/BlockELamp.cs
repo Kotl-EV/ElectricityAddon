@@ -58,17 +58,9 @@ namespace ElectricityAddon.Content.Block.ELamp
             )
             {
                 entity.Facing = facing;
-                entity.Eparams = (new float[7]
-                        {
-                            10,                                 //максимальный ток
-                            0,                                  //индекс материала?!!!
-                            0,                                  //потери энергии в элементе цепи
-                            1,                                  //количество линий элемента цепи/провода
-                            1,                                  //площадь сечения одной жилы (def=1)
-                            0,                                  //сгорел или нет
-                            32                                  //напряжение
-                         },
-                        FacingHelper.Faces(facing).First().Index);
+                entity.Eparams = (
+                    new EParams(32, 10, -1, 0, 1, 1, false, false),
+                    FacingHelper.Faces(facing).First().Index);
 
                 return true;
             }

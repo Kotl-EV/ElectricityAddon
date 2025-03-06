@@ -17,14 +17,14 @@ namespace ElectricityAddon.Content.Block.ECable
         }
 
         //передает значения из Block в BEBehaviorElectricityAddon
-        public (float[],int) Eparams
+        public (EParams,int) Eparams
         {
             get => this.ElectricityAddon!.Eparams;
             set => this.ElectricityAddon!.Eparams = value;
         }
 
         //передает значения из Block в BEBehaviorElectricityAddon
-        public float[][] AllEparams
+        public EParams[] AllEparams
         {
             get => this.ElectricityAddon!.AllEparams;
             set => this.ElectricityAddon!.AllEparams = value;

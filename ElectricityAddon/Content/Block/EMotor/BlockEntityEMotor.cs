@@ -27,10 +27,10 @@ public class BlockEntityEMotor : BlockEntity
 
 
     //передает значения из Block в BEBehaviorElectricityAddon
-    public (float[],int) Eparams
+    public (EParams,int) Eparams
     {
         //get => this.ElectricityAddon.Eparams;
-        set => this.ElectricityAddon.Eparams = value;
+        set => this.ElectricityAddon!.Eparams = value;
     }
 
 

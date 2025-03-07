@@ -42,7 +42,8 @@
         "burned",
         "fix",
         "block_isolated",
-        "isolated"
+        "isolated",
+        "dot_isolated"
       ]
     }
   ],

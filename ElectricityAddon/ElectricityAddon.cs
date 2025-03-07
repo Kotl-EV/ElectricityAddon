@@ -1368,27 +1368,61 @@ public struct energyPacket
 /// <summary>
 /// Параметры проводов/приборов как участников электрической цепи
 /// </summary>
-public struct EParams
+public struct EParams : IEquatable<EParams>
 {
-    public int voltage;             //напряжение
-    public float maxCurrent;        //максим ток, которое может пройти по одной линии этого элемента цепи
-    public int indexM;              //индекс материала
-    public float resisitivity;      //потери энергии в элементе цепи (удельное сопротивление)
-    public byte lines;              //количество линий элемента цепи/провода
-    public float crossArea;         //площадь сечения одной жилы
-    public bool burnout;            //сгорел или нет?
-    public bool isolated;           //изолирован?
+    public int voltage;
+    public float maxCurrent;
+    public int indexM;
+    public float resisitivity;
+    public byte lines;
+    public float crossArea;
+    public bool burnout;
+    public bool isolated;
 
     public EParams(int voltage, float maxCurrent, int indexM, float resisitivity, byte lines, float crossArea, bool burnout, bool isolated)
     {
-        this.voltage= voltage;
-        this.maxCurrent =maxCurrent;
-        this.indexM= indexM;
-        this.resisitivity= resisitivity;
-        this.lines= lines;
-        this.crossArea= crossArea;
-        this.burnout= burnout;
-        this.isolated= isolated;          
+        this.voltage = voltage;
+        this.maxCurrent = maxCurrent;
+        this.indexM = indexM;
+        this.resisitivity = resisitivity;
+        this.lines = lines;
+        this.crossArea = crossArea;
+        this.burnout = burnout;
+        this.isolated = isolated;
+    }
+
+    public bool Equals(EParams other)
+    {
+        return voltage == other.voltage &&
+               maxCurrent.Equals(other.maxCurrent) &&
+               indexM == other.indexM &&
+               resisitivity.Equals(other.resisitivity) &&
+               lines == other.lines &&
+               crossArea.Equals(other.crossArea) &&
+               burnout == other.burnout &&
+               isolated == other.isolated;
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is EParams other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            int hash = 17;
+            hash = hash * 31 + voltage;
+            hash = hash * 31 + maxCurrent.GetHashCode();
+            hash = hash * 31 + indexM;
+            hash = hash * 31 + resisitivity.GetHashCode();
+            hash = hash * 31 + lines;
+            hash = hash * 31 + crossArea.GetHashCode();
+            hash = hash * 31 + burnout.GetHashCode();
+            hash = hash * 31 + isolated.GetHashCode();
+            return hash;
+        }
     }
 }
 

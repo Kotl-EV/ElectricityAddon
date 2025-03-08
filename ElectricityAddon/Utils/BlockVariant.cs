@@ -24,7 +24,7 @@ public class BlockVariant
         {
             var cachedShape = clientApi.TesselatorManager.GetCachedShape(block.Shape.Base);
 
-            clientApi.Tesselator.TesselateShape(baseBlock, cachedShape, out this.MeshData);
+            clientApi.Tesselator.TesselateShape(block, cachedShape, out this.MeshData);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Cairo.Freetype;
 using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Content.Block.ESwitch;
@@ -11,6 +12,7 @@ using ElectricityAddon.Utils;
 using HarmonyLib;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
@@ -27,10 +29,6 @@ namespace ElectricityAddon.Content.Block.ECable
 
         public BlockVariant? enabledSwitchVariant;
         public BlockVariant? disabledSwitchVariant;
-
-
-        public BlockVariants? dotVariant;
-        public BlockVariants? partVariant;
 
         public float res;                       //удельное сопротивление из ассета
         public float maxCurrent;                //максимальный ток из ассета
@@ -100,8 +98,7 @@ namespace ElectricityAddon.Content.Block.ECable
             this.api = api;
 
 
-
-            // предзагрузка ассетов
+            // предзагрузка ассетов выключателя
             {
                 var assetLocation = new AssetLocation("electricityaddon:switch-enabled");
                 var block = api.World.BlockAccessor.GetBlock(assetLocation);
@@ -110,8 +107,6 @@ namespace ElectricityAddon.Content.Block.ECable
                 this.disabledSwitchVariant = new BlockVariant(api, block, "disabled");
             }
 
-            this.dotVariant = new BlockVariants(api, this, 32, 0, 1, 0);
-            this.partVariant = new BlockVariants(api, this, 32, 0, 1, 1);
         }
 
 
@@ -152,7 +147,7 @@ namespace ElectricityAddon.Content.Block.ECable
                         var burn = entity.AllEparams[FacingHelper.Faces(facing).First().Index].burnout;            //сгорело?
                         var isol = entity.AllEparams[FacingHelper.Faces(facing).First().Index].isolated;            //изолировано ?
 
-                        var block = new GetCableAsset().CableAsset(api, this, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+                        var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
 
                         //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
                         if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(block.Code)
@@ -210,16 +205,11 @@ namespace ElectricityAddon.Content.Block.ECable
                     else
                     {
                         int indexM = materialsInvert[byItemStack.Block.Variant["material"]];  //определяем индекс материала
-                        int indexV = voltagesInvert[byItemStack.Block.Variant["voltage"]];    //определяем индекс напряжения
-
-                        //определяем изоляцию
-                        bool iso = false;
-                        if (byItemStack.Block.Code.ToString().Contains("isolated"))
-                        {
-                            iso = true;
-                        }
-
-
+                        int indexV = voltagesInvert[byItemStack.Block.Variant["voltage"]];    //определяем индекс напряжения                        
+                        bool iso = byItemStack.Block.Code.ToString().Contains("isolated")     //определяем изоляцию
+                            ? true
+                            : false;
+                       
                         //подгружаем некоторые параметры из ассета
                         res = MyMiniLib.GetAttributeFloat(byItemStack.Block, "res", 1);
                         maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack.Block, "maxCurrent", 1);
@@ -228,14 +218,14 @@ namespace ElectricityAddon.Content.Block.ECable
 
 
                         //линий 0? Значит грань была пустая    
-                        if (lines == 0.0F)
+                        if (lines == 0)
                         {
                             entity.Eparams = (
                                 new EParams(indexV, maxCurrent, indexM, res, 1, crosssectional, false, iso),
                                 FacingHelper.Faces(facing).First().Index);
 
                             entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
-                            entity.MarkDirty(true);
+                            
                         }
                         else   //линий не 0, значитуже что-то там есть на грани
                         {
@@ -246,7 +236,7 @@ namespace ElectricityAddon.Content.Block.ECable
                             var burn = entity.AllEparams[FacingHelper.Faces(facing).First().Index].burnout;            //сгорело?
                             var iso2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].isolated;            //изолировано ?
 
-                            var block = new GetCableAsset().CableAsset(api, this, indexV2, indexM2, 1, iso2 ? 6 : 1); //берем ассет блока кабеля
+                            var block = new GetCableAsset().CableAsset(api, entity.Block, indexV2, indexM2, 1, iso2 ? 6 : 1); //берем ассет блока кабеля
 
 
                             //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
@@ -264,7 +254,7 @@ namespace ElectricityAddon.Content.Block.ECable
                                     FacingHelper.Faces(facing).First().Index);
 
                                 entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
-                                entity.MarkDirty(true);
+                                
                             }
                             else
                             {
@@ -290,7 +280,7 @@ namespace ElectricityAddon.Content.Block.ECable
                         }
 
                         entity.Connection |= facing;
-
+                        entity.MarkDirty(true);
                     }
                     return true;
                 }
@@ -304,14 +294,9 @@ namespace ElectricityAddon.Content.Block.ECable
                 {
                     int indexM = materialsInvert[byItemStack.Block.Variant["material"]];  //определяем индекс материала
                     int indexV = voltagesInvert[byItemStack.Block.Variant["voltage"]];    //определяем индекс напряжения
-
-                    //определяем изоляцию
-                    bool iso = false;
-                    if (byItemStack.Block.Code.ToString().Contains("isolated"))
-                    {
-                        iso = true;
-                    }
-
+                    bool iso = byItemStack.Block.Code.ToString().Contains("isolated")     //определяем изоляцию
+                        ? true
+                        : false;
 
                     //подгружаем некоторые параметры из ассета
                     res = MyMiniLib.GetAttributeFloat(byItemStack.Block, "res", 1);
@@ -353,7 +338,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     var hitPosition = blockSelection.HitPosition;
 
                     var sf = new SelectionFacingCable();
-                    var selectedFacing = sf.SelectionFacing(key, hitPosition, this);  //выделяем направление для слома под курсором
+                    var selectedFacing = sf.SelectionFacing(key, hitPosition, this, entity);  //выделяем направление для слома под курсором
 
 
                     //определяем какой выключатель ломать
@@ -380,13 +365,12 @@ namespace ElectricityAddon.Content.Block.ECable
                             entity.Switches &= ~faceSelect;
                             entity.MarkDirty(true);
 
-                            if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)
-                            {
-                                var assetLocation = new AssetLocation("electricityaddon:switch-enabled");
-                                var block = world.BlockAccessor.GetBlock(assetLocation);
-                                var itemStack = new ItemStack(block, stackSize);
-                                world.SpawnItemEntity(itemStack, position.ToVec3d());
-                            }
+                            
+                            var assetLocation = new AssetLocation("electricityaddon:switch-enabled");
+                            var block = world.BlockAccessor.GetBlock(assetLocation);
+                            var itemStack = new ItemStack(block, stackSize);
+                            world.SpawnItemEntity(itemStack, position.ToVec3d());
+                            
 
                             return;
                         }
@@ -411,8 +395,8 @@ namespace ElectricityAddon.Content.Block.ECable
                                 var indexM = entity.AllEparams[face.Index].indexM;          //индекс материала этой грани
                                 var indexQ = entity.AllEparams[face.Index].lines;          //индекс линий этой грани
                                 var isol = entity.AllEparams[face.Index].isolated;          //изолировано ли?
+                                var burn = entity.AllEparams[face.Index].burnout;          //сгорело ли?
 
-                                var block = new GetCableAsset().CableAsset(api, this, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
 
                                 connection = selectedFacing & FacingHelper.FromFace(face);                   //берем направления только в этой грани
 
@@ -421,7 +405,19 @@ namespace ElectricityAddon.Content.Block.ECable
 
                                 stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
 
-                                var itemStack = new ItemStack(block, stackSize);
+                                ItemStack itemStack = null!;
+                                string material = materials[indexM]; //берем материал кабеля
+                                if (burn)       //если сгорело, то бросаем кусочки металла
+                                {
+                                    AssetLocation assetLoc = new AssetLocation("metalbit-" + material);
+                                    var item = api.World.GetItem(assetLoc);
+                                    itemStack = new ItemStack(item, stackSize);
+                                }
+                                else
+                                {
+                                    var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+                                    itemStack = new ItemStack(block, stackSize);
+                                }
 
                                 world.SpawnItemEntity(itemStack, position.ToVec3d());
 
@@ -461,8 +457,8 @@ namespace ElectricityAddon.Content.Block.ECable
                     var indexM = entity.AllEparams[face.Index].indexM;          //индекс материала этой грани
                     var indexQ = entity.AllEparams[face.Index].lines;          //индекс линий этой грани
                     var isol = entity.AllEparams[face.Index].isolated;          //изолировано ли?
+                    var burn = entity.AllEparams[face.Index].burnout;          //сгорело ли?
 
-                    var block = new GetCableAsset().CableAsset(api, this, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
 
                     connection = entity.Connection & FacingHelper.FromFace(face);                   //берем направления только в этой грани
 
@@ -471,7 +467,19 @@ namespace ElectricityAddon.Content.Block.ECable
 
                     var stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
 
-                    var itemStack = new ItemStack(block, stackSize);
+                    ItemStack itemStack = null!;
+                    string material = materials[indexM]; //берем материал кабеля
+                    if (burn)       //если сгорело, то бросаем кусочки металла
+                    {
+                        AssetLocation assetLoc = new AssetLocation("metalbit-" + material);
+                        var item = api.World.GetItem(assetLoc);
+                        itemStack = new ItemStack(item, stackSize);
+                    }
+                    else
+                    {
+                        var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+                        itemStack = new ItemStack(block, stackSize);
+                    }
 
                     itemStacks = itemStacks.AddToArray<ItemStack>(itemStack);
                 }
@@ -541,14 +549,17 @@ namespace ElectricityAddon.Content.Block.ECable
 
                     if (stackSize > 0)
                     {
+                        entity.Connection &= ~selectedConnection;
+
                         foreach (var face in FacingHelper.Faces(selectedConnection))         //перебираем все грани выделенных кабелей
                         {
                             var indexV = entity.AllEparams[face.Index].voltage;          //индекс напряжения этой грани
                             var indexM = entity.AllEparams[face.Index].indexM;          //индекс материала этой грани
                             var indexQ = entity.AllEparams[face.Index].lines;          //индекс линий этой грани
                             var isol = entity.AllEparams[face.Index].isolated;          //изолировано ли?
+                            var burn = entity.AllEparams[face.Index].burnout;          //сгорело ли?
 
-                            var block = new GetCableAsset().CableAsset(api, this, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+
 
                             var connection = selectedConnection & FacingHelper.FromFace(face);                   //берем направления только в этой грани
 
@@ -557,14 +568,26 @@ namespace ElectricityAddon.Content.Block.ECable
 
                             stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
 
-                            var itemStack = new ItemStack(block, stackSize);
+                            ItemStack itemStack = null!;
+                            string material = materials[indexM]; //берем материал кабеля
+                            if (burn)       //если сгорело, то бросаем кусочки металла
+                            {
+                                AssetLocation assetLoc = new AssetLocation("metalbit-" + material);
+                                var item = api.World.GetItem(assetLoc);
+                                itemStack = new ItemStack(item, stackSize);
+                            }
+                            else
+                            {
+                                var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+                                itemStack = new ItemStack(block, stackSize);
+                            }
 
                             world.SpawnItemEntity(itemStack, pos.ToVec3d());
 
 
                         }
 
-                        entity.Connection &= ~selectedConnection;
+                        
 
                     }
 
@@ -573,7 +596,7 @@ namespace ElectricityAddon.Content.Block.ECable
         }
 
         /// <summary>
-        /// взаимодействие с переключателем
+        /// взаимодействие с кабелем/переключателем
         /// </summary>
         /// <param name="world"></param>
         /// <param name="byPlayer"></param>
@@ -594,7 +617,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 var hitPosition = blockSel.HitPosition;
 
                 var sf = new SelectionFacingCable();
-                var selectedFacing = sf.SelectionFacing(key, hitPosition, this);  //выделяем грань выключателя
+                var selectedFacing = sf.SelectionFacing(key, hitPosition, this, entity);  //выделяем грань выключателя
 
 
 
@@ -603,7 +626,6 @@ namespace ElectricityAddon.Content.Block.ECable
                 if (selectedSwitches != 0)
                 {
                     entity.SwitchesState ^= selectedSwitches;
-
                     return true;
                 }
             }
@@ -612,7 +634,12 @@ namespace ElectricityAddon.Content.Block.ECable
         }
 
 
-
+        /// <summary>
+        /// Переопределение системной функции выделений
+        /// </summary>
+        /// <param name="blockAccessor"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
         public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos position)
         {
             if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity)
@@ -622,10 +649,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 return CalculateBoxes(
                         key,
                         BlockECable.SelectionBoxesCache,
-                        this.dotVariant!.SelectionBoxes,
-                        this.partVariant!.SelectionBoxes,
-                        this.enabledSwitchVariant!.SelectionBoxes,
-                        this.disabledSwitchVariant!.SelectionBoxes
+                        entity
                     ).Values
                     .SelectMany(x => x)
                     .Distinct()
@@ -635,6 +659,13 @@ namespace ElectricityAddon.Content.Block.ECable
             return base.GetSelectionBoxes(blockAccessor, position);
         }
 
+
+        /// <summary>
+        /// Переопределение системной функции коллизий
+        /// </summary>
+        /// <param name="blockAccessor"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
         public override Cuboidf[] GetCollisionBoxes(IBlockAccessor blockAccessor, BlockPos position)
         {
             if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity)
@@ -644,10 +675,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 return CalculateBoxes(
                         key,
                         BlockECable.CollisionBoxesCache,
-                        this.dotVariant!.CollisionBoxes,
-                        this.partVariant!.CollisionBoxes,
-                        this.enabledSwitchVariant!.CollisionBoxes,
-                        this.disabledSwitchVariant!.CollisionBoxes
+                        entity
                     ).Values
                     .SelectMany(x => x)
                     .Distinct()
@@ -702,17 +730,17 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].burnout;//индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].isolated; //изолировано ли?
 
-                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
+                        var dotVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
 
                         BlockVariants partVariant;
                         if (!indexB)
                         {
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
                         }
                         else
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
 
-                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+                        var fixVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
 
                         //ставим точку посередине, если провода не перегорел
                         if (!indexB)
@@ -755,17 +783,17 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].isolated; //изолировано ли?
 
-                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
+                        var dotVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
 
                         BlockVariants partVariant;
                         if (!indexB)
                         {
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
                         }
                         else
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
 
-                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+                        var fixVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
 
                         //ставим точку посередине, если провода не перегорел
                         if (!indexB)
@@ -805,17 +833,17 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].isolated; //изолировано ли?
 
-                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
+                        var dotVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
 
                         BlockVariants partVariant;
                         if (!indexB)
                         {
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
                         }
                         else
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
 
-                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+                        var fixVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
 
                         //ставим точку посередине, если провода не перегорел
                         if (!indexB)
@@ -855,17 +883,17 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].isolated; //изолировано ли?
 
-                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
+                        var dotVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
 
                         BlockVariants partVariant;
                         if (!indexB)
                         {
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
                         }
                         else
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
 
-                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+                        var fixVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
 
                         //ставим точку посередине, если провода не перегорел
                         if (!indexB)
@@ -905,17 +933,17 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].isolated; //изолировано ли?
 
-                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
+                        var dotVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
 
                         BlockVariants partVariant;
                         if (!indexB)
                         {
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
                         }
                         else
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
 
-                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+                        var fixVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
 
                         //ставим точку посередине, если провода не перегорел
                         if (!indexB)
@@ -955,17 +983,17 @@ namespace ElectricityAddon.Content.Block.ECable
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].isolated; //изолировано ли?
 
-                        var dotVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
+                        var dotVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
 
                         BlockVariants partVariant;
                         if (!indexB)
                         {
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
                         }
                         else
-                            partVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
 
-                        var fixVariant = new BlockVariants(api, this, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+                        var fixVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
 
                         //ставим точку посередине, если провода не перегорел
                         if (!indexB)
@@ -1350,10 +1378,14 @@ namespace ElectricityAddon.Content.Block.ECable
             base.OnJsonTesselation(ref sourceMesh, ref lightRgbsByCorner, position, chunkExtBlocks, extIndex3d);
         }
 
-
-        public static Dictionary<Facing, Cuboidf[]> CalculateBoxes(CacheDataKey key, IDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> boxesCache,
-            Cuboidf[] dotBoxes, Cuboidf[] partBoxes,
-            Cuboidf[] enabledSwitchBoxes, Cuboidf[] disabledSwitchBoxes)
+        /// <summary>
+        /// Просчет коллайдеров (колллизии проводов должны совпадать с коллизиями выделения)
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="boxesCache"></param>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public Dictionary<Facing, Cuboidf[]> CalculateBoxes(CacheDataKey key, IDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> boxesCache, BlockEntityECable entity)
         {
             if (!boxesCache.TryGetValue(key, out var boxes))
             {
@@ -1364,155 +1396,285 @@ namespace ElectricityAddon.Content.Block.ECable
                 // Connections
                 if ((key.Connection & Facing.NorthAll) != 0)
                 {
-                    boxes.Add(Facing.NorthAll, dotBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 0.0f, 0.0f, origin)).ToArray());
+                    var indexV = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].voltage; //индекс напряжения этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].indexM; //индекс материала этой грани
+                    var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].lines; //индекс линий этой грани
+                    var indexB = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].burnout;//индекс перегорания этой грани
+                    var isol = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].isolated; //изолировано ли?
+
+
+                    Cuboidf[] partBoxes;
+                    if (!indexB)
+                    {
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                    }
+                    else
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+
+                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+
+                    //ставим точку посередине, если провода не перегорел
+                    if (!indexB)
+                        boxes.Add(Facing.NorthAll, fixBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 0.0f, 0.0f, origin)).ToArray());
+
+
+                    if ((key.Connection & Facing.NorthEast) != 0)
+                    {
+                        boxes.Add(Facing.NorthEast, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 270.0f, 0.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.NorthWest) != 0)
+                    {
+                        boxes.Add(Facing.NorthWest, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 90.0f, 0.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.NorthUp) != 0)
+                    {
+                        boxes.Add(Facing.NorthUp, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 0.0f, 0.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.NorthDown) != 0)
+                    {
+                        boxes.Add(Facing.NorthDown, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 180.0f, 0.0f, origin)).ToArray());
+                    }
+
                 }
 
-                if ((key.Connection & Facing.NorthEast) != 0)
-                {
-                    boxes.Add(Facing.NorthEast, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 270.0f, 0.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.NorthWest) != 0)
-                {
-                    boxes.Add(Facing.NorthWest, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 90.0f, 0.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.NorthUp) != 0)
-                {
-                    boxes.Add(Facing.NorthUp, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 0.0f, 0.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.NorthDown) != 0)
-                {
-                    boxes.Add(Facing.NorthDown, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 180.0f, 0.0f, origin)).ToArray());
-                }
-
+                
                 if ((key.Connection & Facing.EastAll) != 0)
                 {
-                    boxes.Add(Facing.EastAll, dotBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 90.0f, origin)).ToArray());
+                    var indexV = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].voltage; //индекс напряжения этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].indexM; //индекс материала этой грани
+                    var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].lines; //индекс линий этой грани
+                    var indexB = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].burnout;//индекс перегорания этой грани
+                    var isol = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].isolated; //изолировано ли?
+
+
+                    Cuboidf[] partBoxes;
+                    if (!indexB)
+                    {
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                    }
+                    else
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+
+                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+
+                    //ставим точку посередине, если провода не перегорел
+                    if (!indexB)
+                        boxes.Add(Facing.EastAll, fixBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 90.0f, origin)).ToArray());
+
+                    if ((key.Connection & Facing.EastNorth) != 0)
+                    {
+                        boxes.Add(Facing.EastNorth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 90.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.EastSouth) != 0)
+                    {
+                        boxes.Add(Facing.EastSouth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(180.0f, 0.0f, 90.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.EastUp) != 0)
+                    {
+                        boxes.Add(Facing.EastUp, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 0.0f, 90.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.EastDown) != 0)
+                    {
+                        boxes.Add(Facing.EastDown, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 0.0f, 90.0f, origin)).ToArray());
+                    }
                 }
 
-                if ((key.Connection & Facing.EastNorth) != 0)
-                {
-                    boxes.Add(Facing.EastNorth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 90.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.EastSouth) != 0)
-                {
-                    boxes.Add(Facing.EastSouth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(180.0f, 0.0f, 90.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.EastUp) != 0)
-                {
-                    boxes.Add(Facing.EastUp, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 0.0f, 90.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.EastDown) != 0)
-                {
-                    boxes.Add(Facing.EastDown, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 0.0f, 90.0f, origin)).ToArray());
-                }
+                
 
                 if ((key.Connection & Facing.SouthAll) != 0)
                 {
-                    boxes.Add(Facing.SouthAll, dotBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 0.0f, 0.0f, origin)).ToArray());
+                    var indexV = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].voltage; //индекс напряжения этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].indexM; //индекс материала этой грани
+                    var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].lines; //индекс линий этой грани
+                    var indexB = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].burnout;//индекс перегорания этой грани
+                    var isol = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].isolated; //изолировано ли?
+
+
+                    Cuboidf[] partBoxes;
+                    if (!indexB)
+                    {
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                    }
+                    else
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+
+                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+
+                    //ставим точку посередине, если провода не перегорел
+                    if (!indexB)
+                        boxes.Add(Facing.SouthAll, fixBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 0.0f, 0.0f, origin)).ToArray());
+
+                    if ((key.Connection & Facing.SouthEast) != 0)
+                    {
+                        boxes.Add(Facing.SouthEast, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 270.0f, 0.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.SouthWest) != 0)
+                    {
+                        boxes.Add(Facing.SouthWest, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 90.0f, 0.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.SouthUp) != 0)
+                    {
+                        boxes.Add(Facing.SouthUp, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 180.0f, 0.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.SouthDown) != 0)
+                    {
+                        boxes.Add(Facing.SouthDown, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 0.0f, 0.0f, origin)).ToArray());
+                    }
                 }
 
-                if ((key.Connection & Facing.SouthEast) != 0)
-                {
-                    boxes.Add(Facing.SouthEast, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 270.0f, 0.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.SouthWest) != 0)
-                {
-                    boxes.Add(Facing.SouthWest, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 90.0f, 0.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.SouthUp) != 0)
-                {
-                    boxes.Add(Facing.SouthUp, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 180.0f, 0.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.SouthDown) != 0)
-                {
-                    boxes.Add(Facing.SouthDown, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 0.0f, 0.0f, origin)).ToArray());
-                }
+                
 
                 if ((key.Connection & Facing.WestAll) != 0)
                 {
-                    boxes.Add(Facing.WestAll, dotBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 270.0f, origin)).ToArray());
+                    var indexV = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].voltage; //индекс напряжения этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].indexM; //индекс материала этой грани
+                    var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].lines; //индекс линий этой грани
+                    var indexB = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].burnout;//индекс перегорания этой грани
+                    var isol = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].isolated; //изолировано ли?
+
+
+                    Cuboidf[] partBoxes;
+                    if (!indexB)
+                    {
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                    }
+                    else
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+
+                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+
+                    //ставим точку посередине, если провода не перегорел
+                    if (!indexB)
+                        boxes.Add(Facing.WestAll, fixBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 270.0f, origin)).ToArray());
+
+                    if ((key.Connection & Facing.WestNorth) != 0)
+                    {
+                        boxes.Add(Facing.WestNorth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 270.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.WestSouth) != 0)
+                    {
+                        boxes.Add(Facing.WestSouth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(180.0f, 0.0f, 270.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.WestUp) != 0)
+                    {
+                        boxes.Add(Facing.WestUp, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 0.0f, 270.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.WestDown) != 0)
+                    {
+                        boxes.Add(Facing.WestDown, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 0.0f, 270.0f, origin)).ToArray());
+                    }
                 }
 
-                if ((key.Connection & Facing.WestNorth) != 0)
-                {
-                    boxes.Add(Facing.WestNorth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 270.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.WestSouth) != 0)
-                {
-                    boxes.Add(Facing.WestSouth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(180.0f, 0.0f, 270.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.WestUp) != 0)
-                {
-                    boxes.Add(Facing.WestUp, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(90.0f, 0.0f, 270.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.WestDown) != 0)
-                {
-                    boxes.Add(Facing.WestDown, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(270.0f, 0.0f, 270.0f, origin)).ToArray());
-                }
+                
 
                 if ((key.Connection & Facing.UpAll) != 0)
                 {
-                    boxes.Add(Facing.UpAll, dotBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 180.0f, origin)).ToArray());
+                    var indexV = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].voltage; //индекс напряжения этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].indexM; //индекс материала этой грани
+                    var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].lines; //индекс линий этой грани
+                    var indexB = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].burnout;//индекс перегорания этой грани
+                    var isol = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].isolated; //изолировано ли?
+
+                   
+
+                    Cuboidf[] partBoxes;
+                    if (!indexB)
+                    {
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                    }
+                    else
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+
+                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+
+                    //ставим точку посередине, если провода не перегорел
+                    if (!indexB)
+                        boxes.Add(Facing.UpAll, fixBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 180.0f, origin)).ToArray());
+
+                    if ((key.Connection & Facing.UpNorth) != 0)
+                    {
+                        boxes.Add(Facing.UpNorth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 180.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.UpEast) != 0)
+                    {
+                        boxes.Add(Facing.UpEast, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 270.0f, 180.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.UpSouth) != 0)
+                    {
+                        boxes.Add(Facing.UpSouth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 180.0f, 180.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.UpWest) != 0)
+                    {
+                        boxes.Add(Facing.UpWest, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 90.0f, 180.0f, origin)).ToArray());
+                    }
                 }
 
-                if ((key.Connection & Facing.UpNorth) != 0)
-                {
-                    boxes.Add(Facing.UpNorth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 180.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.UpEast) != 0)
-                {
-                    boxes.Add(Facing.UpEast, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 270.0f, 180.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.UpSouth) != 0)
-                {
-                    boxes.Add(Facing.UpSouth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 180.0f, 180.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.UpWest) != 0)
-                {
-                    boxes.Add(Facing.UpWest, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 90.0f, 180.0f, origin)).ToArray());
-                }
+                
 
                 if ((key.Connection & Facing.DownAll) != 0)
                 {
-                    boxes.Add(Facing.DownAll, dotBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 0.0f, origin)).ToArray());
+                    var indexV = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].voltage; //индекс напряжения этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].indexM; //индекс материала этой грани
+                    var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].lines; //индекс линий этой грани
+                    var indexB = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].burnout;//индекс перегорания этой грани
+                    var isol = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].isolated; //изолировано ли?
+
+                    
+
+                    Cuboidf[] partBoxes;
+                    if (!indexB)
+                    {
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                    }
+                    else
+                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+
+                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+
+                    //ставим точку посередине, если провода не перегорел
+                    if (!indexB)
+                        boxes.Add(Facing.DownAll, fixBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 0.0f, origin)).ToArray());
+
+                    if ((key.Connection & Facing.DownNorth) != 0)
+                    {
+                        boxes.Add(Facing.DownNorth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 0.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.DownEast) != 0)
+                    {
+                        boxes.Add(Facing.DownEast, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 270.0f, 0.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.DownSouth) != 0)
+                    {
+                        boxes.Add(Facing.DownSouth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 180.0f, 0.0f, origin)).ToArray());
+                    }
+
+                    if ((key.Connection & Facing.DownWest) != 0)
+                    {
+                        boxes.Add(Facing.DownWest, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 90.0f, 0.0f, origin)).ToArray());
+                    }
                 }
 
-                if ((key.Connection & Facing.DownNorth) != 0)
-                {
-                    boxes.Add(Facing.DownNorth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 0.0f, 0.0f, origin)).ToArray());
-                }
+                Cuboidf[] enabledSwitchBoxes = enabledSwitchVariant?.CollisionBoxes ?? Array.Empty<Cuboidf>();
+                Cuboidf[] disabledSwitchBoxes = disabledSwitchVariant?.CollisionBoxes ?? Array.Empty<Cuboidf>();
 
-                if ((key.Connection & Facing.DownEast) != 0)
-                {
-                    boxes.Add(Facing.DownEast, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 270.0f, 0.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.DownSouth) != 0)
-                {
-                    boxes.Add(Facing.DownSouth, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 180.0f, 0.0f, origin)).ToArray());
-                }
-
-                if ((key.Connection & Facing.DownWest) != 0)
-                {
-                    boxes.Add(Facing.DownWest, partBoxes.Select(selectionBox => selectionBox.RotatedCopy(0.0f, 90.0f, 0.0f, origin)).ToArray());
-                }
-
-                // Switches
+                // переключатели
                 if ((key.Switches & Facing.NorthEast) != 0)
                 {
                     AddBoxes(

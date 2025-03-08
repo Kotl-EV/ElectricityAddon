@@ -1365,19 +1365,21 @@ public struct energyPacket
     }
 }
 
+
+
 /// <summary>
 /// Параметры проводов/приборов как участников электрической цепи
 /// </summary>
 public struct EParams : IEquatable<EParams>
 {
-    public int voltage;
-    public float maxCurrent;
-    public int indexM;
-    public float resisitivity;
-    public byte lines;
-    public float crossArea;
-    public bool burnout;
-    public bool isolated;
+    public int voltage;         //напряжение
+    public float maxCurrent;    //максимальный ток
+    public int indexM;          //индекс материала
+    public float resisitivity;  //удельное сопротивление
+    public byte lines;          //количество линий
+    public float crossArea;     //площадь поперечного сечения
+    public bool burnout;        //провод сгорел
+    public bool isolated;       //изолированный провод
 
     public EParams(int voltage, float maxCurrent, int indexM, float resisitivity, byte lines, float crossArea, bool burnout, bool isolated)
     {

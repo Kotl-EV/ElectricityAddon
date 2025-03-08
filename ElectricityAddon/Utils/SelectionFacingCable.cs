@@ -1,6 +1,7 @@
 ﻿using ElectricityAddon.Content.Block;
 using ElectricityAddon.Content.Block.ECable;
 using System.Linq;
+using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
 using static ElectricityAddon.Content.Block.ECable.BlockECable;
 
@@ -17,16 +18,13 @@ namespace ElectricityAddon.Utils
         /// <param name="hitPosition"></param>
         /// <param name="Cable"></param>
         /// <returns></returns>
-        public Facing SelectionFacingSwitch(CacheDataKey key, Vec3d hitPosition, BlockECable Cable)
+        public Facing SelectionFacingSwitch(CacheDataKey key, Vec3d hitPosition, BlockECable block, BlockEntity entity)
         {
             var selectedFacing = (
-                        from keyValuePair in BlockECable.CalculateBoxes(
+                        from keyValuePair in block.CalculateBoxes(
                             key,
                             BlockECable.SelectionBoxesCache,
-                            Cable.dotVariant!.SelectionBoxes,
-                            Cable.partVariant!.SelectionBoxes,
-                            Cable.enabledSwitchVariant!.SelectionBoxes,
-                            Cable.disabledSwitchVariant!.SelectionBoxes
+                            (BlockEntityECable)entity
                         )
                         let selectionFacing = keyValuePair.Key
                         let selectionBoxes = keyValuePair.Value
@@ -57,17 +55,14 @@ namespace ElectricityAddon.Utils
         /// <param name="hitPosition"></param>
         /// <param name="Cable"></param>
         /// <returns></returns>
-        public Facing SelectionFacing(CacheDataKey key, Vec3d hitPosition, BlockECable Cable)
+        public Facing SelectionFacing(CacheDataKey key, Vec3d hitPosition, BlockECable block, BlockEntity entity)
         {
 
             var selectedFacing = (
-                            from keyValuePair in BlockECable.CalculateBoxes(
+                            from keyValuePair in block.CalculateBoxes(
                                 key,
                                 BlockECable.SelectionBoxesCache,
-                                Cable.dotVariant!.SelectionBoxes,
-                                Cable.partVariant!.SelectionBoxes,
-                                Cable.enabledSwitchVariant!.SelectionBoxes,
-                                Cable.disabledSwitchVariant!.SelectionBoxes
+                                (BlockEntityECable)entity 
                             )
                             let selectionFacing = keyValuePair.Key
                             let selectionBoxes = keyValuePair.Value

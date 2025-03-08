@@ -10,9 +10,32 @@
   "block-eoven-*": "Электрическая духовка",
 
   "block-accumulator": "Аккумулятор",
-  "block-cable-copper-*": "Медный кабель",
-  "block-cable-silver-*": "Серебряный кабель",
-  "block-cable-lead-*": "Свинцовый кабель",
+
+  "block-cable-32v-copper-*-part": "Медный кабель (32В)",
+  "block-cable-32v-silver-*-part": "Серебряный кабель (32В)",
+  "block-cable-32v-lead-*-part": "Свинцовый кабель (32В)",
+
+  "block-cable-128v-copper-*-part": "Медный кабель (128В)",
+  "block-cable-128v-silver-*-part": "Серебряный кабель (128В)",
+  "block-cable-128v-lead-*-part": "Свинцовый кабель (128В)",
+
+  "block-cable-32v-copper-*-isolated": "Медный изолированный кабель (32В)",
+  "block-cable-32v-silver-*-isolated": "Серебряный изолированный кабель (32В)",
+  "block-cable-32v-lead-*-isolated": "Свинцовый изолированный кабель (32В)",
+
+  "block-cable-128v-copper-*-isolated": "Медный изолированный кабель (128В)",
+  "block-cable-128v-silver-*-isolated": "Серебряный изолированный кабель (128В)",
+  "block-cable-128v-lead-*-isolated": "Свинцовый изолированный кабель (128В)",
+
+  "block-cable-32v-copper-*-burned": "Медный сгоревший кабель (32В)",
+  "block-cable-32v-silver-*-burned": "Серебряный сгоревший кабель (32В)",
+  "block-cable-32v-lead-*-burned": "Свинцовый сгоревший кабель (32В)",
+
+  "block-cable-128v-copper-*-burned": "Медный сгоревший кабель (128В)",
+  "block-cable-128v-silver-*-burned": "Серебряный сгоревший кабель (128В)",
+  "block-cable-128v-lead-*-burned": "Свинцовый сгоревший кабель (128В)",
+
+
   "block-motor-*": "Двигатель",
   "block-generator-*": "Генератор",
   "block-switch-*": "Ручной переключатель",

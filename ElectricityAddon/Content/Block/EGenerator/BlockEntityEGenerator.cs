@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using ElectricityAddon.Utils;
+using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Util;
@@ -9,6 +11,7 @@ namespace ElectricityAddon.Content.Block.EGenerator;
 public class BlockEntityEGenerator : BlockEntity
 {
     private Facing facing = Facing.None;
+
 
     private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 

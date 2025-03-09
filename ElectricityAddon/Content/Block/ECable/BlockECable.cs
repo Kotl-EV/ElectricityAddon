@@ -16,6 +16,7 @@ using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent;
+using Vintagestory.ServerMods.NoObf;
 
 namespace ElectricityAddon.Content.Block.ECable
 {
@@ -23,12 +24,12 @@ namespace ElectricityAddon.Content.Block.ECable
     {
         private readonly static ConcurrentDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> CollisionBoxesCache = new();
 
-        public readonly static Dictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> SelectionBoxesCache = new();
+        public readonly static ConcurrentDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> SelectionBoxesCache = new();
 
         public readonly static Dictionary<CacheDataKey, MeshData> MeshDataCache = new();
 
-        public BlockVariant? enabledSwitchVariant;
-        public BlockVariant? disabledSwitchVariant;
+        public static BlockVariant? enabledSwitchVariant;
+        public static BlockVariant? disabledSwitchVariant;
 
         public float res;                       //удельное сопротивление из ассета
         public float maxCurrent;                //максимальный ток из ассета
@@ -89,6 +90,7 @@ namespace ElectricityAddon.Content.Block.ECable
             BlockECable.CollisionBoxesCache.Clear();
             BlockECable.SelectionBoxesCache.Clear();
             BlockECable.MeshDataCache.Clear();
+
         }
 
         public override void OnLoaded(ICoreAPI api)
@@ -103,8 +105,8 @@ namespace ElectricityAddon.Content.Block.ECable
                 var assetLocation = new AssetLocation("electricityaddon:switch-enabled");
                 var block = api.World.BlockAccessor.GetBlock(assetLocation);
 
-                this.enabledSwitchVariant = new BlockVariant(api, block, "enabled");
-                this.disabledSwitchVariant = new BlockVariant(api, block, "disabled");
+                enabledSwitchVariant = new BlockVariant(api, block, "enabled");
+                disabledSwitchVariant = new BlockVariant(api, block, "disabled");
             }
 
         }
@@ -129,54 +131,203 @@ namespace ElectricityAddon.Content.Block.ECable
             var selection = new Selection(blockSelection);
             var facing = FacingHelper.From(selection.Face, selection.Direction);
 
+            var entity = (BlockEntityECable)world.BlockAccessor.GetBlockEntity(blockSelection.Position);
+
             // обновляем текущий блок с кабелем 
-            {//кавычка тут специально
-                if (world.BlockAccessor.GetBlockEntity(blockSelection.Position) is BlockEntityECable entity) //это кабель?
+            //кавычка тут специально
+            if (entity is BlockEntityECable && entity.AllEparams != null) //это кабель?
+            {
+                var lines = entity.AllEparams[FacingHelper.Faces(facing).First().Index].lines; //сколько линий на грани уже?
+
+
+                if ((entity.Connection & facing) != 0)  //мы навелись уже на существующий кабель?
                 {
-                    var lines = entity.AllEparams[FacingHelper.Faces(facing).First().Index].lines; //сколько линий на грани уже?
+
+                    var faceCoonections = entity.Connection & FacingHelper.FromFace(FacingHelper.Faces(facing).First()); //какие соединения уже есть на грани?
+
+                    //какой блок сейчас здесь находится
+                    var indexV = entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage;          //индекс напряжения этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(facing).First().Index].indexM;          //индекс материала этой грани
+                    var burn = entity.AllEparams[FacingHelper.Faces(facing).First().Index].burnout;            //сгорело?
+                    var isol = entity.AllEparams[FacingHelper.Faces(facing).First().Index].isolated;            //изолировано ?
+
+                    var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+
+                    //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
+                    if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(block.Code)
+                        && !burn
+                        && (byItemStack.StackSize >= FacingHelper.Count(faceCoonections) | byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative))
+                    {
+                        //для 32V 1-4 линии, для 128V 2 линии
+                        if (lines >= 1.0F && ((entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage == 32 & lines < 4.0F) | (entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage == 128 & lines < 2.0F)))                                          //линий 1-3 имеется
+                        {
+                            lines++;                                                                //приращиваем линии
+                            if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)        //чтобы в креативе не уменьшало стак
+                            {
+                                byItemStack!.StackSize -= FacingHelper.Count(faceCoonections) - 1;   //отнимаем у игрока столько же, сколько установили
+                            }
+
+                            entity.AllEparams[FacingHelper.Faces(facing).First().Index].lines = lines; //применяем линии
+                            entity.MarkDirty(true);
+                            return true;
+                        }
+                        else
+                        {
+                            //уведомление на экране
+                            if (this.api is ICoreClientAPI apii)
+                            {
+                                apii.TriggerIngameError((object)this, "cable", "Линий уже достаточно.");
+                            }
+
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        //уведомление на экране
+                        if (this.api is ICoreClientAPI apii)
+                        {
+                            if (!byItemStack!.Block.Code.ToString().Contains(block.Code))
+                            {
+                                apii.TriggerIngameError((object)this, "cable", "Кабеля должны быть того же типа.");
+                            }
+                            else if (byItemStack.StackSize < FacingHelper.Count(faceCoonections))
+                            {
+                                apii.TriggerIngameError((object)this, "cable", "Недостаточно кабелей для размещения.");
+                            }
+                            else if (burn == true)
+                            {
+                                apii.TriggerIngameError((object)this, "cable", "Уберите сгоревший кабель сначала.");
+                            }
+                        }
+
+                        return false;
+                    }
 
 
-                    if ((entity.Connection & facing) != 0)  //мы навелись уже на существующий кабель?
+                }
+                else
+                {
+                    //проверка на сплошную соседнюю грань
+                    if (lines == 0)
+                    {
+                        var indexFacing = FacingHelper.Faces(facing).First().Index; //индекс грани под курсором
+                        var pos = blockSelection.Position.Copy();
+                        if (indexFacing == 0)
+                        {
+                            pos.Z -= 1;
+
+                            if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                            {
+                                if (!b.SideIsSolid(pos, 2))
+                                    return false;
+                            }
+                        }
+                        else if (indexFacing == 1)
+                        {
+                            pos.X += 1;
+
+                            if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                            {
+                                if (!b.SideIsSolid(pos, 3))
+                                    return false;
+                            }
+                        }
+                        else if (indexFacing == 2)
+                        {
+                            pos.Z += 1;
+
+                            if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                            {
+                                if (!b.SideIsSolid(pos, 0))
+                                    return false;
+                            }
+                        }
+                        else if (indexFacing == 3)
+                        {
+                            pos.X -= 1;
+
+                            if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                            {
+                                if (!b.SideIsSolid(pos, 1))
+                                    return false;
+                            }
+                        }
+                        else if (indexFacing == 4)
+                        {
+                            pos.Y += 1;
+
+                            if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                            {
+                                if (!b.SideIsSolid(pos, 5))
+                                    return false;
+                            }
+                        }
+                        else if (indexFacing == 5)
+                        {
+                            pos.Y -= 1;
+
+                            if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                            {
+                                if (!b.SideIsSolid(pos, 1))
+                                    return false;
+                            }
+                        }
+                    }
+
+
+
+                    int indexM = materialsInvert[byItemStack.Block.Variant["material"]];  //определяем индекс материала
+                    int indexV = voltagesInvert[byItemStack.Block.Variant["voltage"]];    //определяем индекс напряжения                        
+                    bool iso = byItemStack.Block.Code.ToString().Contains("isolated")     //определяем изоляцию
+                        ? true
+                        : false;
+
+                    //подгружаем некоторые параметры из ассета
+                    res = MyMiniLib.GetAttributeFloat(byItemStack.Block, "res", 1);
+                    maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack.Block, "maxCurrent", 1);
+                    crosssectional = MyMiniLib.GetAttributeFloat(byItemStack.Block, "crosssectional", 1);
+
+
+
+                    //линий 0? Значит грань была пустая    
+                    if (lines == 0)
+                    {
+                        entity.Eparams = (
+                            new EParams(indexV, maxCurrent, indexM, res, 1, crosssectional, false, iso),
+                            FacingHelper.Faces(facing).First().Index);
+
+                        entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
+
+                    }
+                    else   //линий не 0, значитуже что-то там есть на грани
                     {
 
-                        var faceCoonections = entity.Connection & FacingHelper.FromFace(FacingHelper.Faces(facing).First()); //какие соединения уже есть на грани?
-
                         //какой блок сейчас здесь находится
-                        var indexV = entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage;          //индекс напряжения этой грани
-                        var indexM = entity.AllEparams[FacingHelper.Faces(facing).First().Index].indexM;          //индекс материала этой грани
+                        var indexV2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage;          //индекс напряжения этой грани
+                        var indexM2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].indexM;          //индекс материала этой грани
                         var burn = entity.AllEparams[FacingHelper.Faces(facing).First().Index].burnout;            //сгорело?
-                        var isol = entity.AllEparams[FacingHelper.Faces(facing).First().Index].isolated;            //изолировано ?
+                        var iso2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].isolated;            //изолировано ?
 
-                        var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+                        var block = new GetCableAsset().CableAsset(api, entity.Block, indexV2, indexM2, 1, iso2 ? 6 : 1); //берем ассет блока кабеля
+
 
                         //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
                         if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(block.Code)
                             && !burn
-                            && (byItemStack.StackSize >= FacingHelper.Count(faceCoonections) | byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative))
+                            && (byItemStack.StackSize >= lines | byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative))
                         {
-                            //для 32V 1-4 линии, для 128V 2 линии
-                            if (lines >= 1.0F && ((entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage == 32 & lines < 4.0F) | (entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage == 128 & lines < 2.0F)))                                          //линий 1-3 имеется
+                            if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative) //чтобы в креативе не уменьшало стак
                             {
-                                lines++;                                                                //приращиваем линии
-                                if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative)        //чтобы в креативе не уменьшало стак
-                                {
-                                    byItemStack!.StackSize -= FacingHelper.Count(faceCoonections) - 1;   //отнимаем у игрока столько же, сколько установили
-                                }
-
-                                entity.AllEparams[FacingHelper.Faces(facing).First().Index].lines = lines; //применяем линии
-                                entity.MarkDirty(true);
-                                return true;
+                                byItemStack.StackSize -= lines - 1;          //отнимаем у игрока столько же, сколько установили
                             }
-                            else
-                            {
-                                //уведомление на экране
-                                if (this.api is ICoreClientAPI apii)
-                                {
-                                    apii.TriggerIngameError((object)this, "cable", "Линий уже достаточно.");
-                                }
 
-                                return false;
-                            }
+                            entity.Eparams = (
+                                new EParams(indexV, maxCurrent, indexM, res, lines, crosssectional, false, iso),
+                                FacingHelper.Faces(facing).First().Index);
+
+                            entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
+
                         }
                         else
                         {
@@ -185,112 +336,109 @@ namespace ElectricityAddon.Content.Block.ECable
                             {
                                 if (!byItemStack!.Block.Code.ToString().Contains(block.Code))
                                 {
-                                    apii.TriggerIngameError((object)this, "cable", "Кабеля должны быть того же типа.");
+                                    apii.TriggerIngameError(this, "cable", "Кабеля должны быть того же типа.");
                                 }
-                                else if (byItemStack.StackSize < FacingHelper.Count(faceCoonections))
+                                else if (byItemStack.StackSize < lines)
                                 {
-                                    apii.TriggerIngameError((object)this, "cable", "Недостаточно кабелей для размещения.");
+                                    apii.TriggerIngameError(this, "cable", "Недостаточно кабелей для размещения.");
                                 }
-                                else if (burn == true)
+                                else if (burn)
                                 {
-                                    apii.TriggerIngameError((object)this, "cable", "Уберите сгоревший кабель сначала.");
+                                    apii.TriggerIngameError(this, "cable", "Уберите сгоревший кабель сначала.");
                                 }
                             }
 
                             return false;
                         }
-
-
                     }
-                    else
-                    {
-                        int indexM = materialsInvert[byItemStack.Block.Variant["material"]];  //определяем индекс материала
-                        int indexV = voltagesInvert[byItemStack.Block.Variant["voltage"]];    //определяем индекс напряжения                        
-                        bool iso = byItemStack.Block.Code.ToString().Contains("isolated")     //определяем изоляцию
-                            ? true
-                            : false;
-                       
-                        //подгружаем некоторые параметры из ассета
-                        res = MyMiniLib.GetAttributeFloat(byItemStack.Block, "res", 1);
-                        maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack.Block, "maxCurrent", 1);
-                        crosssectional = MyMiniLib.GetAttributeFloat(byItemStack.Block, "crosssectional", 1);
 
-
-
-                        //линий 0? Значит грань была пустая    
-                        if (lines == 0)
-                        {
-                            entity.Eparams = (
-                                new EParams(indexV, maxCurrent, indexM, res, 1, crosssectional, false, iso),
-                                FacingHelper.Faces(facing).First().Index);
-
-                            entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
-                            
-                        }
-                        else   //линий не 0, значитуже что-то там есть на грани
-                        {
-
-                            //какой блок сейчас здесь находится
-                            var indexV2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage;          //индекс напряжения этой грани
-                            var indexM2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].indexM;          //индекс материала этой грани
-                            var burn = entity.AllEparams[FacingHelper.Faces(facing).First().Index].burnout;            //сгорело?
-                            var iso2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].isolated;            //изолировано ?
-
-                            var block = new GetCableAsset().CableAsset(api, entity.Block, indexV2, indexM2, 1, iso2 ? 6 : 1); //берем ассет блока кабеля
-
-
-                            //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
-                            if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(block.Code)
-                                && !burn
-                                && (byItemStack.StackSize >= lines | byPlayer.WorldData.CurrentGameMode == EnumGameMode.Creative))
-                            {
-                                if (byPlayer.WorldData.CurrentGameMode != EnumGameMode.Creative) //чтобы в креативе не уменьшало стак
-                                {
-                                    byItemStack.StackSize -= lines - 1;          //отнимаем у игрока столько же, сколько установили
-                                }
-
-                                entity.Eparams = (
-                                    new EParams(indexV, maxCurrent, indexM, res, lines, crosssectional, false, iso),
-                                    FacingHelper.Faces(facing).First().Index);
-
-                                entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
-                                
-                            }
-                            else
-                            {
-                                //уведомление на экране
-                                if (this.api is ICoreClientAPI apii)
-                                {
-                                    if (!byItemStack!.Block.Code.ToString().Contains(block.Code))
-                                    {
-                                        apii.TriggerIngameError(this, "cable", "Кабеля должны быть того же типа.");
-                                    }
-                                    else if (byItemStack.StackSize < lines)
-                                    {
-                                        apii.TriggerIngameError(this, "cable", "Недостаточно кабелей для размещения.");
-                                    }
-                                    else if (burn)
-                                    {
-                                        apii.TriggerIngameError(this, "cable", "Уберите сгоревший кабель сначала.");
-                                    }
-                                }
-
-                                return false;
-                            }
-                        }
-
-                        entity.Connection |= facing;
-                        entity.MarkDirty(true);
-                    }
-                    return true;
+                    entity.Connection |= facing;
+                    entity.MarkDirty(true);
                 }
+                return true;
+            }
+
+
+
+            {
+
+                //а грань под курсором сплошная?
+                var indexFacing = FacingHelper.Faces(facing).First().Index; //индекс грани под курсором
+                var pos = blockSelection.Position.Copy();
+                if (indexFacing == 0)
+                {
+                    pos.Z -= 1;
+
+                    if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                    {
+                        if (!b.SideIsSolid(pos, 2))
+                            return false;
+                    }
+                }
+                else if (indexFacing == 1)
+                {
+                    pos.X += 1;
+
+                    if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                    {
+                        if (!b.SideIsSolid(pos, 3))
+                            return false;
+                    }
+                }
+                else if (indexFacing == 2)
+                {
+                    pos.Z += 1;
+
+                    if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                    {
+                        if (!b.SideIsSolid(pos, 0))
+                            return false;
+                    }
+                }
+                else if (indexFacing == 3)
+                {
+                    pos.X -= 1;
+
+                    if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                    {
+                        if (!b.SideIsSolid(pos, 1))
+                            return false;
+                    }
+                }
+                else if (indexFacing == 4)
+                {
+                    pos.Y += 1;
+
+                    if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                    {
+                        if (!b.SideIsSolid(pos, 5))
+                            return false;
+                    }
+                }
+                else if (indexFacing == 5)
+                {
+                    pos.Y -= 1;
+
+                    if (world.BlockAccessor.GetBlock(pos) is Vintagestory.API.Common.Block b)
+                    {
+                        if (!b.SideIsSolid(pos, 4))
+                            return false;
+                    }
+                }
+
+
             }
 
 
             // если установка все же успешна
             if (base.DoPlaceBlock(world, byPlayer, blockSelection, byItemStack))
             {
-                if (world.BlockAccessor.GetBlockEntity(blockSelection.Position) is BlockEntityECable entity)
+
+                entity = (BlockEntityECable)world.BlockAccessor.GetBlockEntity(blockSelection.Position);
+
+                // обновляем текущий блок с кабелем 
+                //кавычка тут специально
+                if (entity is BlockEntityECable) //это кабель?
                 {
                     int indexM = materialsInvert[byItemStack.Block.Variant["material"]];  //определяем индекс материала
                     int indexV = voltagesInvert[byItemStack.Block.Variant["voltage"]];    //определяем индекс напряжения
@@ -317,6 +465,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 return true;
             }
 
+
             return false;
         }
 
@@ -338,7 +487,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     var hitPosition = blockSelection.HitPosition;
 
                     var sf = new SelectionFacingCable();
-                    var selectedFacing = sf.SelectionFacing(key, hitPosition, this, entity);  //выделяем направление для слома под курсором
+                    var selectedFacing = sf.SelectionFacing(key, hitPosition, entity);  //выделяем направление для слома под курсором
 
 
                     //определяем какой выключатель ломать
@@ -365,12 +514,12 @@ namespace ElectricityAddon.Content.Block.ECable
                             entity.Switches &= ~faceSelect;
                             entity.MarkDirty(true);
 
-                            
+
                             var assetLocation = new AssetLocation("electricityaddon:switch-enabled");
                             var block = world.BlockAccessor.GetBlock(assetLocation);
                             var itemStack = new ItemStack(block, stackSize);
                             world.SpawnItemEntity(itemStack, position.ToVec3d());
-                            
+
 
                             return;
                         }
@@ -427,7 +576,7 @@ namespace ElectricityAddon.Content.Block.ECable
                             return;
                         }
                     }
-                    
+
                 }
             }
 
@@ -587,7 +736,7 @@ namespace ElectricityAddon.Content.Block.ECable
 
                         }
 
-                        
+
 
                     }
 
@@ -617,7 +766,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 var hitPosition = blockSel.HitPosition;
 
                 var sf = new SelectionFacingCable();
-                var selectedFacing = sf.SelectionFacing(key, hitPosition, this, entity);  //выделяем грань выключателя
+                var selectedFacing = sf.SelectionFacing(key, hitPosition, entity);  //выделяем грань выключателя
 
 
 
@@ -642,7 +791,8 @@ namespace ElectricityAddon.Content.Block.ECable
         /// <returns></returns>
         public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos position)
         {
-            if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity)
+
+            if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity && entity.AllEparams != null)
             {
                 var key = CacheDataKey.FromEntity(entity);
 
@@ -668,7 +818,8 @@ namespace ElectricityAddon.Content.Block.ECable
         /// <returns></returns>
         public override Cuboidf[] GetCollisionBoxes(IBlockAccessor blockAccessor, BlockPos position)
         {
-            if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity)
+
+            if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity && entity.AllEparams != null)
             {
                 var key = CacheDataKey.FromEntity(entity);
 
@@ -681,6 +832,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     .Distinct()
                     .ToArray();
             }
+
 
             return base.GetSelectionBoxes(blockAccessor, position);
         }
@@ -1030,8 +1182,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.NorthAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 90.0f * GameMath.DEG2RAD,
@@ -1045,8 +1197,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.NorthAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 270.0f * GameMath.DEG2RAD,
@@ -1060,8 +1212,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.NorthAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 180.0f * GameMath.DEG2RAD,
@@ -1075,8 +1227,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.NorthAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 0.0f * GameMath.DEG2RAD,
@@ -1090,8 +1242,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.EastAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 180.0f * GameMath.DEG2RAD,
                                 0.0f,
@@ -1105,8 +1257,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.EastAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 0.0f * GameMath.DEG2RAD,
                                 0.0f,
@@ -1120,8 +1272,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.EastAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 270.0f * GameMath.DEG2RAD,
                                 0.0f,
@@ -1135,8 +1287,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.EastAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 0.0f,
@@ -1150,8 +1302,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.SouthAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 90.0f * GameMath.DEG2RAD,
@@ -1165,8 +1317,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.SouthAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 270.0f * GameMath.DEG2RAD,
@@ -1180,8 +1332,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.SouthAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 180.0f * GameMath.DEG2RAD,
@@ -1195,8 +1347,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.SouthAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 0.0f * GameMath.DEG2RAD,
@@ -1210,8 +1362,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.WestAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 180.0f * GameMath.DEG2RAD,
                                 0.0f,
@@ -1225,8 +1377,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.WestAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 0.0f * GameMath.DEG2RAD,
                                 0.0f,
@@ -1240,8 +1392,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.WestAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 270.0f * GameMath.DEG2RAD,
                                 0.0f,
@@ -1255,8 +1407,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.WestAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 90.0f * GameMath.DEG2RAD,
                                 0.0f,
@@ -1270,8 +1422,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.UpAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 0.0f,
                                 180.0f * GameMath.DEG2RAD,
@@ -1285,8 +1437,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.UpAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 0.0f,
                                 90.0f * GameMath.DEG2RAD,
@@ -1300,8 +1452,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.UpAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 0.0f,
                                 0.0f * GameMath.DEG2RAD,
@@ -1315,8 +1467,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.UpAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone().Rotate(
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone().Rotate(
                                 origin,
                                 0.0f,
                                 270.0f * GameMath.DEG2RAD,
@@ -1330,8 +1482,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.DownAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone()
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone()
                             .Rotate(origin, 0.0f, 180.0f * GameMath.DEG2RAD, 0.0f)
                         );
                     }
@@ -1341,8 +1493,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.DownAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone()
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone()
                             .Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f)
                         );
                     }
@@ -1352,8 +1504,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.DownAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone()
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone()
                             .Rotate(origin, 0.0f, 0.0f * GameMath.DEG2RAD, 0.0f)
                         );
                     }
@@ -1363,8 +1515,8 @@ namespace ElectricityAddon.Content.Block.ECable
                         AddMeshData(
                             ref meshData,
                             ((key.Switches & key.SwitchesState & Facing.DownAll) != 0
-                                ? this.enabledSwitchVariant
-                                : this.disabledSwitchVariant)?.MeshData?.Clone()
+                                ? enabledSwitchVariant
+                                : disabledSwitchVariant)?.MeshData?.Clone()
                             .Rotate(origin, 0.0f, 270.0f * GameMath.DEG2RAD, 0.0f)
                         );
                     }
@@ -1385,7 +1537,7 @@ namespace ElectricityAddon.Content.Block.ECable
         /// <param name="boxesCache"></param>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public Dictionary<Facing, Cuboidf[]> CalculateBoxes(CacheDataKey key, IDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> boxesCache, BlockEntityECable entity)
+        public static Dictionary<Facing, Cuboidf[]> CalculateBoxes(CacheDataKey key, IDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> boxesCache, BlockEntityECable entity)
         {
             if (!boxesCache.TryGetValue(key, out var boxes))
             {
@@ -1406,12 +1558,12 @@ namespace ElectricityAddon.Content.Block.ECable
                     Cuboidf[] partBoxes;
                     if (!indexB)
                     {
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
                     }
                     else
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
 
-                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+                    var fixBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
 
                     //ставим точку посередине, если провода не перегорел
                     if (!indexB)
@@ -1440,7 +1592,7 @@ namespace ElectricityAddon.Content.Block.ECable
 
                 }
 
-                
+
                 if ((key.Connection & Facing.EastAll) != 0)
                 {
                     var indexV = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].voltage; //индекс напряжения этой грани
@@ -1453,12 +1605,12 @@ namespace ElectricityAddon.Content.Block.ECable
                     Cuboidf[] partBoxes;
                     if (!indexB)
                     {
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
                     }
                     else
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
 
-                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+                    var fixBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
 
                     //ставим точку посередине, если провода не перегорел
                     if (!indexB)
@@ -1485,7 +1637,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     }
                 }
 
-                
+
 
                 if ((key.Connection & Facing.SouthAll) != 0)
                 {
@@ -1499,12 +1651,12 @@ namespace ElectricityAddon.Content.Block.ECable
                     Cuboidf[] partBoxes;
                     if (!indexB)
                     {
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
                     }
                     else
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
 
-                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+                    var fixBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
 
                     //ставим точку посередине, если провода не перегорел
                     if (!indexB)
@@ -1531,7 +1683,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     }
                 }
 
-                
+
 
                 if ((key.Connection & Facing.WestAll) != 0)
                 {
@@ -1545,12 +1697,12 @@ namespace ElectricityAddon.Content.Block.ECable
                     Cuboidf[] partBoxes;
                     if (!indexB)
                     {
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
                     }
                     else
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
 
-                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+                    var fixBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
 
                     //ставим точку посередине, если провода не перегорел
                     if (!indexB)
@@ -1577,7 +1729,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     }
                 }
 
-                
+
 
                 if ((key.Connection & Facing.UpAll) != 0)
                 {
@@ -1587,17 +1739,17 @@ namespace ElectricityAddon.Content.Block.ECable
                     var indexB = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].burnout;//индекс перегорания этой грани
                     var isol = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].isolated; //изолировано ли?
 
-                   
+
 
                     Cuboidf[] partBoxes;
                     if (!indexB)
                     {
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
                     }
                     else
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
 
-                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+                    var fixBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
 
                     //ставим точку посередине, если провода не перегорел
                     if (!indexB)
@@ -1624,7 +1776,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     }
                 }
 
-                
+
 
                 if ((key.Connection & Facing.DownAll) != 0)
                 {
@@ -1634,17 +1786,17 @@ namespace ElectricityAddon.Content.Block.ECable
                     var indexB = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].burnout;//индекс перегорания этой грани
                     var isol = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].isolated; //изолировано ли?
 
-                    
+
 
                     Cuboidf[] partBoxes;
                     if (!indexB)
                     {
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1).CollisionBoxes;  //получаем шейп нужного кабеля изолированного или целого
                     }
                     else
-                        partBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
+                        partBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 3).CollisionBoxes;  //получаем шейп нужного кабеля сгоревшего
 
-                    var fixBoxes = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
+                    var fixBoxes = new BlockVariants(entity.Api, entity.Block, indexV, indexM, indexQ, 4).CollisionBoxes;   //получаем шейп крепления кабеля
 
                     //ставим точку посередине, если провода не перегорел
                     if (!indexB)

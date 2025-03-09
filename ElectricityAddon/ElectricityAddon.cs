@@ -111,9 +111,7 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEMotorTier2", typeof(BEBehaviorEMotorTier2));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEMotorTier3", typeof(BEBehaviorEMotorTier3));
 
-        api.RegisterBlockClass("BlockEGeneratorTier1", typeof(BlockEGeneratorTier1));
-        api.RegisterBlockClass("BlockEGeneratorTier2", typeof(BlockEGeneratorTier2));
-        api.RegisterBlockClass("BlockEGeneratorTier3", typeof(BlockEGeneratorTier3));
+        api.RegisterBlockClass("BlockEGenerator", typeof(BlockEGenerator));
         api.RegisterBlockEntityClass("BlockEntityEGenerator", typeof(BlockEntityEGenerator));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier1", typeof(BEBehaviorEGeneratorTier1));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEGeneratorTier2", typeof(BEBehaviorEGeneratorTier2));

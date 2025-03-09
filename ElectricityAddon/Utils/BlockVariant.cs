@@ -23,8 +23,8 @@ public class BlockVariant
         if (api is ICoreClientAPI clientApi)
         {
             var cachedShape = clientApi.TesselatorManager.GetCachedShape(block.Shape.Base);
-
             clientApi.Tesselator.TesselateShape(block, cachedShape, out this.MeshData);
+            clientApi.TesselatorManager.ThreadDispose(); //обязательно!!
         }
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ElectricityAddon.Utils;
@@ -8,14 +9,14 @@ using Vintagestory.GameContent.Mechanics;
 
 namespace ElectricityAddon.Content.Block.EGenerator;
 
-public class BlockEGeneratorTier3 : Vintagestory.API.Common.Block, IMechanicalPowerBlock
+public class BlockEGenerator : Vintagestory.API.Common.Block, IMechanicalPowerBlock
 {
-    private readonly static Dictionary<Facing, MeshData> MeshData = new();
-
+    private readonly static Dictionary<(Facing, string), MeshData> MeshData = new();
+    
     public override void OnUnloaded(ICoreAPI api)
     {
         base.OnUnloaded(api);
-        BlockEGeneratorTier3.MeshData.Clear();
+        BlockEGenerator.MeshData.Clear();
     }
 
     public MechanicalNetwork? GetNetwork(IWorldAccessor world, BlockPos pos)
@@ -52,13 +53,13 @@ public class BlockEGeneratorTier3 : Vintagestory.API.Common.Block, IMechanicalPo
         BlockSelection blockSel, ref string failureCode)
     {
         var selection = new Selection(blockSel);
-        Facing facing = Facing.None;
+        Facing facing=Facing.None;
 
         try
         {
             facing = FacingHelper.From(selection.Face, selection.Direction);
         }
-        catch
+        catch 
         {
             return false;
         }
@@ -76,6 +77,7 @@ public class BlockEGeneratorTier3 : Vintagestory.API.Common.Block, IMechanicalPo
         return base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
     }
 
+    //ставим блок
     public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel,
         ItemStack byItemStack)
     {
@@ -87,7 +89,11 @@ public class BlockEGeneratorTier3 : Vintagestory.API.Common.Block, IMechanicalPo
             world.BlockAccessor.GetBlockEntity(blockSel.Position) is BlockEntityEGenerator entity
         )
         {
-            entity.Facing = facing;
+            entity.Facing = facing;                             //сообщаем направление
+            entity.Eparams = (
+                new EParams(32, 10, -1, 0, 1, 1, false, false),
+                FacingHelper.Faces(facing).First().Index);
+
 
             var blockFacing = FacingHelper.Directions(entity.Facing).First();
             var blockPos = blockSel.Position;
@@ -119,10 +125,14 @@ public class BlockEGeneratorTier3 : Vintagestory.API.Common.Block, IMechanicalPo
             FacingHelper.Faces(entity.Facing).First() is { } blockFacing &&
             !world.BlockAccessor.GetBlock(pos.AddCopy(blockFacing)).SideSolid[blockFacing.Opposite.Index]
         )
+
         {
             world.BlockAccessor.BreakBlock(pos, null);
         }
     }
+
+    
+
 
     public override void OnJsonTesselation(ref MeshData sourceMesh, ref int[] lightRgbsByCorner, BlockPos pos,
         Vintagestory.API.Common.Block[] chunkExtBlocks, int extIndex3d)
@@ -134,9 +144,12 @@ public class BlockEGeneratorTier3 : Vintagestory.API.Common.Block, IMechanicalPo
             entity.Facing != Facing.None
            )
         {
-            var facing = entity.Facing;
 
-            if (!BlockEGeneratorTier3.MeshData.TryGetValue(facing, out var meshData))
+
+            var facing = entity.Facing;   //куда смотрит генератор
+            string tier= entity.Block.Variant["tier"]; //какой тир
+
+            if (!BlockEGenerator.MeshData.TryGetValue((facing,tier), out var meshData))
             {
                 var origin = new Vec3f(0.5f, 0.5f, 0.5f);
                 var block = clientApi.World.BlockAccessor.GetBlockEntity(pos).Block;
@@ -267,7 +280,7 @@ public class BlockEGeneratorTier3 : Vintagestory.API.Common.Block, IMechanicalPo
                     meshData.Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f);
                 }
 
-                BlockEGeneratorTier3.MeshData.Add(facing, meshData);
+                BlockEGenerator.MeshData.Add((facing, tier), meshData);
             }
 
             sourceMesh = meshData;

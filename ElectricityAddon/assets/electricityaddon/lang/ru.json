@@ -5,8 +5,11 @@
   "block-largeaccumulator": "Аккумулятор (большой)",
   "block-motortier2-*": "Модернизированный двигатель",
   "block-motortier3-*": "Высокопроизводительный двигатель",
-  "block-generatortier2-*": "Модернизированный генератор",
-  "block-generatortier3-*": "Высокопроизводительный генератор",
+
+  "block-egenerator-tier1-*": "Генератор",
+  "block-egenerator-tier2-*": "Модернизированный генератор",
+  "block-egenerator-tier3-*": "Высокопроизводительный генератор",
+
   "block-eoven-*": "Электрическая духовка",
 
   "block-accumulator": "Аккумулятор",
@@ -37,7 +40,7 @@
 
 
   "block-motor-*": "Двигатель",
-  "block-generator-*": "Генератор",
+
   "block-switch-*": "Ручной переключатель",
   "block-lamp-*": "Электрическая лампа",
   "block-lamp_small-*": "Электрическая лампа (маленькая)",
@@ -90,8 +93,6 @@
   "block-handbooktitle-motor": "Используется",
   "block-handbooktext-motor": "Двигатель преобразовывает электрическую энергию в механическую. Имеет небольшую мощность и скорость вращения <br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 100; <br><i>torque_max</i> : 0.5; <br><i>kpd_max</i> : 0.75; <br><i>speed_max</i> : 0.5; <br><i>resistance_factor</i> : 0.1. <br> <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
-  "block-handbooktitle-generator": "Используется",
-  "block-handbooktext-generator": "Генератор преобразовывает механическую энергию в электрическую. Имеет небольшую мощность и скорость вращения <br><br>Дополнительные параметры: <br><i>I_max</i>: 100;<br><i>speed_max</i>: 0.5;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.25. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
   "block-handbooktitle-lamp": "Используется",
   "block-handbooktext-lamp": "Хороший источник света, потребляющий электрическую энергию.<br><br>Максимальный уровень света: 21.<br>Максимальное потребление: 8 Eu/с.",
@@ -132,11 +133,15 @@
   "block-handbooktitle-motortier3": "Используется",
   "block-handbooktext-motortier3": "Высокопроизводительный двигатель преобразовывает электрическую энергию в механическую. Благодаря использованию лучших материалов, имеет более высокую выходную мощность по сравнению с <a href=\"handbooksearch:\/\/Модернизированный двигатель\">модернизированным двигателем<\/a>.<br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 800; <br><i>torque_max</i> : 2.0; <br><i>kpd_max</i> : 0.95; <br><i>speed_max</i> : 1.0; <br><i>resistance_factor</i> : 0.1. <br> <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
-  "block-handbooktitle-generatortier2": "Используется",
-  "block-handbooktext-generatortier2": "Модернизированный генератор преобразовывает механическую энергию в электрическую. Имеет повышенную мощность по сравнению с <a href=\"handbooksearch:\/\/Генератор\">генератором<\/a>.<br><br>Дополнительные параметры: <br><i>I_max</i>: 200;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.32. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
-  "block-handbooktitle-generatortier3": "Используется",
-  "block-handbooktext-generatortier3": "Высокопроизводительный генератор преобразовывает механическую энергию в электрическую. Благодаря использованию лучших материалов, имеет более высокую мощность по сравнению с <a href=\"handbooksearch:\/\/Модернизированный генератор\">модернизированным генератором<\/a>.<br><br>Дополнительные параметры: <br><i>I_max</i>: 400;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.81. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+  "block-handbooktitle-egenerator-tier1": "Используется",
+  "block-handbooktext-egenerator-tier1": "Генератор преобразовывает механическую энергию в электрическую. Имеет небольшую мощность и скорость вращения <br><br>Дополнительные параметры: <br><i>I_max</i>: 100;<br><i>speed_max</i>: 0.5;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.25. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+
+  "block-handbooktitle-egenerator-tier2": "Используется",
+  "block-handbooktext-egenerator-tier2": "Модернизированный генератор преобразовывает механическую энергию в электрическую. Имеет повышенную мощность по сравнению с <a href=\"handbooksearch:\/\/Генератор\">генератором<\/a>.<br><br>Дополнительные параметры: <br><i>I_max</i>: 200;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.32. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+
+  "block-handbooktitle-egenerator-tier3": "Используется",
+  "block-handbooktext-egenerator-tier3": "Высокопроизводительный генератор преобразовывает механическую энергию в электрическую. Благодаря использованию лучших материалов, имеет более высокую мощность по сравнению с <a href=\"handbooksearch:\/\/Модернизированный генератор\">модернизированным генератором<\/a>.<br><br>Дополнительные параметры: <br><i>I_max</i>: 400;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.81. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
 
 

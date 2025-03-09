@@ -18,10 +18,10 @@ namespace ElectricityAddon.Utils
         /// <param name="hitPosition"></param>
         /// <param name="Cable"></param>
         /// <returns></returns>
-        public Facing SelectionFacingSwitch(CacheDataKey key, Vec3d hitPosition, BlockECable block, BlockEntity entity)
+        public Facing SelectionFacingSwitch(CacheDataKey key, Vec3d hitPosition, BlockEntity entity)
         {
             var selectedFacing = (
-                        from keyValuePair in block.CalculateBoxes(
+                        from keyValuePair in BlockECable.CalculateBoxes(
                             key,
                             BlockECable.SelectionBoxesCache,
                             (BlockEntityECable)entity
@@ -55,11 +55,11 @@ namespace ElectricityAddon.Utils
         /// <param name="hitPosition"></param>
         /// <param name="Cable"></param>
         /// <returns></returns>
-        public Facing SelectionFacing(CacheDataKey key, Vec3d hitPosition, BlockECable block, BlockEntity entity)
+        public Facing SelectionFacing(CacheDataKey key, Vec3d hitPosition, BlockEntity entity)
         {
 
             var selectedFacing = (
-                            from keyValuePair in block.CalculateBoxes(
+                            from keyValuePair in BlockECable.CalculateBoxes(
                                 key,
                                 BlockECable.SelectionBoxesCache,
                                 (BlockEntityECable)entity 

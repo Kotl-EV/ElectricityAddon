@@ -1,0 +1,129 @@
+{
+  "code": "egenerator",
+  "class": "BlockEGenerator",
+  "entityClass": "BlockEntityEGenerator",
+
+  "variantGroups": [
+    {
+      "code": "tier",
+      "states": [
+        "tier1",
+        "tier2",
+        "tier3"
+      ]
+    },
+    {
+      "code": "type",
+      "states": [
+        "rotor",
+        "stator"
+      ]
+    }
+  ],
+
+
+  "entityBehaviorsByType": {
+    "*-tier1-*": [
+      {
+        "name": "BEBehaviorEGeneratorTier1"
+      },
+      {
+        "name": "ElectricityAddon"
+      }
+    ],
+    "*-tier2-*": [
+      {
+        "name": "BEBehaviorEGeneratorTier2"
+      },
+      {
+        "name": "ElectricityAddon"
+      }
+    ],
+    "*-tier3-*": [
+      {
+        "name": "BEBehaviorEGeneratorTier3"
+      },
+      {
+        "name": "ElectricityAddon"
+      }
+    ]
+  },
+
+
+
+  "attributes": {
+    "handbook": {
+      "groupBy": [ "egenerator-*" ],
+      "extraSections": [
+        {
+          "title": "electricityaddon:block-handbooktitle-egenerator-{tier}",
+          "text": "electricityaddon:block-handbooktext-egenerator-{tier}"
+        }
+      ]
+    }
+  },
+
+
+  "attributesByType": { //параметры генератора, менять на свой страх и риск
+    "*-tier1-*": {
+      "params": [ 100.0, 0.5, 0.1, 0.25 ]
+    },
+    "*-tier2-*": {
+      "params": [ 200.0, 1.0, 0.1, 0.32 ]
+    },
+    "*-tier3-*": {
+      "params": [ 400.0, 1.0, 0.1, 0.81 ]
+    }
+  },
+
+
+  "creativeInventory": {
+    "general": [
+      "*-stator"
+    ],
+    "mechanics": [
+      "*-stator"
+    ],
+    "electricity": [
+      "*-stator"
+    ]
+  },
+
+
+  "shapeInventory": {
+    "base": "block/egenerator/egenerator-{tier}"
+  },
+
+  "shapeByType": {
+    "*-rotor": {
+      "base": "block/egenerator/egenerator-{tier}-rotor"
+    }, 
+    "*-stator": {
+      "base": "block/egenerator/egenerator-{tier}-stator"
+    }
+  },
+
+
+
+  "resistance": 1,
+  "drawType": "JSON",
+  "lightAbsorption": 0.0,
+  "faceCullMode": "NeverCull",
+  "renderPass": "OpaqueNoCull",
+  "emitSideAo": {
+    "all": false
+  },
+  "sideAo": {
+    "all": false
+  },
+  "sideOpaque": {
+    "all": false
+  },
+  "sideSolid": {
+    "all": false
+  },
+  "sounds": {
+    "place": "game:block/anvil",
+    "walk": "game:walk/stone"
+  }
+}

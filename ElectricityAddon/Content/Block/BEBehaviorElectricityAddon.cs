@@ -194,7 +194,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         stringBuilder.AppendLine(Lang.Get("Electricity"));
 
         //если это кабель, то мы можем вывести только информацию о сети на одной грани
-        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable entity)
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable entity && entity.AllEparams!=null)
         {
             if (forPlayer is { CurrentBlockSelection: { } blockSelection })
             {
@@ -202,7 +202,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                 var hitPosition = blockSelection.HitPosition;
 
                 var sf = new SelectionFacingCable();
-                selectedFacing = sf.SelectionFacing(key, hitPosition, (BlockECable)this.Api.World.BlockAccessor.GetBlock(this.Blockentity.Pos), this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos));  //выделяем напрвление для слома под курсором
+                selectedFacing = sf.SelectionFacing(key, hitPosition, this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos));  //выделяем напрвление для слома под курсором
 
                 if (selectedFacing != Facing.None)
                     selectedFacing = FacingHelper.FromFace(FacingHelper.Faces(selectedFacing).First());  //выбираем одну грань, если даже их там вдруг окажется больше

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ElectricityAddon.Interface;
@@ -24,8 +25,8 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     private static float resistance_factor;     // Множитель сопротивления
     private static float resistance_load;       // Сопротивление нагрузки генератора
 
-    private float[] def_Params = { 100.0F, 0.5F, 0.1F, 0.25F };          //заглушка
-    public float[] Params = { 0, 0, 0, 0 };                              //сюда берем параметры из ассетов
+    private static float[] def_Params = { 100.0F, 0.5F, 0.1F, 0.25F };          //заглушка
+    private static float[] Params = { 0, 0, 0, 0 };                              //сюда берем параметры из ассетов
 
 
 
@@ -53,10 +54,20 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
         AVGpowerOrder = 0;
     }
 
+
+
+    public override void OnBlockUnloaded()
+    {
+        base.OnBlockUnloaded();
+
+        compositeShape = null;
+    }
+
+
     public BEBehaviorEGeneratorTier1(BlockEntity blockEntity) : base(blockEntity)
     {
+
         GetParams();
-        
     }
 
     public override BlockFacing OutFacingForNetworkDiscovery
@@ -126,7 +137,6 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     {
         this.powerOrder = amount;
 
-        //AVGpowerOrder = (float)emaFilter.Update(amount);
         AVGpowerOrder = (float)emaFilter.Update(Math.Min(powerGive, powerOrder));
         
     }
@@ -161,14 +171,10 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 
         float spd = this.Network.Speed;
         return (Math.Abs(spd) > speed_max)                                                                                      // Если скорость превышает максимальную, рассчитываем сопротивление как квадратичную
-        //    ? resistance_load  + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
-        //    : resistance_load  + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
-
-        //в таком виде будет лучше, иначе система выработки может встать колом, когда потребления больше выработки
             ? resistance_load * (Math.Min(AVGpowerOrder, I_max) / I_max) + (resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f))   // Степенная зависимость, если скорость ушла за пределы двигателя              
             : resistance_load * (Math.Min(AVGpowerOrder, I_max) / I_max) + (resistance_factor * Math.Abs(spd) / speed_max);                         // Линейное сопротивление для обычных скоростей
-
-        // сопротивление генератора также напрямую зависит от нагрузки в электрической цепи powerOrder 
+                                                                                                                                                    //в таком виде будет лучше, иначе система выработки может встать колом, когда потребления больше выработки
+                                                                                                                                                    // сопротивление генератора также напрямую зависит от нагрузки в электрической цепи powerOrder 
     }
 
 
@@ -194,7 +200,12 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 
             if (BEBehaviorEGeneratorTier1.compositeShape == null)
             {
-                var location = this.Block.CodeWithVariant("type", "rotor");
+                string tier = entity.Block.Variant["tier"]; //какой тир
+
+                string[] types = new string[2] { "tier", "type" };//типы генератора
+                string[] variants = new string[2] { tier, "rotor" };//нужные вариант генератора
+
+                var location = this.Block.CodeWithVariants( types, variants);
 
                 BEBehaviorEGeneratorTier1.compositeShape = api.World.BlockAccessor.GetBlock(location).Shape.Clone();
             }

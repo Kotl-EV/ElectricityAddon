@@ -40,7 +40,7 @@ public class BlockEntityEGenerator : BlockEntity
     {
         base.ToTreeAttributes(tree);
 
-        tree.SetBytes("electricity:facing", SerializerUtil.Serialize(this.facing));
+        tree.SetBytes("electricityaddon:facing", SerializerUtil.Serialize(this.facing));
     }
 
     public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
@@ -49,7 +49,7 @@ public class BlockEntityEGenerator : BlockEntity
 
         try
         {
-            this.facing = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricity:facing"));
+            this.facing = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricityaddon:facing"));
         }
         catch (Exception exception)
         {

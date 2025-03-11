@@ -103,9 +103,7 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockEntityClass("BlockEntityEOven", typeof(BlockEntityEOven));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEOven", typeof(BEBehaviorEOven));
 
-        api.RegisterBlockClass("BlockEMotorTier1", typeof(BlockEMotorTier1));
-        api.RegisterBlockClass("BlockEMotorTier2", typeof(BlockEMotorTier2));
-        api.RegisterBlockClass("BlockEMotorTier3", typeof(BlockEMotorTier3));
+        api.RegisterBlockClass("BlockEMotor", typeof(BlockEMotor));
         api.RegisterBlockEntityClass("BlockEntityEMotor", typeof(BlockEntityEMotor));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEMotorTier1", typeof(BEBehaviorEMotorTier1));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEMotorTier2", typeof(BEBehaviorEMotorTier2));
@@ -636,6 +634,7 @@ public class ElectricityAddon : ModSystem
                         var totalGive = sim2.Customers[i].Required - sim2.Customers[i].Remaining;       //аккум получил столько энергии                    
                         accum.ElectricAccum.Store(totalGive);                                           //выдаем энергию аккумам 
 
+
                         i++;
                     }
                 }
@@ -709,17 +708,23 @@ public class ElectricityAddon : ModSystem
                         {
                             if (item.path[0] == part.Key)  //если первый элемент пути пакета имеет те же координаты, что и текущмй элемент, значит пакет можно забирать
                             {
+
                                 //удаляем пакеты
                                 parts[part.Key].energyPackets.Remove(item);
 
-                                //суммируем все полученные пакеты данным потребителем
-                                if (sumEnergy.TryGetValue(part.Key, out var value))
+                                //если пакет имеет напряжение меньше, чему нужно, то он не будет учитываться
+                                if (part.Value.eparams.Where(s => s.voltage > 0).Any(s => item.voltage >= s.voltage))
                                 {
-                                    sumEnergy[part.Key] += item.energy;
-                                }
-                                else
-                                {
-                                    sumEnergy.Add(part.Key, item.energy);
+
+                                    //суммируем все полученные пакеты данным потребителем
+                                    if (sumEnergy.TryGetValue(part.Key, out var value))
+                                    {
+                                        sumEnergy[part.Key] += item.energy;
+                                    }
+                                    else
+                                    {
+                                        sumEnergy.Add(part.Key, item.energy);
+                                    }
                                 }
 
                             }
@@ -833,7 +838,7 @@ public class ElectricityAddon : ModSystem
 
 
 
-                //Этап  - Палим провода ---------------------------------------------------------------------------------------//
+                //Этап  - Палим провода и не только ---------------------------------------------------------------------------------------//
                 foreach (var part in parts)  //перебираем все элементы
                 {
                     if (part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)

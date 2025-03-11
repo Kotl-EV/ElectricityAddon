@@ -3,18 +3,19 @@ using System.Linq;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent.Mechanics;
 
 namespace ElectricityAddon.Content.Block.EMotor;
-public class BlockEMotorTier3 : Vintagestory.API.Common.Block, IMechanicalPowerBlock
+public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
 {
-    private readonly static Dictionary<Facing, MeshData> MeshData = new();
+    private readonly static Dictionary<(Facing, string), MeshData> MeshData = new();
 
     public override void OnUnloaded(ICoreAPI api)
     {
         base.OnUnloaded(api);
-        BlockEMotorTier3.MeshData.Clear();
+        BlockEMotor.MeshData.Clear();
     }
 
     public MechanicalNetwork? GetNetwork(IWorldAccessor world, BlockPos pos)
@@ -41,9 +42,13 @@ public class BlockEMotorTier3 : Vintagestory.API.Common.Block, IMechanicalPowerB
     {
     }
 
+
+
+
     public override void OnLoaded(ICoreAPI coreApi)
     {
         base.OnLoaded(coreApi);
+
     }
 
     public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack,
@@ -65,6 +70,7 @@ public class BlockEMotorTier3 : Vintagestory.API.Common.Block, IMechanicalPowerB
         return base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
     }
 
+    //ставим блок
     public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel,
         ItemStack byItemStack)
     {
@@ -76,7 +82,16 @@ public class BlockEMotorTier3 : Vintagestory.API.Common.Block, IMechanicalPowerB
             world.BlockAccessor.GetBlockEntity(blockSel.Position) is BlockEntityEMotor entity
         )
         {
-            entity.Facing = facing;
+            entity.Facing = facing;                             //сообщаем направление
+
+            //задаем параметры блока/проводника
+            var voltage = MyMiniLib.GetAttributeInt(this, "voltage", 32);
+            var maxCurrent = MyMiniLib.GetAttributeFloat(this, "maxCurrent", 5.0F);
+
+            entity.Eparams = (
+                new EParams(voltage, maxCurrent, -1, 0, 1, 1, false, false),
+                FacingHelper.Faces(facing).First().Index);
+
 
             var blockFacing = FacingHelper.Directions(entity.Facing).First();
             var blockPos = blockSel.Position;
@@ -123,9 +138,11 @@ public class BlockEMotorTier3 : Vintagestory.API.Common.Block, IMechanicalPowerB
             entity.Facing != Facing.None
            )
         {
-            var facing = entity.Facing;
 
-            if (!BlockEMotorTier3.MeshData.TryGetValue(facing, out var meshData))
+            var facing = entity.Facing;   //куда смотрит генератор
+            string tier = entity.Block.Variant["tier"]; //какой тир
+
+            if (!BlockEMotor.MeshData.TryGetValue((facing, tier), out var meshData))
             {
                 var origin = new Vec3f(0.5f, 0.5f, 0.5f);
                 var block = clientApi.World.BlockAccessor.GetBlockEntity(pos).Block;
@@ -256,7 +273,7 @@ public class BlockEMotorTier3 : Vintagestory.API.Common.Block, IMechanicalPowerB
                     meshData.Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f);
                 }
 
-                BlockEMotorTier3.MeshData.Add(facing, meshData);
+                BlockEMotor.MeshData.Add((facing, tier), meshData);
             }
 
             sourceMesh = meshData;

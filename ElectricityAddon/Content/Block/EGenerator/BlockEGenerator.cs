@@ -90,8 +90,13 @@ public class BlockEGenerator : Vintagestory.API.Common.Block, IMechanicalPowerBl
         )
         {
             entity.Facing = facing;                             //сообщаем направление
+
+            //задаем параметры блока/проводника
+            var voltage = MyMiniLib.GetAttributeInt(this, "voltage", 32);
+            var maxCurrent = MyMiniLib.GetAttributeFloat(this, "maxCurrent", 5.0F);
+
             entity.Eparams = (
-                new EParams(32, 10, -1, 0, 1, 1, false, false),
+                new EParams(voltage, maxCurrent, -1, 0, 1, 1, false, false),
                 FacingHelper.Faces(facing).First().Index);
 
 

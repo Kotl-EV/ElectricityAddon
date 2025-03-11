@@ -36,7 +36,7 @@ public class BlockEStove : Vintagestory.API.Common.Block
 
         bool handled = base.OnBlockInteractStart(world, byPlayer, blockSel);
 
-        if (!handled && !byPlayer.WorldData.EntityControls.Sneak && blockSel.Position != null)
+        if (!handled && !byPlayer.WorldData.EntityControls.Sneak && blockSel.Position != null) //зачем тут sneak
         {
             if (be != null)
             {

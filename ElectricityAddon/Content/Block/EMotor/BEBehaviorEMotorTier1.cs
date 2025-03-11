@@ -16,7 +16,6 @@ namespace ElectricityAddon.Content.Block.EMotor;
 public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
 {
 
-
     public BEBehaviorEMotorTier1(BlockEntity blockEntity) : base(blockEntity)
     {
         GetParams();
@@ -284,7 +283,12 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
 
             if (BEBehaviorEMotorTier1.compositeShape == null)
             {
-                var location = this.Block.CodeWithVariant("type", "rotor");
+                string tier = entity.Block.Variant["tier"]; //какой тир
+
+                string[] types = new string[2] { "tier", "type" };//типы мотора
+                string[] variants = new string[2] { tier, "rotor" };//нужные вариант мотора
+
+                var location = this.Block.CodeWithVariants(types, variants);
                 BEBehaviorEMotorTier1.compositeShape = api.World.BlockAccessor.GetBlock(location).Shape.Clone();
             }
 

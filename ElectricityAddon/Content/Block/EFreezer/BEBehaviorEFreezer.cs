@@ -15,7 +15,7 @@ public class BEBehaviorEFreezer : BlockEntityBehavior, IElectricConsumer
         maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 100);
     }
 
-    public ConsumptionRange ConsumptionRange => new(0, maxConsumption);
+
 
     public void Consume(int amount)
     {

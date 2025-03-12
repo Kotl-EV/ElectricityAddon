@@ -14,7 +14,7 @@ public class BEBehaviorEHornNew : BlockEntityBehavior, IElectricConsumer
     public BEBehaviorEHornNew(BlockEntity blockEntity) : base(blockEntity)
     {
     }
-    public ConsumptionRange ConsumptionRange => hasItems ? new ConsumptionRange(10, 100) : new ConsumptionRange(0, 0);
+
     public void Consume(int amount)
     {
         BlockEntityEHornNew? entity = null;

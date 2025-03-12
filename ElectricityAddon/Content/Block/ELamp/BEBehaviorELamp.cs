@@ -33,7 +33,7 @@ namespace ElectricityAddon.Content.Block.ELamp
 
         public float LightLevel { get; private set; }
 
-        public ConsumptionRange ConsumptionRange => new(0, maxConsumption);  //удалить
+
 
 
 

@@ -38,5 +38,4 @@ public interface IElectricProducer
     /// </summary>
     public void Update();
 
-    public int Produce();                    //можно удалить
 }

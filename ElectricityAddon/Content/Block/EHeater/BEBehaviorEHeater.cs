@@ -14,7 +14,7 @@ namespace ElectricityAddon.Content.Block.EHeater
 
         public int HeatLevel { get; private set; }
 
-        public ConsumptionRange ConsumptionRange => new(0, 8);
+
 
         public void Consume(int heatLevel)
         {

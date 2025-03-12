@@ -19,13 +19,16 @@ namespace ElectricityAddon.Content.Block;
 public class BEBehaviorElectricityAddon : BlockEntityBehavior
 {
     private IElectricAccumulator? accumulator;
+    private IElectricConsumer? consumer;
+    private IElectricProducer? producer;
+    private IElectricTransformator? transformator;
 
     private Facing connection;
-    private IElectricConsumer? consumer;
+
     private bool dirty = true;
     private bool paramsSet = false;
     private Facing interruption;
-    private IElectricProducer? producer;
+    
     public EParams eparams;
     public int eparamsFace;
     private EParams[] allEparams;
@@ -124,6 +127,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                 this.consumer = null;
                 this.producer = null;
                 this.accumulator = null;
+                this.transformator = null;
 
                 foreach (var entityBehavior in this.Blockentity.Behaviors)
                 {
@@ -131,15 +135,18 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                     {
                         case IElectricConsumer { } consumer:
                             this.consumer = consumer;
-
                             break;
+
                         case IElectricProducer { } producer:
                             this.producer = producer;
-
                             break;
+
                         case IElectricAccumulator { } accumulator:
                             this.accumulator = accumulator;
+                            break;
 
+                        case IElectricTransformator { } transformator:
+                            this.transformator = transformator;
                             break;
                     }
                 }
@@ -148,7 +155,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
                 system.SetConsumer(this.Blockentity.Pos, this.consumer);
                 system.SetProducer(this.Blockentity.Pos, this.producer);
                 system.SetAccumulator(this.Blockentity.Pos, this.accumulator);
-
+                system.SetTransformator(this.Blockentity.Pos, this.transformator);
 
                 //если обновляется connection или interrupt, то нафиг присваивать параметры
                 (EParams, int) Epar;
@@ -225,6 +232,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
             stringBuilder.AppendLine("├ Потребителей: " + networkInformation?.NumberOfConsumers);
             stringBuilder.AppendLine("├ Генераторов: " + networkInformation?.NumberOfProducers);
             stringBuilder.AppendLine("├ Аккумуляторов: " + networkInformation?.NumberOfAccumulators);
+            stringBuilder.AppendLine("├ Трансформаторов: " + networkInformation?.NumberOfTransformators);
             stringBuilder.AppendLine("├ Блоков: " + networkInformation?.NumberOfBlocks);
         }
 
@@ -258,12 +266,8 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
     {
         base.ToTreeAttributes(tree);
 
-
         tree.SetBytes("electricityaddon:connection", SerializerUtil.Serialize(this.connection));
         tree.SetBytes("electricityaddon:interruption", SerializerUtil.Serialize(this.interruption));
-
-        //var networkInformation = this.System?.GetNetworks(this.Blockentity.Pos, this.Connection);      //получаем информацию о сети
-        //tree.SetBytes("electricity:eparams", SerializerUtil.Serialize(networkInformation?.eParamsInNetwork));
 
         //массив массивов приходится сохранять через newtonsoftjson
         tree.SetBytes("electricityaddon:allEparams", Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(this.allEparams)));

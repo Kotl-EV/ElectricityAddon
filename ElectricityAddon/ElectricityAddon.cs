@@ -23,6 +23,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Util;
 using ElectricityAddon.Content.Block.ECable;
 using Vintagestory.API.Config;
+using ElectricityAddon.Content.Block.ETransformator;
 
 
 
@@ -49,6 +50,8 @@ public class ElectricityAddon : ModSystem
     private readonly List<Producer> producers2 = new();
     private readonly List<Accumulator> accums = new();
     private readonly List<Accumulator> accums2 = new();
+
+
     private readonly HashSet<Network> networks = new();
     private readonly Dictionary<BlockPos, NetworkPart> parts = new(); //хранит все элементы всех цепей
     public static bool combatoverhaul = false;                        //установлен ли combatoverhaul
@@ -90,6 +93,10 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockClass("BlockECharger", typeof(BlockECharger));
         api.RegisterBlockEntityClass("BlockEntityECharger", typeof(BlockEntityECharger));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorECharger", typeof(BEBehaviorECharger));
+
+        api.RegisterBlockClass("BlockETransformator", typeof(BlockETransformator));
+        api.RegisterBlockEntityClass("BlockEntityETransformator", typeof(BlockEntityETransformator));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorETransformator", typeof(BEBehaviorETransformator));
 
         api.RegisterBlockClass("BlockEStove", typeof(BlockEStove));
         api.RegisterBlockEntityClass("BlockEntityEStove", typeof(BlockEntityEStove));
@@ -256,7 +263,7 @@ public class ElectricityAddon : ModSystem
 
                         if (ams.Equals(default(EParams)))
                             this.parts[pos].eparams[i] = new EParams();
-                        
+
                         i++;
                     }
 
@@ -287,7 +294,7 @@ public class ElectricityAddon : ModSystem
                         item2.moved = false;
                         this.parts[pos].energyPackets.Remove(item);
                         this.parts[pos].energyPackets.Add(item2);
-                       
+
                     }
                 }
 
@@ -789,7 +796,7 @@ public class ElectricityAddon : ModSystem
                                     float resistance = part.Value.eparams[item2.facingFrom.Last()].resisitivity / (part.Value.eparams[item2.facingFrom.Last()].lines * part.Value.eparams[item2.facingFrom.Last()].crossArea);    //сопротивление проводника 
                                     if (part.Value.eparams[item2.facingFrom.Last()].isolated)  //если проводник изолированный
                                     {
-                                        resistance /=2.0F;  //снижаем сопротивление в 2 раза
+                                        resistance /= 2.0F;  //снижаем сопротивление в 2 раза
                                     }
 
                                     float current = item2.energy * (1.0F) / item2.voltage;  //считаем ток
@@ -838,9 +845,10 @@ public class ElectricityAddon : ModSystem
 
 
 
-                //Этап  - Палим провода и не только ---------------------------------------------------------------------------------------//
+                //Этап  - Палим провода и трансформируем энергию ---------------------------------------------------------------------------------------//
                 foreach (var part in parts)  //перебираем все элементы
                 {
+                    //палим провода))
                     if (part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)
                     {
                         var copyEnergyPackets = part.Value.energyPackets.ToList<energyPacket>();
@@ -892,6 +900,43 @@ public class ElectricityAddon : ModSystem
                             }
                             i++;
                         }
+
+                    }
+
+                    //трансформируем энергию
+                    if (part.Value.Transformator != null && part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)
+                    {
+                        var copyEnergyPackets = part.Value.energyPackets.ToList<energyPacket>();
+                        var copyEnergyPackets2 = part.Value.energyPackets.ToList<energyPacket>();
+
+
+                        i = 0;
+                        foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
+                        {
+                            //пакет с напряжением высоким? Понизим напряжение
+                            if (item.voltage == part.Value.Transformator.highVoltage)
+                            {
+                                var newPacket = item.DeepCopy();
+                                newPacket.voltage = part.Value.Transformator.lowVoltage;
+                                copyEnergyPackets2[i] = newPacket;
+                            }
+
+                            //пакет с напряжением низким? Повысим напряжение
+                            if (item.voltage == part.Value.Transformator.lowVoltage)
+                            {
+                                var newPacket = item.DeepCopy();
+                                newPacket.voltage = part.Value.Transformator.highVoltage;
+                                copyEnergyPackets2[i] = newPacket;
+                            }
+
+
+
+                            i++;
+                        }
+
+
+                        parts[part.Key].energyPackets = new List<energyPacket>(copyEnergyPackets2);
+
 
                     }
                 }
@@ -960,6 +1005,11 @@ public class ElectricityAddon : ModSystem
                     if (part.Accumulator is { } accumulator)
                     {
                         outNetwork.Accumulators.Add(accumulator);
+                    }
+
+                    if (part.Transformator is { } transformator)
+                    {
+                        outNetwork.Transformators.Add(transformator);
                     }
 
                     outNetwork.PartPositions.Add(position);
@@ -1124,6 +1174,11 @@ public class ElectricityAddon : ModSystem
                 network.Accumulators.Add(accumulator);
             }
 
+            if (part.Transformator is { } transformator)
+            {
+                network.Transformators.Add(transformator);
+            }
+
             network.PartPositions.Add(part.Position);
 
             part.Networks[face.Index] = network;            //присваиваем в этой точке эту цепь
@@ -1236,6 +1291,19 @@ public class ElectricityAddon : ModSystem
             (part, a) => part.Accumulator = a,
             network => network.Accumulators);
 
+    /// <summary>
+    /// Задать трансформатор
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="accumulator"></param>
+    public void SetTransformator(BlockPos position, IElectricTransformator? transformator) =>
+        SetComponent(
+            position,
+            transformator,
+            part => part.Transformator,
+            (part, a) => part.Transformator = a,
+            network => network.Transformators);
+
 
     /// <summary>
     /// Задает компоненты разных типов
@@ -1320,6 +1388,7 @@ public class ElectricityAddon : ModSystem
                 result.NumberOfConsumers += network.Consumers.Count;
                 result.NumberOfProducers += network.Producers.Count;
                 result.NumberOfAccumulators += network.Accumulators.Count;
+                result.NumberOfTransformators += network.Transformators.Count;
                 result.Production += network.Production;
                 result.Consumption += network.Consumption;
                 result.Overflow += network.Overflow;
@@ -1440,8 +1509,11 @@ public class Network
 {
     public readonly HashSet<IElectricAccumulator> Accumulators = new();
     public readonly HashSet<IElectricConsumer> Consumers = new();
-    public readonly HashSet<BlockPos> PartPositions = new();
     public readonly HashSet<IElectricProducer> Producers = new();
+    public readonly HashSet<IElectricTransformator> Transformators = new();
+
+    public readonly HashSet<BlockPos> PartPositions = new();
+
 
     public float Consumption;
     public float Overflow;
@@ -1476,13 +1548,15 @@ public class NetworkPart                       //элемент цепи
         0.0F
     };
 
-    public List<energyPacket> energyPackets;
+    public List<energyPacket> energyPackets;        //пакеты энергии
 
-    public readonly BlockPos Position;           //позиция
-    public IElectricAccumulator? Accumulator;    //поведение аккумулятора?
+    public readonly BlockPos Position;              //позиция
     public Facing Connection = Facing.None;
-    public IElectricConsumer? Consumer;          //поведение потребителя?
-    public IElectricProducer? Producer;          //поведение источнрка?
+
+    public IElectricAccumulator? Accumulator;       //поведение аккумулятора
+    public IElectricConsumer? Consumer;             //поведение потребителя
+    public IElectricProducer? Producer;             //поведение источнрка
+    public IElectricTransformator? Transformator;   //поведение трансформатора
 
     public NetworkPart(BlockPos position)
     {
@@ -1505,6 +1579,7 @@ public class NetworkInformation             //информация о конкр
     public int NumberOfBlocks;                //блоков
     public int NumberOfConsumers;             //потребителй
     public int NumberOfProducers;             //источников
+    public int NumberOfTransformators;        //трансформаторов
 
     public EParams eParamsInNetwork = new EParams();       //параметрах конкретно этого блока в этой цепи
     internal float current;
@@ -1515,13 +1590,10 @@ public class NetworkInformation             //информация о конкр
 /// </summary>
 internal class Consumer
 {
-    public readonly ConsumptionRange Consumption;               //удалим!!!   
-
     public readonly IElectricConsumer ElectricConsumer;
     public Consumer(IElectricConsumer electricConsumer)
     {
         this.ElectricConsumer = electricConsumer;
-        this.Consumption = electricConsumer.ConsumptionRange;   //удалим!!
     }
 }
 

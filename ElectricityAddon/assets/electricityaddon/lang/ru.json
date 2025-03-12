@@ -12,7 +12,7 @@
   "block-egenerator-tier2-*": "Модернизированный генератор",
   "block-egenerator-tier3-*": "Высокопроизводительный генератор",
 
-
+  "block-transformator-*": "Трансформатор",
 
   "block-eoven-*": "Электрическая духовка",
 
@@ -103,6 +103,10 @@
 
   "block-handbooktitle-eforge": "Используется",
   "block-handbooktext-eforge": "Электрический горн позволяет полностью заменить обычный кузнечный горн.<br><br>Максимальная температура нагрева: 1100 °C.<br>Максимальное потребление: 100 Eu/с.",
+
+  "block-handbooktitle-transformator": "Используется",
+  "block-handbooktext-transformator": "Служит для преобразования электрической энергии с одного напряжения в другое.<br><br>Коэффициент трансформации: 1:4.",
+
 
 
   "game:gamemechanicinfo-electricityaddon-title": "Электричество: модификация ElectricityAddon/Electricity",

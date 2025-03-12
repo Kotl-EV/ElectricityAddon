@@ -119,10 +119,7 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         _ => throw new Exception()
     };
 
-    /// <summary>
-    /// Диапазон потребления
-    /// </summary>
-    public ConsumptionRange ConsumptionRange => new(0, (int)I_max);  //удалить
+
 
     public new BlockPos Pos => this.Position;
 

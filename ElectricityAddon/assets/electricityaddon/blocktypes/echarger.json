@@ -14,6 +14,7 @@
       ]
     }
   },
+
   "shape": {
     "base": "block/charger"
   },
@@ -62,6 +63,7 @@
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
+
   "shapebytype": {
     "*-enabled-north": {
       "base": "block/charger-enabled",

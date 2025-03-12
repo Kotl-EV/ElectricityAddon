@@ -35,13 +35,6 @@
     "shape": {
         "base": "block/accumulator"
     },
-    "textures": {
-        "brass": { "base": "block/brass" },
-        "copper": { "base": "block/copper" },
-        "iron": { "base": "block/iron" },
-        "steel": { "base": "block/steel" },
-        "zinc": { "base": "block/zinc" }
-    },
     "resistance": 1,
     "drawType": "JSON",
     "lightAbsorption": 0.0,

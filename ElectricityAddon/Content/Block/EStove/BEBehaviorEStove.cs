@@ -16,7 +16,7 @@ public class BEBehaviorEStove : BlockEntityBehavior, IElectricConsumer
     {
         maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 100);
     }
-    public ConsumptionRange ConsumptionRange => working ? new ConsumptionRange(0, maxConsumption) : new ConsumptionRange(0, 0);  //тут поправить
+
     public void Consume(int amount)
     {
         BlockEntityEStove? entity = null;

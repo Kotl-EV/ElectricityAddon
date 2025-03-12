@@ -1,0 +1,99 @@
+{
+  "code": "transformator",
+  "class": "BlockETransformator",
+  "entityClass": "BlockEntityETransformator",
+  "entityBehaviors": [
+    {
+      "name": "BEBehaviorETransformator"
+    },
+    {
+      "name": "ElectricityAddon"
+    }
+  ],
+  "creativeInventory": {
+    "general": [
+      "*-south"
+    ],
+    "electricity": [
+      "*-south"
+    ]
+  },
+
+  "attributes": {
+    "rechargeable": true,
+    "maxcapacity": 64000,
+    "handbook": {
+      "groupBy": [ "transformator-*" ],
+      "extraSections": [
+        {
+          "title": "electricityaddon:block-handbooktitle-transformator",
+          "text": "electricityaddon:block-handbooktext-transformator"
+        }
+      ]
+    }
+
+  },
+
+  "variantgroups": [
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    }
+  ],
+
+
+
+  "behaviors": [
+    {
+      "name": "HorizontalOrientable",
+      "properties": {
+        "dropBlockFace": "south"
+      }
+    }
+  ],
+
+
+
+  "shapebytype": {
+    "*-north": {
+      "base": "block/transformator",
+      "rotateY": 0
+    },
+    "*-east": {
+      "base": "block/transformator",
+      "rotateY": 270
+    },
+    "*-south": {
+      "base": "block/transformator",
+      "rotateY": 180
+    },
+    "*-west": {
+      "base": "block/transformator",
+      "rotateY": 90
+    }
+  },
+
+
+
+  "resistance": 1,
+  "drawType": "JSON",
+  "lightAbsorption": 0.0,
+  "faceCullMode": "NeverCull",
+  "renderPass": "OpaqueNoCull",
+  "emitSideAo": {
+    "all": false
+  },
+  "sideAo": {
+    "all": false
+  },
+  "sideOpaque": {
+    "all": false
+  },
+  "sideSolid": {
+    "all": false
+  },
+  "sounds": {
+    "place": "game:block/anvil",
+    "walk": "game:walk/stone"
+  }
+}

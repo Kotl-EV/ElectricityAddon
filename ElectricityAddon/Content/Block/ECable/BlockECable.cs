@@ -34,6 +34,7 @@ namespace ElectricityAddon.Content.Block.ECable
         public float res;                       //удельное сопротивление из ассета
         public float maxCurrent;                //максимальный ток из ассета
         public float crosssectional;            //площадь сечения из ассета
+        public string material;                 //материал из ассета
 
         private ICoreAPI api;
 
@@ -147,11 +148,11 @@ namespace ElectricityAddon.Content.Block.ECable
 
                     //какой блок сейчас здесь находится
                     var indexV = entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage;          //индекс напряжения этой грани
-                    var indexM = entity.AllEparams[FacingHelper.Faces(facing).First().Index].indexM;          //индекс материала этой грани
+                    var material = entity.AllEparams[FacingHelper.Faces(facing).First().Index].material;          //индекс материала этой грани
                     var burn = entity.AllEparams[FacingHelper.Faces(facing).First().Index].burnout;            //сгорело?
                     var isol = entity.AllEparams[FacingHelper.Faces(facing).First().Index].isolated;            //изолировано ?
 
-                    var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+                    var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, material, 1, isol ? 6 : 1); //берем ассет блока кабеля
 
                     //проверяем сколько у игрока проводов в руке и совпадают ли они с теми что есть
                     if (byItemStack != null && byItemStack.Block.Code.ToString().Contains(block.Code)
@@ -277,13 +278,14 @@ namespace ElectricityAddon.Content.Block.ECable
 
 
 
-                    int indexM = materialsInvert[byItemStack.Block.Variant["material"]];  //определяем индекс материала
+                    
                     int indexV = voltagesInvert[byItemStack.Block.Variant["voltage"]];    //определяем индекс напряжения                        
                     bool iso = byItemStack.Block.Code.ToString().Contains("isolated")     //определяем изоляцию
                         ? true
                         : false;
 
                     //подгружаем некоторые параметры из ассета
+                    string material = MyMiniLib.GetAttributeString(byItemStack.Block, "material", "");  //определяем материал
                     res = MyMiniLib.GetAttributeFloat(byItemStack.Block, "res", 1);
                     maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack.Block, "maxCurrent", 1);
                     crosssectional = MyMiniLib.GetAttributeFloat(byItemStack.Block, "crosssectional", 1);
@@ -294,7 +296,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     if (lines == 0)
                     {
                         entity.Eparams = (
-                            new EParams(indexV, maxCurrent, indexM, res, 1, crosssectional, false, iso),
+                            new EParams(indexV, maxCurrent, material, res, 1, crosssectional, false, iso),
                             FacingHelper.Faces(facing).First().Index);
 
                         entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
@@ -305,7 +307,7 @@ namespace ElectricityAddon.Content.Block.ECable
 
                         //какой блок сейчас здесь находится
                         var indexV2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].voltage;          //индекс напряжения этой грани
-                        var indexM2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].indexM;          //индекс материала этой грани
+                        var indexM2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].material;          //индекс материала этой грани
                         var burn = entity.AllEparams[FacingHelper.Faces(facing).First().Index].burnout;            //сгорело?
                         var iso2 = entity.AllEparams[FacingHelper.Faces(facing).First().Index].isolated;            //изолировано ?
 
@@ -323,7 +325,7 @@ namespace ElectricityAddon.Content.Block.ECable
                             }
 
                             entity.Eparams = (
-                                new EParams(indexV, maxCurrent, indexM, res, lines, crosssectional, false, iso),
+                                new EParams(indexV, maxCurrent, material, res, lines, crosssectional, false, iso),
                                 FacingHelper.Faces(facing).First().Index);
 
                             entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
@@ -440,7 +442,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 //кавычка тут специально
                 if (entity is BlockEntityECable) //это кабель?
                 {
-                    int indexM = materialsInvert[byItemStack.Block.Variant["material"]];  //определяем индекс материала
+                    string material = MyMiniLib.GetAttributeString(byItemStack.Block, "material", "");  //определяем материал
                     int indexV = voltagesInvert[byItemStack.Block.Variant["voltage"]];    //определяем индекс напряжения
                     bool iso = byItemStack.Block.Code.ToString().Contains("isolated")     //определяем изоляцию
                         ? true
@@ -454,7 +456,7 @@ namespace ElectricityAddon.Content.Block.ECable
 
                     entity.Connection = facing;       //сообщаем направление
                     entity.Eparams = (
-                        new EParams(indexV, maxCurrent, indexM, res, 1, crosssectional, false, iso),
+                        new EParams(indexV, maxCurrent, material, res, 1, crosssectional, false, iso),
                         FacingHelper.Faces(facing).First().Index);
 
                     entity.AllEparams[FacingHelper.Faces(facing).First().Index] = entity.Eparams.Item1;
@@ -541,7 +543,7 @@ namespace ElectricityAddon.Content.Block.ECable
                             foreach (var face in FacingHelper.Faces(selectedFacing))         //перебираем все грани выделенных кабелей
                             {
                                 var indexV = entity.AllEparams[face.Index].voltage;          //индекс напряжения этой грани
-                                var indexM = entity.AllEparams[face.Index].indexM;          //индекс материала этой грани
+                                var material = entity.AllEparams[face.Index].material;          //индекс материала этой грани
                                 var indexQ = entity.AllEparams[face.Index].lines;          //индекс линий этой грани
                                 var isol = entity.AllEparams[face.Index].isolated;          //изолировано ли?
                                 var burn = entity.AllEparams[face.Index].burnout;          //сгорело ли?
@@ -555,7 +557,6 @@ namespace ElectricityAddon.Content.Block.ECable
                                 stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
 
                                 ItemStack itemStack = null!;
-                                string material = materials[indexM]; //берем материал кабеля
                                 if (burn)       //если сгорело, то бросаем кусочки металла
                                 {
                                     AssetLocation assetLoc = new AssetLocation("metalbit-" + material);
@@ -564,7 +565,7 @@ namespace ElectricityAddon.Content.Block.ECable
                                 }
                                 else
                                 {
-                                    var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+                                    var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, material, 1, isol ? 6 : 1); //берем ассет блока кабеля
                                     itemStack = new ItemStack(block, stackSize);
                                 }
 
@@ -603,7 +604,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 foreach (var face in FacingHelper.Faces(entity.Connection))         //перебираем все грани выделенных кабелей
                 {
                     var indexV = entity.AllEparams[face.Index].voltage;          //индекс напряжения этой грани
-                    var indexM = entity.AllEparams[face.Index].indexM;          //индекс материала этой грани
+                    var material = entity.AllEparams[face.Index].material;          //индекс материала этой грани
                     var indexQ = entity.AllEparams[face.Index].lines;          //индекс линий этой грани
                     var isol = entity.AllEparams[face.Index].isolated;          //изолировано ли?
                     var burn = entity.AllEparams[face.Index].burnout;          //сгорело ли?
@@ -617,7 +618,6 @@ namespace ElectricityAddon.Content.Block.ECable
                     var stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
 
                     ItemStack itemStack = null!;
-                    string material = materials[indexM]; //берем материал кабеля
                     if (burn)       //если сгорело, то бросаем кусочки металла
                     {
                         AssetLocation assetLoc = new AssetLocation("metalbit-" + material);
@@ -626,7 +626,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     }
                     else
                     {
-                        var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+                        var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, material, 1, isol ? 6 : 1); //берем ассет блока кабеля
                         itemStack = new ItemStack(block, stackSize);
                     }
 
@@ -703,7 +703,7 @@ namespace ElectricityAddon.Content.Block.ECable
                         foreach (var face in FacingHelper.Faces(selectedConnection))         //перебираем все грани выделенных кабелей
                         {
                             var indexV = entity.AllEparams[face.Index].voltage;          //индекс напряжения этой грани
-                            var indexM = entity.AllEparams[face.Index].indexM;          //индекс материала этой грани
+                            var material = entity.AllEparams[face.Index].material;          //индекс материала этой грани
                             var indexQ = entity.AllEparams[face.Index].lines;          //индекс линий этой грани
                             var isol = entity.AllEparams[face.Index].isolated;          //изолировано ли?
                             var burn = entity.AllEparams[face.Index].burnout;          //сгорело ли?
@@ -718,7 +718,6 @@ namespace ElectricityAddon.Content.Block.ECable
                             stackSize = FacingHelper.Count(connection) * indexQ;          //сколько на этой грани проводов выронить
 
                             ItemStack itemStack = null!;
-                            string material = materials[indexM]; //берем материал кабеля
                             if (burn)       //если сгорело, то бросаем кусочки металла
                             {
                                 AssetLocation assetLoc = new AssetLocation("metalbit-" + material);
@@ -727,7 +726,7 @@ namespace ElectricityAddon.Content.Block.ECable
                             }
                             else
                             {
-                                var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, indexM, 1, isol ? 6 : 1); //берем ассет блока кабеля
+                                var block = new GetCableAsset().CableAsset(api, entity.Block, indexV, material, 1, isol ? 6 : 1); //берем ассет блока кабеля
                                 itemStack = new ItemStack(block, stackSize);
                             }
 
@@ -792,7 +791,7 @@ namespace ElectricityAddon.Content.Block.ECable
         public override Cuboidf[] GetSelectionBoxes(IBlockAccessor blockAccessor, BlockPos position)
         {
 
-            if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity && entity.AllEparams != null)
+            if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity && entity != null && entity.AllEparams != null)
             {
                 var key = CacheDataKey.FromEntity(entity);
 
@@ -819,7 +818,7 @@ namespace ElectricityAddon.Content.Block.ECable
         public override Cuboidf[] GetCollisionBoxes(IBlockAccessor blockAccessor, BlockPos position)
         {
 
-            if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity && entity.AllEparams != null)
+            if (blockAccessor.GetBlockEntity(position) is BlockEntityECable entity && entity != null && entity.AllEparams != null)
             {
                 var key = CacheDataKey.FromEntity(entity);
 
@@ -877,22 +876,22 @@ namespace ElectricityAddon.Content.Block.ECable
                     if ((key.Connection & Facing.NorthAll) != 0)
                     {
                         var indexV = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].voltage; //индекс напряжения этой грани
-                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].indexM; //индекс материала этой грани
+                        var material = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].material; //индекс материала этой грани
                         var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].lines; //индекс линий этой грани
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].burnout;//индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].isolated; //изолировано ли?
 
-                        var dotVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
+                        var dotVariant = new BlockVariants(api, entity.Block, indexV, material, indexQ, isol ? 7 : 0);   //получаем шейп нужной точки кабеля
 
                         BlockVariants partVariant;
                         if (!indexB)
                         {
-                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
+                            partVariant = new BlockVariants(api, entity.Block, indexV, material, indexQ, isol ? 6 : 1);  //получаем шейп нужного кабеля изолированного или целого
                         }
                         else
-                            partVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
+                            partVariant = new BlockVariants(api, entity.Block, indexV, material, indexQ, 3);  //получаем шейп нужного кабеля сгоревшего
 
-                        var fixVariant = new BlockVariants(api, entity.Block, indexV, indexM, indexQ, 4);   //получаем шейп крепления кабеля
+                        var fixVariant = new BlockVariants(api, entity.Block, indexV, material, indexQ, 4);   //получаем шейп крепления кабеля
 
                         //ставим точку посередине, если провода не перегорел
                         if (!indexB)
@@ -930,7 +929,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     {
 
                         var indexV = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].voltage; //индекс напряжения этой грани
-                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].indexM; //индекс материала этой грани
+                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].material; //индекс материала этой грани
                         var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].lines; //индекс линий этой грани
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].isolated; //изолировано ли?
@@ -980,7 +979,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     if ((key.Connection & Facing.SouthAll) != 0)
                     {
                         var indexV = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].voltage; //индекс напряжения этой грани
-                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].indexM; //индекс материала этой грани
+                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].material; //индекс материала этой грани
                         var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].lines; //индекс линий этой грани
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].isolated; //изолировано ли?
@@ -1030,7 +1029,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     if ((key.Connection & Facing.WestAll) != 0)
                     {
                         var indexV = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].voltage; //индекс напряжения этой грани
-                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].indexM; //индекс материала этой грани
+                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].material; //индекс материала этой грани
                         var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].lines; //индекс линий этой грани
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].isolated; //изолировано ли?
@@ -1080,7 +1079,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     if ((key.Connection & Facing.UpAll) != 0)
                     {
                         var indexV = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].voltage; //индекс напряжения этой грани
-                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].indexM; //индекс материала этой грани
+                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].material; //индекс материала этой грани
                         var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].lines; //индекс линий этой грани
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].isolated; //изолировано ли?
@@ -1130,7 +1129,7 @@ namespace ElectricityAddon.Content.Block.ECable
                     if ((key.Connection & Facing.DownAll) != 0)
                     {
                         var indexV = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].voltage; //индекс напряжения этой грани
-                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].indexM; //индекс материала этой грани
+                        var indexM = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].material; //индекс материала этой грани
                         var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].lines; //индекс линий этой грани
                         var indexB = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].burnout; //индекс перегорания этой грани
                         var isol = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].isolated; //изолировано ли?
@@ -1549,7 +1548,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 if ((key.Connection & Facing.NorthAll) != 0)
                 {
                     var indexV = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].voltage; //индекс напряжения этой грани
-                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].indexM; //индекс материала этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].material; //индекс материала этой грани
                     var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].lines; //индекс линий этой грани
                     var indexB = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].burnout;//индекс перегорания этой грани
                     var isol = entity.AllEparams[FacingHelper.Faces(Facing.NorthAll).First().Index].isolated; //изолировано ли?
@@ -1596,7 +1595,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 if ((key.Connection & Facing.EastAll) != 0)
                 {
                     var indexV = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].voltage; //индекс напряжения этой грани
-                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].indexM; //индекс материала этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].material; //индекс материала этой грани
                     var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].lines; //индекс линий этой грани
                     var indexB = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].burnout;//индекс перегорания этой грани
                     var isol = entity.AllEparams[FacingHelper.Faces(Facing.EastAll).First().Index].isolated; //изолировано ли?
@@ -1642,7 +1641,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 if ((key.Connection & Facing.SouthAll) != 0)
                 {
                     var indexV = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].voltage; //индекс напряжения этой грани
-                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].indexM; //индекс материала этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].material; //индекс материала этой грани
                     var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].lines; //индекс линий этой грани
                     var indexB = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].burnout;//индекс перегорания этой грани
                     var isol = entity.AllEparams[FacingHelper.Faces(Facing.SouthAll).First().Index].isolated; //изолировано ли?
@@ -1688,7 +1687,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 if ((key.Connection & Facing.WestAll) != 0)
                 {
                     var indexV = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].voltage; //индекс напряжения этой грани
-                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].indexM; //индекс материала этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].material; //индекс материала этой грани
                     var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].lines; //индекс линий этой грани
                     var indexB = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].burnout;//индекс перегорания этой грани
                     var isol = entity.AllEparams[FacingHelper.Faces(Facing.WestAll).First().Index].isolated; //изолировано ли?
@@ -1734,7 +1733,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 if ((key.Connection & Facing.UpAll) != 0)
                 {
                     var indexV = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].voltage; //индекс напряжения этой грани
-                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].indexM; //индекс материала этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].material; //индекс материала этой грани
                     var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].lines; //индекс линий этой грани
                     var indexB = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].burnout;//индекс перегорания этой грани
                     var isol = entity.AllEparams[FacingHelper.Faces(Facing.UpAll).First().Index].isolated; //изолировано ли?
@@ -1781,7 +1780,7 @@ namespace ElectricityAddon.Content.Block.ECable
                 if ((key.Connection & Facing.DownAll) != 0)
                 {
                     var indexV = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].voltage; //индекс напряжения этой грани
-                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].indexM; //индекс материала этой грани
+                    var indexM = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].material; //индекс материала этой грани
                     var indexQ = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].lines; //индекс линий этой грани
                     var indexB = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].burnout;//индекс перегорания этой грани
                     var isol = entity.AllEparams[FacingHelper.Faces(Facing.DownAll).First().Index].isolated; //изолировано ли?

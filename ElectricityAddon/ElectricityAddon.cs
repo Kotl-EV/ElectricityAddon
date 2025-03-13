@@ -22,7 +22,6 @@ using Vintagestory.API.MathTools;
 using Vintagestory.API.Client;
 using Vintagestory.API.Util;
 using ElectricityAddon.Content.Block.ECable;
-using Vintagestory.API.Config;
 using ElectricityAddon.Content.Block.ETransformator;
 
 
@@ -848,6 +847,54 @@ public class ElectricityAddon : ModSystem
                 //Этап  - Палим провода и трансформируем энергию ---------------------------------------------------------------------------------------//
                 foreach (var part in parts)  //перебираем все элементы
                 {
+                    //трансформируем энергию
+                    if (part.Value.Transformator != null && part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)
+                    {
+                        //копируем пакеты
+                        var copyEnergyPackets = part.Value.energyPackets.ToList<energyPacket>();
+                        var copyEnergyPackets2 = part.Value.energyPackets.ToList<energyPacket>();
+
+                        float energy = 0.0F;
+                        float current = 0.0F;
+
+                        i = 0;
+                        foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
+                        {
+                            energy += item.energy;    //суммируем энергию всех пакетов
+
+                            //пакет с напряжением высоким? Понизим напряжение
+                            if (item.voltage == part.Value.Transformator.highVoltage)
+                            {
+                                var newPacket = item.DeepCopy();
+                                newPacket.voltage = part.Value.Transformator.lowVoltage;
+                                copyEnergyPackets2[i] = newPacket;
+                            }
+
+                            //пакет с напряжением низким? Повысим напряжение
+                            if (item.voltage == part.Value.Transformator.lowVoltage)
+                            {
+                                var newPacket = item.DeepCopy();
+                                newPacket.voltage = part.Value.Transformator.highVoltage;
+                                copyEnergyPackets2[i] = newPacket;
+                            }
+
+                            current += copyEnergyPackets2[i].energy * (1.0F) / copyEnergyPackets2[i].voltage;  //считаем ток
+
+                            i++;
+                        }
+
+
+                        parts[part.Key].energyPackets = new List<energyPacket>(copyEnergyPackets2); //заменяем пакеты на новые
+
+                        parts[part.Key].Transformator!.setPower(energy);  //передаем энергию трансформатору посчитанную
+
+                        parts[part.Key].current[5] = current;  //обновляем ток в трансформаторе
+
+                        parts[part.Key].Transformator!.Update();  //обновляем трансформатор
+
+                    }
+
+
                     //палим провода))
                     if (part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)
                     {
@@ -903,42 +950,7 @@ public class ElectricityAddon : ModSystem
 
                     }
 
-                    //трансформируем энергию
-                    if (part.Value.Transformator != null && part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)
-                    {
-                        var copyEnergyPackets = part.Value.energyPackets.ToList<energyPacket>();
-                        var copyEnergyPackets2 = part.Value.energyPackets.ToList<energyPacket>();
-
-
-                        i = 0;
-                        foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
-                        {
-                            //пакет с напряжением высоким? Понизим напряжение
-                            if (item.voltage == part.Value.Transformator.highVoltage)
-                            {
-                                var newPacket = item.DeepCopy();
-                                newPacket.voltage = part.Value.Transformator.lowVoltage;
-                                copyEnergyPackets2[i] = newPacket;
-                            }
-
-                            //пакет с напряжением низким? Повысим напряжение
-                            if (item.voltage == part.Value.Transformator.lowVoltage)
-                            {
-                                var newPacket = item.DeepCopy();
-                                newPacket.voltage = part.Value.Transformator.highVoltage;
-                                copyEnergyPackets2[i] = newPacket;
-                            }
-
-
-
-                            i++;
-                        }
-
-
-                        parts[part.Key].energyPackets = new List<energyPacket>(copyEnergyPackets2);
-
-
-                    }
+                    
                 }
 
 
@@ -1446,18 +1458,18 @@ public struct EParams : IEquatable<EParams>
 {
     public int voltage;         //напряжение
     public float maxCurrent;    //максимальный ток
-    public int indexM;          //индекс материала
+    public string material;     //индекс материала
     public float resisitivity;  //удельное сопротивление
     public byte lines;          //количество линий
     public float crossArea;     //площадь поперечного сечения
     public bool burnout;        //провод сгорел
     public bool isolated;       //изолированный провод
 
-    public EParams(int voltage, float maxCurrent, int indexM, float resisitivity, byte lines, float crossArea, bool burnout, bool isolated)
+    public EParams(int voltage, float maxCurrent, string material, float resisitivity, byte lines, float crossArea, bool burnout, bool isolated)
     {
         this.voltage = voltage;
         this.maxCurrent = maxCurrent;
-        this.indexM = indexM;
+        this.material = material;
         this.resisitivity = resisitivity;
         this.lines = lines;
         this.crossArea = crossArea;
@@ -1465,11 +1477,24 @@ public struct EParams : IEquatable<EParams>
         this.isolated = isolated;
     }
 
+    public EParams()
+    {
+        this.voltage = 0;
+        this.maxCurrent = 0.0F;
+        this.material = "";
+        this.resisitivity = 0.0F;
+        this.lines = 0;
+        this.crossArea = 0.0F;
+        this.burnout = false;
+        this.isolated = false;
+    }
+
+
     public bool Equals(EParams other)
     {
         return voltage == other.voltage &&
                maxCurrent.Equals(other.maxCurrent) &&
-               indexM == other.indexM &&
+               material == other.material &&
                resisitivity.Equals(other.resisitivity) &&
                lines == other.lines &&
                crossArea.Equals(other.crossArea) &&
@@ -1489,7 +1514,7 @@ public struct EParams : IEquatable<EParams>
             int hash = 17;
             hash = hash * 31 + voltage;
             hash = hash * 31 + maxCurrent.GetHashCode();
-            hash = hash * 31 + indexM;
+            hash = hash * 31 + material.GetHashCode();
             hash = hash * 31 + resisitivity.GetHashCode();
             hash = hash * 31 + lines;
             hash = hash * 31 + crossArea.GetHashCode();

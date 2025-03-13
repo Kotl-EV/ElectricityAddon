@@ -89,7 +89,7 @@ public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
             var maxCurrent = MyMiniLib.GetAttributeFloat(this, "maxCurrent", 5.0F);
 
             entity.Eparams = (
-                new EParams(voltage, maxCurrent, -1, 0, 1, 1, false, false),
+                new EParams(voltage, maxCurrent, "", 0, 1, 1, false, false),
                 FacingHelper.Faces(facing).First().Index);
 
 

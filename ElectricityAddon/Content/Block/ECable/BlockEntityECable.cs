@@ -26,9 +26,16 @@ namespace ElectricityAddon.Content.Block.ECable
         //передает значения из Block в BEBehaviorElectricityAddon
         public EParams[] AllEparams
         {
-            get => this.ElectricityAddon!.AllEparams;
-            set => this.ElectricityAddon!.AllEparams = value;
+            get => this.ElectricityAddon?.AllEparams ?? null;
+            set
+            {
+                if (this.ElectricityAddon != null)
+                {
+                    this.ElectricityAddon.AllEparams = value;
+                }
+            }
         }
+
 
         public Facing Switches {
             get => this.switches;

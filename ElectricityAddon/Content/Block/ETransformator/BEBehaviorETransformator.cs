@@ -12,52 +12,44 @@ namespace ElectricityAddon.Content.Block.ETransformator;
 
 public class BEBehaviorETransformator : BlockEntityBehavior, IElectricTransformator
 {
-
+    float maxCurrent; //максимальный ток
+    float power;      //мощность
     public BEBehaviorETransformator(BlockEntity blockEntity) : base(blockEntity)
     {
+        maxCurrent = MyMiniLib.GetAttributeFloat(this.Block, "maxCurrent", 5.0F);
     }
 
 
     public new BlockPos Pos => this.Blockentity.Pos;
 
-    public int highVoltage => 128;
+    public int highVoltage => MyMiniLib.GetAttributeInt(this.Block, "voltage", 32);
 
-    public int lowVoltage => 32;
+    public int lowVoltage => MyMiniLib.GetAttributeInt(this.Block, "lowVoltage", 32);
 
-    public override void ToTreeAttributes(ITreeAttribute tree)
-    {
-        base.ToTreeAttributes(tree);
-
-    }
-
-    public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
-    {
-        base.FromTreeAttributes(tree, worldAccessForResolve);
-
-    }
 
 
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
-
+        stringBuilder.AppendLine(StringHelper.Progressbar(getPower() / (lowVoltage*maxCurrent) * 100));
+        stringBuilder.AppendLine("└ " + "Мощность " + getPower() + " / " + lowVoltage * maxCurrent + " Вт");
         stringBuilder.AppendLine();
     }
 
 
     public void Update()
     {
-        throw new NotImplementedException();
+        this.Blockentity.MarkDirty(true);
     }
 
 
     public float getPower()
     {
-        throw new NotImplementedException();
+        return this.power;
     }
 
     public void setPower(float power)
     {
-        throw new NotImplementedException();
+        this.power = power;
     }
 }

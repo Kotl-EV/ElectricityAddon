@@ -59,7 +59,7 @@ namespace ElectricityAddon.Content.Block.ELamp
             {
                 entity.Facing = facing;
                 entity.Eparams = (
-                    new EParams(32, 10, -1, 0, 1, 1, false, false),
+                    new EParams(32, 10, "", 0, 1, 1, false, false),
                     FacingHelper.Faces(facing).First().Index);
 
                 return true;

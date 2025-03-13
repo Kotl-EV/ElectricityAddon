@@ -23,9 +23,14 @@ public class BlockEntityETransformator : BlockEntity
     {
         base.OnBlockPlaced(byItemStack);
 
+        //задаем параметры блока/проводника
+        var voltage = MyMiniLib.GetAttributeInt(byItemStack.Block, "voltage", 32);
+        var lowVoltage = MyMiniLib.GetAttributeInt(byItemStack.Block, "lowVoltage", 32);
+        var maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack.Block, "maxCurrent", 5.0F);
+
         this.ElectricityAddon!.Connection = Facing.DownAll;
         this.ElectricityAddon.Eparams = (
-            new EParams(128, 20, -1, 0, 1, 1, false, false),
+            new EParams(voltage, maxCurrent, "", 0, 1, 1, false, false),
             FacingHelper.Faces(Facing.DownAll).First().Index);
 
     }

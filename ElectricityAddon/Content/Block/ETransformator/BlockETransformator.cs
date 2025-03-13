@@ -10,15 +10,10 @@ namespace ElectricityAddon.Content.Block.ETransformator;
 
 public class BlockETransformator : Vintagestory.API.Common.Block
 {
-    public int maxcapacity;
-
     public override void OnLoaded(ICoreAPI api)
     {
         base.OnLoaded(api);
-        maxcapacity = MyMiniLib.GetAttributeInt(this, "maxcapacity", 16000);
-       
     }
-
 
 
     public override bool TryPlaceBlock(IWorldAccessor world, IPlayer byPlayer, ItemStack itemstack,

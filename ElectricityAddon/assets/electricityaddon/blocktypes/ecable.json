@@ -1,5 +1,5 @@
 {
-  "code": "cable",
+  "code": "ecable",
   "class": "BlockECable",
   "entityClass": "BlockEntityECable",
   "entityBehaviors": [
@@ -66,18 +66,18 @@
 
   "shapeInventoryByType": {
     "*-isolated": {
-      "base": "block/cable/cable-single/cable-{voltage}-single-block_isolated"
+      "base": "block/ecable/ecable-single/ecable-{voltage}-single-block_isolated"
     },
 
     "*": {
-      "base": "block/cable/cable-single/cable-{voltage}-single-block"
+      "base": "block/ecable/ecable-single/ecable-{voltage}-single-block"
     }
   },
 
 
   "shapeByType": {
     "*": {
-      "base": "block/cable/cable-{quantity}/cable-{voltage}-{quantity}-{type}"
+      "base": "block/ecable/ecable-{quantity}/ecable-{voltage}-{quantity}-{type}"
     }
   },
 
@@ -343,11 +343,24 @@
   },
 
 
-    "resistance": 1,
-    "drawType": "JSON",
-    "lightAbsorption": 0.0,
-    "faceCullMode": "NeverCull",
-    "renderPass": "OpaqueNoCull",
+  "resistance": 1,
+  "drawType": "JSON",
+  "lightAbsorption": 0.0,
+  "faceCullMode": "NeverCull",
+  "renderPass": "OpaqueNoCull",
+
+  "attributes": {
+    "handbook": {
+      "groupBy": [ "ecable-*" ],
+      "extraSections": [
+        {
+          "title": "electricityaddon:block-handbooktitle-ecable",
+          "text": "electricityaddon:block-handbooktext-ecable"
+        }
+      ]
+    },
+    "material": "{material}"
+  },
 
     "attributesByType": {
       "*-32v-copper-*": {

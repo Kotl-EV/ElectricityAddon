@@ -20,8 +20,9 @@
   },
 
   "attributes": {
-    "rechargeable": true,
-    "maxcapacity": 64000,
+    "voltage": 128,
+    "lowVoltage": 32,
+    "maxCurrent": 20.0,
     "handbook": {
       "groupBy": [ "transformator-*" ],
       "extraSections": [

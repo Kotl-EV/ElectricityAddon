@@ -16,10 +16,10 @@ public class BlockVariants
     /// </summary>
     /// <param name="api"></param>
     /// <param name="baseBlock"></param>
-    /// <param name="indexMaterial"></param>
+    /// <param name="material"></param>
     /// <param name="indexQuantity"></param>
     /// <param name="indexType"></param>
-    public BlockVariants(ICoreAPI api, CollectibleObject baseBlock, int indexVoltage, int indexMaterial, int indexQuantity, int indexType)
+    public BlockVariants(ICoreAPI api, CollectibleObject baseBlock, int indexVoltage, string material, int indexQuantity, int indexType)
     {
         //if (indexVoltage == 0)
         //    return;
@@ -33,7 +33,7 @@ public class BlockVariants
         t[3] = "type";
 
         v[0] = BlockECable.voltages[indexVoltage];
-        v[1] = BlockECable.materials[indexMaterial];
+        v[1] = material;
         v[2] = BlockECable.quantitys[indexQuantity];
         v[3] = BlockECable.types[indexType];
 

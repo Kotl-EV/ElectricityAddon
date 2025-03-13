@@ -4,13 +4,13 @@
   "block-efreezer-*": "Электрический морозильник",
   "block-largeaccumulator": "Аккумулятор (большой)",
 
-  "block-emotor-tier1-*": "Двигатель",
-  "block-emotor-tier2-*": "Модернизированный двигатель",
-  "block-emotor-tier3-*": "Высокопроизводительный двигатель",
+  "block-emotor-tier1-*": "Двигатель (32В)",
+  "block-emotor-tier2-*": "Модернизированный двигатель (32В)",
+  "block-emotor-tier3-*": "Высокопроизводительный двигатель (128В)",
 
-  "block-egenerator-tier1-*": "Генератор",
-  "block-egenerator-tier2-*": "Модернизированный генератор",
-  "block-egenerator-tier3-*": "Высокопроизводительный генератор",
+  "block-egenerator-tier1-*": "Генератор (32В)",
+  "block-egenerator-tier2-*": "Модернизированный генератор (32В)",
+  "block-egenerator-tier3-*": "Высокопроизводительный генератор (128В)",
 
   "block-transformator-*": "Трансформатор",
 
@@ -18,29 +18,29 @@
 
   "block-accumulator": "Аккумулятор",
 
-  "block-cable-32v-copper-*-part": "Медный кабель (32В)",
-  "block-cable-32v-silver-*-part": "Серебряный кабель (32В)",
-  "block-cable-32v-lead-*-part": "Свинцовый кабель (32В)",
+  "block-ecable-32v-copper-*-part": "Медный кабель (32В)",
+  "block-ecable-32v-silver-*-part": "Серебряный кабель (32В)",
+  "block-ecable-32v-lead-*-part": "Свинцовый кабель (32В)",
 
-  "block-cable-128v-copper-*-part": "Медный кабель (128В)",
-  "block-cable-128v-silver-*-part": "Серебряный кабель (128В)",
-  "block-cable-128v-lead-*-part": "Свинцовый кабель (128В)",
+  "block-ecable-128v-copper-*-part": "Медный кабель (128В)",
+  "block-ecable-128v-silver-*-part": "Серебряный кабель (128В)",
+  "block-ecable-128v-lead-*-part": "Свинцовый кабель (128В)",
 
-  "block-cable-32v-copper-*-isolated": "Медный изолированный кабель (32В)",
-  "block-cable-32v-silver-*-isolated": "Серебряный изолированный кабель (32В)",
-  "block-cable-32v-lead-*-isolated": "Свинцовый изолированный кабель (32В)",
+  "block-ecable-32v-copper-*-isolated": "Медный изолированный кабель (32В)",
+  "block-ecable-32v-silver-*-isolated": "Серебряный изолированный кабель (32В)",
+  "block-ecable-32v-lead-*-isolated": "Свинцовый изолированный кабель (32В)",
 
-  "block-cable-128v-copper-*-isolated": "Медный изолированный кабель (128В)",
-  "block-cable-128v-silver-*-isolated": "Серебряный изолированный кабель (128В)",
-  "block-cable-128v-lead-*-isolated": "Свинцовый изолированный кабель (128В)",
+  "block-ecable-128v-copper-*-isolated": "Медный изолированный кабель (128В)",
+  "block-ecable-128v-silver-*-isolated": "Серебряный изолированный кабель (128В)",
+  "block-ecable-128v-lead-*-isolated": "Свинцовый изолированный кабель (128В)",
 
-  "block-cable-32v-copper-*-burned": "Медный сгоревший кабель (32В)",
-  "block-cable-32v-silver-*-burned": "Серебряный сгоревший кабель (32В)",
-  "block-cable-32v-lead-*-burned": "Свинцовый сгоревший кабель (32В)",
+  "block-ecable-32v-copper-*-burned": "Медный сгоревший кабель (32В)",
+  "block-ecable-32v-silver-*-burned": "Серебряный сгоревший кабель (32В)",
+  "block-ecable-32v-lead-*-burned": "Свинцовый сгоревший кабель (32В)",
 
-  "block-cable-128v-copper-*-burned": "Медный сгоревший кабель (128В)",
-  "block-cable-128v-silver-*-burned": "Серебряный сгоревший кабель (128В)",
-  "block-cable-128v-lead-*-burned": "Свинцовый сгоревший кабель (128В)",
+  "block-ecable-128v-copper-*-burned": "Медный сгоревший кабель (128В)",
+  "block-ecable-128v-silver-*-burned": "Серебряный сгоревший кабель (128В)",
+  "block-ecable-128v-lead-*-burned": "Свинцовый сгоревший кабель (128В)",
 
 
 
@@ -93,7 +93,8 @@
   "block-handbooktitle-accumulator": "Используется",
   "block-handbooktext-accumulator": "Позволяет хранить электрическую энергию.<br>Заряженный аккумулятор, при необходимости, можно носить с собой.",
 
-
+  "block-handbooktitle-ecable-*": "Используется",
+  "block-handbooktext-ecable-*": "Позволяет передавать электрическую энергию на расстояние.",
 
   "block-handbooktitle-lamp": "Используется",
   "block-handbooktext-lamp": "Хороший источник света, потребляющий электрическую энергию.<br><br>Максимальный уровень света: 21.<br>Максимальное потребление: 8 Eu/с.",

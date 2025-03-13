@@ -17,7 +17,7 @@ public class BlockEntityEAccumulator : BlockEntity
 
         this.ElectricityAddon!.Connection = Facing.DownAll;
         this.ElectricityAddon.Eparams = (
-            new EParams(32, 10, -1, 0, 1, 1, false, false),
+            new EParams(32, 10, "", 0, 1, 1, false, false),
             FacingHelper.Faces(Facing.DownAll).First().Index);
 
     }

@@ -15,10 +15,23 @@ namespace ElectricityAddon.Content.Block.ELamp
         private BEBehaviorELamp Behavior => this.GetBehavior<BEBehaviorELamp>();
 
         //передает значения из Block в BEBehaviorElectricityAddon
-        public (EParams,int) Eparams
+        public (EParams, int) Eparams
         {
-            //get => this.ElectricityAddon!.Eparams;
+            get => this.ElectricityAddon!.Eparams;
             set => this.ElectricityAddon!.Eparams = value;
+        }
+
+        //передает значения из Block в BEBehaviorElectricityAddon
+        public EParams[] AllEparams
+        {
+            get => this.ElectricityAddon?.AllEparams ?? null;
+            set
+            {
+                if (this.ElectricityAddon != null)
+                {
+                    this.ElectricityAddon.AllEparams = value;
+                }
+            }
         }
 
         public Facing Facing

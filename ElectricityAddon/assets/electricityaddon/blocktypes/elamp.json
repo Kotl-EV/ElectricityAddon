@@ -12,12 +12,15 @@
   ],
   "attributes": {
     "maxConsumption": 8, //максимальное потребление
+    "voltage": 128,
+    "maxCurrent": 20.0,
+    "isolated": true,
     "handbook": {
       "groupBy": [ "elamp-*" ],
       "extraSections": [
         {
-          "title": "electricityaddon:block-handbooktitle-lamp",
-          "text": "electricityaddon:block-handbooktext-lamp"
+          "title": "electricityaddon:block-handbooktitle-elamp",
+          "text": "electricityaddon:block-handbooktext-elamp"
         }
       ]
     }
@@ -35,10 +38,10 @@
 
   "creativeInventory": {
     "general": [
-      "*-disabled"
+      "*-disabled-normal"
     ],
     "electricity": [
-      "*-disabled"
+      "*-disabled-normal"
     ]
   },
 
@@ -50,31 +53,25 @@
     {
       "code": "state",
       "states": [ "disabled", "enabled" ]
+    },
+    {
+      "code": "status",
+      "states": [
+        "normal",
+        "burned"
+      ]
     }
-
   ],
 
-  "shapeByType": {
-    "*-disabled": {
-      "base": "block/lamp-disabled"
-    },
-    "*-enabled": {
-      "base": "block/lamp-enabled"
-    }
+
+  "skipVariants": [
+    "*-enabled-burned"
+  ],
+
+  "shape": {
+    "base": "block/elamp/elamp-{state}-{status}"
   },
 
-  "textures": {
-    "brass": { "base": "block/brass" },
-    "copper": { "base": "block/copper" },
-    "copper-hot": { "base": "block/copper-hot" },
-    "emeral": { "base": "block/emeral" },
-    "iron": { "base": "block/iron" },
-    "quartzglass": { "base": "block/quartzglass" },
-    "stainlesssteel": { "base": "block/stainlesssteel" },
-    "steel": { "base": "block/steel" },
-    "topaz": { "base": "block/topaz" },
-    "zinc": { "base": "block/zinc" }
-  },
   "resistance": 1,
   "drawType": "JSON",
   "lightAbsorption": 0.0,

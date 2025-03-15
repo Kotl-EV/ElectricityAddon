@@ -40,16 +40,7 @@
       "base": "block/heater-enabled"
     }
   },
-  "textures": {
-    "bismuthbronze": { "base": "block/bismuthbronze" },
-    "brass": { "base": "block/brass" },
-    "copper": { "base": "block/copper" },
-    "copper-hot": { "base": "block/copper-hot" },
-    "emeral": { "base": "block/emeral" },
-    "iron": { "base": "block/iron" },
-    "steel": { "base": "block/steel" },
-    "topaz": { "base": "block/topaz" }
-  },
+
   "resistance": 1,
   "drawType": "JSON",
   "lightAbsorption": 0.0,

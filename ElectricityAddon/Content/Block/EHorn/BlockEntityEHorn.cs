@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
@@ -19,7 +21,9 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
     private bool clientSidePrevBurning;
     private double lastTickTotalHours;
     private double lastPlaySoundDin=0;
-    
+    private float maxTargetTemp => MyMiniLib.GetAttributeFloat(this.Block, "maxTargetTemp", 1100.0F);
+    private int maxConsumption => MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 100);
+
     private ForgeContentsRenderer? renderer;
     private WeatherSystemBase? weatherSystem;
 
@@ -46,6 +50,28 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
     }
 
     private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
+
+
+    //передает значения из Block в BEBehaviorElectricityAddon
+    public (EParams, int) Eparams
+    {
+        get => this.ElectricityAddon!.Eparams;
+        set => this.ElectricityAddon!.Eparams = value;
+    }
+
+    //передает значения из Block в BEBehaviorElectricityAddon
+    public EParams[] AllEparams
+    {
+        get => this.ElectricityAddon?.AllEparams ?? null;
+        set
+        {
+            if (this.ElectricityAddon != null)
+            {
+                this.ElectricityAddon.AllEparams = value;
+            }
+        }
+    }
+
 
     public float GetHeatStrength(IWorldAccessor world, BlockPos heatSourcePos, BlockPos heatReceiverPos)
     {
@@ -97,10 +123,12 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
             if (this.Contents != null)
             {
                 float temperature = this.Contents.Collectible.GetTemperature(this.Api.World, this.Contents);
-                if ((double) temperature < 1100.0)
+                float power = GetBehavior<BEBehaviorEHorn>().getPowerReceive();
+                if ((double) temperature < power * maxTargetTemp / maxConsumption)
                 {
                     float num2 = (float) (num1 * 1500.0);
-                    this.Contents.Collectible.SetTemperature(this.Api.World, this.Contents, Math.Min(GetBehavior<BEBehaviorEHorn>().powerSetting * 11F, temperature + num2));
+                    
+                    this.Contents.Collectible.SetTemperature(this.Api.World, this.Contents, Math.Min(power * 11F, temperature + num2));
                 }
                 else
                 {
@@ -112,6 +140,10 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
                     }
                 }
 
+            }
+            else
+            {
+                this.IsBurning = false;
             }
         }
         this.tmpPos.Set(this.Pos.X + 0.5, this.Pos.Y + 0.5, this.Pos.Z + 0.5);
@@ -138,7 +170,7 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
 
             if (temp > 20) {
                 playSound = temp > 100;
-                this.Contents?.Collectible.SetTemperature(this.Api.World, this.Contents, Math.Min(GetBehavior<BEBehaviorEHorn>().powerSetting * 11F, temp - 8), false);
+                this.Contents?.Collectible.SetTemperature(this.Api.World, this.Contents, Math.Min(GetBehavior<BEBehaviorEHorn>().getPowerReceive() * 11F, temp - 8), false);
                 this.MarkDirty();
             }
 
@@ -188,8 +220,18 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
 
     internal bool OnPlayerInteract(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel)
     {
-        var slot = byPlayer.InventoryManager.ActiveHotbarSlot;
+        //проверяем не сгорел ли прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Pos) is BlockEntityEHorn entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout)
+            {
+                return false;
+            }
+        }
 
+
+        var slot = byPlayer.InventoryManager.ActiveHotbarSlot;
         if (!byPlayer.Entity.Controls.ShiftKey)
         {
             if (this.Contents == null)
@@ -242,6 +284,8 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
             this.Api.World.PlaySoundAt(new AssetLocation("sounds/block/ingot"), this.Pos.X, this.Pos.Y, this.Pos.Z,
                 byPlayer, false);
 
+            this.IsBurning = true;
+
             return true;
         }
 
@@ -282,6 +326,16 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
         if (electricity != null)
         {
             electricity.Connection = Facing.DownAll;
+
+            //задаем параметры блока/проводника
+            var voltage = MyMiniLib.GetAttributeInt(byItemStack!.Block, "voltage", 32);
+            var maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack!.Block, "maxCurrent", 5.0F);
+            var isolated = MyMiniLib.GetAttributeBool(byItemStack!.Block, "isolated", false);
+
+            this.ElectricityAddon!.Connection = Facing.DownAll;
+            this.ElectricityAddon.Eparams = (
+                new EParams(voltage, maxCurrent, "", 0, 1, 1, false, isolated),
+                FacingHelper.Faces(Facing.DownAll).First().Index);
         }
     }
 

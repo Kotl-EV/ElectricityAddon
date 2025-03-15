@@ -848,48 +848,53 @@ public class ElectricityAddon : ModSystem
                 foreach (var part in parts)  //перебираем все элементы
                 {
                     //трансформируем энергию
-                    if (part.Value.Transformator != null && part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)
+                    if (part.Value.Transformator != null)
                     {
-                        //копируем пакеты
-                        var copyEnergyPackets = part.Value.energyPackets.ToList<energyPacket>();
-                        var copyEnergyPackets2 = part.Value.energyPackets.ToList<energyPacket>();
-
                         float energy = 0.0F;
-                        float current = 0.0F;
 
-                        i = 0;
-                        foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
+                        if (part.Value.energyPackets != null && part.Value.energyPackets.Count > 0)
                         {
-                            energy += item.energy;    //суммируем энергию всех пакетов
+                            //копируем пакеты
+                            var copyEnergyPackets = part.Value.energyPackets.ToList<energyPacket>();
+                            var copyEnergyPackets2 = part.Value.energyPackets.ToList<energyPacket>();
 
-                            //пакет с напряжением высоким? Понизим напряжение
-                            if (item.voltage == part.Value.Transformator.highVoltage)
+                            
+                            float current = 0.0F;
+
+                            i = 0;
+                            foreach (var item in copyEnergyPackets)  //перебираем все пакеты в этой части
                             {
-                                var newPacket = item.DeepCopy();
-                                newPacket.voltage = part.Value.Transformator.lowVoltage;
-                                copyEnergyPackets2[i] = newPacket;
+                                energy += item.energy;    //суммируем энергию всех пакетов
+
+                                //пакет с напряжением высоким? Понизим напряжение
+                                if (item.voltage == part.Value.Transformator.highVoltage)
+                                {
+                                    var newPacket = item.DeepCopy();
+                                    newPacket.voltage = part.Value.Transformator.lowVoltage;
+                                    copyEnergyPackets2[i] = newPacket;
+                                }
+
+                                //пакет с напряжением низким? Повысим напряжение
+                                if (item.voltage == part.Value.Transformator.lowVoltage)
+                                {
+                                    var newPacket = item.DeepCopy();
+                                    newPacket.voltage = part.Value.Transformator.highVoltage;
+                                    copyEnergyPackets2[i] = newPacket;
+                                }
+
+                                current += copyEnergyPackets2[i].energy * (1.0F) / copyEnergyPackets2[i].voltage;  //считаем ток
+
+                                i++;
                             }
 
-                            //пакет с напряжением низким? Повысим напряжение
-                            if (item.voltage == part.Value.Transformator.lowVoltage)
-                            {
-                                var newPacket = item.DeepCopy();
-                                newPacket.voltage = part.Value.Transformator.highVoltage;
-                                copyEnergyPackets2[i] = newPacket;
-                            }
+                            parts[part.Key].energyPackets = new List<energyPacket>(copyEnergyPackets2); //заменяем пакеты на новые
 
-                            current += copyEnergyPackets2[i].energy * (1.0F) / copyEnergyPackets2[i].voltage;  //считаем ток
+                            
 
-                            i++;
+                            parts[part.Key].current[5] = current;  //обновляем ток в трансформаторе
                         }
 
-
-                        parts[part.Key].energyPackets = new List<energyPacket>(copyEnergyPackets2); //заменяем пакеты на новые
-
                         parts[part.Key].Transformator!.setPower(energy);  //передаем энергию трансформатору посчитанную
-
-                        parts[part.Key].current[5] = current;  //обновляем ток в трансформаторе
-
                         parts[part.Key].Transformator!.Update();  //обновляем трансформатор
 
                     }
@@ -916,6 +921,33 @@ public class ElectricityAddon : ModSystem
 
                                 //уничтожаем все пакеты в этой точке грани
                                 parts[part.Key].energyPackets.Remove(item);
+
+                                //обновляем и обнуляем сгоревшие приборы
+                                if (part.Value.Consumer != null)
+                                {
+                                    parts[part.Key].Consumer!.Consume_receive(0.0F); //потребитель не получил энергию
+                                    parts[part.Key].Consumer!.Update(); //обновляем потребителя
+                                    parts[part.Key].Consumer = null; //обнуляем потребителя
+                                }
+                                else if (part.Value.Producer != null)
+                                {
+                                    parts[part.Key].Producer!.Produce_order(0.0F); //генератор не выдал энергию
+                                    parts[part.Key].Producer!.Update(); //обновляем генератор
+                                    parts[part.Key].Producer = null; //обнуляем генератор
+                                }
+                                else if (part.Value.Accumulator != null)
+                                {
+                                    parts[part.Key].Accumulator!.SetCapacity(0.0F); //аккумулятор не принял энергию
+                                    parts[part.Key].Accumulator!.Update(); //обновляем аккумулятор
+                                    parts[part.Key].Accumulator = null; //обнуляем аккумулятор
+                                }
+                                else if (part.Value.Transformator != null)
+                                {
+                                    parts[part.Key].Transformator!.setPower(0.0F); //трансформатор не принял энергию
+                                    parts[part.Key].Transformator!.Update(); //обновляем трансформатор
+                                    parts[part.Key].Transformator = null; //обнуляем трансформатор
+                                }
+
                             }
                         }
 
@@ -944,13 +976,39 @@ public class ElectricityAddon : ModSystem
                                         parts[part.Key].energyPackets.Remove(item);
                                     }
                                 }
+
+                                //обновляем и обнуляем сгоревшие приборы
+                                if (part.Value.Consumer != null)
+                                {
+                                    parts[part.Key].Consumer!.Consume_receive(0.0F); //потребитель не получил энергию
+                                    parts[part.Key].Consumer!.Update(); //обновляем потребителя
+                                    parts[part.Key].Consumer = null; //обнуляем потребителя
+                                }
+                                else if (part.Value.Producer != null)
+                                {
+                                    parts[part.Key].Producer!.Produce_order(0.0F); //генератор не выдал энергию
+                                    parts[part.Key].Producer!.Update(); //обновляем генератор
+                                    parts[part.Key].Producer = null; //обнуляем генератор
+                                }
+                                else if (part.Value.Accumulator != null)
+                                {
+                                    parts[part.Key].Accumulator!.SetCapacity(0.0F); //аккумулятор не принял энергию
+                                    parts[part.Key].Accumulator!.Update(); //обновляем аккумулятор
+                                    parts[part.Key].Accumulator = null; //обнуляем аккумулятор
+                                }
+                                else if (part.Value.Transformator != null)
+                                {
+                                    parts[part.Key].Transformator!.setPower(0.0F); //трансформатор не принял энергию
+                                    parts[part.Key].Transformator!.Update(); //обновляем трансформатор
+                                    parts[part.Key].Transformator = null; //обнуляем трансформатор
+                                }
                             }
                             i++;
                         }
 
                     }
 
-                    
+
                 }
 
 

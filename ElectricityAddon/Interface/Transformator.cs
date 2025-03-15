@@ -15,6 +15,7 @@ public interface IElectricTransformator
     public int highVoltage { get; }
 
 
+
     /// <summary>
     /// Низкое напряжение трансформатора
     /// </summary>

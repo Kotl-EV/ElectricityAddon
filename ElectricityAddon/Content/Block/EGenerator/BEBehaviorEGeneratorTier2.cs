@@ -124,10 +124,7 @@ public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
     };
 
 
-    public int Produce()                        //можно удалять потом----------------------------------
-    {
-        return 0;
-    }
+
 
     /// <summary>
     /// Сеть запрашивает энергию у генератора
@@ -286,9 +283,23 @@ public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(Math.Min(powerGive, powerOrder) / I_max * 100));
-        stringBuilder.AppendLine("└ " + Lang.Get("Production") + Math.Min(powerGive, powerOrder) + "/" + I_max + " Вт");
-        //stringBuilder.AppendLine(powerOrder.ToString()); //для дебага
+
+        //проверяем не сгорел ли прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEGenerator entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout)
+            {
+                stringBuilder.AppendLine("!!!Сгорел!!!");
+            }
+            else
+            {
+                stringBuilder.AppendLine(StringHelper.Progressbar(Math.Min(powerGive, powerOrder) / I_max * 100));
+                stringBuilder.AppendLine("└ " + Lang.Get("Production") + Math.Min(powerGive, powerOrder) + "/" + I_max + " Вт");
+            }
+
+        }
+
         stringBuilder.AppendLine();
 
 

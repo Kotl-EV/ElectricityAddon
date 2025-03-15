@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
+using ElectricityAddon.Content.Block.ETransformator;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
@@ -24,7 +26,7 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
 
     public new BlockPos Pos => this.Blockentity.Pos;
 
-    public float maxCurrent => 200.0F;   //ограничение по энергии в тик(ток*напряж)!!!!!!!
+    public float power => MyMiniLib.GetAttributeFloat(this.Block, "power", 128.0F);   //мощность батареи!!!!!!!
 
     public float GetMaxCapacity()
     {
@@ -50,7 +52,7 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
 
     public void Store(float amount)
     {
-        var buf = Math.Min(Math.Min(amount, maxCurrent), GetMaxCapacity() - capacity);
+        var buf = Math.Min(Math.Min(amount, power), GetMaxCapacity() - capacity);
 
         capacity += buf;  //не позволяем одним пакетом сохранить больше максимального тока. В теории такого превышения и не должно случиться
 
@@ -58,7 +60,7 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
 
     public float Release(float amount)
     {        
-        var buf = Math.Min(capacity, Math.Min(amount, maxCurrent));
+        var buf = Math.Min(capacity, Math.Min(amount, power));
         capacity -= buf;
 
         return buf;                                                 //выдаем пакет c учетом тока и запасов
@@ -67,12 +69,12 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
 
     public float canStore()
     {
-        return Math.Min(maxCurrent, GetMaxCapacity() - capacity);
+        return Math.Min(power, GetMaxCapacity() - capacity);
     }
 
     public float canRelease()
     {
-        return Math.Min(capacity, maxCurrent);
+        return Math.Min(capacity, power);
     }
 
     public float GetLastCapacity()
@@ -82,6 +84,18 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
 
     public void Update()
     {
+
+        //смотрим надо ли обновить модельку когда сгорает батарея
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEAccumulator entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout && entity.Block.Variant["status"] == "normal")
+            {
+                this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("status", "burned")).BlockId, Pos);
+            }
+        }
+
+
         lastCapacity = capacity;
         this.Blockentity.MarkDirty(true);
     }
@@ -103,8 +117,23 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(GetCapacity() * 100.0f / GetMaxCapacity()));
-        stringBuilder.AppendLine("└ " + Lang.Get("Storage") + GetCapacity() + "/" + GetMaxCapacity() + " Вт*t");
+
+        //проверяем не сгорел ли прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEAccumulator entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout)
+            {
+                stringBuilder.AppendLine("!!!Сгорел!!!");
+            }
+            else
+            {
+                stringBuilder.AppendLine(StringHelper.Progressbar(GetCapacity() * 100.0f / GetMaxCapacity()));
+                stringBuilder.AppendLine("└ " + Lang.Get("Storage") + GetCapacity() + "/" + GetMaxCapacity() + " Вт*t");
+            }
+
+        }
+ 
         stringBuilder.AppendLine();
     }
 

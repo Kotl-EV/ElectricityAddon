@@ -1,59 +1,136 @@
 {
-    "code": "accumulator",
-    "class": "BlockEAccumulator",
-    "entityClass": "BlockEntityEAccumulator",
-    "entityBehaviors": [
-        {
-            "name": "BEBehaviorEAccumulator"
-        },
-        {
-            "name": "ElectricityAddon"
-        }
-    ],
-    "creativeInventory": {
-        "general": [
-            "*"
-        ],
-        "electricity": [
-            "*"
-        ]
+  "code": "accumulator",
+  "class": "BlockEAccumulator",
+  "entityClass": "BlockEntityEAccumulator",
+  "entityBehaviors": [
+    {
+      "name": "BEBehaviorEAccumulator"
     },
-    "attributes": {
-        "rechargeable": true,
-        "maxcapacity": 64000,
-		    "handbook": {
-            "groupBy": ["accumulator-*"],
-          "extraSections": [
-            {
-              "title": "electricityaddon:block-handbooktitle-accumulator",
-              "text": "electricityaddon:block-handbooktext-accumulator"
-            }
-          ]
-		}
-    },
-	
-    "shape": {
-        "base": "block/accumulator"
-    },
-    "resistance": 1,
-    "drawType": "JSON",
-    "lightAbsorption": 0.0,
-    "faceCullMode": "NeverCull",
-    "renderPass": "OpaqueNoCull",
-    "emitSideAo": {
-        "all": false
-    },
-    "sideAo": {
-        "all": false
-    },
-    "sideOpaque": {
-        "all": false
-    },
-    "sideSolid": {
-        "all": false
-    },
-    "sounds": {
-        "place": "game:block/anvil",
-        "walk": "game:walk/stone"
+    {
+      "name": "ElectricityAddon"
     }
+  ],
+
+  "variantGroups": [
+    {
+      "code": "tier",
+      "states": [
+        "tier1",
+        "tier2"
+      ]
+    },
+    {
+      "code": "status",
+      "states": [
+        "normal",
+        "burned"
+      ]
+    }
+  ],
+
+  "behaviorsByType": {
+    "*-tier2-*": [
+      {
+        "name": "Multiblock",
+        "properties": {
+          "sizex": 1,
+          "sizey": 2,
+          "sizez": 1,
+          "cposition": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          }
+        }
+      }
+    ]
+  },
+
+  "storageFlagsByType": {
+    "*-tier2-*": 2
+  },
+
+
+  "creativeInventory": {
+    "general": [
+      "*-normal"
+    ],
+    "electricity": [
+      "*-normal"
+    ]
+  },
+
+  "attributes": {
+    "rechargeable": true,
+    "handbook": {
+      "groupBy": [ "accumulator-*" ],
+      "extraSections": [
+        {
+          "title": "electricityaddon:block-handbooktitle-accumulator-{tier}",
+          "text": "electricityaddon:block-handbooktext-accumulator-{tier}"
+        }
+      ]
+    }
+  },
+
+  "attributesByType": {
+    "*-tier1-*": {
+      "maxcapacity": 64000,
+      "voltage": 32,
+      "maxCurrent": 20.0,
+      "isolated": false,
+      "power": 128.0
+    },
+    "*-tier2-*": {
+      "maxcapacity": 256000,
+      "voltage": 128,
+      "maxCurrent": 20.0,
+      "isolated": false,
+      "power": 512.0
+    }
+  },
+
+  "shape": {
+    "base": "block/accumulator/accumulator-{tier}-{status}"
+  },
+
+  "resistance": 1,
+  "drawType": "JSON",
+  "lightAbsorption": 0.0,
+  "faceCullMode": "NeverCull",
+  "renderPass": "OpaqueNoCull",
+  "emitSideAo": {
+    "all": false
+  },
+  "sideAo": {
+    "all": false
+  },
+  "sideOpaque": {
+    "all": false
+  },
+  "sideSolid": {
+    "all": false
+  },
+
+  "guiTransformByType": {
+    "*-tier2-*": {
+      "rotation": {
+        "x": -22.6,
+        "y": -145,
+        "z": 0
+      },
+      "origin": {
+        "x": 0.5,
+        "y": 0.9,
+        "z": 0.5
+      },
+      "scale": 0.72
+    }
+  },
+
+
+  "sounds": {
+    "place": "game:block/anvil",
+    "walk": "game:walk/stone"
+  }
 }

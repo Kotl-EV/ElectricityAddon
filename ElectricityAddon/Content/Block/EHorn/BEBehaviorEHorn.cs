@@ -1,23 +1,66 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
+using ElectricityAddon.Content.Block.EAccumulator;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 
 namespace ElectricityAddon.Content.Block.EHorn;
 
 public class BEBehaviorEHorn : BlockEntityBehavior, IElectricConsumer
 {
-    private int maxTemp;
-    public int powerSetting;
+    private float maxTemp;
+    private float maxTargetTemp;
+
+    private float powerRequest = maxConsumption;         // Нужно энергии (сохраняется)
+    private float powerReceive = 0;             // Дали энергии  (сохраняется)
+
+
+
     private bool hasItems;
-    public int maxConsumption;
+    public static int maxConsumption;
+
     public BEBehaviorEHorn(BlockEntity blockEntity) : base(blockEntity)
     {
         maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 100);
+        maxTargetTemp = MyMiniLib.GetAttributeFloat(this.Block, "maxTargetTemp", 1100.0F);
     }
 
-    public void Consume(int amount)
+    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+    {
+        base.GetBlockInfo(forPlayer, stringBuilder);
+
+        //проверяем не сгорел ли прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEHorn entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout)
+            {
+                stringBuilder.AppendLine("!!!Сгорел!!!");
+                entity.IsBurning = false;
+            }
+            else
+            {
+                stringBuilder.AppendLine(StringHelper.Progressbar(powerReceive / maxConsumption * 100));
+                stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerReceive + "/" + maxConsumption + " Вт");
+                stringBuilder.AppendLine("└ " + Lang.Get("Temperature") + maxTemp + "° (max.)");
+            }
+
+        }
+
+        stringBuilder.AppendLine();
+    }
+
+
+    public float Consume_request()
+    {
+        return this.powerRequest;
+    }
+
+
+    public void Consume_receive(float amount)
     {
         BlockEntityEHorn? entity = null;
         if (Blockentity is BlockEntityEHorn temp)
@@ -29,47 +72,58 @@ public class BEBehaviorEHorn : BlockEntityBehavior, IElectricConsumer
         {
             amount = 0;
         }
-        if (powerSetting != amount)
+
+        if (this.powerReceive != amount)
         {
-            powerSetting = amount;
-            maxTemp = amount * 1100 / maxConsumption;
-            if (entity != null)
-            {
-                entity.IsBurning = amount > 0;
-            }
+            this.powerReceive = amount;
+            maxTemp = amount * maxTargetTemp / maxConsumption;
+
         }
-    }
-    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
-    {
-        base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting));
-        stringBuilder.AppendLine("├ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Eu");
-        stringBuilder.AppendLine("└ " + Lang.Get("Temperature") + maxTemp + "° (max.)");
-        stringBuilder.AppendLine();
-    }
-
-    public float Consume_request()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void Consume_receive(float amount)
-    {
-        throw new System.NotImplementedException();
     }
 
     public void Update()
     {
-        throw new System.NotImplementedException();
+        //смотрим надо ли обновить модельку когда сгорает прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEHorn entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout && entity.Block.Variant["status"] == "normal")
+            {
+                string state = "disabled";
+                string side=entity.Block.Variant["side"];
+
+                string[] types = new string[3] { "state", "status", "side" };   //типы горна
+                string[] variants = new string[3] { state, "burned", side };  //нужный вариант гона
+
+                this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariants(types, variants)).BlockId, Pos);
+            }
+        }
+                
     }
 
     public float getPowerReceive()
     {
-        throw new System.NotImplementedException();
+        return this.powerReceive;
     }
 
     public float getPowerRequest()
     {
-        throw new System.NotImplementedException();
+        return this.powerRequest;
     }
+
+
+    public override void ToTreeAttributes(ITreeAttribute tree)
+    {
+        base.ToTreeAttributes(tree);
+        tree.SetFloat("electricityaddon:powerRequest", powerRequest);
+        tree.SetFloat("electricityaddon:powerRecieve", powerReceive);
+    }
+
+    public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
+    {
+        base.FromTreeAttributes(tree, worldAccessForResolve);
+        powerRequest = tree.GetFloat("electricityaddon:powerRequest");
+        powerReceive = tree.GetFloat("electricityaddon:powerReceive");
+    }
+
 }

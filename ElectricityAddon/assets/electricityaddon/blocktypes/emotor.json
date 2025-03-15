@@ -67,17 +67,20 @@
     "*-tier1-*": {
       "params": [ 10.0, 100.0, 0.5, 0.75, 0.5, 0.1 ],
       "voltage": 32,
-      "maxCurrent": 20.0
+      "maxCurrent": 20.0,
+      "isolated": false
     },
     "*-tier2-*": {
       "params": [ 10.0, 400.0, 1.0, 0.85, 1.0, 0.1 ],
       "voltage": 32,
-      "maxCurrent": 20.0
+      "maxCurrent": 20.0,
+      "isolated": false
     },
     "*-tier3-*": {
       "params": [ 10.0, 800.0, 2.0, 0.95, 1.0, 0.1 ],
       "voltage": 128,
-      "maxCurrent": 20.0
+      "maxCurrent": 20.0,
+      "isolated": false
     }
   },
 

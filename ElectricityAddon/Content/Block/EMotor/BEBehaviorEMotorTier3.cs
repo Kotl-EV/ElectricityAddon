@@ -36,7 +36,7 @@ public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
     private static float resistance_factor;     // множитель сопротивления
 
     private float torque;                       // Текущий крутящий момент
-    private float I_value, I_value2;            // Ток потребления
+    private float I_value;                      // Ток потребления
     public float kpd;                           // КПД
 
     private float[] def_Params = { 10.0F, 100.0F, 0.5F, 0.75F, 0.5F, 0.1F };   //заглушка
@@ -148,13 +148,6 @@ public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
 
 
 
-    public void Consume(int amount)                //удалить можно---------------------------
-    {
-
-    }
-
-
-
     public override void WasPlaced(BlockFacing connectedOnFacing)
     {
 
@@ -234,7 +227,6 @@ public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
 
         float torque_down = 0;
         int k = 0;
-        I_value2 = I_value;
         while (I_value > I_max || I_value > I_amount)                                           // Проверка, чтобы ток не превышал максимальное значение I_max и I_amount
         {
             k++;
@@ -267,7 +259,6 @@ public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
 
 
     }
-
 
 
 
@@ -361,10 +352,22 @@ public class BEBehaviorEMotorTier3 : BEBehaviorMPBase, IElectricConsumer
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
 
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerReceive / I_max * 100));
-        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerReceive + "/" + I_max + " Вт");
-        //stringBuilder.AppendLine("└ " + "КПД " + this.kpd*100F + "%/" + this.kpd_max*100+"%");
-        //stringBuilder.AppendLine("└ " + "Реальный ток " + I_value + "/" + this.I_max);
+        //проверяем не сгорел ли прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEMotor entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout)
+            {
+                stringBuilder.AppendLine("!!!Сгорел!!!");
+            }
+            else
+            {
+                stringBuilder.AppendLine(StringHelper.Progressbar(powerReceive / I_max * 100));
+                stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerReceive + "/" + I_max + " Вт");
+            }
+
+        }
+
         stringBuilder.AppendLine();
 
     }

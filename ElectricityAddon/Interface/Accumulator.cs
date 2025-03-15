@@ -13,7 +13,7 @@ public interface IElectricAccumulator
     /// <summary>
     /// Максимальный ток отдачи/сохранения
     /// </summary>
-    public float maxCurrent { get; }
+    public float power { get; }
 
     /// <summary>
     /// Максимальная емкость аккумулятора

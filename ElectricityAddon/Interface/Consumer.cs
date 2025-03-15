@@ -2,7 +2,6 @@ using Vintagestory.API.MathTools;
 
 namespace ElectricityAddon.Interface;
 
-
 public interface IElectricConsumer
 {
     /// <summary>
@@ -39,9 +38,6 @@ public interface IElectricConsumer
     /// <returns></returns>
     public float getPowerRequest();
 
-
-
-    public void Consume(int amount);                //удалить можно 
 
 
 }

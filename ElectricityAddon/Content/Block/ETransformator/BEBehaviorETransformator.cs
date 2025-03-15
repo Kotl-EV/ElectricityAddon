@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
+using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
@@ -31,14 +33,39 @@ public class BEBehaviorETransformator : BlockEntityBehavior, IElectricTransforma
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(getPower() / (lowVoltage*maxCurrent) * 100));
-        stringBuilder.AppendLine("└ " + "Мощность " + getPower() + " / " + lowVoltage * maxCurrent + " Вт");
+
+        //проверяем не сгорел ли прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityETransformator entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout)
+            {
+                stringBuilder.AppendLine("!!!Сгорел!!!");
+            }
+            else
+            {
+                stringBuilder.AppendLine(StringHelper.Progressbar(getPower() / (lowVoltage * maxCurrent) * 100));
+                stringBuilder.AppendLine("└ " + "Мощность " + getPower() + " / " + lowVoltage * maxCurrent + " Вт");
+            }
+
+        }
+
         stringBuilder.AppendLine();
     }
 
 
     public void Update()
     {
+        //смотрим надо ли обновить модельку когда сгорает трансформатор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityETransformator entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout && entity.Block.Variant["status"]=="normal")
+            {
+                this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("status", "burned")).BlockId, Pos);
+            }
+        }
+
         this.Blockentity.MarkDirty(true);
     }
 

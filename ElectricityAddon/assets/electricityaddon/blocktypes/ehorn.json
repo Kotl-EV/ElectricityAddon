@@ -1,33 +1,48 @@
 {
-  "code": "eforge",
+  "code": "ehorn",
   "class": "BlockEHorn",
   "entityClass": "BlockEntityEHorn",
+  "entityBehaviors": [
+    {
+      "name": "BEBehaviorEHorn"
+    },
+    {
+      "name": "ElectricityAddon"
+    }
+  ],
+
   "attributes": {
     "maxConsumption": 100,
+    "maxTargetTemp": 1100.0,
+    "voltage": 128,
+    "maxCurrent": 20.0,
+    "isolated": false,
     "handbook": {
-      "groupBy": [ "eforge-*" ],
+      "groupBy": [ "ehorn-*" ],
       "extraSections": [
         {
-          "title": "electricityaddon:block-handbooktitle-eforge",
-          "text": "electricityaddon:block-handbooktext-eforge"
+          "title": "electricityaddon:block-handbooktitle-ehorn",
+          "text": "electricityaddon:block-handbooktext-ehorn"
         }
       ]
     }
   },
+
   "shape": {
-    "base": "block/eforge-disabled"
+    "base": "block/ehorn/ehorn-enabled-{status}"
   },
-  "textures": {
-    "bismuthbronze": { "base": "block/bismuthbronze" },
-    "brass": { "base": "block/brass" },
-    "copper": { "base": "block/copper" },
-    "copper-hot": { "base": "block/copper-hot" },
-    "emeral": { "base": "block/emeral" },
-    "iron": { "base": "block/iron" },
-    "steel": { "base": "block/steel" },
-    "topaz": { "base": "block/topaz" },
-    "zinc": { "base": "block/zinc" }
+
+  "creativeInventory": {
+    "general": [
+      "*-disabled-normal-south"
+    ],
+    "electricity": [
+      "*-disabled-normal-south"
+    ]
   },
+
+
+
   "behaviors": [
     {
       "name": "HeatSource"
@@ -39,14 +54,7 @@
       }
     }
   ],
-  "entityBehaviors": [
-    {
-      "name": "BEBehaviorEHorn"
-    },
-    {
-      "name": "ElectricityAddon"
-    }
-  ],
+
 
   "variantgroups": [
     {
@@ -54,55 +62,52 @@
       "states": [ "disabled", "enabled" ]
     },
     {
+      "code": "status",
+      "states": [
+        "normal",
+        "burned"
+      ]
+    },
+    {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
+
+
+  "skipVariants": [
+    "*-enabled-burned-*"
+  ],
+
   "shapebytype": {
-    "*-enabled-north": {
-      "base": "block/eforge-enabled",
+    "*-north": {
+      "base": "block/ehorn/ehorn-{state}-{status}",
       "rotateY": 0
     },
-    "*-enabled-east": {
-      "base": "block/eforge-enabled",
+    "*-east": {
+      "base": "block/ehorn/ehorn-{state}-{status}",
       "rotateY": 270
     },
-    "*-enabled-south": {
-      "base": "block/eforge-enabled",
+    "*-south": {
+      "base": "block/ehorn/ehorn-{state}-{status}",
       "rotateY": 180
     },
-    "*-enabled-west": {
-      "base": "block/eforge-enabled",
-      "rotateY": 90
-    },
-    "*-disabled-north": {
-      "base": "block/eforge-disabled",
-      "rotateY": 0
-    },
-    "*-disabled-east": {
-      "base": "block/eforge-disabled",
-      "rotateY": 270
-    },
-    "*-disabled-south": {
-      "base": "block/eforge-disabled",
-      "rotateY": 180
-    },
-    "*-disabled-west": {
-      "base": "block/eforge-disabled",
+    "*-west": {
+      "base": "block/ehorn/ehorn-{state}-{status}",
       "rotateY": 90
     }
   },
+
   "blockMaterial": "Stone",
-  "creativeinventory": {
-    "general": [ "*-disabled-south" ],
-    "electricity": [ "*-disabled-south" ]
-  },
+
   "replaceable": 500,
   "lightAbsorption": 0,
+
   "lightHsvByType": {
     "*-disabled-*": [ 0, 0, 0 ],
     "*-enabled-*": [ 7, 7, 11 ]
   },
+
   "resistance": 3.5,
   "sounds": {
     "walk": "game:walk/stone",

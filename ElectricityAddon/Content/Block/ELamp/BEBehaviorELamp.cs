@@ -5,6 +5,9 @@ using ElectricityAddon.Interface;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
+using ElectricityAddon.Content.Block.ETransformator;
+using System.Linq;
+using ElectricityAddon.Content.Block.EHorn;
 
 namespace ElectricityAddon.Content.Block.ELamp
 {
@@ -36,23 +39,18 @@ namespace ElectricityAddon.Content.Block.ELamp
 
 
 
-
-        public void Consume(int lightLevel)  // можно удалить
-        {
-
-        }
-
-
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
             tree.SetFloat("electricityaddon:LightLevel", LightLevel);
+
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
             base.FromTreeAttributes(tree, worldAccessForResolve);
             LightLevel = tree.GetFloat("electricityaddon:LightLevel");
+
         }
 
 
@@ -73,16 +71,14 @@ namespace ElectricityAddon.Content.Block.ELamp
                 if (amount != this.LightLevel)
                 {
 
-                    if (amount >= 1 && this.Block.Code.ToString().Contains("disabled"))                               //включаем если питание больше 1
+                    if (amount >= 1 && this.Block.Variant["state"]== "disabled")                               //включаем если питание больше 1
                     {
                         api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
                     }
-                    else if (amount < 1 && this.Block.Code.ToString().Contains("enabled"))                            //гасим если питание меньше 1
+                    else if (amount < 1 && this.Block.Variant["state"] == "enabled")                            //гасим если питание меньше 1
                     {
                         api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
                     }
-
-
 
                     //применяем цвет и яркость
                     this.Blockentity.Block.LightHsv = new[] {
@@ -111,7 +107,21 @@ namespace ElectricityAddon.Content.Block.ELamp
 
         public void Update()
         {
-            //this.Blockentity.MarkDirty(true);
+            //смотрим надо ли обновить модельку когда сгорает прибор
+            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityELamp entity && entity.AllEparams != null)
+            {
+                bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+                if (hasBurnout && entity.Block.Variant["status"] == "normal")
+                {
+                    string state = "disabled";
+                    string tempK = entity.Block.Variant["tempK"];
+
+                    string[] types = new string[3] { "tempK" , "state", "status" };   //типы лампы
+                    string[] variants = new string[3] { tempK, state, "burned" };     //нужный вариант лампы
+
+                    this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariants(types, variants)).BlockId, Pos);
+                }
+            }
         }
 
 
@@ -119,8 +129,21 @@ namespace ElectricityAddon.Content.Block.ELamp
         {
             base.GetBlockInfo(forPlayer, stringBuilder);
 
-            stringBuilder.AppendLine(StringHelper.Progressbar(this.LightLevel * 100.0f / maxConsumption));
-            stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.LightLevel + "/" + maxConsumption + " Вт");
+            //проверяем не сгорел ли прибор
+            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityETransformator entity && entity.AllEparams != null)
+            {
+                bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+                if (hasBurnout)
+                {
+                    stringBuilder.AppendLine("!!!Сгорел!!!");
+                }
+                else
+                {
+                    stringBuilder.AppendLine(StringHelper.Progressbar(this.LightLevel * 100.0f / maxConsumption));
+                    stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.LightLevel + "/" + maxConsumption + " Вт");
+                }
+            }
+
             stringBuilder.AppendLine();
             
         }

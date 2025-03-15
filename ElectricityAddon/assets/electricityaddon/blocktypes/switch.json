@@ -21,26 +21,14 @@
 
 
   "shapeInventory": {
-    "base": "block/switch-disabled"
+    "base": "block/switch/switch-disabled"
   },
 
-  "shapeByType": {
-    "*-enabled": {
-      "base": "block/switch-enabled"
-    },
-    "*-disabled": {
-      "base": "block/switch-disabled"
-    }
+  "shape": {
+    "base": "block/switch/switch-{type}"
   },
 
-  "textures": {
-    "oak": {
-      "base": "block/oak"
-    },
-    "copper": {
-      "base": "block/copper"
-    }
-  },
+
 
   "collisionSelectionBoxes": [
     {
@@ -114,7 +102,7 @@
   "guiTransform": {
     "translation": {
       "x": 0,
-      "y": -16,
+      "y": -8,
       "z": 0
     },
     "scale": 1.63

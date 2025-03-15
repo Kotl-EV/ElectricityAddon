@@ -8,14 +8,15 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Common.Entities;
 using Vintagestory.API.Common;
 using Vintagestory.API.MathTools;
+using System.Collections.Concurrent;
 
 namespace ElectricityAddon.Content.Block.ELamp
 {
     internal class BlockESmallLamp : Vintagestory.API.Common.Block
     {
         private readonly static Dictionary<CacheDataKey, MeshData> MeshDataCache = new();
-        private readonly static Dictionary<CacheDataKey, Cuboidf[]> SelectionBoxesCache = new();
-        private readonly static Dictionary<CacheDataKey, Cuboidf[]> CollisionBoxesCache = new();
+        private readonly static ConcurrentDictionary<CacheDataKey, Cuboidf[]> SelectionBoxesCache = new();
+        private readonly static ConcurrentDictionary<CacheDataKey, Cuboidf[]> CollisionBoxesCache = new();
 
         
 
@@ -62,6 +63,15 @@ namespace ElectricityAddon.Content.Block.ELamp
             {
                 entity.Facing = facing;
 
+                //задаем параметры блока/проводника
+                var voltage = MyMiniLib.GetAttributeInt(byItemStack!.Block, "voltage", 32);
+                var maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack!.Block, "maxCurrent", 5.0F);
+                var isolated = MyMiniLib.GetAttributeBool(byItemStack!.Block, "isolated", false);
+
+                entity.Eparams = (
+                    new EParams(voltage, maxCurrent, "", 0, 1, 1, false, isolated),
+                    FacingHelper.Faces(facing).First().Index);
+
                 return true;
             }
 
@@ -70,12 +80,11 @@ namespace ElectricityAddon.Content.Block.ELamp
 
         public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)
         {
-            var block = world.BlockAccessor.GetBlock(pos);            
-            string str = block.Code.ToString();
-            str = str.Replace("enabled", "disabled");
-            block = world.BlockAccessor.GetBlock(new AssetLocation(str));
+            var block = api.World.BlockAccessor.GetBlock(pos);
+            var block2 = api.World.GetBlock(block.CodeWithVariant("state", "disabled"));
+
             return new[] {
-                new ItemStack(block, (int)Math.Ceiling(dropQuantityMultiplier))
+                new ItemStack(block2, (int)Math.Ceiling(dropQuantityMultiplier))
             };
         }
 

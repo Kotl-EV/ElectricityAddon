@@ -18,19 +18,6 @@
   "shape": {
     "base": "block/charger"
   },
-  "textures": {
-    "bismuthbronze": { "base": "block/bismuthbronze" },
-    "copper": { "base": "block/copper" },
-    "iron": { "base": "block/iron" },
-    "quartzglass": { "base": "block/quartzglass" },
-    "stainlesssteel": { "base": "block/stainlesssteel" },
-    "steel": { "base": "block/steel" },
-    "zinc": { "base": "block/zinc" },
-    "brass": { "base": "block/brass" },
-    "copper-hot": { "base": "block/copper-hot" },
-    "emeral": { "base": "block/emeral" },
-    "topaz": { "base": "block/topaz" }
-  },
   "behaviors": [
     { "name": "Container" },
     {

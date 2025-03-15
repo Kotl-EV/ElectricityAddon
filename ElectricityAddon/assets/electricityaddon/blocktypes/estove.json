@@ -47,49 +47,39 @@
   ],
   "shapebytype": {
     "*-enabled-north": {
-      "base": "block/electricstove-enabled",
+      "base": "block/estove-enabled",
       "rotateY": 0
     },
     "*-enabled-east": {
-      "base": "block/electricstove-enabled",
+      "base": "block/estove-enabled",
       "rotateY": 270
     },
     "*-enabled-south": {
-      "base": "block/electricstove-enabled",
+      "base": "block/estove-enabled",
       "rotateY": 180
     },
     "*-enabled-west": {
-      "base": "block/electricstove-enabled",
+      "base": "block/estove-enabled",
       "rotateY": 90
     },
     "*-disabled-north": {
-      "base": "block/electricstove-disabled",
+      "base": "block/estove-disabled",
       "rotateY": 0
     },
     "*-disabled-east": {
-      "base": "block/electricstove-disabled",
+      "base": "block/estove-disabled",
       "rotateY": 270
     },
     "*-disabled-south": {
-      "base": "block/electricstove-disabled",
+      "base": "block/estove-disabled",
       "rotateY": 180
     },
     "*-disabled-west": {
-      "base": "block/electricstove-disabled",
+      "base": "block/estove-disabled",
       "rotateY": 90
     }
   },
-  "textures": {
-    "brass": { "base": "block/brass" },
-    "copper": { "base": "block/copper" },
-    "copper-hot": { "base": "block/copper-hot" },
-    "emeral": { "base": "block/emeral" },
-    "iron": { "base": "block/iron" },
-    "stainlesssteel": { "base": "block/stainlesssteel" },
-    "steel": { "base": "block/steel" },
-    "topaz": { "base": "block/topaz" },
-    "zinc": { "base": "block/zinc" }
-  },
+
   "blockmaterial": "Stone",
   "sidesolid": {
     "all": false

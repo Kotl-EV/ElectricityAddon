@@ -12,10 +12,10 @@
   ],
   "creativeInventory": {
     "general": [
-      "*-south"
+      "*-normal-south"
     ],
     "electricity": [
-      "*-south"
+      "*-normal-south"
     ]
   },
 
@@ -23,6 +23,7 @@
     "voltage": 128,
     "lowVoltage": 32,
     "maxCurrent": 20.0,
+    "isolated": false,
     "handbook": {
       "groupBy": [ "transformator-*" ],
       "extraSections": [
@@ -36,6 +37,13 @@
   },
 
   "variantgroups": [
+    {
+      "code": "status",
+      "states": [
+        "normal",
+        "burned"
+      ]
+    },
     {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
@@ -57,19 +65,19 @@
 
   "shapebytype": {
     "*-north": {
-      "base": "block/transformator",
+      "base": "block/transformator/transformator-{status}",
       "rotateY": 0
     },
     "*-east": {
-      "base": "block/transformator",
+      "base": "block/transformator/transformator-{status}",
       "rotateY": 270
     },
     "*-south": {
-      "base": "block/transformator",
+      "base": "block/transformator/transformator-{status}",
       "rotateY": 180
     },
     "*-west": {
-      "base": "block/transformator",
+      "base": "block/transformator/transformator-{status}",
       "rotateY": 90
     }
   },

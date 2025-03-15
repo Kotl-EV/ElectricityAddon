@@ -87,9 +87,10 @@ public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
             //задаем параметры блока/проводника
             var voltage = MyMiniLib.GetAttributeInt(this, "voltage", 32);
             var maxCurrent = MyMiniLib.GetAttributeFloat(this, "maxCurrent", 5.0F);
+            var isolated = MyMiniLib.GetAttributeBool(this, "isolated", false);
 
             entity.Eparams = (
-                new EParams(voltage, maxCurrent, "", 0, 1, 1, false, false),
+                new EParams(voltage, maxCurrent, "", 0, 1, 1, false, isolated),
                 FacingHelper.Faces(facing).First().Index);
 
 

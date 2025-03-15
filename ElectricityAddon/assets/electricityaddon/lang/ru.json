@@ -2,21 +2,21 @@
   "block-charger-*": "Зарядная станция",
   "block-estove-*": "Электрическая плита",
   "block-efreezer-*": "Электрический морозильник",
-  "block-largeaccumulator": "Аккумулятор (большой)",
 
-  "block-emotor-tier1-*": "Двигатель (32В)",
-  "block-emotor-tier2-*": "Модернизированный двигатель (32В)",
-  "block-emotor-tier3-*": "Высокопроизводительный двигатель (128В)",
+  "block-emotor-tier1-*": "Двигатель",
+  "block-emotor-tier2-*": "Модернизированный двигатель",
+  "block-emotor-tier3-*": "Высокопроизводительный двигатель",
 
-  "block-egenerator-tier1-*": "Генератор (32В)",
-  "block-egenerator-tier2-*": "Модернизированный генератор (32В)",
-  "block-egenerator-tier3-*": "Высокопроизводительный генератор (128В)",
+  "block-egenerator-tier1-*": "Генератор",
+  "block-egenerator-tier2-*": "Модернизированный генератор",
+  "block-egenerator-tier3-*": "Высокопроизводительный генератор",
 
   "block-transformator-*": "Трансформатор",
 
   "block-eoven-*": "Электрическая духовка",
 
-  "block-accumulator": "Аккумулятор",
+  "block-accumulator-tier1-*": "Аккумулятор (32В)",
+  "block-accumulator-tier2-*": "Аккумулятор (128В)",
 
   "block-ecable-32v-copper-*-part": "Медный кабель (32В)",
   "block-ecable-32v-silver-*-part": "Серебряный кабель (32В)",
@@ -45,8 +45,6 @@
 
 
   "block-switch-*": "Ручной переключатель",
-  "block-lamp-*": "Электрическая лампа",
-  "block-lamp_small-*": "Электрическая лампа (маленькая)",
   "block-eforge-*": "Электрический горн",
   "block-heater-*": "Электрический нагреватель",
 
@@ -59,8 +57,6 @@
   "block-elamp-9000-*": "Электрическая лампа: сине-холодный  (9000К)",
 
 
-
-
   "block-elamp_small-3000-*": "Эл. лампа (маленькая): оранжево-теплый (3000К)",
   "block-elamp_small-4000-*": "Эл. лампа (маленькая): желто-теплый (4000К)",
   "block-elamp_small-5000-*": "Эл. лампа (маленькая): белый теплый (5000К)",
@@ -68,7 +64,6 @@
   "block-elamp_small-7000-*": "Эл. лампа (маленькая): голубоватый белый (7000К)",
   "block-elamp_small-8000-*": "Эл. лампа (маленькая): белый холодный (8000К)",
   "block-elamp_small-9000-*": "Эл. лампа (маленькая): сине-холодный  (9000К)",
-
 
 
 
@@ -90,23 +85,28 @@
 
   "game:tabname-electricity": "Электричество",
 
-  "block-handbooktitle-accumulator": "Используется",
-  "block-handbooktext-accumulator": "Позволяет хранить электрическую энергию.<br>Заряженный аккумулятор, при необходимости, можно носить с собой.",
+
+  "block-handbooktitle-accumulator-tier1": "Используется",
+  "block-handbooktext-accumulator-tier1": "Позволяет хранить электрическую энергию.<br>Заряженный аккумулятор, при необходимости, можно носить с собой.<br>Напряжение: 32 В.",
+
+  "block-handbooktitle-accumulator-tier2": "Используется",
+  "block-handbooktext-accumulator-tier2": "Позволяет хранить электрическую энергию. Более вместительный вариант обычного <a href=\"handbooksearch:\/\/аккумулятор\">аккумулятора<\/a>.<br>Заряженный аккумулятор (большой), при необходимости, можно носить с собой, но только в слоте для сумок.<br>Напряжение: 128 В.",
+
 
   "block-handbooktitle-ecable-*": "Используется",
   "block-handbooktext-ecable-*": "Позволяет передавать электрическую энергию на расстояние.",
 
-  "block-handbooktitle-lamp": "Используется",
-  "block-handbooktext-lamp": "Хороший источник света, потребляющий электрическую энергию.<br><br>Максимальный уровень света: 21.<br>Максимальное потребление: 8 Eu/с.",
+  "block-handbooktitle-elamp": "Используется",
+  "block-handbooktext-elamp": "Хороший источник света, потребляющий электрическую энергию.<br><br>Максимальный уровень света: 21.<br>Напряжение питания: 128 В.<br>Максимальное потребление: 8 Вт.",
 
-  "block-handbooktitle-lamp_small": "Используется",
-  "block-handbooktext-lamp_small": "Слабый источник света, потребляющий электрическую энергию.<br><br>Максимальный уровень света: 10.<br>Максимальное потребление: 4 Eu/с.",
+  "block-handbooktitle-elamp_small": "Используется",
+  "block-handbooktext-elamp_small": "Слабый источник света, потребляющий электрическую энергию.<br><br>Максимальный уровень света: 14.<br>Напряжение питания: 32 В.<br>Максимальное потребление: 4 Вт.",
 
-  "block-handbooktitle-eforge": "Используется",
-  "block-handbooktext-eforge": "Электрический горн позволяет полностью заменить обычный кузнечный горн.<br><br>Максимальная температура нагрева: 1100 °C.<br>Максимальное потребление: 100 Eu/с.",
+  "block-handbooktitle-ehorn": "Используется",
+  "block-handbooktext-ehorn": "Электрический горн позволяет полностью заменить обычный кузнечный горн.<br><br>Максимальная температура нагрева: 1100 °C.<br>Напряжение питания: 128 В.<br>Максимальное потребление: 100 Вт.",
 
   "block-handbooktitle-transformator": "Используется",
-  "block-handbooktext-transformator": "Служит для преобразования электрической энергии с одного напряжения в другое.<br><br>Коэффициент трансформации: 1:4.",
+  "block-handbooktext-transformator": "Служит для преобразования электрической энергии с одного напряжения в другое. Рекомендуется подключать кабеля/устройства только с двух любых сторон трансформатора!<br><br>Коэффициент трансформации: 1:4.",
 
 
 
@@ -120,35 +120,33 @@
 
 
   "block-handbooktitle-charger": "Используется",
-  "block-handbooktext-charger": "Зарядная станция позволяет заряжать аккумуляторы и устройства со встроенным аккумулятором.<br><br>Максимальное потребление: 200 Eu/с.",
+  "block-handbooktext-charger": "Зарядная станция позволяет заряжать аккумуляторы и устройства со встроенным аккумулятором.<br><br>Максимальное потребление: 200 Вт.",
 
   "block-handbooktitle-estove": "Используется",
-  "block-handbooktext-estove": "Электрическая плита позволяет полностью заменить обычный костер.<br><br>Максимальная температура нагрева плиты: 1325 °C.<br>Максимальное потребление: 100 Eu/с.",
+  "block-handbooktext-estove": "Электрическая плита позволяет полностью заменить обычный костер.<br><br>Максимальная температура нагрева плиты: 1325 °C.<br>Максимальное потребление: 100 Вт.",
 
   "block-handbooktitle-efreezer": "Используется",
-  "block-handbooktext-efreezer": "Электрический морозильник позволяет хранить продукты дольше. <br><br>Слотов для хранения: 6.<br>Скорость порчи еды: 0,05х<br>Максимальное потребление: 100 Eu/с.",
+  "block-handbooktext-efreezer": "Электрический морозильник позволяет хранить продукты дольше. <br><br>Слотов для хранения: 6.<br>Скорость порчи еды: 0,05х<br>Максимальное потребление: 100 Вт.",
 
-  "block-handbooktitle-largeaccumulator": "Используется",
-  "block-handbooktext-largeaccumulator": "Позволяет хранить электрическую энергию. Более вместительный вариант обычного <a href=\"handbooksearch:\/\/аккумулятор\">аккумулятора<\/a>.<br>Заряженный аккумулятор (большой), при необходимости, можно носить с собой, но только в слоте для сумок.",
 
   "block-handbooktitle-emotor-tier1": "Используется",
-  "block-handbooktext-emotor-tier1": "Двигатель преобразовывает электрическую энергию в механическую. Имеет небольшую мощность и скорость вращения <br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 100; <br><i>torque_max</i> : 0.5; <br><i>kpd_max</i> : 0.75; <br><i>speed_max</i> : 0.5; <br><i>resistance_factor</i> : 0.1. <br> <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+  "block-handbooktext-emotor-tier1": "Двигатель преобразовывает электрическую энергию в механическую. Имеет небольшую мощность и скорость вращения.<br>Напряжение питания: 32 В.<br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 100; <br><i>torque_max</i> : 0.5; <br><i>kpd_max</i> : 0.75; <br><i>speed_max</i> : 0.5; <br><i>resistance_factor</i> : 0.1. <br> <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
   "block-handbooktitle-emotor-tier2": "Используется",
-  "block-handbooktext-emotor-tier2": "Модернизированный двигатель преобразовывает электрическую энергию в механическую. Имеет повышенную выходную мощность и скорость вращения по сравнению с <a href=\"handbooksearch:\/\/Двигатель\">двигателем<\/a>.<br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 400; <br><i>torque_max</i> : 1.0; <br><i>kpd_max</i> : 0.85; <br><i>speed_max</i> : 1.0; <br><i>resistance_factor</i> : 0.1. <br><br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+  "block-handbooktext-emotor-tier2": "Модернизированный двигатель преобразовывает электрическую энергию в механическую. Имеет повышенную выходную мощность и скорость вращения по сравнению с <a href=\"handbooksearch:\/\/Двигатель\">двигателем<\/a>.<br>Напряжение питания: 32 В.<br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 400; <br><i>torque_max</i> : 1.0; <br><i>kpd_max</i> : 0.85; <br><i>speed_max</i> : 1.0; <br><i>resistance_factor</i> : 0.1. <br><br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
   "block-handbooktitle-emotor-tier3": "Используется",
-  "block-handbooktext-emotor-tier3": "Высокопроизводительный двигатель преобразовывает электрическую энергию в механическую. Благодаря использованию лучших материалов, имеет более высокую выходную мощность по сравнению с <a href=\"handbooksearch:\/\/Модернизированный двигатель\">модернизированным двигателем<\/a>.<br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 800; <br><i>torque_max</i> : 2.0; <br><i>kpd_max</i> : 0.95; <br><i>speed_max</i> : 1.0; <br><i>resistance_factor</i> : 0.1. <br> <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+  "block-handbooktext-emotor-tier3": "Высокопроизводительный двигатель преобразовывает электрическую энергию в механическую. Благодаря использованию лучших материалов, имеет более высокую выходную мощность по сравнению с <a href=\"handbooksearch:\/\/Модернизированный двигатель\">модернизированным двигателем<\/a>.<br>Напряжение питания: 128 В.<br><br>Дополнительные параметры: <br><i>I_min</i> : 10; <br><i>I_max</i> : 800; <br><i>torque_max</i> : 2.0; <br><i>kpd_max</i> : 0.95; <br><i>speed_max</i> : 1.0; <br><i>resistance_factor</i> : 0.1. <br> <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
 
   "block-handbooktitle-egenerator-tier1": "Используется",
-  "block-handbooktext-egenerator-tier1": "Генератор преобразовывает механическую энергию в электрическую. Имеет небольшую мощность и скорость вращения <br><br>Дополнительные параметры: <br><i>I_max</i>: 100;<br><i>speed_max</i>: 0.5;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.25. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+  "block-handbooktext-egenerator-tier1": "Генератор преобразовывает механическую энергию в электрическую. Имеет небольшую мощность и скорость вращения.<br>Вырабатываемое напряжение: 32 В.<br><br>Дополнительные параметры: <br><i>I_max</i>: 100;<br><i>speed_max</i>: 0.5;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.25. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
   "block-handbooktitle-egenerator-tier2": "Используется",
-  "block-handbooktext-egenerator-tier2": "Модернизированный генератор преобразовывает механическую энергию в электрическую. Имеет повышенную мощность по сравнению с <a href=\"handbooksearch:\/\/Генератор\">генератором<\/a>.<br><br>Дополнительные параметры: <br><i>I_max</i>: 200;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.32. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+  "block-handbooktext-egenerator-tier2": "Модернизированный генератор преобразовывает механическую энергию в электрическую. Имеет повышенную мощность по сравнению с <a href=\"handbooksearch:\/\/Генератор\">генератором<\/a>.<br>Вырабатываемое напряжение: 32 В.<br><br>Дополнительные параметры: <br><i>I_max</i>: 200;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.32. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
   "block-handbooktitle-egenerator-tier3": "Используется",
-  "block-handbooktext-egenerator-tier3": "Высокопроизводительный генератор преобразовывает механическую энергию в электрическую. Благодаря использованию лучших материалов, имеет более высокую мощность по сравнению с <a href=\"handbooksearch:\/\/Модернизированный генератор\">модернизированным генератором<\/a>.<br><br>Дополнительные параметры: <br><i>I_max</i>: 400;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.81. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
+  "block-handbooktext-egenerator-tier3": "Высокопроизводительный генератор преобразовывает механическую энергию в электрическую. Благодаря использованию лучших материалов, имеет более высокую мощность по сравнению с <a href=\"handbooksearch:\/\/Модернизированный генератор\">модернизированным генератором<\/a>.<br>Вырабатываемое напряжение: 128 В.<br><br>Дополнительные параметры: <br><i>I_max</i>: 400;<br><i>speed_max</i>: 1.0;<br><i>resistance_factor</i> : 0.1;<br><i>resistance_load</i>: 0.81. <br>Об особенностях работы читайте в <a href=\"handbook:\/\/gamemechanicinfo-electricityaddon-rotors\">руководстве<\/a>.",
 
 
 

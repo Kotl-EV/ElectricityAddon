@@ -12,7 +12,16 @@ public static class MyMiniLib
         }
         return def;
     }
-    
+
+    public static bool GetAttributeBool(CollectibleObject block, string attrname, bool def = false)
+    {
+        if (block != null && block.Attributes != null && block.Attributes[attrname] != null)
+        {
+            return block.Attributes[attrname].AsBool(def);
+        }
+        return def;
+    }
+
     public static float GetAttributeFloat(CollectibleObject block, string attrname, float def = 0F)
     {
         if (block != null && block.Attributes != null && block.Attributes[attrname] != null)

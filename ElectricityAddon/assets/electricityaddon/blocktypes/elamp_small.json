@@ -12,36 +12,40 @@
   ],
   "attributes": {
     "maxConsumption": 4, //максимальное потребление
+    "voltage": 32,
+    "maxCurrent": 20.0,
+    "isolated": true,
     "handbook": {
       "groupBy": [ "elamp_small-*" ],
       "extraSections": [
         {
-          "title": "electricityaddon:block-handbooktitle-lamp_small",
-          "text": "electricityaddon:block-handbooktext-lamp_small"
+          "title": "electricityaddon:block-handbooktitle-elamp_small",
+          "text": "electricityaddon:block-handbooktext-elamp_small"
         }
       ]
     }
   },
 
   "attributesByType": {
-    "*-3000-*": { "HSV": [ 58, 40, 10 ] },
-    "*-4000-*": { "HSV": [ 58, 32, 10 ] },
-    "*-5000-*": { "HSV": [ 57, 16, 10 ] },
-    "*-6000-*": { "HSV": [ 0, 0, 10 ] },
-    "*-7000-*": { "HSV": [ 203, 9, 10 ] },
-    "*-8000-*": { "HSV": [ 201, 25, 10 ] },
-    "*-9000-*": { "HSV": [ 199, 40, 10 ] }
+    "*-3000-*": { "HSV": [ 58, 40, 14 ] },
+    "*-4000-*": { "HSV": [ 58, 32, 14 ] },
+    "*-5000-*": { "HSV": [ 57, 16, 14 ] },
+    "*-6000-*": { "HSV": [ 0, 0, 14 ] },
+    "*-7000-*": { "HSV": [ 203, 9, 14 ] },
+    "*-8000-*": { "HSV": [ 201, 25, 14 ] },
+    "*-9000-*": { "HSV": [ 199, 40, 14 ] }
   },
 
 
   "creativeInventory": {
     "general": [
-      "*-disabled"
+      "*-disabled-normal"
     ],
     "electricity": [
-      "*-disabled"
+      "*-disabled-normal"
     ]
   },
+
   "variantGroups": [
     {
       "code": "tempK",
@@ -50,27 +54,26 @@
     {
       "code": "state",
       "states": [ "disabled", "enabled" ]
+    },
+    {
+      "code": "status",
+      "states": [
+        "normal",
+        "burned"
+      ]
     }
 
   ],
-  "textures": {
-    "bismuthbronze": { "base": "block/bismuthbronze" },
-    "brass": { "base": "block/brass" },
-    "copper": { "base": "block/copper" },
-    "iron": { "base": "block/iron" },
-    "quartzglass": { "base": "block/quartzglass" },
-    "stainlesssteel": { "base": "block/stainlesssteel" },
-    "steel": { "base": "block/steel" }
+
+  "skipVariants": [
+    "*-enabled-burned"
+  ],
+
+
+  "shape": {
+    "base": "block/elamp_small/elamp_small-{state}-{status}"
   },
 
-  "shapeByType": {
-    "*-disabled": {
-      "base": "block/lamp_small-disabled"
-    },
-    "*-enabled": {
-      "base": "block/lamp_small-enabled"
-    }
-  },
   "resistance": 1,
   "drawType": "JSON",
   "lightAbsorption": 0.0,

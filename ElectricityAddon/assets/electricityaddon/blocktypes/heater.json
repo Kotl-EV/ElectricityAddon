@@ -7,22 +7,43 @@
       "name": "HeatSource"
     }
   ],
+
   "entityBehaviors": [
     {
-      "name": "Heater"
+      "name": "BEBehaviorEHeater"
     },
     {
       "name": "ElectricityAddon"
     }
   ],
+
+
+  "attributes": {
+    "maxConsumption": 96, //максимальное потребление
+    "voltage": 32,
+    "maxCurrent": 20.0,
+    "isolated": false,
+    "HSV": [ 58, 40, 21 ],
+    "handbook": {
+      "groupBy": [ "heater-*" ],
+      "extraSections": [
+        {
+          "title": "electricityaddon:block-handbooktitle-heater",
+          "text": "electricityaddon:block-handbooktext-heater"
+        }
+      ]
+    }
+  },
+
   "creativeInventory": {
     "general": [
-      "*-disabled"
+      "*-disabled-normal"
     ],
     "electricity": [
-      "*-disabled"
+      "*-disabled-normal"
     ]
   },
+
   "variantGroups": [
     {
       "code": "state",
@@ -30,15 +51,22 @@
         "disabled",
         "enabled"
       ]
+    },
+    {
+      "code": "status",
+      "states": [
+        "normal",
+        "burned"
+      ]
     }
   ],
-  "shapeByType": {
-    "*-disabled": {
-      "base": "block/heater-disabled"
-    },
-    "*-enabled": {
-      "base": "block/heater-enabled"
-    }
+
+  "skipVariants": [
+    "*-enabled-burned"
+  ],
+
+  "shape": {
+    "base": "block/heater/heater-{state}-{status}"
   },
 
   "resistance": 1,

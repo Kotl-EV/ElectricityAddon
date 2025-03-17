@@ -10,11 +10,12 @@
       "name": "ElectricityAddon"
     }
   ],
+
   "attributes": {
     "maxConsumption": 8, //максимальное потребление
     "voltage": 128,
     "maxCurrent": 20.0,
-    "isolated": true,
+    "isolated": false,
     "handbook": {
       "groupBy": [ "elamp-*" ],
       "extraSections": [
@@ -27,13 +28,13 @@
   },
 
   "attributesByType": {
-    "*-3000-*": { "HSV": [ 58, 40, 21 ] },
-    "*-4000-*": { "HSV": [ 58, 32, 21 ] },
-    "*-5000-*": { "HSV": [ 57, 16, 21 ] },
-    "*-6000-*": { "HSV": [ 0, 0, 21 ] },
-    "*-7000-*": { "HSV": [ 203, 9, 21 ] },
-    "*-8000-*": { "HSV": [ 201, 25, 21 ] },
-    "*-9000-*": { "HSV": [ 199, 40, 21 ] }
+    "*-3000-enabled-normal": { "HSV": [ 58, 40, 21 ] },
+    "*-4000-enabled-normal": { "HSV": [ 58, 32, 21 ] },
+    "*-5000-enabled-normal": { "HSV": [ 57, 16, 21 ] },
+    "*-6000-enabled-normal": { "HSV": [ 0, 0, 21 ] },
+    "*-7000-enabled-normal": { "HSV": [ 203, 9, 21 ] },
+    "*-8000-enabled-normal": { "HSV": [ 201, 25, 21 ] },
+    "*-9000-enabled-normal": { "HSV": [ 199, 40, 21 ] }
   },
 
   "creativeInventory": {

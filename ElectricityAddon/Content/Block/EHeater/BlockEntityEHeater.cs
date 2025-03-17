@@ -14,6 +14,7 @@ namespace ElectricityAddon.Content.Block.EHeater {
 
         private BEBehaviorEHeater Behavior => this.GetBehavior<BEBehaviorEHeater>();
 
+
         public Facing Facing {
             get => this.facing;
             set {
@@ -24,23 +25,49 @@ namespace ElectricityAddon.Content.Block.EHeater {
             }
         }
 
-        public bool IsEnabled => this.Behavior.HeatLevel > 0;
+        //передает значения из Block в BEBehaviorElectricityAddon
+        public (EParams, int) Eparams
+        {
+            get => this.ElectricityAddon!.Eparams;
+            set => this.ElectricityAddon!.Eparams = value;
+        }
+
+        //передает значения из Block в BEBehaviorElectricityAddon
+        public EParams[] AllEparams
+        {
+            get => this.ElectricityAddon?.AllEparams ?? null;
+            set
+            {
+                if (this.ElectricityAddon != null)
+                {
+                    this.ElectricityAddon.AllEparams = value;
+                }
+            }
+        }
+
+        public bool IsEnabled => this.Behavior?.HeatLevel >= 1;
+
 
         public float GetHeatStrength(IWorldAccessor world, BlockPos heatSourcePos, BlockPos heatReceiverPos) {
-            return this.Behavior.HeatLevel * 20f / 8.0f;
+            if (this.Behavior == null)
+                return 0.0f;
+            else
+                return this.Behavior.HeatLevel / this.Behavior.getPowerRequest() * 8.0f;
         }
+        
 
         public override void ToTreeAttributes(ITreeAttribute tree) {
             base.ToTreeAttributes(tree);
 
-            tree.SetBytes("electricity:facing", SerializerUtil.Serialize(this.facing));
+            tree.SetBytes("electricityaddon:facing", SerializerUtil.Serialize(this.facing));
         }
+
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve) {
             base.FromTreeAttributes(tree, worldAccessForResolve);
 
             try {
-                this.facing = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricity:facing"));
+                this.facing = SerializerUtil.Deserialize<Facing>(tree.GetBytes("electricityaddon:facing"));
             }
             catch (Exception exception) {
                 this.Api?.Logger.Error(exception.ToString());

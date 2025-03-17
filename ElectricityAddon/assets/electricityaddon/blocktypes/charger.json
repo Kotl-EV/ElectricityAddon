@@ -2,8 +2,22 @@
   "code": "charger",
   "class": "BlockECharger",
   "entityClass": "BlockEntityECharger",
+  "entityBehaviors": [
+    {
+      "name": "BEBehaviorECharger"
+    },
+    {
+      "name": "ElectricityAddon"
+    }
+  ],
+
+
+
   "attributes": {
     "maxConsumption": 200,
+    "voltage": 128,
+    "maxCurrent": 20.0,
+    "isolated": false,
     "handbook": {
       "groupBy": [ "charger-*" ],
       "extraSections": [
@@ -16,8 +30,9 @@
   },
 
   "shape": {
-    "base": "block/charger"
+    "base": "block/charger/charger-{state}-{status}"
   },
+
   "behaviors": [
     { "name": "Container" },
     {
@@ -27,23 +42,26 @@
       }
     }
   ],
-  "entityBehaviors": [
-    {
-      "name": "BEBehaviorECharger"
-    },
-    {
-      "name": "ElectricityAddon"
-    }
-  ],
+
+
   "blockMaterial": "Stone",
+
   "creativeinventory": {
-    "general": [ "*-disabled-south" ],
-    "electricity": [ "*-disabled-south" ]
+    "general": [ "*-disabled-normal-south" ],
+    "electricity": [ "*-disabled-normal-south" ]
   },
+
   "variantgroups": [
     {
       "code": "state",
       "states": [ "disabled", "enabled" ]
+    },
+    {
+      "code": "status",
+      "states": [
+        "normal",
+        "burned"
+      ]
     },
     {
       "code": "side",
@@ -51,40 +69,32 @@
     }
   ],
 
+
+  "skipVariants": [
+    "*-enabled-burned-*"
+  ],
+
+
   "shapebytype": {
-    "*-enabled-north": {
-      "base": "block/charger-enabled",
+    "*-north": {
+      "base": "block/charger/charger-{state}-{status}",
       "rotateY": 0
     },
-    "*-enabled-east": {
-      "base": "block/charger-enabled",
+    "*-east": {
+      "base": "block/charger/charger-{state}-{status}",
       "rotateY": 270
     },
-    "*-enabled-south": {
-      "base": "block/charger-enabled",
+    "*-south": {
+      "base": "block/charger/charger-{state}-{status}",
       "rotateY": 180
     },
-    "*-enabled-west": {
-      "base": "block/charger-enabled",
-      "rotateY": 90
-    },
-    "*-disabled-north": {
-      "base": "block/charger-disabled",
-      "rotateY": 0
-    },
-    "*-disabled-east": {
-      "base": "block/charger-disabled",
-      "rotateY": 270
-    },
-    "*-disabled-south": {
-      "base": "block/charger-disabled",
-      "rotateY": 180
-    },
-    "*-disabled-west": {
-      "base": "block/charger-disabled",
+    "*-west": {
+      "base": "block/charger/charger-{state}-{status}",
       "rotateY": 90
     }
   },
+
+
   "replaceable": 500,
   "lightAbsorption": 0,
   "lightHsvByType": {

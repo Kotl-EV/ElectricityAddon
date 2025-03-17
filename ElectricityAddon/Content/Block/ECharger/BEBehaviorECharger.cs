@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
+using ElectricityAddon.Content.Block.EHorn;
+using ElectricityAddon.Content.Block.ELamp;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
@@ -11,12 +14,16 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
     public int powerSetting;
     public bool working;
     public int maxConsumption;
+
+
     public BEBehaviorECharger(BlockEntity blockEntity) : base(blockEntity)
     {
         maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 200);
     }
 
-    public void Consume(int amount)
+
+
+    public void Consume_receive(float amount)
     {
         BlockEntityECharger? entity = null;
         if (Blockentity is BlockEntityECharger temp)
@@ -26,7 +33,7 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
             {
                 if (entity.inventory[0]?.Itemstack?.Item is IEnergyStorageItem)
                 {
-                    var storageEnergyItem = entity.inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
+                    var storageEnergyItem = entity.inventory[0].Itemstack.Attributes.GetInt("electricityaddon:energy");
                     var maxStorageItem = MyMiniLib.GetAttributeInt(entity.inventory[0].Itemstack.Item, "maxcapacity");
                     if (storageEnergyItem < maxStorageItem)
                     {
@@ -36,7 +43,7 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
                 }
                 else if (entity.inventory[0]?.Itemstack?.Block is IEnergyStorageItem)
                 {
-                    var storageEnergyBlock = entity.inventory[0].Itemstack.Attributes.GetInt("electricity:energy");
+                    var storageEnergyBlock = entity.inventory[0].Itemstack.Attributes.GetInt("electricityaddon:energy");
                     var maxStorageBlock = MyMiniLib.GetAttributeInt(entity.inventory[0].Itemstack.Block, "maxcapacity");
                     if (storageEnergyBlock < maxStorageBlock)
                     {
@@ -57,41 +64,69 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
 
         if (powerSetting != amount)
         {
-            powerSetting = amount;
+            powerSetting = (int)amount;
         }
 
     }
 
-    public void Consume_receive(float amount)
-    {
-        throw new System.NotImplementedException();
-    }
-
     public float Consume_request()
     {
-        throw new System.NotImplementedException();
+        return maxConsumption;
     }
+
 
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
-        stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Eu");
+
+        //проверяем не сгорел ли прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECharger entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout)
+            {
+                stringBuilder.AppendLine("!!!Сгорел!!!");
+            }
+            else
+            {
+                stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
+                stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Вт");
+            }
+
+        }
+
         stringBuilder.AppendLine();
     }
 
     public float getPowerReceive()
     {
-        throw new System.NotImplementedException();
+        return this.powerSetting;
     }
 
     public float getPowerRequest()
     {
-        throw new System.NotImplementedException();
+        return maxConsumption;
     }
 
     public void Update()
     {
-        throw new System.NotImplementedException();
+        //смотрим надо ли обновить модельку когда сгорает прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECharger entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout && entity.Block.Variant["status"] == "normal")
+            {
+                string state = "disabled";
+                string side = entity.Block.Variant["side"];
+
+                string[] types = new string[3] { "state", "status", "side" };   //типы горна
+                string[] variants = new string[3] { state, "burned", side };  //нужный вариант гона
+
+                this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariants(types, variants)).BlockId, Pos);
+            }
+        }
+
+
+
     }
 }

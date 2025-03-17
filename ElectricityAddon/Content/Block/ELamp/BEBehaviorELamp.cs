@@ -8,6 +8,7 @@ using Vintagestory.API.Datastructures;
 using ElectricityAddon.Content.Block.ETransformator;
 using System.Linq;
 using ElectricityAddon.Content.Block.EHorn;
+using ElectricityAddon.Content.Block.EHeater;
 
 namespace ElectricityAddon.Content.Block.ELamp
 {
@@ -15,45 +16,31 @@ namespace ElectricityAddon.Content.Block.ELamp
     {
         public BEBehaviorELamp(BlockEntity blockEntity) : base(blockEntity)
         {
-            HSV = GetHSV();
             maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 4);
         }
 
 
         private int[] null_HSV = { 0, 0, 0 };   //заглушка
-        public int[] HSV = { 0, 0, 0 };         //сюда берем цвет
         public int maxConsumption;              //максимальное потребление
 
-        //извлекаем цвет
-        public int[] GetHSV()
-        {
-            int[] bufHSV = MyMiniLib.GetAttributeArrayInt(this.Block, "HSV", null_HSV);
-            //теперь нужно поделить H и S на 6, чтобы в игре правильно считало цвет
-            bufHSV[0] = (int)Math.Round((bufHSV[0] / 6.0), MidpointRounding.AwayFromZero);
-            bufHSV[1] = (int)Math.Round((bufHSV[1] / 6.0), MidpointRounding.AwayFromZero);
-            return bufHSV;
-        }
-
-        public float LightLevel { get; private set; }
 
 
+        public int LightLevel { get; private set; }
 
 
         public override void ToTreeAttributes(ITreeAttribute tree)
         {
             base.ToTreeAttributes(tree);
-            tree.SetFloat("electricityaddon:LightLevel", LightLevel);
+            tree.SetInt("electricityaddon:LightLevel", LightLevel);
 
         }
 
         public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
         {
             base.FromTreeAttributes(tree, worldAccessForResolve);
-            LightLevel = tree.GetFloat("electricityaddon:LightLevel");
+            LightLevel = tree.GetInt("electricityaddon:LightLevel");
 
         }
-
-
 
 
         public float Consume_request()
@@ -62,33 +49,36 @@ namespace ElectricityAddon.Content.Block.ELamp
         }
 
 
-
-
         public void Consume_receive(float amount)
         {
             if (this.Api is { } api)
             {
-                if (amount != this.LightLevel)
+                if ((int)Math.Round(amount, MidpointRounding.AwayFromZero) != this.LightLevel && this.Block.Variant["status"] != "burned")
                 {
 
-                    if (amount >= 1 && this.Block.Variant["state"]== "disabled")                               //включаем если питание больше 1
+                    if ((int)Math.Round(amount, MidpointRounding.AwayFromZero) >= 1 && this.Block.Variant["state"]== "disabled")                               //включаем если питание больше 1
                     {
                         api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
                     }
-                    else if (amount < 1 && this.Block.Variant["state"] == "enabled")                            //гасим если питание меньше 1
+                    else if ((int)Math.Round(amount, MidpointRounding.AwayFromZero) < 1 && this.Block.Variant["state"] == "enabled")                            //гасим если питание меньше 1
                     {
                         api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
                     }
 
+                    int[] bufHSV = MyMiniLib.GetAttributeArrayInt(this.Block, "HSV", null_HSV);
+                    //теперь нужно поделить H и S на 6, чтобы в игре правильно считало цвет
+                    bufHSV[0] = (int)Math.Round((bufHSV[0] / 6.0), MidpointRounding.AwayFromZero);
+                    bufHSV[1] = (int)Math.Round((bufHSV[1] / 6.0), MidpointRounding.AwayFromZero);
+
                     //применяем цвет и яркость
                     this.Blockentity.Block.LightHsv = new[] {
-                            (byte)this.HSV[0],
-                            (byte)this.HSV[1],
-                            (byte)FloatHelper.Remap(amount, 0, maxConsumption, 0, this.HSV[2])
+                            (byte)bufHSV[0],
+                            (byte)bufHSV[1],
+                            (byte)FloatHelper.Remap((int)Math.Round(amount, MidpointRounding.AwayFromZero), 0, maxConsumption, 0, bufHSV[2])
                         };
 
                     this.Blockentity.MarkDirty(true);
-                    this.LightLevel = amount;
+                    this.LightLevel = (int)Math.Round(amount, MidpointRounding.AwayFromZero);
 
                 }
             }
@@ -120,7 +110,10 @@ namespace ElectricityAddon.Content.Block.ELamp
                     string[] variants = new string[3] { tempK, state, "burned" };     //нужный вариант лампы
 
                     this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariants(types, variants)).BlockId, Pos);
+
+
                 }
+
             }
         }
 
@@ -130,7 +123,7 @@ namespace ElectricityAddon.Content.Block.ELamp
             base.GetBlockInfo(forPlayer, stringBuilder);
 
             //проверяем не сгорел ли прибор
-            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityETransformator entity && entity.AllEparams != null)
+            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityELamp entity && entity.AllEparams != null)
             {
                 bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
                 if (hasBurnout)
@@ -142,7 +135,9 @@ namespace ElectricityAddon.Content.Block.ELamp
                     stringBuilder.AppendLine(StringHelper.Progressbar(this.LightLevel * 100.0f / maxConsumption));
                     stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.LightLevel + "/" + maxConsumption + " Вт");
                 }
+            
             }
+
 
             stringBuilder.AppendLine();
             

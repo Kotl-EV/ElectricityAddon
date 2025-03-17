@@ -82,6 +82,8 @@ public class BlockECharger : Vintagestory.API.Common.Block
         return false;
     }
 
+
+
     // We need the tool item textures also in the block atlas
     public override void OnCollectTextures(ICoreAPI api, ITextureLocationDictionary textureDict)
     {
@@ -152,7 +154,8 @@ public class BlockECharger : Vintagestory.API.Common.Block
         AssetLocation blockCode = CodeWithVariants(new Dictionary<string, string>
         {
             { "state", "disabled" },
-            { "horizontalorientation", "south" }
+            { "status", "burned" },
+            { "side", "south" }
         });
 
         Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockCode);

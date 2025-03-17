@@ -23,6 +23,7 @@ using Vintagestory.API.Client;
 using Vintagestory.API.Util;
 using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Content.Block.ETransformator;
+using ElectricityAddon.Content.Block.EHeater;
 
 
 
@@ -85,6 +86,10 @@ public class ElectricityAddon : ModSystem
 
         api.RegisterBlockEntityClass("BlockEntityELamp", typeof(BlockEntityELamp));
         api.RegisterBlockEntityBehaviorClass("BEBehaviorELamp", typeof(BEBehaviorELamp));
+
+        api.RegisterBlockClass("BlockEHeater", typeof(BlockEHeater));
+        api.RegisterBlockEntityClass("BlockEntityEHeater", typeof(BlockEntityEHeater));
+        api.RegisterBlockEntityBehaviorClass("BEBehaviorEHeater", typeof(BEBehaviorEHeater));
 
         api.RegisterBlockClass("BlockConnector", typeof(BlockConnector));
         api.RegisterBlockEntityClass("BlockEntityConnector", typeof(BlockEntityEConnector));

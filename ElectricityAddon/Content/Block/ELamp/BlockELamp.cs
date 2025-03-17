@@ -13,8 +13,8 @@ namespace ElectricityAddon.Content.Block.ELamp
     internal class BlockELamp : Vintagestory.API.Common.Block
     {
         private readonly static Dictionary<CacheDataKey, MeshData> MeshDataCache = new();
-        private readonly static ConcurrentDictionary<CacheDataKey, Cuboidf[]> SelectionBoxesCache = new();
-        private readonly static ConcurrentDictionary<CacheDataKey, Cuboidf[]> CollisionBoxesCache = new();
+        private readonly static Dictionary<CacheDataKey, Cuboidf[]> SelectionBoxesCache = new();
+        private readonly static Dictionary<CacheDataKey, Cuboidf[]> CollisionBoxesCache = new();
 
         
 
@@ -360,14 +360,8 @@ namespace ElectricityAddon.Content.Block.ELamp
                 {
                     var origin = new Vec3f(0.5f, 0.5f, 0.5f);
 
-                    var assetLocation = this.CodeWithVariant("state",
-                        entity.IsEnabled
-                            ? "enabled"
-                            : "disabled");
 
-                    var block = this.api.World.BlockAccessor.GetBlock(assetLocation);
-
-                    clientApi.Tesselator.TesselateBlock(block, out meshData);
+                    clientApi.Tesselator.TesselateBlock(this, out meshData);
 
                     if ((key.Facing & Facing.NorthEast) != 0)
                     {
@@ -496,22 +490,29 @@ namespace ElectricityAddon.Content.Block.ELamp
             }
         }
 
+
+        /// <summary>
+        /// Структура ключа для кеширования данных блока.
+        /// </summary>
         internal struct CacheDataKey
         {
             public readonly Facing Facing;
             public readonly bool IsEnabled;
+            public readonly string code;
 
-            public CacheDataKey(Facing facing, bool isEnabled)
+            public CacheDataKey(Facing facing, bool isEnabled, string code)
             {
                 this.Facing = facing;
                 this.IsEnabled = isEnabled;
+                this.code = code;
             }
 
             public static CacheDataKey FromEntity(BlockEntityELamp entity)
             {
                 return new CacheDataKey(
                     entity.Facing,
-                    entity.IsEnabled
+                    entity.IsEnabled,
+                    entity.Block.Code
                 );
             }
         }

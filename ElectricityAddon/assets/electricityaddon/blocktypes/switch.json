@@ -29,6 +29,18 @@
   },
 
 
+  "attributes": {
+    "handbook": {
+      "groupBy": [ "switch-*" ],
+      "extraSections": [
+        {
+          "title": "electricityaddon:block-handbooktitle-switch",
+          "text": "electricityaddon:block-handbooktext-switch"
+        }
+      ]
+    }
+  },
+
 
   "collisionSelectionBoxes": [
     {

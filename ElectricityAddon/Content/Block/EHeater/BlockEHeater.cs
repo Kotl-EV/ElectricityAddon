@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ElectricityAddon.Content.Block.ELamp;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -49,6 +50,15 @@ namespace ElectricityAddon.Content.Block.EHeater {
             ) {
                 entity.Facing = facing;
 
+                //задаем параметры блока/проводника
+                var voltage = MyMiniLib.GetAttributeInt(byItemStack!.Block, "voltage", 32);
+                var maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack!.Block, "maxCurrent", 5.0F);
+                var isolated = MyMiniLib.GetAttributeBool(byItemStack!.Block, "isolated", false);
+
+                entity.Eparams = (
+                    new EParams(voltage, maxCurrent, "", 0, 1, 1, false, isolated),
+                    FacingHelper.Faces(facing).First().Index);
+
                 return true;
             }
 
@@ -56,10 +66,11 @@ namespace ElectricityAddon.Content.Block.EHeater {
         }
 
         public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1) {
-            var block = world.GetBlock(new AssetLocation("electricity:heater-disabled"));
+            var block = api.World.BlockAccessor.GetBlock(pos);
+            var block2 = api.World.GetBlock(block.CodeWithVariant("state", "disabled"));
 
             return new[] {
-                new ItemStack(block, (int)Math.Ceiling(dropQuantityMultiplier))
+                new ItemStack(block2, (int)Math.Ceiling(dropQuantityMultiplier))
             };
         }
 
@@ -341,19 +352,28 @@ namespace ElectricityAddon.Content.Block.EHeater {
             }
         }
 
-        internal struct CacheDataKey {
+        /// <summary>
+        /// —труктура ключа дл€ кешировани€ данных блока.
+        /// </summary>
+        internal struct CacheDataKey
+        {
             public readonly Facing Facing;
             public readonly bool IsEnabled;
+            public readonly string code;
 
-            public CacheDataKey(Facing facing, bool isEnabled) {
+            public CacheDataKey(Facing facing, bool isEnabled, string code)
+            {
                 this.Facing = facing;
                 this.IsEnabled = isEnabled;
+                this.code = code;
             }
 
-            public static CacheDataKey FromEntity(BlockEntityEHeater entityE) {
+            public static CacheDataKey FromEntity(BlockEntityEHeater entity)
+            {
                 return new CacheDataKey(
-                    entityE.Facing,
-                    entityE.IsEnabled
+                    entity.Facing,
+                    entity.IsEnabled,
+                    entity.Block.Code
                 );
             }
         }

@@ -14,7 +14,7 @@
     "maxConsumption": 4, //максимальное потребление
     "voltage": 32,
     "maxCurrent": 20.0,
-    "isolated": true,
+    "isolated": false,
     "handbook": {
       "groupBy": [ "elamp_small-*" ],
       "extraSections": [

@@ -29,7 +29,7 @@
   },
 
   "shape": {
-    "base": "block/ehorn/ehorn-enabled-{status}"
+    "base": "block/ehorn/ehorn-{state}-{status}"
   },
 
   "creativeInventory": {

@@ -75,12 +75,12 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
 
     public override void DamageItem(IWorldAccessor world, Entity byEntity, ItemSlot itemslot, int amount)
     {
-        int energy = itemslot.Itemstack.Attributes.GetInt("electricity:energy");
+        int energy = itemslot.Itemstack.Attributes.GetInt("electricityaddon:energy");
         if (energy >= consume * amount)
         {
             energy -= consume * amount;
             itemslot.Itemstack.Attributes.SetInt("durability", Math.Max(1, energy / consume));
-            itemslot.Itemstack.Attributes.SetInt("electricity:energy", energy);
+            itemslot.Itemstack.Attributes.SetInt("electricityaddon:energy", energy);
         }
         else
         {
@@ -92,21 +92,21 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
-        dsc.AppendLine(inSlot.Itemstack.Attributes.GetInt("electricity:energy") + "/" + maxcapacity + " Eu");
+        dsc.AppendLine(inSlot.Itemstack.Attributes.GetInt("electricityaddon:energy") + "/" + maxcapacity + " Eu");
     }
 
     public int receiveEnergy(ItemStack itemstack, int maxReceive)
     {
-        int received = Math.Min(maxcapacity - itemstack.Attributes.GetInt("electricity:energy"), maxReceive);
-        itemstack.Attributes.SetInt("electricity:energy", itemstack.Attributes.GetInt("electricity:energy") + received);
-        int durab = Math.Max(1, itemstack.Attributes.GetInt("electricity:energy") / consume);
+        int received = Math.Min(maxcapacity - itemstack.Attributes.GetInt("electricityaddon:energy"), maxReceive);
+        itemstack.Attributes.SetInt("electricityaddon:energy", itemstack.Attributes.GetInt("electricityaddon:energy") + received);
+        int durab = Math.Max(1, itemstack.Attributes.GetInt("electricityaddon:energy") / consume);
         itemstack.Attributes.SetInt("durability", durab);
         return received;
     }
 
     public override bool OnBlockBrokenWith(IWorldAccessor world, Entity byEntity, ItemSlot slot, BlockSelection blockSel, float dropQuantityMultiplier = 1)
     {
-        int energy = slot.Itemstack.Attributes.GetInt("electricity:energy");
+        int energy = slot.Itemstack.Attributes.GetInt("electricityaddon:energy");
         if (energy >= consume)
         {
             DamageItem(world,byEntity,slot,1);
@@ -166,7 +166,7 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
     //credit to stitch37 for this code
     public void destroyBlocks(IWorldAccessor world, BlockPos min, BlockPos max, IPlayer player,BlockSelection block, ItemSlot slot)
     {
-        int energy = slot.Itemstack.Attributes.GetInt("electricity:energy");
+        int energy = slot.Itemstack.Attributes.GetInt("electricityaddon:energy");
         var centerBlock = world.BlockAccessor.GetBlock(block.Position);
         var itemStack = new ItemStack(this);
         Vintagestory.API.Common.Block tempBlock;
@@ -200,6 +200,5 @@ class EDrill : Vintagestory.API.Common.Item,IEnergyStorageItem
                 }
             }
         }
-    }
-    
+    }    
 }

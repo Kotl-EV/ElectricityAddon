@@ -1,8 +1,12 @@
+using System;
+using System.Linq;
 using System.Text;
+using ElectricityAddon.Content.Block.ELamp;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Config;
+using Vintagestory.API.Datastructures;
 
 namespace ElectricityAddon.Content.Block.EHeater
 {
@@ -10,80 +14,121 @@ namespace ElectricityAddon.Content.Block.EHeater
     {
         public BEBehaviorEHeater(BlockEntity blockEntity) : base(blockEntity)
         {
+            maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 4);
         }
+
+        private int[] null_HSV = { 0, 0, 0 };   //заглушка
+        public int maxConsumption;              //максимальное потребление
+
 
         public int HeatLevel { get; private set; }
 
 
+        public override void ToTreeAttributes(ITreeAttribute tree)
+        {
+            base.ToTreeAttributes(tree);
+            tree.SetInt("electricityaddon:HeatLevel", HeatLevel);
 
-        public void Consume(int heatLevel)
+        }
+
+        public override void FromTreeAttributes(ITreeAttribute tree, IWorldAccessor worldAccessForResolve)
+        {
+            base.FromTreeAttributes(tree, worldAccessForResolve);
+            HeatLevel = tree.GetInt("electricityaddon:HeatLevel");
+
+        }
+
+
+
+
+        public void Consume_receive(float amount)
         {
             if (this.Api is { } api)
             {
-                if (heatLevel != this.HeatLevel)
+                if ((int)Math.Round(amount, MidpointRounding.AwayFromZero) != this.HeatLevel && this.Block.Variant["status"] != "burned")
                 {
-                    switch (this.HeatLevel)
+
+                    if ((int)Math.Round(amount, MidpointRounding.AwayFromZero) >= 1 && this.Block.Variant["state"] == "disabled")                               //включаем если питание больше 1
                     {
-                        case 0 when heatLevel > 0:
-                            {
-                                var assetLocation = this.Blockentity.Block.CodeWithVariant("state", "enabled");
-                                var block = api.World.BlockAccessor.GetBlock(assetLocation);
-                                api.World.BlockAccessor.ExchangeBlock(block.Id, this.Blockentity.Pos);
-                                break;
-                            }
-                        case > 0 when heatLevel == 0:
-                            {
-                                var assetLocation = this.Blockentity.Block.CodeWithVariant("state", "disabled");
-                                var block = api.World.BlockAccessor.GetBlock(assetLocation);
-                                api.World.BlockAccessor.ExchangeBlock(block.Id, this.Blockentity.Pos);
-                                break;
-                            }
+                        api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "enabled")).BlockId, Pos);
+                    }
+                    else if ((int)Math.Round(amount, MidpointRounding.AwayFromZero) < 1 && this.Block.Variant["state"] == "enabled")                            //гасим если питание меньше 1
+                    {
+                        api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("state", "disabled")).BlockId, Pos);
                     }
 
-                    this.Blockentity.Block.LightHsv = new[] {
-                        (byte)FloatHelper.Remap(heatLevel, 0, 32, 0, 8),
-                        (byte)FloatHelper.Remap(heatLevel, 0, 32, 0, 2),
-                        (byte)FloatHelper.Remap(heatLevel, 0, 32, 0, 21)
-                    };
+                    int[] bufHSV = MyMiniLib.GetAttributeArrayInt(this.Block, "HSV", null_HSV);
+                    //теперь нужно поделить H и S на 6, чтобы в игре правильно считало цвет
+                    bufHSV[0] = (int)Math.Round((bufHSV[0] / 6.0), MidpointRounding.AwayFromZero);
+                    bufHSV[1] = (int)Math.Round((bufHSV[1] / 6.0), MidpointRounding.AwayFromZero);
 
-                    this.HeatLevel = heatLevel;
+                    //применяем цвет и яркость
+                    this.Blockentity.Block.LightHsv = new[] {
+                            (byte)bufHSV[0],
+                            (byte)bufHSV[1],
+                            (byte)FloatHelper.Remap((int)Math.Round(amount, MidpointRounding.AwayFromZero), 0, maxConsumption, 0, bufHSV[2])
+                        };
+
                     this.Blockentity.MarkDirty(true);
+                    this.HeatLevel = (int)Math.Round(amount, MidpointRounding.AwayFromZero);
                 }
             }
         }
 
-        public void Consume_receive(float amount)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public float Consume_request()
         {
-            throw new System.NotImplementedException();
+            return maxConsumption;
         }
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
         {
             base.GetBlockInfo(forPlayer, stringBuilder);
 
-            stringBuilder.AppendLine(StringHelper.Progressbar(this.HeatLevel * 100.0f / 8.0f));
-            stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.HeatLevel + "/" + 8 + "Eu");
+            //проверяем не сгорел ли прибор
+            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEHeater entity && entity.AllEparams != null)
+            {
+                bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+                if (hasBurnout)
+                {
+                    stringBuilder.AppendLine("!!!Сгорел!!!");
+                }
+                else
+                {
+                    stringBuilder.AppendLine(StringHelper.Progressbar(this.HeatLevel * 100.0f / maxConsumption));
+                    stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.HeatLevel + "/" + maxConsumption + " Вт");
+                }
+
+            }
+
             stringBuilder.AppendLine();
         }
 
         public float getPowerReceive()
         {
-            throw new System.NotImplementedException();
+            return this.HeatLevel;
         }
 
         public float getPowerRequest()
         {
-            throw new System.NotImplementedException();
+            return maxConsumption;
         }
 
         public void Update()
         {
-            throw new System.NotImplementedException();
+            //смотрим надо ли обновить модельку когда сгорает прибор
+            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEHeater entity && entity.AllEparams != null)
+            {
+                bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+                if (hasBurnout && entity.Block.Variant["status"] == "normal")
+                {
+                    string state = "disabled";
+
+                    string[] types = new string[2] { "state", "status" };   //типы лампы
+                    string[] variants = new string[2] { state, "burned" };     //нужный вариант лампы
+
+                    this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariants(types, variants)).BlockId, Pos);
+                }
+            }
         }
     }
 }

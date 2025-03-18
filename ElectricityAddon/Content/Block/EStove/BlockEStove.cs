@@ -18,7 +18,8 @@ public class BlockEStove : Vintagestory.API.Common.Block
         AssetLocation blockCode = CodeWithVariants(new Dictionary<string, string>
         {
             { "state", "disabled" },
-            { "horizontalorientation", "south" }
+            { "status", "burned" },
+            { "side", "south" }
         });
 
         Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockCode);
@@ -53,5 +54,20 @@ public class BlockEStove : Vintagestory.API.Common.Block
         float dropQuantityMultiplier = 1)
     {
         return new[] { OnPickBlock(world, pos) };
+    }
+
+
+    public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
+    {
+        base.OnNeighbourBlockChange(world, pos, neibpos);
+
+        if (
+            !world.BlockAccessor
+                .GetBlock(pos.AddCopy(BlockFacing.DOWN))
+                .SideSolid[BlockFacing.indexUP]
+        )
+        {
+            world.BlockAccessor.BreakBlock(pos, null);
+        }
     }
 }

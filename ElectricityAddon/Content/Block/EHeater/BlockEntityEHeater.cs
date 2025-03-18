@@ -47,12 +47,18 @@ namespace ElectricityAddon.Content.Block.EHeater {
 
         public bool IsEnabled => this.Behavior?.HeatLevel >= 1;
 
-
+        /// <summary>
+        /// Отвечает за тепло отдаваемое в окружающую среду
+        /// </summary>
+        /// <param name="world"></param>
+        /// <param name="heatSourcePos"></param>
+        /// <param name="heatReceiverPos"></param>
+        /// <returns></returns>
         public float GetHeatStrength(IWorldAccessor world, BlockPos heatSourcePos, BlockPos heatReceiverPos) {
             if (this.Behavior == null)
                 return 0.0f;
             else
-                return this.Behavior.HeatLevel / this.Behavior.getPowerRequest() * 8.0f;
+                return this.Behavior.HeatLevel / this.Behavior.getPowerRequest() * MyMiniLib.GetAttributeFloat(this.Block, "maxHeat", 0.0F); 
         }
         
 

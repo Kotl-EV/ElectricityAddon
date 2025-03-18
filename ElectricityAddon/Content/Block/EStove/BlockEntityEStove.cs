@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
@@ -75,6 +76,28 @@ public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPosition
         inventory = new InventorySmelting(null, null);
         inventory.SlotModified += OnSlotModifid;
         meshes = new MeshData[6];
+    }
+
+
+
+    //передает значения из Block в BEBehaviorElectricityAddon
+    public (EParams, int) Eparams
+    {
+        get => this.ElectricityAddon!.Eparams;
+        set => this.ElectricityAddon!.Eparams = value;
+    }
+
+    //передает значения из Block в BEBehaviorElectricityAddon
+    public EParams[] AllEparams
+    {
+        get => this.ElectricityAddon?.AllEparams ?? null;
+        set
+        {
+            if (this.ElectricityAddon != null)
+            {
+                this.ElectricityAddon.AllEparams = value;
+            }
+        }
     }
 
 
@@ -343,7 +366,7 @@ public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPosition
             smeltItems();
         }
         
-        //if (GetBehavior<BEBehaviorEStove>().powerSetting > 0)
+
         if (GetBehavior<BEBehaviorEStove>()?.powerSetting > 0)
         {
 
@@ -552,9 +575,16 @@ public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPosition
         }
     }
 
+    /// <summary>
+    /// Отвечает за тепло отдаваемое в окружающую среду
+    /// </summary>
+    /// <param name="world"></param>
+    /// <param name="heatSourcePos"></param>
+    /// <param name="heatReceiverPos"></param>
+    /// <returns></returns>
     public float GetHeatStrength(IWorldAccessor world, BlockPos heatSourcePos, BlockPos heatReceiverPos)
     {
-        return IsBurning ? 5 : 0;
+        return IsBurning ? MyMiniLib.GetAttributeFloat(this.Block, "maxHeat", 0.0F) : 0;
     }
 
     public bool canHeatInput()
@@ -698,6 +728,15 @@ public class BlockEntityEStove : BlockEntityContainer, IHeatSource, ITexPosition
         var electricity = ElectricityAddon;
         if (electricity != null) {
             electricity.Connection = Facing.DownAll;
+
+            //задаем параметры блока/проводника
+            var voltage = MyMiniLib.GetAttributeInt(byItemStack!.Block, "voltage", 32);
+            var maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack!.Block, "maxCurrent", 5.0F);
+            var isolated = MyMiniLib.GetAttributeBool(byItemStack!.Block, "isolated", false);
+
+            this.ElectricityAddon.Eparams = (
+                new EParams(voltage, maxCurrent, "", 0, 1, 1, false, isolated),
+                FacingHelper.Faces(Facing.DownAll).First().Index);
         }
     }
     

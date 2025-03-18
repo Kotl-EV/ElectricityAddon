@@ -4,6 +4,10 @@
   "entityClass": "BlockEntityEStove",
   "attributes": {
     "maxConsumption": 100,
+    "voltage": 128,
+    "maxCurrent": 20.0,
+    "isolated": false,
+    "maxHeat": 7.0,
     "handbook": {
       "groupBy": [ "estove-*" ],
       "extraSections": [
@@ -14,6 +18,7 @@
       ]
     }
   },
+
   "behaviors": [
     { "name": "Container" },
     {
@@ -23,6 +28,7 @@
       }
     }
   ],
+
   "entityBehaviors": [
     {
       "name": "BEBehaviorEStove"
@@ -31,51 +37,60 @@
       "name": "ElectricityAddon"
     }
   ],
-  "creativeinventory": {
-    "general": [ "*-disabled-south" ],
-    "electricity": [ "*-disabled-south" ]
+
+  "shape": {
+    "base": "block/estove/estove-{state}-{status}"
   },
+
+  "creativeInventory": {
+    "general": [
+      "*-disabled-normal-south"
+    ],
+    "electricity": [
+      "*-disabled-normal-south"
+    ]
+  },
+
+
   "variantgroups": [
     {
       "code": "state",
       "states": [ "disabled", "enabled" ]
     },
     {
+      "code": "status",
+      "states": [
+        "normal",
+        "burned"
+      ]
+    },
+    {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
+
+
+  "skipVariants": [
+    "*-enabled-burned-*"
+  ],
+
+
   "shapebytype": {
-    "*-enabled-north": {
-      "base": "block/estove-enabled",
+    "*-north": {
+      "base": "block/estove/estove-{state}-{status}",
       "rotateY": 0
     },
-    "*-enabled-east": {
-      "base": "block/estove-enabled",
+    "*-east": {
+      "base": "block/estove/estove-{state}-{status}",
       "rotateY": 270
     },
-    "*-enabled-south": {
-      "base": "block/estove-enabled",
+    "*-south": {
+      "base": "block/estove/estove-{state}-{status}",
       "rotateY": 180
     },
-    "*-enabled-west": {
-      "base": "block/estove-enabled",
-      "rotateY": 90
-    },
-    "*-disabled-north": {
-      "base": "block/estove-disabled",
-      "rotateY": 0
-    },
-    "*-disabled-east": {
-      "base": "block/estove-disabled",
-      "rotateY": 270
-    },
-    "*-disabled-south": {
-      "base": "block/estove-disabled",
-      "rotateY": 180
-    },
-    "*-disabled-west": {
-      "base": "block/estove-disabled",
+    "*-west": {
+      "base": "block/estove/estove-{state}-{status}",
       "rotateY": 90
     }
   },

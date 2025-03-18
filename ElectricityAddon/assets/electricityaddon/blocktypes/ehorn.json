@@ -17,6 +17,7 @@
     "voltage": 128,
     "maxCurrent": 20.0,
     "isolated": false,
+    "maxHeat": 7.0,
     "handbook": {
       "groupBy": [ "ehorn-*" ],
       "extraSections": [

@@ -24,6 +24,7 @@
     "maxCurrent": 20.0,
     "isolated": false,
     "HSV": [ 58, 40, 21 ],
+    "maxHeat": 10.0,
     "handbook": {
       "groupBy": [ "heater-*" ],
       "extraSections": [

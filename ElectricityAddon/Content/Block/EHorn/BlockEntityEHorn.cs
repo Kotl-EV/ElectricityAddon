@@ -72,11 +72,17 @@ public class BlockEntityEHorn : BlockEntity, IHeatSource
         }
     }
 
-
+    /// <summary>
+    /// Отвечает за тепло отдаваемое в окружающую среду
+    /// </summary>
+    /// <param name="world"></param>
+    /// <param name="heatSourcePos"></param>
+    /// <param name="heatReceiverPos"></param>
+    /// <returns></returns>
     public float GetHeatStrength(IWorldAccessor world, BlockPos heatSourcePos, BlockPos heatReceiverPos)
     {
         return this.burning
-            ? 7
+            ? MyMiniLib.GetAttributeFloat(this.Block, "maxHeat", 0.0F)
             : 0;
     }
 

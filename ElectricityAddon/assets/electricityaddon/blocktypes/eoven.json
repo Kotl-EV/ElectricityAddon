@@ -17,6 +17,7 @@
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
+
   "shapeByType": {
     "*-north": {
       "base": "game:block/clay/oven",
@@ -37,6 +38,7 @@
   },
   "attributes": {
     "maxConsumption": 100,
+    "maxHeat": 7.0,
     "reinforcable": true,
     "handbook": {
       "groupBy": [ "eoven-*" ],
@@ -46,7 +48,7 @@
           "text": "electricityaddon:eoven-handbook-help-text"
         }
       ]
-    },    
+    },
     "rotShape": "item/rot"
   },
   "creativeinventory": {

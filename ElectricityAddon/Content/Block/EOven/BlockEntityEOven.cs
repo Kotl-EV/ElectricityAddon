@@ -229,12 +229,19 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         return false;
     }
 
+    /// <summary>
+    /// Отвечает за тепло отдаваемое в окружающую среду
+    /// </summary>
+    /// <param name="world"></param>
+    /// <param name="heatSourcePos"></param>
+    /// <param name="heatReceiverPos"></param>
+    /// <returns></returns>
     public float GetHeatStrength(
       IWorldAccessor world,
       BlockPos heatSourcePos,
       BlockPos heatReceiverPos)
     {
-        return Math.Max((float)(((double)this.ovenTemperature - 20.0) / ((double)this.maxTemperature - 20.0) * 8.0), 0.0f);
+        return Math.Max((float)(((double)this.ovenTemperature - 20.0) / ((double)this.maxTemperature - 20.0) * MyMiniLib.GetAttributeFloat(this.Block, "maxHeat", 0.0F)), 0.0f);
     }
 
     protected virtual void OnBurnTick(float dt)

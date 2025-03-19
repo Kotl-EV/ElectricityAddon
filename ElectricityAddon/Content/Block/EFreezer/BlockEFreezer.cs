@@ -63,8 +63,8 @@ class BlockEFreezer : Vintagestory.API.Common.Block
         AssetLocation blockCode = CodeWithVariants(new Dictionary<string, string>
         {
             { "state", "closed" },
-            { "status", "melted" },
-            { "horizontalorientation", "north" }
+            { "status", this.Variant["status"] },
+            { "side", "north" }
         });
 
         Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockCode);
@@ -95,5 +95,20 @@ class BlockEFreezer : Vintagestory.API.Common.Block
                 MouseButton = EnumMouseButton.Right,
             }
         }.Append(base.GetPlacedBlockInteractionHelp(world, selection, forPlayer));
+    }
+
+
+    public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
+    {
+        base.OnNeighbourBlockChange(world, pos, neibpos);
+
+        if (
+            !world.BlockAccessor
+                .GetBlock(pos.AddCopy(BlockFacing.DOWN))
+                .SideSolid[BlockFacing.indexUP]
+        )
+        {
+            world.BlockAccessor.BreakBlock(pos, null);
+        }
     }
 }

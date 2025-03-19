@@ -4,6 +4,9 @@
   "entityClass": "BlockEntityEFreezer",
   "attributes": {
     "maxConsumption": 100,
+    "voltage": 32,
+    "maxCurrent": 20.0,
+    "isolated": false,
     "handbook": {
       "groupBy": [ "efreezer-*" ],
       "extraSections": [
@@ -14,6 +17,8 @@
       ]
     }
   },
+
+
   "entityBehaviors": [
     {
       "name": "BEBehaviorEFreezer"
@@ -22,131 +27,70 @@
       "name": "ElectricityAddon"
     }
   ],
+
   "creativeinventory": {
     "general": [ "*-melted-closed-north" ],
     "electricity": [ "*-melted-closed-north" ]
   },
+
   "behaviors": [
     { "name": "HorizontalOrientable" },
     {
       "name": "Multiblock",
-      "propertiesByType": {
-        "*-north": {
-          "sizex": 1,
-          "sizey": 2,
-          "sizez": 1,
-          "cposition": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-          }
-        },
-        "*-east": {
-          "sizex": 1,
-          "sizey": 2,
-          "sizez": 1,
-          "cposition": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-          }
-        },
-        "*-south": {
-          "sizex": 1,
-          "sizey": 2,
-          "sizez": 1,
-          "cposition": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-          }
-        },
-        "*-west": {
-          "sizex": 1,
-          "sizey": 2,
-          "sizez": 1,
-          "cposition": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-          }
+      "properties": {
+        "sizex": 1,
+        "sizey": 2,
+        "sizez": 1,
+        "cposition": {
+          "x": 0,
+          "y": 0,
+          "z": 0
         }
+
       }
     }
   ],
+
   "blockmaterial": "Metal",
+
   "variantgroups": [
     {
       "code": "status",
-      "states": [ "frozen", "melted" ]
+      "states": [ "frozen", "melted", "burned" ]
     },
     {
       "code": "state",
       "states": [ "closed", "open" ]
     },
-    { "loadFromProperties": "abstract/horizontalorientation" }
+    {
+      "code": "side",
+      "loadFromProperties": "abstract/horizontalorientation"
+    } 
   ],
+
   "drawtype": "json",
-  "texturesByType": {
-    "*-frozen-*": {
-      "brass": { "base": "block/brass" },
-      "copper": { "base": "block/copper" },
-      "iron": { "base": "block/iron" },
-      "stainlesssteel1": { "base": "block/plate/stainlesssteel1" },
-      "steel1": { "base": "block/plate/steel1" },
-      "quartzglass": { "base": "block/quartzglass" },
-      "stainlesssteel": { "base": "block/stainlesssteel" },
-      "steel": { "base": "block/steel" },
-      "zinc": { "base": "block/zinc" },
-      "insideFridge": { "base": "game:block/liquid/snow/normal2" }
-    },
-    "*-melted-*": {
-      "brass": { "base": "block/brass" },
-      "copper": { "base": "block/copper" },
-      "iron": { "base": "block/iron" },
-      "stainlesssteel1": { "base": "block/plate/stainlesssteel1" },
-      "steel1": { "base": "block/plate/steel1" },
-      "quartzglass": { "base": "block/quartzglass" },
-      "stainlesssteel": { "base": "block/stainlesssteel" },
-      "steel": { "base": "block/steel" },
-      "zinc": { "base": "block/zinc" },
-      "insideFridge": { "base": "block/zinc" }
-    }
-  },
-  "shapeByType": {
-    "*-closed-north": {
-      "base": "block/freezer_closed",
+
+
+  "shapebytype": {
+    "*-north": {
+      "base": "block/efreezer/efreezer-{status}-{state}",
       "rotateY": 0
     },
-    "*-closed-east": {
-      "base": "block/freezer_closed",
+    "*-east": {
+      "base": "block/efreezer/efreezer-{status}-{state}",
       "rotateY": 270
     },
-    "*-closed-south": {
-      "base": "block/freezer_closed",
+    "*-south": {
+      "base": "block/efreezer/efreezer-{status}-{state}",
       "rotateY": 180
     },
-    "*-closed-west": {
-      "base": "block/freezer_closed",
-      "rotateY": 90
-    },
-    "*-open-north": {
-      "base": "block/freezer_open",
-      "rotateY": 0
-    },
-    "*-open-east": {
-      "base": "block/freezer_open",
-      "rotateY": 270
-    },
-    "*-open-south": {
-      "base": "block/freezer_open",
-      "rotateY": 180
-    },
-    "*-open-west": {
-      "base": "block/freezer_open",
+    "*-west": {
+      "base": "block/efreezer/efreezer-{status}-{state}",
       "rotateY": 90
     }
   },
+
+
   "lightAbsorption": 0,
   "sidesolid": {
     "all": "false"

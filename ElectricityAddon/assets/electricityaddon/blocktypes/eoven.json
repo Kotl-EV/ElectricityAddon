@@ -4,13 +4,15 @@
   "entityClass": "BlockEntityEOven",
   "entityBehaviors": [
     { "name": "BEBehaviorEOven" },
-    { "name": "Electricity" }
+    { "name": "ElectricityAddon" }
   ],
+
   "blockmaterial": "Ceramic",
   "behaviors": [
     { "name": "Lockable" },
     { "name": "HorizontalOrientable" }
   ],
+
   "variantgroups": [
     {
       "code": "state",
@@ -72,17 +74,7 @@
     "general": [ "*-disabled-north" ],
     "electricity": [ "*-disabled-north" ]
   },
-  "textures": {
-    "brass": { "base": "block/brass" },
-    "copper": { "base": "block/copper" },
-    "copper-hot": { "base": "block/copper-hot" },
-    "emeral": { "base": "block/emeral" },
-    "iron": { "base": "block/iron" },
-    "stainlesssteel": { "base": "block/stainlesssteel" },
-    "steel": { "base": "block/steel" },
-    "topaz": { "base": "block/topaz" },
-    "zinc": { "base": "block/zinc" }
-  },
+
   "replaceable": 500,
   "resistance": 3.5,
   "maxStackSize": 1,

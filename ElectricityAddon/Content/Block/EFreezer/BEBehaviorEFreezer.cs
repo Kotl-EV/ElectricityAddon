@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
+using ElectricityAddon.Content.Block.ECharger;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
@@ -17,44 +19,66 @@ public class BEBehaviorEFreezer : BlockEntityBehavior, IElectricConsumer
 
 
 
-    public void Consume(int amount)
+    public void Consume_receive(float amount)
     {
         if (powerSetting != amount)
         {
-            powerSetting = amount;
+            powerSetting = (int)amount;
         }
-    }
-
-    public void Consume_receive(float amount)
-    {
-        throw new System.NotImplementedException();
     }
 
     public float Consume_request()
     {
-        throw new System.NotImplementedException();
+        return maxConsumption;
     }
 
     public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
     {
         base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
-        stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerSetting + "/" + 100 + " Eu");
+
+        //проверяем не сгорел ли прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEFreezer entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout)
+            {
+                stringBuilder.AppendLine("!!!Сгорел!!!");
+            }
+            else
+            {
+                stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
+                stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Вт");
+            }
+
+        }
+
         stringBuilder.AppendLine();
     }
 
     public float getPowerReceive()
     {
-        throw new System.NotImplementedException();
+        return this.powerSetting;
     }
 
     public float getPowerRequest()
     {
-        throw new System.NotImplementedException();
+        return maxConsumption;
     }
 
     public void Update()
     {
-        throw new System.NotImplementedException();
+        //смотрим надо ли обновить модельку когда сгорает прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEFreezer entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout && (entity.Block.Variant["status"] == "frozen" || entity.Block.Variant["status"] == "melted"))
+            {
+                string type = "status";
+                string variant = "burned";  
+
+                this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant(type, variant)).BlockId, Pos);
+            }
+        }
+
     }
 }

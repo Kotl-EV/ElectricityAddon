@@ -142,6 +142,19 @@ public class BEBehaviorEMotorTier2 : BEBehaviorMPBase, IElectricConsumer
 
     public void Update()
     {
+        //смотрим надо ли обновить модельку когда сгорает прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEMotor entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout && entity.Block.Variant["type"] != "burned")
+            {
+                string type = "type";
+                string variant = "burned";
+
+                this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant(type, variant)).BlockId, Pos);
+            }
+        }
+
         this.Blockentity.MarkDirty(true);
     }
 
@@ -179,6 +192,11 @@ public class BEBehaviorEMotorTier2 : BEBehaviorMPBase, IElectricConsumer
     /// </summary>
     public float Resistance(float spd)
     {
+        if (isBurned) //клиним ротор, если сгорел
+        {
+            return 9999.0F;
+        }
+
         return (Math.Abs(spd) > speed_max)                                          // Если скорость превышает максимальную, рассчитываем сопротивление как степенную зависимость
             ? resistance_factor * (float)Math.Pow((Math.Abs(spd) / speed_max), 2f)  // Степенная зависимость, если скорость ушла за пределы двигателя   
             : resistance_factor * Math.Abs(spd) / speed_max;                        // Линейное сопротивление для обычных скоростей
@@ -261,21 +279,26 @@ public class BEBehaviorEMotorTier2 : BEBehaviorMPBase, IElectricConsumer
     }
 
 
+    public bool isBurned => this.Block.Variant["type"] == "burned";
 
 
-
+    /// <summary>
+    /// Выдается игре шейп для отрисовки ротора
+    /// </summary>
+    /// <returns></returns>
     protected override CompositeShape? GetShape()
     {
-        if (this.Api is { } api && this.Blockentity is BlockEntityEMotor entity && entity.Facing != Facing.None)
+        if (this.Api is { } api && this.Blockentity is BlockEntityEMotor entity && entity.Facing != Facing.None && entity.Block.Variant["type"] != "burned") //какой тип )
+
         {
             var direction = this.OutFacingForNetworkDiscovery;
 
             if (BEBehaviorEMotorTier2.compositeShape == null)
             {
-                string tier = entity.Block.Variant["tier"]; //какой тир
-
-                string[] types = new string[2] { "tier", "type" };//типы мотора
-                string[] variants = new string[2] { tier, "rotor" };//нужные вариант мотора
+                string tier = entity.Block.Variant["tier"];             //какой тир
+                string type = "rotor";
+                string[] types = new string[2] { "tier", "type" };//типы генератора
+                string[] variants = new string[2] { tier, type };//нужные вариант генератора
 
                 var location = this.Block.CodeWithVariants(types, variants);
                 BEBehaviorEMotorTier2.compositeShape = api.World.BlockAccessor.GetBlock(location).Shape.Clone();

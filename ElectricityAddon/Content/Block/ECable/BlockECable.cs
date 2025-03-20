@@ -50,20 +50,6 @@ namespace ElectricityAddon.Content.Block.ECable
             { "128v", 128 }
         };
 
-        public static readonly Dictionary<int, string> materials = new Dictionary<int, string>
-        {
-            { 0, "copper" },
-            { 1, "silver" },
-            { 2, "lead" }
-        };
-
-        public static readonly Dictionary<string, int> materialsInvert = new Dictionary<string, int>
-        {
-            { "copper", 0 },
-            { "silver", 1 },
-            { "lead", 2  }
-        };
-
         public static Dictionary<int, string> quantitys = new Dictionary<int, string>
         {
             { 1, "single" },

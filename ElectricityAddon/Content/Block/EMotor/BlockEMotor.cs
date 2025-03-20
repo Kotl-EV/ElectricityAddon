@@ -141,9 +141,9 @@ public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
         {
 
             var facing = entity.Facing;   //куда смотрит генератор
-            string tier = entity.Block.Variant["tier"]; //какой тир
+            string code = entity.Block.Code; //код блока
 
-            if (!BlockEMotor.MeshData.TryGetValue((facing, tier), out var meshData))
+            if (!BlockEMotor.MeshData.TryGetValue((facing, code), out var meshData))
             {
                 var origin = new Vec3f(0.5f, 0.5f, 0.5f);
                 var block = clientApi.World.BlockAccessor.GetBlockEntity(pos).Block;
@@ -274,7 +274,7 @@ public class BlockEMotor : Vintagestory.API.Common.Block, IMechanicalPowerBlock
                     meshData.Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f);
                 }
 
-                BlockEMotor.MeshData.Add((facing, tier), meshData);
+                BlockEMotor.MeshData.Add((facing, code), meshData);
             }
 
             sourceMesh = meshData;

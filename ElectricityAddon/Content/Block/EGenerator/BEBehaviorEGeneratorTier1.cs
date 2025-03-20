@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ElectricityAddon.Content.Block.EFreezer;
 using ElectricityAddon.Content.Block.EMotor;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
@@ -38,7 +39,7 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
 
     public float AVGpowerOrder;
 
-
+    public bool isBurned => this.Block.Variant["type"] == "burned";
 
     /// <summary>
     /// Извлекаем параметры из ассетов
@@ -166,6 +167,10 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     /// </summary>
     public override float GetResistance()
     {
+        if(isBurned) //клиним ротор, если сгорел
+        {
+            return 9999.0F;
+        }
 
         float spd = this.Network.Speed;
         return (Math.Abs(spd) > speed_max)                                                                                      // Если скорость превышает максимальную, рассчитываем сопротивление как квадратичную
@@ -190,18 +195,24 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     {
     }
 
+
+    /// <summary>
+    /// Выдается игре шейп для отрисовки ротора
+    /// </summary>
+    /// <returns></returns>
     protected override CompositeShape? GetShape()
     {
-        if (this.Api is { } api && this.Blockentity is BlockEntityEGenerator entity && entity.Facing != Facing.None)
-        {
+       if (this.Api is { } api && this.Blockentity is BlockEntityEGenerator entity && entity.Facing != Facing.None &&  entity.Block.Variant["type"] != "burned" ) //какой тип )
+
+            {
             var direction = this.OutFacingForNetworkDiscovery;
 
             if (BEBehaviorEGeneratorTier1.compositeShape == null)
             {
-                string tier = entity.Block.Variant["tier"]; //какой тир
-
+                string tier = entity.Block.Variant["tier"];             //какой тир
+                string type = "rotor"; 
                 string[] types = new string[2] { "tier", "type" };//типы генератора
-                string[] variants = new string[2] { tier, "rotor" };//нужные вариант генератора
+                string[] variants = new string[2] { tier, type };//нужные вариант генератора
 
                 var location = this.Block.CodeWithVariants( types, variants);
 
@@ -254,11 +265,26 @@ public class BEBehaviorEGeneratorTier1 : BEBehaviorMPBase, IElectricProducer
     public override bool OnTesselation(ITerrainMeshPool mesher, ITesselatorAPI tesselator)
     {
         return false;
+
     }
 
 
     public void Update()
     {
+
+        //смотрим надо ли обновить модельку когда сгорает прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEGenerator entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout && entity.Block.Variant["type"] != "burned")
+            {
+                string type = "type";
+                string variant = "burned";
+
+                this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant(type, variant)).BlockId, Pos);
+            }
+        }
+
         this.Blockentity.MarkDirty(true);
     }
 

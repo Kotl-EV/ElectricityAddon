@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ElectricityAddon.Content.Block.EMotor;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
@@ -153,9 +154,9 @@ public class BlockEGenerator : Vintagestory.API.Common.Block, IMechanicalPowerBl
 
 
             var facing = entity.Facing;   //куда смотрит генератор
-            string tier= entity.Block.Variant["tier"]; //какой тир
+            string code = entity.Block.Code; //код блока
 
-            if (!BlockEGenerator.MeshData.TryGetValue((facing,tier), out var meshData))
+            if (!BlockEGenerator.MeshData.TryGetValue((facing, code), out var meshData))
             {
                 var origin = new Vec3f(0.5f, 0.5f, 0.5f);
                 var block = clientApi.World.BlockAccessor.GetBlockEntity(pos).Block;
@@ -286,7 +287,7 @@ public class BlockEGenerator : Vintagestory.API.Common.Block, IMechanicalPowerBl
                     meshData.Rotate(origin, 0.0f, 90.0f * GameMath.DEG2RAD, 0.0f);
                 }
 
-                BlockEGenerator.MeshData.Add((facing, tier), meshData);
+                BlockEGenerator.MeshData.Add((facing, code), meshData);
             }
 
             sourceMesh = meshData;

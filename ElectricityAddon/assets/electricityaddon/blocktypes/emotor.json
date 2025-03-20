@@ -16,7 +16,9 @@
       "code": "type",
       "states": [
         "rotor",
-        "stator"
+        "stator",
+        "normal",
+        "burned"
       ]
     }
   ],
@@ -62,7 +64,6 @@
   },
 
 
-
   "attributesByType": { //параметры двигателя, менять на свой страх и риск
     "*-tier1-*": {
       "params": [ 10.0, 100.0, 0.5, 0.75, 0.5, 0.1 ],
@@ -98,17 +99,18 @@
   },
 
 
-  "shapeInventory": {
-    "base": "block/emotor/emotor-{tier}"
+
+  "shapeInventoryByType": {
+    "*-burned": {
+      "base": "block/emotor/emotor-{tier}-burned"
+    },
+    "*": {
+      "base": "block/emotor/emotor-{tier}-normal"
+    }
   },
 
-  "shapeByType": {
-    "*-rotor": {
-      "base": "block/emotor/emotor-{tier}-rotor"
-    },
-    "*-stator": {
-      "base": "block/emotor/emotor-{tier}-stator"
-    }
+  "shape": {
+    "base": "block/emotor/emotor-{tier}-{type}"
   },
 
 

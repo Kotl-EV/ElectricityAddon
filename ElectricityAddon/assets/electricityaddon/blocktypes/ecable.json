@@ -21,7 +21,13 @@
       "states": [
         "copper",
         "silver",
-        "lead"
+        "lead",
+        "gold",
+        "steel",
+        "iron",
+        "tinbronze",
+        "brass",
+        "electrum"
       ]
     },
     {
@@ -362,39 +368,99 @@
     "material": "{material}"
   },
 
-    "attributesByType": {
-      "*-32v-copper-*": {
-        "res": 1,
-        "maxCurrent": 5,
-        "crosssectional": 1
-      },
-      "*-32v-silver-*": {
-        "res": 0.95,
-        "maxCurrent": 6,
-        "crosssectional": 1
-      },
-      "*-32v-lead-*": {
-        "res": 4,
-        "maxCurrent": 2,
-        "crosssectional": 1
-      },
-
-      "*-128v-copper-*": {
-        "res": 1,
-        "maxCurrent": 10,
-        "crosssectional": 2
-      },
-      "*-128v-silver-*": {
-        "res": 0.95,
-        "maxCurrent": 12,
-        "crosssectional": 2
-      },
-      "*-128v-lead-*": {
-        "res": 4,
-        "maxCurrent": 4,
-        "crosssectional": 2
-      }
+  "attributesByType": {
+    "*-32v-copper-*": {
+      "res": 1,
+      "maxCurrent": 5,
+      "crosssectional": 1
     },
+    "*-32v-silver-*": {
+      "res": 0.6,
+      "maxCurrent": 7,
+      "crosssectional": 1
+    },
+    "*-32v-lead-*": {
+      "res": 2,
+      "maxCurrent": 3,
+      "crosssectional": 1
+    },
+    "*-32v-electrum-*": {
+      "res": 0.65,
+      "maxCurrent": 6.8,
+      "crosssectional": 1
+    },
+    "*-128v-electrum-*": {
+      "res": 0.65,
+      "maxCurrent": 13.6,
+      "crosssectional": 2
+    },
+    "*-32v-brass-*": {
+      "res": 0.8,
+      "maxCurrent": 6.0,
+      "crosssectional": 1
+    },
+    "*-128v-brass-*": {
+      "res": 0.8,
+      "maxCurrent": 12.0,
+      "crosssectional": 2
+    },
+
+    "*-32v-tinbronze-*": {
+      "res": 0.9,
+      "maxCurrent": 5.5,
+      "crosssectional": 1
+    },
+    "*-128v-tinbronze-*": {
+      "res": 0.9,
+      "maxCurrent": 11.0,
+      "crosssectional": 2
+    },
+    "*-32v-iron-*": {
+      "res": 1.5,
+      "maxCurrent": 4.0,
+      "crosssectional": 1
+    },
+    "*-128v-iron-*": {
+      "res": 1.5,
+      "maxCurrent": 8.0,
+      "crosssectional": 2
+    },
+    "*-32v-steel-*": {
+      "res": 1.2,
+      "maxCurrent": 4.5,
+      "crosssectional": 1
+    },
+    "*-128v-steel-*": {
+      "res": 1.2,
+      "maxCurrent": 9.0,
+      "crosssectional": 2
+    },
+    "*-32v-gold-*": {
+      "res": 0.7,
+      "maxCurrent": 6.5,
+      "crosssectional": 1
+    },
+    "*-128v-gold-*": {
+      "res": 0.7,
+      "maxCurrent": 13,
+      "crosssectional": 2
+    },
+    "*-128v-copper-*": {
+      "res": 1,
+      "maxCurrent": 10,
+      "crosssectional": 2
+    },
+    "*-128v-silver-*": {
+      "res": 0.6,
+      "maxCurrent": 14,
+      "crosssectional": 2
+    },
+    "*-128v-lead-*": {
+      "res": 2,
+      "maxCurrent": 6,
+      "crosssectional": 2
+    }
+  },
 
 
     "emitSideAo": {

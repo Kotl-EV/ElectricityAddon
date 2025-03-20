@@ -16,7 +16,9 @@
       "code": "type",
       "states": [
         "rotor",
-        "stator"
+        "stator",
+        "normal",
+        "burned"
       ]
     }
   ],
@@ -99,17 +101,17 @@
   },
 
 
-  "shapeInventory": {
-    "base": "block/egenerator/egenerator-{tier}"
+  "shapeInventoryByType": {
+    "*-burned": {
+      "base": "block/egenerator/egenerator-{tier}-burned"
+    },
+    "*": {
+      "base": "block/egenerator/egenerator-{tier}-normal"
+    }
   },
 
-  "shapeByType": {
-    "*-rotor": {
-      "base": "block/egenerator/egenerator-{tier}-rotor"
-    }, 
-    "*-stator": {
-      "base": "block/egenerator/egenerator-{tier}-stator"
-    }
+  "shape": {
+      "base": "block/egenerator/egenerator-{tier}-{type}"
   },
 
 

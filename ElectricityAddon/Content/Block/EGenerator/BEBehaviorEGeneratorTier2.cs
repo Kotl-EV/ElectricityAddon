@@ -158,12 +158,19 @@ public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
         return power;
     }
 
+    public bool isBurned => this.Block.Variant["type"] == "burned";
+
 
     /// <summary>
     /// Механическая сеть берет отсюда сопротивление этого генератора
     /// </summary>
     public override float GetResistance()
     {
+        if (isBurned) //клиним ротор, если сгорел
+        {
+            return 9999.0F;
+        }
+
 
         float spd = this.Network.Speed;
         return (Math.Abs(spd) > speed_max)                                                                                      // Если скорость превышает максимальную, рассчитываем сопротивление как квадратичную
@@ -188,18 +195,23 @@ public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
     {
     }
 
+    /// <summary>
+    /// Выдается игре шейп для отрисовки ротора
+    /// </summary>
+    /// <returns></returns>
     protected override CompositeShape? GetShape()
     {
-        if (this.Api is { } api && this.Blockentity is BlockEntityEGenerator entity && entity.Facing != Facing.None)
+        if (this.Api is { } api && this.Blockentity is BlockEntityEGenerator entity && entity.Facing != Facing.None && entity.Block.Variant["type"] != "burned") //какой тип )
+
         {
             var direction = this.OutFacingForNetworkDiscovery;
 
             if (BEBehaviorEGeneratorTier2.compositeShape == null)
             {
-                string tier = entity.Block.Variant["tier"]; //какой тир
-
+                string tier = entity.Block.Variant["tier"];             //какой тир
+                string type = "rotor";
                 string[] types = new string[2] { "tier", "type" };//типы генератора
-                string[] variants = new string[2] { tier, "rotor" };//нужные вариант генератора
+                string[] variants = new string[2] { tier, type };//нужные вариант генератора
 
                 var location = this.Block.CodeWithVariants(types, variants);
 
@@ -257,6 +269,20 @@ public class BEBehaviorEGeneratorTier2 : BEBehaviorMPBase, IElectricProducer
 
     public void Update()
     {
+        //смотрим надо ли обновить модельку когда сгорает прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEGenerator entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout && entity.Block.Variant["type"] != "burned")
+            {
+                string type = "type";
+                string variant = "burned";
+
+                this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant(type, variant)).BlockId, Pos);
+            }
+        }
+
+
         this.Blockentity.MarkDirty(true);
     }
 

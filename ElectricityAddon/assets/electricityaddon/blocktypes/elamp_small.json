@@ -39,10 +39,10 @@
 
   "creativeInventory": {
     "general": [
-      "*-disabled-normal"
+      "*-disabled"
     ],
     "electricity": [
-      "*-disabled-normal"
+      "*-disabled"
     ]
   },
 
@@ -54,24 +54,12 @@
     {
       "code": "state",
       "states": [ "disabled", "enabled" ]
-    },
-    {
-      "code": "status",
-      "states": [
-        "normal",
-        "burned"
-      ]
     }
-
-  ],
-
-  "skipVariants": [
-    "*-enabled-burned"
   ],
 
 
   "shape": {
-    "base": "block/elamp_small/elamp_small-{state}-{status}"
+    "base": "block/elamp_small/elamp_small-{state}"
   },
 
   "resistance": 1,

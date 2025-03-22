@@ -22,6 +22,7 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
     }
 
 
+    public bool isBurned => this.Block.Variant["state"] == "burned";
 
     public void Consume_receive(float amount)
     {
@@ -80,21 +81,18 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
         base.GetBlockInfo(forPlayer, stringBuilder);
 
         //проверяем не сгорел ли прибор
-        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECharger entity && entity.AllEparams != null)
-        {
-            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout)
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECharger entity)
+        {            
+            if (isBurned)
             {
-                stringBuilder.AppendLine("!!!Сгорел!!!");
+                stringBuilder.AppendLine(Lang.Get("Burned"));
             }
             else
             {
                 stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
-                stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Вт");
+                stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + ": " + powerSetting + "/" + maxConsumption + " " + Lang.Get("W"));
             }
-
         }
-
         stringBuilder.AppendLine();
     }
 
@@ -114,13 +112,12 @@ public class BEBehaviorECharger : BlockEntityBehavior, IElectricConsumer
         if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECharger entity && entity.AllEparams != null)
         {
             bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout && entity.Block.Variant["status"] == "normal")
+            if (hasBurnout && entity.Block.Variant["state"] != "burned")
             {
-                string state = "disabled";
                 string side = entity.Block.Variant["side"];
 
-                string[] types = new string[3] { "state", "status", "side" };   //типы горна
-                string[] variants = new string[3] { state, "burned", side };  //нужный вариант гона
+                string[] types = new string[2] { "state", "side" };   //типы горна
+                string[] variants = new string[2] { "burned", side };  //нужный вариант 
 
                 this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariants(types, variants)).BlockId, Pos);
             }

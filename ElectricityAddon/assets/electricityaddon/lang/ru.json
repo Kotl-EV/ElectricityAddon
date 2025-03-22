@@ -18,34 +18,75 @@
   "block-accumulator-tier1-*": "Аккумулятор (32В)",
   "block-accumulator-tier2-*": "Аккумулятор (128В)",
 
+  // 32В
   "block-ecable-32v-copper-*-part": "Медный кабель (32В)",
   "block-ecable-32v-silver-*-part": "Серебряный кабель (32В)",
   "block-ecable-32v-lead-*-part": "Свинцовый кабель (32В)",
+  "block-ecable-32v-gold-*-part": "Золотой кабель (32В)",
+  "block-ecable-32v-steel-*-part": "Стальной кабель (32В)",
+  "block-ecable-32v-iron-*-part": "Железный кабель (32В)",
+  "block-ecable-32v-tinbronze-*-part": "Бронзовый кабель (32В)",
+  "block-ecable-32v-brass-*-part": "Латунный кабель (32В)",
+  "block-ecable-32v-electrum-*-part": "Кабель из электрума (32В)",
 
+  // 128В
   "block-ecable-128v-copper-*-part": "Медный кабель (128В)",
   "block-ecable-128v-silver-*-part": "Серебряный кабель (128В)",
   "block-ecable-128v-lead-*-part": "Свинцовый кабель (128В)",
+  "block-ecable-128v-gold-*-part": "Золотой кабель (128В)",
+  "block-ecable-128v-steel-*-part": "Стальной кабель (128В)",
+  "block-ecable-128v-iron-*-part": "Железный кабель (128В)",
+  "block-ecable-128v-tinbronze-*-part": "Бронзовый кабель (128В)",
+  "block-ecable-128v-brass-*-part": "Латунный кабель (128В)",
+  "block-ecable-128v-electrum-*-part": "Кабель из электрума (128В)",
 
+  // 32В
   "block-ecable-32v-copper-*-isolated": "Медный изолированный кабель (32В)",
   "block-ecable-32v-silver-*-isolated": "Серебряный изолированный кабель (32В)",
   "block-ecable-32v-lead-*-isolated": "Свинцовый изолированный кабель (32В)",
+  "block-ecable-32v-gold-*-isolated": "Золотой изолированный кабель (32В)",
+  "block-ecable-32v-steel-*-isolated": "Стальной изолированный кабель (32В)",
+  "block-ecable-32v-iron-*-isolated": "Железный изолированный кабель (32В)",
+  "block-ecable-32v-tinbronze-*-isolated": "Бронзовый изолированный кабель (32В)",
+  "block-ecable-32v-brass-*-isolated": "Латунный изолированный кабель (32В)",
+  "block-ecable-32v-electrum-*-isolated": "Изолированный кабель из электрума (32В)",
 
+  // 128В
   "block-ecable-128v-copper-*-isolated": "Медный изолированный кабель (128В)",
   "block-ecable-128v-silver-*-isolated": "Серебряный изолированный кабель (128В)",
   "block-ecable-128v-lead-*-isolated": "Свинцовый изолированный кабель (128В)",
+  "block-ecable-128v-gold-*-isolated": "Золотой изолированный кабель (128В)",
+  "block-ecable-128v-steel-*-isolated": "Стальной изолированный кабель (128В)",
+  "block-ecable-128v-iron-*-isolated": "Железный изолированный кабель (128В)",
+  "block-ecable-128v-tinbronze-*-isolated": "Бронзовый изолированный кабель (128В)",
+  "block-ecable-128v-brass-*-isolated": "Латунный изолированный кабель (128В)",
+  "block-ecable-128v-electrum-*-isolated": "Изолированный кабель из электрума (128В)",
 
-  "block-ecable-32v-copper-*-burned": "Медный сгоревший кабель (32В)",
-  "block-ecable-32v-silver-*-burned": "Серебряный сгоревший кабель (32В)",
-  "block-ecable-32v-lead-*-burned": "Свинцовый сгоревший кабель (32В)",
+  // 32В
+  "block-ecable-32v-copper-*-burned": "Сгоревший медный кабель (32В)",
+  "block-ecable-32v-silver-*-burned": "Сгоревший серебряный кабель (32В)",
+  "block-ecable-32v-lead-*-burned": "Сгоревший свинцовый кабель (32В)",
+  "block-ecable-32v-gold-*-burned": "Сгоревший золотой кабель (32В)",
+  "block-ecable-32v-steel-*-burned": "Сгоревший стальной кабель (32В)",
+  "block-ecable-32v-iron-*-burned": "Сгоревший железный кабель (32В)",
+  "block-ecable-32v-tinbronze-*-burned": "Сгоревший бронзовый кабель (32В)",
+  "block-ecable-32v-brass-*-burned": "Сгоревший латунный кабель (32В)",
+  "block-ecable-32v-electrum-*-burned": "Сгоревший кабель из электрума (32В)",
 
-  "block-ecable-128v-copper-*-burned": "Медный сгоревший кабель (128В)",
-  "block-ecable-128v-silver-*-burned": "Серебряный сгоревший кабель (128В)",
-  "block-ecable-128v-lead-*-burned": "Свинцовый сгоревший кабель (128В)",
-
+  // 128В
+  "block-ecable-128v-copper-*-burned": "Сгоревший медный кабель (128В)",
+  "block-ecable-128v-silver-*-burned": "Сгоревший серебряный кабель (128В)",
+  "block-ecable-128v-lead-*-burned": "Сгоревший свинцовый кабель (128В)",
+  "block-ecable-128v-gold-*-burned": "Сгоревший золотой кабель (128В)",
+  "block-ecable-128v-steel-*-burned": "Сгоревший стальной кабель (128В)",
+  "block-ecable-128v-iron-*-burned": "Сгоревший железный кабель (128В)",
+  "block-ecable-128v-tinbronze-*-burned": "Сгоревший бронзовый кабель (128В)",
+  "block-ecable-128v-brass-*-burned": "Сгоревший латунный кабель (128В)",
+  "block-ecable-128v-electrum-*-burned": "Сгоревший кабель из электрума (128В)",
 
 
   "block-switch-*": "Ручной переключатель",
-  "block-eforge-*": "Электрический горн",
+  "block-ehorn-*": "Электрический горн",
   "block-heater-*": "Электрический нагреватель",
 
   "block-elamp-3000-*": "Электрическая лампа: оранжево-теплый (3000К)",
@@ -93,8 +134,13 @@
   "block-handbooktext-accumulator-tier2": "Позволяет хранить электрическую энергию. Более вместительный вариант обычного <a href=\"handbooksearch:\/\/аккумулятор\">аккумулятора<\/a>.<br>Заряженный аккумулятор (большой), при необходимости, можно носить с собой, но только в слоте для сумок.<br>Напряжение: 128 В.",
 
 
-  "block-handbooktitle-ecable-*": "Используется",
-  "block-handbooktext-ecable-*": "Позволяет передавать электрическую энергию на расстояние.",
+  "block-handbooktitle-eoven": "Используется",
+  "block-handbooktext-eoven": "Электрическая духовка позволяет полностью заменить печь. Выключается автоматически, когда процесс выпечки окончен. Больше никаких подгораний!<br><br><br>Напряжение: 128 В.<br>Максимальное потребление: 100 Вт.",
+
+
+
+  "block-handbooktitle-ecable": "Используется",
+  "block-handbooktext-ecable": "Позволяет передавать электрическую энергию на расстояние.",
 
   "block-handbooktitle-switch": "Используется",
   "block-handbooktext-switch": "Позволяет разрывать электрическую цепь. Устанавливается на кабель. Кликните по нему, чтобы переключить его.",
@@ -194,7 +240,7 @@
   "item-handbooktext-eaxe": "Прекрасно справляется с рубкой. Не используется в рецептах.<br>Когда разрядится, то перестанет работать. Не забывайте заряжать!",
 
   "game:BlockEStove": "Электрическая плита",
-  "freezer-title-gui": "Холодильник",
+  "game:freezer-title-gui": "Холодильник",
   "game:freezer-over-sneak-help": "Откр/закр дверцу.",
   "game:freezer-over-help": "Откройте дверцу и положите еду что бы сохранить ее.",
 
@@ -202,11 +248,34 @@
 
 
   "game:Electricity": "Электросеть",
-  "game:Storage": "Хранит: ",
-  "game:Temperature": "Температура: ",
-  "game:Consumption": "Потребляет: ",
-  "game:Production": "Производит: ",
-  "game:Overflow": "Избыток: ",
-  "game:Contents": "Содержимое: "
-
+  "game:Storage": "Хранитcя",
+  "game:Temperature": "Температура",
+  "game:Contents": "Содержится",
+  "game:Consumers": "Потребителей",
+  "game:Generators": "Генераторов",
+  "game:Batteries": "Аккумуляторов",
+  "game:Transformers": "Трансформаторов",
+  "game:Blocks": "Блоков",
+  "game:Generation": "Генерация",
+  "game:W": "Вт",
+  "game:Consumption": "Потребление",
+  "game:Shortage": "Дефицит",
+  "game:Press Alt for details": "Нажми Alt для деталей",
+  "game:Block": "Блок",
+  "game:Max. current": "Макс. ток",
+  "game:Current": "Ток",
+  "game:Resistivity": "Уд. сопр",
+  "game:Resistance": "Сопротивление",
+  "game:Lines": "Линий",
+  "game:Section size": "Пл. сечения",
+  "game:Max voltage": "Макс напряжение",
+  "game:V": "В",
+  "game:units": "у.е.",
+  "game:pcs.": "шт.",
+  "game:A": "А",
+  "game:Om/line": "Ом/линию",
+  "game:Om": "Ом",
+  "game:Burned": "!!!Сгорел!!!",
+  "game:Power": "Мощность",
+  "game:J": "Дж",
 }

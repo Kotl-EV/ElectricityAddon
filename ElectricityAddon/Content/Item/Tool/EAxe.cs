@@ -6,6 +6,7 @@ using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
@@ -142,7 +143,7 @@ class EAxe : ItemAxe,IEnergyStorageItem
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
-        dsc.AppendLine(inSlot.Itemstack.Attributes.GetInt("electricityaddon:energy") + "/" + maxcapacity + " Eu");
+        dsc.AppendLine(inSlot.Itemstack.Attributes.GetInt("electricityaddon:energy") + "/" + maxcapacity + " " + Lang.Get("W"));
     }
 
     public int receiveEnergy(ItemStack itemstack, int maxReceive)

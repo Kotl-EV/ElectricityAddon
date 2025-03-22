@@ -28,21 +28,21 @@
   },
 
   "attributesByType": {
-    "*-3000-enabled-normal": { "HSV": [ 58, 40, 21 ] },
-    "*-4000-enabled-normal": { "HSV": [ 58, 32, 21 ] },
-    "*-5000-enabled-normal": { "HSV": [ 57, 16, 21 ] },
-    "*-6000-enabled-normal": { "HSV": [ 0, 0, 21 ] },
-    "*-7000-enabled-normal": { "HSV": [ 203, 9, 21 ] },
-    "*-8000-enabled-normal": { "HSV": [ 201, 25, 21 ] },
-    "*-9000-enabled-normal": { "HSV": [ 199, 40, 21 ] }
+    "*-3000-enabled": { "HSV": [ 58, 40, 21 ] },
+    "*-4000-enabled": { "HSV": [ 58, 32, 21 ] },
+    "*-5000-enabled": { "HSV": [ 57, 16, 21 ] },
+    "*-6000-enabled": { "HSV": [ 0, 0, 21 ] },
+    "*-7000-enabled": { "HSV": [ 203, 9, 21 ] },
+    "*-8000-enabled": { "HSV": [ 201, 25, 21 ] },
+    "*-9000-enabled": { "HSV": [ 199, 40, 21 ] }
   },
 
   "creativeInventory": {
     "general": [
-      "*-disabled-normal"
+      "*-disabled"
     ],
     "electricity": [
-      "*-disabled-normal"
+      "*-disabled"
     ]
   },
 
@@ -53,24 +53,14 @@
     },
     {
       "code": "state",
-      "states": [ "disabled", "enabled" ]
-    },
-    {
-      "code": "status",
-      "states": [
-        "normal",
-        "burned"
-      ]
+      "states": [ "disabled", "enabled", "burned" ]
     }
   ],
 
 
-  "skipVariants": [
-    "*-enabled-burned"
-  ],
 
   "shape": {
-    "base": "block/elamp/elamp-{state}-{status}"
+    "base": "block/elamp/elamp-{state}"
   },
 
   "resistance": 1,

@@ -122,6 +122,25 @@ public class BlockEHorn : Vintagestory.API.Common.Block
         return base.OnBlockInteractStart(world, byPlayer, blockSel);
     }
 
+    public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
+    {
+        AssetLocation blockCode = CodeWithVariants(new Dictionary<string, string>
+        {
+            { "state", (this.Variant["state"]=="enabled")? "enabled":(this.Variant["state"]=="disabled")? "disabled":"burned" },
+            { "side", "south" }
+        });
+
+        Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockCode);
+
+        return new ItemStack(block);
+    }
+
+    public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer,
+        float dropQuantityMultiplier = 1)
+    {
+        return new[] { OnPickBlock(world, pos) };
+    }
+
     public override WorldInteraction[] GetPlacedBlockInteractionHelp(IWorldAccessor world, BlockSelection selection,
         IPlayer forPlayer)
     {

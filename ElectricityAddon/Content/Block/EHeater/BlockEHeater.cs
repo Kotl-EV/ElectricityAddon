@@ -65,13 +65,22 @@ namespace ElectricityAddon.Content.Block.EHeater {
             return false;
         }
 
-        public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1) {
-            var block = api.World.BlockAccessor.GetBlock(pos);
-            var block2 = api.World.GetBlock(block.CodeWithVariant("state", "disabled"));
+        public override ItemStack OnPickBlock(IWorldAccessor world, BlockPos pos)
+        {
+            AssetLocation blockCode = CodeWithVariants(new Dictionary<string, string>
+        {
+            { "state", (this.Variant["state"]=="enabled")? "enabled":(this.Variant["state"]=="disabled")? "disabled":"burned" }
+        });
 
-            return new[] {
-                new ItemStack(block2, (int)Math.Ceiling(dropQuantityMultiplier))
-            };
+            Vintagestory.API.Common.Block block = world.BlockAccessor.GetBlock(blockCode);
+
+            return new ItemStack(block);
+        }
+
+        public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer,
+            float dropQuantityMultiplier = 1)
+        {
+            return new[] { OnPickBlock(world, pos) };
         }
 
         public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos) {

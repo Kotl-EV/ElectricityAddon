@@ -347,7 +347,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
             stringBuilder.AppendLine();
             stringBuilder.AppendLine(inventory[0].Itemstack.GetName());
             stringBuilder.AppendLine(StringHelper.Progressbar(storageEnergyItem * 100.0f / maxStorageItem));
-            stringBuilder.AppendLine("└ " + Lang.Get("Storage") + storageEnergyItem + "/" + maxStorageItem + " Вт");
+            stringBuilder.AppendLine("└ " + Lang.Get("Storage") + storageEnergyItem + "/" + maxStorageItem + " " + Lang.Get("W"));
         }
         else if (inventory[0]?.Itemstack?.Block is IEnergyStorageItem)
         {
@@ -356,7 +356,7 @@ public class BlockEntityECharger : BlockEntity, ITexPositionSource
             stringBuilder.AppendLine();
             stringBuilder.AppendLine(inventory[0].Itemstack.GetName());
             stringBuilder.AppendLine(StringHelper.Progressbar(storageEnergyBlock * 100.0f / maxStorageBlock));
-            stringBuilder.AppendLine("└ " + Lang.Get("Storage") + storageEnergyBlock + "/" + maxStorageBlock + " Вт");
+            stringBuilder.AppendLine("└ " + Lang.Get("Storage") + storageEnergyBlock + "/" + maxStorageBlock + " " + Lang.Get("W"));
         }
     }
 

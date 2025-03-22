@@ -10,11 +10,11 @@
 	},
 	"textures": {
 		"brass": "block/brass",
-		"iron": "block/iron",
-		"steel": "block/steel",
 		"brass-okalina-krug": "block/brass-okalina-krug",
 		"copper-okalina-polosa": "block/copper-okalina-polosa",
 		"frame-sgorevshiy": "block/frame-sgorevshiy",
+		"iron": "block/iron",
+		"steel": "block/steel",
 		"steel-okalina-polosa": "block/steel-okalina-polosa",
 		"zinc-sgorevshiy": "block/zinc-sgorevshiy"
 	},
@@ -2602,7 +2602,7 @@
 									"to": [ 0.9, 0.9, 0.1 ],
 									"rotationOrigin": [ 0.1, 0.1, -0.1 ],
 									"faces": {
-										"north": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 50 },
+										"north": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
 										"east": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 50, "windMode": [-1,-1,-1,-1] },
 										"south": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 50, "windMode": [-1,-1,-1,-1] },
 										"west": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 50, "windMode": [-1,-1,-1,-1] },
@@ -2632,7 +2632,7 @@
 									"to": [ 0.9, 0.9, 0.1 ],
 									"rotationOrigin": [ 0.1, 0.1, -0.1 ],
 									"faces": {
-										"north": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 50 },
+										"north": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
 										"east": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 50 },
 										"south": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 50 },
 										"west": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 50 },
@@ -2662,7 +2662,7 @@
 									"to": [ 0.9, 0.9, 0.1 ],
 									"rotationOrigin": [ 0.1, 0.1, -0.1 ],
 									"faces": {
-										"north": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 170 },
+										"north": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ] },
 										"east": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 170 },
 										"south": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 170 },
 										"west": { "texture": "#zinc-sgorevshiy", "uv": [ 0.0, 0.0, 0.5, 0.5 ], "glow": 170 },

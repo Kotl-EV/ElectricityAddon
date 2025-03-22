@@ -4,6 +4,7 @@ using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
 using Vintagestory.API.Common.Entities;
+using Vintagestory.API.Config;
 using Vintagestory.GameContent;
 
 namespace ElectricityAddon.Content.Item;
@@ -74,7 +75,7 @@ class EChisel : ItemChisel,IEnergyStorageItem
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
-        dsc.AppendLine(inSlot.Itemstack.Attributes.GetInt("electricityaddon:energy") + "/" + maxcapacity + " Eu");
+        dsc.AppendLine(inSlot.Itemstack.Attributes.GetInt("electricityaddon:energy") + "/" + maxcapacity + " " + Lang.Get("W"));
     }
 
     public int receiveEnergy(ItemStack itemstack, int maxReceive)

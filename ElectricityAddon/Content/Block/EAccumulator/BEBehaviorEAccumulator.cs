@@ -19,6 +19,7 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
     {
     }
 
+    public bool isBurned => this.Block.Variant["status"] == "burned";
 
     public float lastCapacity=0;  //предыдущее значение емкости
 
@@ -89,7 +90,7 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
         if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEAccumulator entity && entity.AllEparams != null)
         {
             bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout && entity.Block.Variant["status"] == "normal")
+            if (hasBurnout && entity.Block.Variant["status"] != "burned")
             {
                 this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("status", "burned")).BlockId, Pos);
             }
@@ -119,17 +120,16 @@ public class BEBehaviorEAccumulator : BlockEntityBehavior, IElectricAccumulator
         base.GetBlockInfo(forPlayer, stringBuilder);
 
         //проверяем не сгорел ли прибор
-        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEAccumulator entity && entity.AllEparams != null)
-        {
-            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout)
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEAccumulator entity )
+        {   
+            if (isBurned)
             {
-                stringBuilder.AppendLine("!!!Сгорел!!!");
+                stringBuilder.AppendLine(Lang.Get("Burned"));
             }
             else
             {
                 stringBuilder.AppendLine(StringHelper.Progressbar(GetCapacity() * 100.0f / GetMaxCapacity()));
-                stringBuilder.AppendLine("└ " + Lang.Get("Storage") + GetCapacity() + "/" + GetMaxCapacity() + " Вт*t");
+                stringBuilder.AppendLine("└ " + Lang.Get("Storage") + ": " + GetCapacity() + "/" + GetMaxCapacity() + " "+ Lang.Get("J"));
             }
 
         }

@@ -311,23 +311,20 @@ public class BEBehaviorEGeneratorTier3 : BEBehaviorMPBase, IElectricProducer
         base.GetBlockInfo(forPlayer, stringBuilder);
 
         //проверяем не сгорел ли прибор
-        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEGenerator entity && entity.AllEparams != null)
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEGenerator entity)
         {
-            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout)
+            if (isBurned)
             {
-                stringBuilder.AppendLine("!!!Сгорел!!!");
+                stringBuilder.AppendLine(Lang.Get("Burned"));
             }
             else
             {
                 stringBuilder.AppendLine(StringHelper.Progressbar(Math.Min(powerGive, powerOrder) / I_max * 100));
-                stringBuilder.AppendLine("└ " + Lang.Get("Production") + Math.Min(powerGive, powerOrder) + "/" + I_max + " Вт");
+                stringBuilder.AppendLine("└ " + Lang.Get("Production") + ": " + Math.Min(powerGive, powerOrder) + "/" + I_max + " " + Lang.Get("W"));
             }
-
         }
 
         stringBuilder.AppendLine();
-
 
     }
 

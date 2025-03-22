@@ -34,7 +34,7 @@ namespace ElectricityAddon.Content.Block.ECable
         public float res;                       //удельное сопротивление из ассета
         public float maxCurrent;                //максимальный ток из ассета
         public float crosssectional;            //площадь сечения из ассета
-        public string material;                 //материал из ассета
+        public string material="";                 //материал из ассета
 
         private ICoreAPI api;
 

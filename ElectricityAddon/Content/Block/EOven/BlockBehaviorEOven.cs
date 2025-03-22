@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
+using ElectricityAddon.Content.Block.ECharger;
 using ElectricityAddon.Interface;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Common;
@@ -18,7 +20,38 @@ public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer
         maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 100);
     }
 
-    public void Consume(int amount)
+
+    public bool isBurned => this.Block.Variant["state"] == "burned";
+
+
+    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
+    {
+        base.GetBlockInfo(forPlayer, stringBuilder);
+
+        //проверяем не сгорел ли прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEOven entity)
+        {
+            if (isBurned)
+            {
+                stringBuilder.AppendLine(Lang.Get("Burned"));
+            }
+            else
+            {
+                stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
+                stringBuilder.AppendLine("├ " + Lang.Get("Consumption")+": " + powerSetting + "/" + maxConsumption + " " + Lang.Get("W"));
+                stringBuilder.AppendLine("└ " + Lang.Get("Temperature")+": " + OvenTemperature + "°");
+            }
+        }
+
+        stringBuilder.AppendLine();
+    }
+
+    public float Consume_request()
+    {
+        return maxConsumption;
+    }
+
+    public void Consume_receive(float amount)
     {
         BlockEntityEOven? entity = null;
         if (Blockentity is BlockEntityEOven temp)
@@ -66,41 +99,37 @@ public class BEBehaviorEOven : BlockEntityBehavior, IElectricConsumer
         }
         if (powerSetting != amount)
         {
-            powerSetting = amount;
+            powerSetting = (int)amount;
         }
     }
 
-    public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
-    {
-        base.GetBlockInfo(forPlayer, stringBuilder);
-        stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
-        stringBuilder.AppendLine("├ " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Eu");
-        stringBuilder.AppendLine("└ " + Lang.Get("Temperature") + OvenTemperature + "°");
-        stringBuilder.AppendLine();
-    }
 
-    public float Consume_request()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public void Consume_receive(float amount)
-    {
-        throw new System.NotImplementedException();
-    }
 
     public void Update()
     {
-        throw new System.NotImplementedException();
+        //смотрим надо ли обновить модельку когда сгорает прибор
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEOven entity && entity.AllEparams != null)
+        {
+            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
+            if (hasBurnout && entity.Block.Variant["state"] != "burned")
+            {
+                string side = entity.Block.Variant["side"];
+
+                string[] types = new string[2] { "state", "side" };   //типы горна
+                string[] variants = new string[2] { "burned", side };  //нужный вариант 
+
+                this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariants(types, variants)).BlockId, Pos);
+            }
+        }
     }
 
     public float getPowerReceive()
     {
-        throw new System.NotImplementedException();
+        return this.powerSetting;
     }
 
     public float getPowerRequest()
     {
-        throw new System.NotImplementedException();
+        return maxConsumption;
     }
 }

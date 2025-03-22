@@ -21,7 +21,7 @@ public class BEBehaviorETransformator : BlockEntityBehavior, IElectricTransforma
         maxCurrent = MyMiniLib.GetAttributeFloat(this.Block, "maxCurrent", 5.0F);
     }
 
-
+    public bool isBurned => this.Block.Variant["status"] == "burned";
     public new BlockPos Pos => this.Blockentity.Pos;
 
     public int highVoltage => MyMiniLib.GetAttributeInt(this.Block, "voltage", 32);
@@ -35,17 +35,16 @@ public class BEBehaviorETransformator : BlockEntityBehavior, IElectricTransforma
         base.GetBlockInfo(forPlayer, stringBuilder);
 
         //проверяем не сгорел ли прибор
-        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityETransformator entity && entity.AllEparams != null)
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityETransformator entity)
         {
-            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout)
+            if (isBurned)
             {
-                stringBuilder.AppendLine("!!!Сгорел!!!");
+                stringBuilder.AppendLine(Lang.Get("Burned"));
             }
             else
             {
                 stringBuilder.AppendLine(StringHelper.Progressbar(getPower() / (lowVoltage * maxCurrent) * 100));
-                stringBuilder.AppendLine("└ " + "Мощность " + getPower() + " / " + lowVoltage * maxCurrent + " Вт");
+                stringBuilder.AppendLine("└ " + Lang.Get("Power") + ": " + getPower() + " / " + lowVoltage * maxCurrent + " " + Lang.Get("W"));
             }
 
         }
@@ -60,7 +59,7 @@ public class BEBehaviorETransformator : BlockEntityBehavior, IElectricTransforma
         if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityETransformator entity && entity.AllEparams != null)
         {
             bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout && entity.Block.Variant["status"]=="normal")
+            if (hasBurnout && entity.Block.Variant["status"]!="burned")
             {
                 this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariant("status", "burned")).BlockId, Pos);
             }

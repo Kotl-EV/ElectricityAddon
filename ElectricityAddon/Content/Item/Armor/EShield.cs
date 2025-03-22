@@ -87,7 +87,7 @@ class EShield : Vintagestory.API.Common.Item,IEnergyStorageItem
         dsc.AppendLine("<strong>" + Lang.Get("Melee attack protection") + "</strong>");
         dsc.AppendLine(Lang.Get("shield-stats", (object) (int) (100.0 * (double) num5), (object) (int) (100.0 * (double) num6), (object) num4));
         dsc.AppendLine();
-        dsc.AppendLine(inSlot.Itemstack.Attributes.GetInt("electricityaddon:energy") + "/" + maxcapacity + " Eu");
+        dsc.AppendLine(inSlot.Itemstack.Attributes.GetInt("electricityaddon:energy") + "/" + maxcapacity + " " + Lang.Get("W"));
     }
 
     public int receiveEnergy(ItemStack itemstack, int maxReceive)

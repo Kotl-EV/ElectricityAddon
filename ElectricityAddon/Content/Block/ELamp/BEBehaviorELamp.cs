@@ -23,7 +23,7 @@ namespace ElectricityAddon.Content.Block.ELamp
         private int[] null_HSV = { 0, 0, 0 };   //заглушка
         public int maxConsumption;              //максимальное потребление
 
-
+        public bool isBurned => this.Block.Variant["state"] == "burned";
 
         public int LightLevel { get; private set; }
 
@@ -53,7 +53,7 @@ namespace ElectricityAddon.Content.Block.ELamp
         {
             if (this.Api is { } api)
             {
-                if ((int)Math.Round(amount, MidpointRounding.AwayFromZero) != this.LightLevel && this.Block.Variant["status"] != "burned")
+                if ((int)Math.Round(amount, MidpointRounding.AwayFromZero) != this.LightLevel && this.Block.Variant["state"] != "burned")
                 {
 
                     if ((int)Math.Round(amount, MidpointRounding.AwayFromZero) >= 1 && this.Block.Variant["state"]== "disabled")                               //включаем если питание больше 1
@@ -101,13 +101,12 @@ namespace ElectricityAddon.Content.Block.ELamp
             if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityELamp entity && entity.AllEparams != null)
             {
                 bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-                if (hasBurnout && entity.Block.Variant["status"] == "normal")
+                if (hasBurnout && entity.Block.Variant["state"] != "burned")
                 {
-                    string state = "disabled";
                     string tempK = entity.Block.Variant["tempK"];
 
-                    string[] types = new string[3] { "tempK" , "state", "status" };   //типы лампы
-                    string[] variants = new string[3] { tempK, state, "burned" };     //нужный вариант лампы
+                    string[] types = new string[2] { "tempK" , "state" };   //типы лампы
+                    string[] variants = new string[2] { tempK, "burned" };     //нужный вариант лампы
 
                     this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariants(types, variants)).BlockId, Pos);
 
@@ -123,24 +122,20 @@ namespace ElectricityAddon.Content.Block.ELamp
             base.GetBlockInfo(forPlayer, stringBuilder);
 
             //проверяем не сгорел ли прибор
-            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityELamp entity && entity.AllEparams != null)
+            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityELamp entity)
             {
-                bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-                if (hasBurnout)
+                if (isBurned)
                 {
-                    stringBuilder.AppendLine("!!!Сгорел!!!");
+                    stringBuilder.AppendLine(Lang.Get("Burned"));
                 }
                 else
                 {
                     stringBuilder.AppendLine(StringHelper.Progressbar(this.LightLevel * 100.0f / maxConsumption));
-                    stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.LightLevel + "/" + maxConsumption + " Вт");
+                    stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + ": " + this.LightLevel + "/" + maxConsumption + " " + Lang.Get("W"));
                 }
             
             }
-
-
-            stringBuilder.AppendLine();
-            
+            stringBuilder.AppendLine();            
         }
 
 

@@ -198,7 +198,7 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
         Facing selectedFacing=Facing.None; //храним направления проводов в этом блоке
 
 
-        stringBuilder.AppendLine(Lang.Get("Electricity"));
+
 
         //если это кабель, то мы можем вывести только информацию о сети на одной грани
         if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable entity && entity.AllEparams!=null)
@@ -229,33 +229,35 @@ public class BEBehaviorElectricityAddon : BlockEntityBehavior
 
         if (this.System!.AltPressed)
         {
-            stringBuilder.AppendLine("├ Потребителей: " + networkInformation?.NumberOfConsumers);
-            stringBuilder.AppendLine("├ Генераторов: " + networkInformation?.NumberOfProducers);
-            stringBuilder.AppendLine("├ Аккумуляторов: " + networkInformation?.NumberOfAccumulators);
-            stringBuilder.AppendLine("├ Трансформаторов: " + networkInformation?.NumberOfTransformators);
-            stringBuilder.AppendLine("├ Блоков: " + networkInformation?.NumberOfBlocks);
+            stringBuilder.AppendLine(Lang.Get("Electricity"));
+            stringBuilder.AppendLine("├ "+ Lang.Get("Consumers") + ": " + networkInformation?.NumberOfConsumers);
+            stringBuilder.AppendLine("├ "+ Lang.Get("Generators") + ": " + networkInformation?.NumberOfProducers);
+            stringBuilder.AppendLine("├ "+ Lang.Get("Batteries") + ": " + networkInformation?.NumberOfAccumulators);
+            stringBuilder.AppendLine("├ "+ Lang.Get("Transformers") + ": " + networkInformation?.NumberOfTransformators);
+            stringBuilder.AppendLine("├ "+ Lang.Get("Blocks") + ": " + networkInformation?.NumberOfBlocks);
+            stringBuilder.AppendLine("├ " + Lang.Get("Generation") + ": " + networkInformation?.Production + " " + Lang.Get("W"));
+            stringBuilder.AppendLine("├ "+ Lang.Get("Consumption") + ": " + networkInformation?.Consumption + " " + Lang.Get("W"));
+            stringBuilder.AppendLine("└ "+ Lang.Get("Shortage") + ": " + networkInformation?.Lack + " " + Lang.Get("W"));
         }
 
-        stringBuilder.AppendLine("├ Генерация: " + networkInformation?.Production + " Вт");
-        stringBuilder.AppendLine("├ Потребление: " + networkInformation?.Consumption + " Вт");
-        stringBuilder.AppendLine("└ Дефицит: " + networkInformation?.Lack + " Вт");
 
-        if (!this.System!.AltPressed) stringBuilder.AppendLine("Нажми Alt для подробностей");
+
+        if (!this.System!.AltPressed) stringBuilder.AppendLine(Lang.Get("Press Alt for details"));
 
         if (this.System!.AltPressed)
         {
-            stringBuilder.AppendLine("Блок");
-            stringBuilder.AppendLine("├ " + "Макс. ток: " + networkInformation?.eParamsInNetwork.maxCurrent* networkInformation?.eParamsInNetwork.lines + " А");
-            stringBuilder.AppendLine("├ " + "Ток: " + networkInformation?.current + " А");
+            stringBuilder.AppendLine(Lang.Get("Block"));
+            stringBuilder.AppendLine("├ " + Lang.Get("Max. current") + ": " + networkInformation?.eParamsInNetwork.maxCurrent* networkInformation?.eParamsInNetwork.lines + " " + Lang.Get("A"));
+            stringBuilder.AppendLine("├ " + Lang.Get("Current") + ": " + networkInformation?.current + " " + Lang.Get("A"));
 
             if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityECable) //если кабель!
             {
-                stringBuilder.AppendLine("├ " + "Уд. сопр: " + networkInformation?.eParamsInNetwork.resisitivity/(networkInformation!.eParamsInNetwork.isolated?2.0F:1.0F) + " Ом/линию");
-                stringBuilder.AppendLine("├ " + "Сопротивление: " + networkInformation?.eParamsInNetwork.resisitivity/ ( networkInformation?.eParamsInNetwork.lines* networkInformation?.eParamsInNetwork.crossArea) / (networkInformation.eParamsInNetwork.isolated ? 2.0F : 1.0F) + " Ом");
-                stringBuilder.AppendLine("├ " + "Линий: " + networkInformation?.eParamsInNetwork.lines + " шт.");
-                stringBuilder.AppendLine("├ " + "Пл. сечения: " + networkInformation?.eParamsInNetwork.crossArea* networkInformation?.eParamsInNetwork.lines + " у.ед.");
+                stringBuilder.AppendLine("├ " + Lang.Get("Resistivity") + ": " + networkInformation?.eParamsInNetwork.resisitivity/(networkInformation!.eParamsInNetwork.isolated?2.0F:1.0F) + " " + Lang.Get("Om/line"));
+                stringBuilder.AppendLine("├ " + Lang.Get("Resistance") + ": " + networkInformation?.eParamsInNetwork.resisitivity/ ( networkInformation?.eParamsInNetwork.lines* networkInformation?.eParamsInNetwork.crossArea) / (networkInformation.eParamsInNetwork.isolated ? 2.0F : 1.0F) + " " + Lang.Get("Om"));
+                stringBuilder.AppendLine("├ " + Lang.Get("Lines") + ": " + networkInformation?.eParamsInNetwork.lines + " " + Lang.Get("pcs."));
+                stringBuilder.AppendLine("├ " + Lang.Get("Section size") + ": " + networkInformation?.eParamsInNetwork.crossArea* networkInformation?.eParamsInNetwork.lines + " " + Lang.Get("units"));
             }
-            stringBuilder.AppendLine("└ " + "Макс напряжение: " + networkInformation?.eParamsInNetwork.voltage + " В");
+            stringBuilder.AppendLine("└ " + Lang.Get("Max voltage") + ": " + networkInformation?.eParamsInNetwork.voltage + " " + Lang.Get("V"));
         }
 
 

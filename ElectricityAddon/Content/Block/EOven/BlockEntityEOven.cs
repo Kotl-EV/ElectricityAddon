@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
@@ -27,6 +28,28 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
     internal InventoryEOven ovenInv;
 
 
+
+    //передает значения из Block в BEBehaviorElectricityAddon
+    public (EParams, int) Eparams
+    {
+        get => this.ElectricityAddon!.Eparams;
+        set => this.ElectricityAddon!.Eparams = value;
+    }
+
+    //передает значения из Block в BEBehaviorElectricityAddon
+    public EParams[] AllEparams
+    {
+        get => this.ElectricityAddon?.AllEparams ?? null;
+        set
+        {
+            if (this.ElectricityAddon != null)
+            {
+                this.ElectricityAddon.AllEparams = value;
+            }
+        }
+    }
+
+
     public virtual float maxTemperature => 300f;
 
     public virtual int bakeableCapacity => 4;
@@ -49,8 +72,6 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
             else
                 return !bakingProperties.LargeItem ? EnumOvenContentMode.Quadrants : EnumOvenContentMode.SingleCenter;
 
-
-            //return EnumOvenContentMode.Quadrants;
         }
     }
 
@@ -251,7 +272,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
             return;
 
 
-        if (GetBehavior<BEBehaviorEOven>()?.powerSetting > 0)
+        if (!GetBehavior<BEBehaviorEOven>().isBurned && GetBehavior<BEBehaviorEOven>()?.powerSetting > 0)
         {
 
             if (!IsBurning)
@@ -264,6 +285,11 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         }
         else
         {
+            if (GetBehavior<BEBehaviorEOven>().isBurned)
+            {
+                IsBurning = false;
+            }
+
             if (IsBurning)                     //готовка закончилась
             {
                 IsBurning = false;
@@ -274,12 +300,13 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
                     Api.World.PlaySoundAt(new AssetLocation("electricityaddon:sounds/din_din_din"), Pos.X, Pos.Y, Pos.Z, null, false, 8.0F, 0.4F);
             }
         }
+        
 
 
 
         if (!ovenInv.Empty)   //если не пусто
         {
-            
+
             int EnvTemp = this.EnvironmentTemperature();
 
             if (this.IsBurning)
@@ -288,12 +315,12 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
                 int power = GetBehavior<BEBehaviorEOven>().powerSetting;
                 float toTemp = Math.Max(EnvTemp, power * maxBakingTemperatureAccepted / GetBehavior<BEBehaviorEOven>().maxConsumption);
                 this.ovenTemperature = this.ChangeTemperature(this.ovenTemperature, toTemp, dt * 1.5F);
-                
+
             }
             else
             {
                 this.ovenTemperature = ChangeTemperature(ovenTemperature, EnvironmentTemperature(), dt); //выравниваем температуру с окружающей средой
-                
+
             }
 
 
@@ -510,6 +537,15 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
         if (electricity != null)
         {
             electricity.Connection = Facing.DownAll;
+
+            //задаем параметры блока/проводника
+            var voltage = MyMiniLib.GetAttributeInt(byItemStack!.Block, "voltage", 32);
+            var maxCurrent = MyMiniLib.GetAttributeFloat(byItemStack!.Block, "maxCurrent", 5.0F);
+            var isolated = MyMiniLib.GetAttributeBool(byItemStack!.Block, "isolated", false);
+
+            this.ElectricityAddon.Eparams = (
+                new EParams(voltage, maxCurrent, "", 0, 1, 1, false, isolated),
+                FacingHelper.Faces(Facing.DownAll).First().Index);
         }
     }
 
@@ -567,10 +603,7 @@ public class BlockEntityEOven : BlockEntityDisplay, IHeatSource
 
     protected override MeshData getOrCreateMesh(ItemStack stack, int index)
     {
-
         return base.getOrCreateMesh(stack, index);
-
-
     }
 
 

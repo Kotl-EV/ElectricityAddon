@@ -378,24 +378,20 @@ public class BEBehaviorEMotorTier1 : BEBehaviorMPBase, IElectricConsumer
         base.GetBlockInfo(forPlayer, stringBuilder);
 
         //проверяем не сгорел ли прибор
-        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEMotor entity && entity.AllEparams != null)
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEMotor entity)
         {
-            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout)
+            if (isBurned)
             {
-                stringBuilder.AppendLine("!!!Сгорел!!!");
+                stringBuilder.AppendLine(Lang.Get("Burned"));
             }
             else
             {
                 stringBuilder.AppendLine(StringHelper.Progressbar(powerReceive / I_max * 100));
-                stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerReceive + "/" + I_max + " Вт");
+                stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + ": " + powerReceive + "/" + I_max + " " + Lang.Get("W"));
             }
 
         }
-
         stringBuilder.AppendLine();
-
     }
-
 
 }

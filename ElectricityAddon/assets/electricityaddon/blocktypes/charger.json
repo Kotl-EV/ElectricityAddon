@@ -29,9 +29,6 @@
     }
   },
 
-  "shape": {
-    "base": "block/charger/charger-{state}-{status}"
-  },
 
   "behaviors": [
     { "name": "Container" },
@@ -47,21 +44,14 @@
   "blockMaterial": "Stone",
 
   "creativeinventory": {
-    "general": [ "*-disabled-normal-south" ],
-    "electricity": [ "*-disabled-normal-south" ]
+    "general": [ "*-disabled-south" ],
+    "electricity": [ "*-disabled-south" ]
   },
 
   "variantgroups": [
     {
       "code": "state",
-      "states": [ "disabled", "enabled" ]
-    },
-    {
-      "code": "status",
-      "states": [
-        "normal",
-        "burned"
-      ]
+      "states": [ "disabled", "enabled", "burned" ]
     },
     {
       "code": "side",
@@ -70,26 +60,23 @@
   ],
 
 
-  "skipVariants": [
-    "*-enabled-burned-*"
-  ],
 
 
   "shapebytype": {
     "*-north": {
-      "base": "block/charger/charger-{state}-{status}",
+      "base": "block/charger/charger-{state}",
       "rotateY": 0
     },
     "*-east": {
-      "base": "block/charger/charger-{state}-{status}",
+      "base": "block/charger/charger-{state}",
       "rotateY": 270
     },
     "*-south": {
-      "base": "block/charger/charger-{state}-{status}",
+      "base": "block/charger/charger-{state}",
       "rotateY": 180
     },
     "*-west": {
-      "base": "block/charger/charger-{state}-{status}",
+      "base": "block/charger/charger-{state}",
       "rotateY": 90
     }
   },
@@ -101,6 +88,7 @@
     "*-disabled-*": [ 0, 0, 0 ],
     "*-enabled-*": [ 7, 7, 11 ]
   },
+
   "resistance": 3.5,
   "sounds": {
     "walk": "game:walk/stone",

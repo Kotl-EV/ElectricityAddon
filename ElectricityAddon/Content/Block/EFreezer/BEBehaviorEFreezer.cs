@@ -17,7 +17,7 @@ public class BEBehaviorEFreezer : BlockEntityBehavior, IElectricConsumer
         maxConsumption = MyMiniLib.GetAttributeInt(this.Block, "maxConsumption", 100);
     }
 
-
+    public bool isBurned => this.Block.Variant["status"] == "burned";
 
     public void Consume_receive(float amount)
     {
@@ -37,21 +37,18 @@ public class BEBehaviorEFreezer : BlockEntityBehavior, IElectricConsumer
         base.GetBlockInfo(forPlayer, stringBuilder);
 
         //проверяем не сгорел ли прибор
-        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEFreezer entity && entity.AllEparams != null)
+        if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEFreezer entity)
         {
-            bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout)
+            if (isBurned)
             {
-                stringBuilder.AppendLine("!!!Сгорел!!!");
+                stringBuilder.AppendLine(Lang.Get("Burned"));
             }
             else
             {
                 stringBuilder.AppendLine(StringHelper.Progressbar(powerSetting * 100.0f / maxConsumption));
-                stringBuilder.AppendLine("└  " + Lang.Get("Consumption") + powerSetting + "/" + maxConsumption + " Вт");
+                stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + ": " + powerSetting + "/" + maxConsumption + " " + Lang.Get("W"));
             }
-
         }
-
         stringBuilder.AppendLine();
     }
 
@@ -71,7 +68,7 @@ public class BEBehaviorEFreezer : BlockEntityBehavior, IElectricConsumer
         if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEFreezer entity && entity.AllEparams != null)
         {
             bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-            if (hasBurnout && (entity.Block.Variant["status"] == "frozen" || entity.Block.Variant["status"] == "melted"))
+            if (hasBurnout && entity.Block.Variant["status"] != "burned")
             {
                 string type = "status";
                 string variant = "burned";  

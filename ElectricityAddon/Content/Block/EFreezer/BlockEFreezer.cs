@@ -63,7 +63,7 @@ class BlockEFreezer : Vintagestory.API.Common.Block
         AssetLocation blockCode = CodeWithVariants(new Dictionary<string, string>
         {
             { "state", "closed" },
-            { "status", this.Variant["status"] },
+            { "status", (this.Variant["status"]=="frozen")? "frozen":(this.Variant["status"]=="melted")? "melted":"burned" },
             { "side", "north" }
         });
 

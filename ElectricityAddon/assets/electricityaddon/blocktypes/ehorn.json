@@ -35,10 +35,10 @@
 
   "creativeInventory": {
     "general": [
-      "*-disabled-normal-south"
+      "*-disabled-south"
     ],
     "electricity": [
-      "*-disabled-normal-south"
+      "*-disabled-south"
     ]
   },
 
@@ -60,14 +60,7 @@
   "variantgroups": [
     {
       "code": "state",
-      "states": [ "disabled", "enabled" ]
-    },
-    {
-      "code": "status",
-      "states": [
-        "normal",
-        "burned"
-      ]
+      "states": [ "disabled", "enabled", "burned" ]
     },
     {
       "code": "side",
@@ -76,25 +69,22 @@
   ],
 
 
-  "skipVariants": [
-    "*-enabled-burned-*"
-  ],
 
   "shapebytype": {
     "*-north": {
-      "base": "block/ehorn/ehorn-{state}-{status}",
+      "base": "block/ehorn/ehorn-{state}",
       "rotateY": 0
     },
     "*-east": {
-      "base": "block/ehorn/ehorn-{state}-{status}",
+      "base": "block/ehorn/ehorn-{state}",
       "rotateY": 270
     },
     "*-south": {
-      "base": "block/ehorn/ehorn-{state}-{status}",
+      "base": "block/ehorn/ehorn-{state}",
       "rotateY": 180
     },
     "*-west": {
-      "base": "block/ehorn/ehorn-{state}-{status}",
+      "base": "block/ehorn/ehorn-{state}",
       "rotateY": 90
     }
   },

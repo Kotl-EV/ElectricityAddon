@@ -39,15 +39,15 @@
   ],
 
   "shape": {
-    "base": "block/estove/estove-{state}-{status}"
+    "base": "block/estove/estove-{state}"
   },
 
   "creativeInventory": {
     "general": [
-      "*-disabled-normal-south"
+      "*-disabled-south"
     ],
     "electricity": [
-      "*-disabled-normal-south"
+      "*-disabled-south"
     ]
   },
 
@@ -58,39 +58,29 @@
       "states": [ "disabled", "enabled" ]
     },
     {
-      "code": "status",
-      "states": [
-        "normal",
-        "burned"
-      ]
-    },
-    {
       "code": "side",
       "loadFromProperties": "abstract/horizontalorientation"
     }
   ],
 
 
-  "skipVariants": [
-    "*-enabled-burned-*"
-  ],
 
 
   "shapebytype": {
     "*-north": {
-      "base": "block/estove/estove-{state}-{status}",
+      "base": "block/estove/estove-{state}",
       "rotateY": 0
     },
     "*-east": {
-      "base": "block/estove/estove-{state}-{status}",
+      "base": "block/estove/estove-{state}",
       "rotateY": 270
     },
     "*-south": {
-      "base": "block/estove/estove-{state}-{status}",
+      "base": "block/estove/estove-{state}",
       "rotateY": 180
     },
     "*-west": {
-      "base": "block/estove/estove-{state}-{status}",
+      "base": "block/estove/estove-{state}",
       "rotateY": 90
     }
   },

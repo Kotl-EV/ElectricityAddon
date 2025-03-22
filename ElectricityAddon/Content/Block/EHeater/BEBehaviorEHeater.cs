@@ -20,6 +20,7 @@ namespace ElectricityAddon.Content.Block.EHeater
         private int[] null_HSV = { 0, 0, 0 };   //заглушка
         public int maxConsumption;              //максимальное потребление
 
+        public bool isBurned => this.Block.Variant["state"] == "burned";
 
         public int HeatLevel { get; private set; }
 
@@ -75,33 +76,36 @@ namespace ElectricityAddon.Content.Block.EHeater
             }
         }
 
+
+
         public float Consume_request()
         {
             return maxConsumption;
         }
+
+
 
         public override void GetBlockInfo(IPlayer forPlayer, StringBuilder stringBuilder)
         {
             base.GetBlockInfo(forPlayer, stringBuilder);
 
             //проверяем не сгорел ли прибор
-            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEHeater entity && entity.AllEparams != null)
+            if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEHeater entity)
             {
-                bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-                if (hasBurnout)
+                if (isBurned)
                 {
-                    stringBuilder.AppendLine("!!!Сгорел!!!");
+                    stringBuilder.AppendLine(Lang.Get("Burned"));
                 }
                 else
                 {
                     stringBuilder.AppendLine(StringHelper.Progressbar(this.HeatLevel * 100.0f / maxConsumption));
-                    stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + this.HeatLevel + "/" + maxConsumption + " Вт");
+                    stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + ": " + this.HeatLevel + "/" + maxConsumption + " " + Lang.Get("W"));
                 }
-
             }
-
             stringBuilder.AppendLine();
         }
+
+
 
         public float getPowerReceive()
         {
@@ -119,12 +123,10 @@ namespace ElectricityAddon.Content.Block.EHeater
             if (this.Api.World.BlockAccessor.GetBlockEntity(this.Blockentity.Pos) is BlockEntityEHeater entity && entity.AllEparams != null)
             {
                 bool hasBurnout = entity.AllEparams.Any(e => e.burnout);
-                if (hasBurnout && entity.Block.Variant["status"] == "normal")
+                if (hasBurnout && entity.Block.Variant["state"] != "burned")
                 {
-                    string state = "disabled";
-
-                    string[] types = new string[2] { "state", "status" };   //типы лампы
-                    string[] variants = new string[2] { state, "burned" };     //нужный вариант лампы
+                    string[] types = new string[1] {"state"};   //типы лампы
+                    string[] variants = new string[1] {"burned"};     //нужный вариант лампы
 
                     this.Api.World.BlockAccessor.ExchangeBlock(Api.World.GetBlock(Block.CodeWithVariants(types, variants)).BlockId, Pos);
                 }

@@ -38,10 +38,10 @@
 
   "creativeInventory": {
     "general": [
-      "*-disabled-normal"
+      "*-disabled"
     ],
     "electricity": [
-      "*-disabled-normal"
+      "*-disabled"
     ]
   },
 
@@ -50,24 +50,15 @@
       "code": "state",
       "states": [
         "disabled",
-        "enabled"
-      ]
-    },
-    {
-      "code": "status",
-      "states": [
-        "normal",
+        "enabled",
         "burned"
       ]
     }
   ],
 
-  "skipVariants": [
-    "*-enabled-burned"
-  ],
 
   "shape": {
-    "base": "block/heater/heater-{state}-{status}"
+    "base": "block/heater/heater-{state}"
   },
 
   "resistance": 1,

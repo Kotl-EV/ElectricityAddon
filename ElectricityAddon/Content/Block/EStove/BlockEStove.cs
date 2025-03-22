@@ -17,8 +17,7 @@ public class BlockEStove : Vintagestory.API.Common.Block
     {
         AssetLocation blockCode = CodeWithVariants(new Dictionary<string, string>
         {
-            { "state", "disabled" },
-            { "status", this.Variant["status"] },
+            { "state", (this.Variant["state"]=="enabled")? "enabled":(this.Variant["state"]=="disabled")? "disabled":"burned" },
             { "side", "south" }
         });
 

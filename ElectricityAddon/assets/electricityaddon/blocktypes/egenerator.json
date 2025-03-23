@@ -111,7 +111,7 @@
   },
 
   "shape": {
-      "base": "block/egenerator/egenerator-{tier}-{type}"
+    "base": "block/egenerator/egenerator-{tier}-{type}"
   },
 
 
@@ -136,5 +136,22 @@
   "sounds": {
     "place": "game:block/anvil",
     "walk": "game:walk/stone"
+  },
+
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldRightReadyAnimation": "heldblockready",
+  "heldTpUseAnimation": "twohandplaceblock",
+  "tpHandTransform": {
+    "translation": {
+      "x": -1.23,
+      "y": -0.91,
+      "z": -0.8
+    },
+    "rotation": {
+      "x": -2,
+      "y": 25,
+      "z": -78
+    },
+    "scale": 0.4
   }
 }

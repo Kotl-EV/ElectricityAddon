@@ -112,6 +112,42 @@
     "all": false
   },
 
+
+  "heldTpIdleAnimation": "holdbothhandslarge",
+  "heldRightReadyAnimation": "heldblockready",
+  "heldTpUseAnimation": "twohandplaceblock",
+
+
+  "tpHandTransformByType": {
+    "*-tier1-*": {
+      "translation": {
+        "x": -1.23,
+        "y": -0.91,
+        "z": -0.8
+      },
+      "rotation": {
+        "x": -2,
+        "y": 25,
+        "z": -78
+      },
+      "scale": 0.4
+    },
+    "*-tier2-*": {
+      "translation": {
+        "x": -0.7,
+        "y": -0.91,
+        "z": -0.8
+      },
+      "rotation": {
+        "x": -2,
+        "y": 25,
+        "z": -78
+      },
+      "scale": 0.4
+    }
+  },
+
+
   "guiTransformByType": {
     "*-tier2-*": {
       "rotation": {

@@ -3,13 +3,13 @@
     "file": "game:blocktypes/metal/metalblock",
     "path": "/entityBehaviors",
     "op": "add",
-    "value": [{"name":  "Electricity"}]
+    "value": [{"name":  "ElectricityAddon"}]
   },
   {
     "file": "game:blocktypes/metal/metalblock",
     "path": "/entityClass",
     "op": "add",
-    "value": "BlockEntityConnector"
+    "value": "BlockEntityEConnector"
   },
   {
     "file": "game:blocktypes/metal/metalblock",

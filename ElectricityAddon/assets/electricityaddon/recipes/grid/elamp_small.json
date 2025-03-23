@@ -152,22 +152,5 @@
       "code": "electricityaddon:elamp_small-9000-disabled",
       "quantity": 4
     }
-  },
-  {
-    "ingredientPattern": "M",
-    "width": 1,
-    "height": 1,
-    "ingredients": {
-      "M": {
-        "type": "block",
-        "code": "electricity:lamp_small-disabled"
-      }
-      
-    },
-    "output": {
-      "type": "block",
-      "code": "electricityaddon:elamp_small-6000-disabled"
-    }
   }
-
 ]

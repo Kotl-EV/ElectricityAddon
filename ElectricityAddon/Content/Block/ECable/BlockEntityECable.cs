@@ -11,15 +11,22 @@ namespace ElectricityAddon.Content.Block.ECable
 
         private BEBehaviorElectricityAddon? ElectricityAddon => GetBehavior<BEBehaviorElectricityAddon>();
 
-        public Facing Connection {
-            get => this.ElectricityAddon!.Connection;
-            set => this.ElectricityAddon!.Connection = value;
+        public Facing Connection
+        {
+            get => this.ElectricityAddon?.Connection ?? Facing.None;
+            set
+            {
+                if (this.ElectricityAddon != null)
+                {
+                    this.ElectricityAddon.Connection = value;
+                }
+            }
         }
 
         //передает значения из Block в BEBehaviorElectricityAddon
-        public (EParams,int) Eparams
+        public (EParams, int) Eparams
         {
-            get => this.ElectricityAddon!.Eparams;
+            get => this.ElectricityAddon?.Eparams ?? default((EParams, int));
             set => this.ElectricityAddon!.Eparams = value;
         }
 

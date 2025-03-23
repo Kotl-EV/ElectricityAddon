@@ -46,7 +46,7 @@ public class BEBehaviorEHorn : BlockEntityBehavior, IElectricConsumer
             {
                 stringBuilder.AppendLine(StringHelper.Progressbar(powerReceive / maxConsumption * 100));
                 stringBuilder.AppendLine("└ " + Lang.Get("Consumption") + ": " + powerReceive + "/" + maxConsumption + " " + Lang.Get("W"));
-                stringBuilder.AppendLine("└ " + Lang.Get("Temperature") + ": " + maxTemp + "° (max.)");
+                stringBuilder.AppendLine("└ " + Lang.Get("Temperature") + ": " + maxTemp + "° ("+ Lang.Get("max") + ")");
             }
 
         }

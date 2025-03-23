@@ -1,5 +1,72 @@
 [
   {
+    "ingredientPattern": "G",
+    "width": 1,
+    "height": 1,
+    "ingredients": {
+      "G": {
+        "type": "block",
+        "code": "electricityaddon:egenerator-*-stator",
+        "name": "tier",
+        "allowedVariants": [
+          "tier1",
+          "tier2",
+          "tier3"
+        ]
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:emotor-{tier}-stator"
+    }
+  },
+
+  {
+    "ingredientPattern": "HS,XM,LC",
+    "width": 2,
+    "height": 3,
+    "ingredients": {
+      "L": {
+        "type": "block",
+        "code": "game:log-*"
+      },
+      "S": {
+        "type": "item",
+        "code": "game:saw-*",
+        "isTool": true,
+        "toolDurabilityCost": 32
+      },
+      "X": {
+        "type": "item",
+        "code": "game:chisel-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "M": {
+        "type": "item",
+        "code": "game:metalplate-iron",
+        "quantity": 4
+      },
+      "C": {
+        "type": "block",
+        "code": "electricityaddon:ecable-32v-copper-single-part",
+        "quantity": 32
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:emotor-tier1-stator",
+      "quantity": 4
+    }
+  },
+
+  {
     "ingredientPattern": "HSH,XMC,_G_",
     "width": 3,
     "height": 3,
@@ -12,7 +79,7 @@
       },
       "H": {
         "type": "block",
-        "code": "electricityaddon:motor-stator",
+        "code": "electricityaddon:emotor-tier1-stator",
         "quantity": 1
       },
       "X": {
@@ -33,13 +100,13 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-32v-copper-single-part",
         "quantity": 16
       }
     },
     "output": {
       "type": "block",
-      "code": "electricityaddon:motortier2-stator",
+      "code": "electricityaddon:emotor-tier2-stator",
       "quantity": 1
     }
   },
@@ -57,12 +124,12 @@
       },
       "H": {
         "type": "block",
-        "code": "electricityaddon:motor-stator",
+        "code": "electricityaddon:emotor-tier1-stator",
         "quantity": 1
       },
       "X": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-32v-copper-single-part",
         "quantity": 8
       },
       "M": {
@@ -84,7 +151,7 @@
     },
     "output": {
       "type": "block",
-      "code": "electricityaddon:motortier2-stator",
+      "code": "electricityaddon:emotor-tier2-stator",
       "quantity": 1
     }
   },
@@ -102,7 +169,7 @@
       },
       "H": {
         "type": "block",
-        "code": "electricityaddon:motortier2-stator",
+        "code": "electricityaddon:emotor-tier2-stator",
         "quantity": 1
       },
       "X": {
@@ -123,7 +190,7 @@
     },
     "output": {
       "type": "block",
-      "code": "electricityaddon:motortier3-stator",
+      "code": "electricityaddon:emotor-tier3-stator",
       "quantity": 1
     }
   }

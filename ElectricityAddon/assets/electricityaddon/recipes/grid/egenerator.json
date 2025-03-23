@@ -1,5 +1,27 @@
 [
   {
+    "ingredientPattern": "M",
+    "width": 1,
+    "height": 1,
+    "ingredients": {
+      "M": {
+        "type": "block",
+        "code": "electricityaddon:emotor-*-stator",
+        "name": "tier",
+        "allowedVariants": [
+          "tier1",
+          "tier2",
+          "tier3"
+        ]
+      }
+    },
+    "output": {
+      "type": "block",
+      "code": "electricityaddon:egenerator-{tier}-stator"
+    }
+  },
+
+  {
     "ingredientPattern": "HSH,XMC,_G_",
     "width": 3,
     "height": 3,
@@ -12,7 +34,7 @@
       },
       "H": {
         "type": "block",
-        "code": "electricityaddon:generator-stator",
+        "code": "electricityaddon:egenerator-tier1-stator",
         "quantity": 1
       },
       "X": {
@@ -33,13 +55,13 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-32v-copper-single-part",
         "quantity": 16
       }
     },
     "output": {
       "type": "block",
-      "code": "electricityaddon:generatortier2-stator",
+      "code": "electricityaddon:egenerator-tier2-stator",
       "quantity": 1
     }
   },
@@ -57,12 +79,12 @@
       },
       "H": {
         "type": "block",
-        "code": "electricityaddon:generator-stator",
+        "code": "electricityaddon:egenerator-tier1-stator",
         "quantity": 1
       },
       "X": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-32v-copper-single-part",
         "quantity": 8
       },
       "M": {
@@ -84,10 +106,11 @@
     },
     "output": {
       "type": "block",
-      "code": "electricityaddon:generatortier2-stator",
+      "code": "electricityaddon:egenerator-tier2-stator",
       "quantity": 1
     }
   },
+
   {
     "ingredientPattern": "HSH,XGC",
     "requiresTrait": "tinkerer",
@@ -102,7 +125,7 @@
       },
       "H": {
         "type": "block",
-        "code": "electricityaddon:generatortier2-stator",
+        "code": "electricityaddon:egenerator-tier2-stator",
         "quantity": 1
       },
       "X": {
@@ -123,7 +146,7 @@
     },
     "output": {
       "type": "block",
-      "code": "electricityaddon:generatortier3-stator",
+      "code": "electricityaddon:egenerator-tier3-stator",
       "quantity": 1
     }
   }

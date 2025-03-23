@@ -9,7 +9,7 @@
     },
     "C": {
       "type": "block",
-      "code": "electricityaddon:cable-*",
+      "code": "electricityaddon:ecable-32v-copper-single-part",
       "quantity": 16
     }
   },

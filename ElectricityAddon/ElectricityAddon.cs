@@ -55,8 +55,8 @@ public class ElectricityAddon : ModSystem
     private readonly HashSet<Network> networks = new();
     private readonly Dictionary<BlockPos, NetworkPart> parts = new(); //хранит все элементы всех цепей
     public static bool combatoverhaul = false;                        //установлен ли combatoverhaul
-    public int speedOfElectricity = 1;                                //скорость электричетсва в проводах при одном обновлении сети (блоков в тик)
-    public bool instant = false;                                      //расчет мгновенно?
+    public int speedOfElectricity = 2;                                //скорость электричетсва в проводах при одном обновлении сети (блоков в тик)
+    public bool instant = true;                                      //расчет мгновенно?
     public bool AltPressed = false;                                   //зажата кнопка Alt
     private PathFinder pathFinder = new PathFinder();                 //инициализация модуля поиска путей
     private ICoreAPI api = null!;
@@ -92,7 +92,7 @@ public class ElectricityAddon : ModSystem
         api.RegisterBlockEntityBehaviorClass("BEBehaviorEHeater", typeof(BEBehaviorEHeater));
 
         api.RegisterBlockClass("BlockConnector", typeof(BlockConnector));
-        api.RegisterBlockEntityClass("BlockEntityConnector", typeof(BlockEntityEConnector));
+        api.RegisterBlockEntityClass("BlockEntityEConnector", typeof(BlockEntityEConnector));
 
         api.RegisterBlockClass("BlockECharger", typeof(BlockECharger));
         api.RegisterBlockEntityClass("BlockEntityECharger", typeof(BlockEntityECharger));

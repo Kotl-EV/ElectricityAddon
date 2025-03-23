@@ -846,7 +846,7 @@ namespace ElectricityAddon.Content.Block.ECable
         /// <param name="extIndex3d"></param>
         public override void OnJsonTesselation(ref MeshData sourceMesh, ref int[] lightRgbsByCorner, BlockPos position, Vintagestory.API.Common.Block[] chunkExtBlocks, int extIndex3d)
         {
-            if (this.api.World.BlockAccessor.GetBlockEntity(position) is BlockEntityECable entity && entity.Connection != Facing.None && entity.AllEparams != null)
+            if (this.api.World.BlockAccessor.GetBlockEntity(position) is BlockEntityECable entity && entity.Connection != Facing.None && entity.AllEparams != null && entity.Block.Code.ToString().Contains("ecable"))
             {
                 var key = CacheDataKey.FromEntity(entity);
 
@@ -1524,7 +1524,7 @@ namespace ElectricityAddon.Content.Block.ECable
         /// <returns></returns>
         public static Dictionary<Facing, Cuboidf[]> CalculateBoxes(CacheDataKey key, IDictionary<CacheDataKey, Dictionary<Facing, Cuboidf[]>> boxesCache, BlockEntityECable entity)
         {
-            if (!boxesCache.TryGetValue(key, out var boxes))
+            if (!boxesCache.TryGetValue(key, out var boxes) && entity.Block.Code.ToString().Contains("ecable"))
             {
                 var origin = new Vec3d(0.5, 0.5, 0.5);
 
@@ -2104,6 +2104,15 @@ namespace ElectricityAddon.Content.Block.ECable
                     );
                 }
             }
+
+            //если это не кабель, то просто возвращаем коллайдеры
+            if (!entity.Block.Code.ToString().Contains("ecable"))
+            {
+                boxes = new Dictionary<Facing, Cuboidf[]>();
+                boxes.Add(Facing.NorthAll, entity.Block.CollisionBoxes);
+            }
+
+
 
             return boxes;
         }

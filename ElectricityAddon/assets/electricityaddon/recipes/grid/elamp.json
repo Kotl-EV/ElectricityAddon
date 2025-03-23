@@ -20,7 +20,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-128v-copper-single-part",
         "quantity": 16
       },
       "A": {
@@ -84,7 +84,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-128v-copper-single-part",
         "quantity": 16
       },
       "A": {
@@ -148,7 +148,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-128v-copper-single-part",
         "quantity": 16
       },
       "A": {
@@ -212,7 +212,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-128v-copper-single-part",
         "quantity": 16
       },
       "A": {
@@ -276,7 +276,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-128v-copper-single-part",
         "quantity": 16
       }
     },
@@ -287,21 +287,6 @@
     }
   },
   {
-    "ingredientPattern": "L",
-    "width": 1,
-    "height": 1,
-    "ingredients": {
-      "L": {
-        "type": "block",
-        "code": "electricity:lamp-disabled"
-      }
-    },
-    "output": {
-      "type": "block",
-      "code": "electricityaddon:elamp-6000-disabled"
-    }
-  },
-  {
     "ingredientPattern": "GS,MC,AB",
     "width": 2,
     "height": 3,
@@ -322,7 +307,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-128v-copper-single-part",
         "quantity": 16
       },
       "A": {
@@ -386,7 +371,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-128v-copper-single-part",
         "quantity": 16
       },
       "A": {
@@ -450,7 +435,7 @@
       },
       "C": {
         "type": "block",
-        "code": "electricityaddon:cable-*",
+        "code": "electricityaddon:ecable-128v-copper-single-part",
         "quantity": 16
       },
       "A": {

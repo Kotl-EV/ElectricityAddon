@@ -19,13 +19,13 @@
     },
     "C": {
       "type": "block",
-      "code": "electricityaddon:cable-*",
+      "code": "electricityaddon:ecable-128v-copper-single-part",
       "quantity": 16
     }
   },
   "output": {
     "type": "block",
-    "code": "electricityaddon:eforge-disabled-south",
+    "code": "electricityaddon:ehorn-disabled-south",
     "quantity": 1
   }
 }

@@ -1,5 +1,5 @@
 {
-  "ingredientPattern": "GS,MC",
+  "ingredientPattern": "GS,PC",
   "width": 2,
   "height": 2,
   "ingredients": {
@@ -13,13 +13,13 @@
       "isTool": true,
       "toolDurabilityCost": 16
     },
-    "M": {
+    "P": {
       "type": "item",
-      "code": "game:metalplate-iron"
+      "code": "game:plank-*"
     },
     "C": {
       "type": "block",
-      "code": "electricityaddon:cable-*",
+      "code": "electricityaddon:ecable-32v-copper-single-part",
       "quantity": 8
     }
   },

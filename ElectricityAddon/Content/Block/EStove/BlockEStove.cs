@@ -69,4 +69,22 @@ public class BlockEStove : Vintagestory.API.Common.Block
             world.BlockAccessor.BreakBlock(pos, null);
         }
     }
+
+
+    /// <summary>
+    /// Проверка на возможность установки блока
+    /// </summary>
+    /// <param name="world"></param>
+    /// <param name="byPlayer"></param>
+    /// <param name="blockSelection"></param>
+    /// <param name="byItemStack"></param>
+    /// <returns></returns>
+    public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSelection, ItemStack byItemStack)
+    {
+        if (byItemStack.Block.Variant["state"] == "burned")
+        {
+            return false;
+        }
+        return base.DoPlaceBlock(world, byPlayer, blockSelection, byItemStack);
+    }
 }

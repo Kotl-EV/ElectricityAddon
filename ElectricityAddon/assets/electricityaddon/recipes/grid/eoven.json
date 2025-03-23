@@ -11,7 +11,7 @@
       },
       "X": {
         "type": "block",
-        "code": "electricity:heater-disabled",
+        "code": "electricityaddon:heater-disabled",
         "quantity": 1
       },
       "H": {

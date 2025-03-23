@@ -82,6 +82,12 @@ public class BlockEGenerator : Vintagestory.API.Common.Block, IMechanicalPowerBl
     public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSel,
         ItemStack byItemStack)
     {
+        // если блок сгорел, то не ставим
+        if (byItemStack.Block.Variant["type"] == "burned")
+        {
+            return false;
+        }
+
         var selection = new Selection(blockSel);
         var facing = FacingHelper.From(selection.Face, selection.Direction);
 

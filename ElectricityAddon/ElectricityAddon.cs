@@ -55,14 +55,13 @@ public class ElectricityAddon : ModSystem
     private readonly HashSet<Network> networks = new();
     private readonly Dictionary<BlockPos, NetworkPart> parts = new(); //хранит все элементы всех цепей
     public static bool combatoverhaul = false;                        //установлен ли combatoverhaul
-    public int speedOfElectricity = 2;                                //скорость электричетсва в проводах при одном обновлении сети (блоков в тик)
-    public bool instant = true;                                      //расчет мгновенно?
+    public int speedOfElectricity;                                //скорость электричетсва в проводах при одном обновлении сети (блоков в тик)
+    public bool instant;                                      //расчет мгновенно?
     public bool AltPressed = false;                                   //зажата кнопка Alt
     private PathFinder pathFinder = new PathFinder();                 //инициализация модуля поиска путей
     private ICoreAPI api = null!;
     private ICoreClientAPI capi = null!;
 
-    public static bool combatoverhaul = false;
 
     private readonly string[] _targetFiles =
     {
@@ -70,6 +69,9 @@ public class ElectricityAddon : ModSystem
         "itemtypes/armor/static-boots.json",
         "itemtypes/armor/static-helmet.json"
     };
+
+    private ElectricityConfig config;
+
 
 
     public override void Start(ICoreAPI api)
@@ -157,8 +159,22 @@ public class ElectricityAddon : ModSystem
             var processor = new ArmorAssetProcessor(api);
             processor.ProcessAssets("electricityaddon", _targetFiles);
         }
-            
+
+
+        // Загрузка или создание конфигурации
+        config = api.LoadModConfig<ElectricityConfig>("ElectricityConfig.json");
+        if (config == null)
+        {
+            config = new ElectricityConfig();
+            api.StoreModConfig(config, "ElectricityConfig.json");
+        }
+
+        // Загрузка конфигурации
+        speedOfElectricity = config.speedOfElectricity;
+        instant = config.instant;
     }
+
+
 
 
 
@@ -1726,4 +1742,14 @@ internal class Accumulator
     {
         this.ElectricAccum = electricAccum;
     }
+}
+
+
+/// <summary>
+/// Конфигурация мода стандартная
+/// </summary>
+public class ElectricityConfig
+{
+    public int speedOfElectricity = 2;
+    public bool instant = false;
 }

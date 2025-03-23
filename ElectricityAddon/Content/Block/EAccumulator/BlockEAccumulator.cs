@@ -34,8 +34,8 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
     {
         return world.BlockAccessor
                    .GetBlock(blockSel.Position.AddCopy(BlockFacing.DOWN))
-                   .SideSolid[BlockFacing.indexUP] &&
-               base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
+                   .SideSolid[BlockFacing.indexUP]
+                   &&  base.TryPlaceBlock(world, byPlayer, itemstack, blockSel, ref failureCode);
     }
 
     public override void OnNeighbourBlockChange(IWorldAccessor world, BlockPos pos, BlockPos neibpos)
@@ -74,6 +74,23 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
         if (be != null) item.Attributes.SetInt("electricityaddon:energy", (int)be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity());
         if (be != null) item.Attributes.SetInt("durability", (int)(100 * be.GetBehavior<BEBehaviorEAccumulator>().GetCapacity() / maxcapacity));
         return item;
+    }
+
+    /// <summary>
+    /// ѕроверка на возможность установки блока
+    /// </summary>
+    /// <param name="world"></param>
+    /// <param name="byPlayer"></param>
+    /// <param name="blockSelection"></param>
+    /// <param name="byItemStack"></param>
+    /// <returns></returns>
+    public override bool DoPlaceBlock(IWorldAccessor world, IPlayer byPlayer, BlockSelection blockSelection, ItemStack byItemStack)
+    {
+        if (byItemStack.Block.Variant["status"] == "burned")
+        {
+            return false;
+        }
+        return base.DoPlaceBlock(world, byPlayer, blockSelection, byItemStack);
     }
 
     public override void OnBlockPlaced(IWorldAccessor world, BlockPos blockPos, ItemStack byItemStack = null)

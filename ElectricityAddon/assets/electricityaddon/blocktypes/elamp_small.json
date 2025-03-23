@@ -53,7 +53,7 @@
     },
     {
       "code": "state",
-      "states": [ "disabled", "enabled" ]
+      "states": [ "disabled", "enabled","burned" ]
     }
   ],
 

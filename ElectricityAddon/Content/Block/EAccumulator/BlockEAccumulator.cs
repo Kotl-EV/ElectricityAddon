@@ -52,10 +52,20 @@ public class BlockEAccumulator : Vintagestory.API.Common.Block, IEnergyStorageIt
         }
     }
 
+
+    /// <summary>
+    /// Получение информации о предмете в инвентаре
+    /// </summary>
+    /// <param name="inSlot"></param>
+    /// <param name="dsc"></param>
+    /// <param name="world"></param>
+    /// <param name="withDebugInfo"></param>
     public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
     {
         base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
         dsc.AppendLine(Lang.Get("Storage")+": " + inSlot.Itemstack.Attributes.GetInt("electricityaddon:energy", 0) + "/" + maxcapacity + " " + Lang.Get("J"));
+        dsc.AppendLine(Lang.Get("Voltage") + ": " + MyMiniLib.GetAttributeInt(inSlot.Itemstack.Block, "voltage", 0) + " " + Lang.Get("V"));
+        dsc.AppendLine(Lang.Get("Power") + ": " + MyMiniLib.GetAttributeFloat(inSlot.Itemstack.Block, "power", 0) + " " + Lang.Get("W"));
     }
 
     public override ItemStack[] GetDrops(IWorldAccessor world, BlockPos pos, IPlayer byPlayer, float dropQuantityMultiplier = 1)

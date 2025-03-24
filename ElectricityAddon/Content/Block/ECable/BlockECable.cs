@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Cairo.Freetype;
 using ElectricityAddon.Content.Block.ECable;
 using ElectricityAddon.Content.Block.ESwitch;
@@ -2144,6 +2145,23 @@ namespace ElectricityAddon.Content.Block.ECable
             }
         }
 
+
+
+        /// <summary>
+        /// Получение информации о предмете в инвентаре
+        /// </summary>
+        /// <param name="inSlot"></param>
+        /// <param name="dsc"></param>
+        /// <param name="world"></param>
+        /// <param name="withDebugInfo"></param>
+        public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+        {
+            base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
+            string text = inSlot.Itemstack.Block.Variant["voltage"]; 
+            dsc.AppendLine(Lang.Get("Voltage") + ": " + text.Substring(0, text.Length - 1) + " " + Lang.Get("V"));
+            dsc.AppendLine(Lang.Get("Max. current") + ": " + MyMiniLib.GetAttributeFloat(inSlot.Itemstack.Block, "maxCurrent", 0) + " " + Lang.Get("A"));
+            dsc.AppendLine(Lang.Get("Resistivity") + ": " + MyMiniLib.GetAttributeFloat(inSlot.Itemstack.Block, "res", 0) + " " + Lang.Get("units"));
+        }
 
 
 

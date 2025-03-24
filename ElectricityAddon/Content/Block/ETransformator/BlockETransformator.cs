@@ -55,4 +55,19 @@ public class BlockETransformator : Vintagestory.API.Common.Block
         }
         return base.DoPlaceBlock(world, byPlayer, blockSelection, byItemStack);
     }
+
+
+    /// <summary>
+    /// Получение информации о предмете в инвентаре
+    /// </summary>
+    /// <param name="inSlot"></param>
+    /// <param name="dsc"></param>
+    /// <param name="world"></param>
+    /// <param name="withDebugInfo"></param>
+    public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+    {
+        base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
+        dsc.AppendLine(Lang.Get("High Voltage") + ": " + MyMiniLib.GetAttributeInt(inSlot.Itemstack.Block, "voltage", 0) + " " + Lang.Get("V"));
+        dsc.AppendLine(Lang.Get("Low Voltage") + ": " + MyMiniLib.GetAttributeInt(inSlot.Itemstack.Block, "lowVoltage", 0) + " " + Lang.Get("V"));
+    }
 }

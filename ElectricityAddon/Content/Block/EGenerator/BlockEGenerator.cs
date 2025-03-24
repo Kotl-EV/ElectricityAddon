@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using ElectricityAddon.Content.Block.EMotor;
 using ElectricityAddon.Utils;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.MathTools;
 using Vintagestory.GameContent.Mechanics;
 
@@ -298,5 +300,19 @@ public class BlockEGenerator : Vintagestory.API.Common.Block, IMechanicalPowerBl
 
             sourceMesh = meshData;
         }
+    }
+
+
+    /// <summary>
+    /// Получение информации о предмете в инвентаре
+    /// </summary>
+    /// <param name="inSlot"></param>
+    /// <param name="dsc"></param>
+    /// <param name="world"></param>
+    /// <param name="withDebugInfo"></param>
+    public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+    {
+        base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
+        dsc.AppendLine(Lang.Get("Voltage") + ": " + MyMiniLib.GetAttributeInt(inSlot.Itemstack.Block, "voltage", 0) + " " + Lang.Get("V"));
     }
 }

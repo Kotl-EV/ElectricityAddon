@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using ElectricityAddon.Utils;
+using System.Collections.Generic;
+using System.Text;
 using Vintagestory.API.Client;
 using Vintagestory.API.Common;
+using Vintagestory.API.Config;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.MathTools;
 using Vintagestory.API.Util;
@@ -122,5 +125,20 @@ public class BlockEOven : Vintagestory.API.Common.Block
             return false;
         }
         return base.DoPlaceBlock(world, byPlayer, blockSelection, byItemStack);
+    }
+
+
+    /// <summary>
+    /// Получение информации о предмете в инвентаре
+    /// </summary>
+    /// <param name="inSlot"></param>
+    /// <param name="dsc"></param>
+    /// <param name="world"></param>
+    /// <param name="withDebugInfo"></param>
+    public override void GetHeldItemInfo(ItemSlot inSlot, StringBuilder dsc, IWorldAccessor world, bool withDebugInfo)
+    {
+        base.GetHeldItemInfo(inSlot, dsc, world, withDebugInfo);
+        dsc.AppendLine(Lang.Get("Voltage") + ": " + MyMiniLib.GetAttributeInt(inSlot.Itemstack.Block, "voltage", 0) + " " + Lang.Get("V"));
+        dsc.AppendLine(Lang.Get("Consumption") + ": " + MyMiniLib.GetAttributeFloat(inSlot.Itemstack.Block, "maxConsumption", 0) + " " + Lang.Get("W"));
     }
 }

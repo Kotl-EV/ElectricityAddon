@@ -71,7 +71,10 @@
 
 
   "creativeinventory": {
-    "general": [ "*-disabled-north" ],
+    "general": [
+      "*-disabled-north",
+      "*-burned-north"
+    ],
     "electricity": [ "*-disabled-north" ]
   },
 

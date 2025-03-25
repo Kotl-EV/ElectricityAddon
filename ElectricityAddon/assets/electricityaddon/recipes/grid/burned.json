@@ -88,6 +88,308 @@
       "code": "game:metalbit-iron",
       "quantity": 80
     }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:egenerator-tier1-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 80
+    }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:emotor-tier2-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 160
+    }
+  },
+
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:egenerator-tier2-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 160
+    }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:emotor-tier3-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 160
+    }
+  },
+
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:egenerator-tier3-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 160
+    }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:heater-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 20
+    }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:ehorn-burned-south"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 20
+    }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:transformator-burned-south"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 80
+    }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:eoven-burned-north"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 80
+    }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:accumulator-tier1-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 40
+    }
+  },
+
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:accumulator-tier2-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 160
+    }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:elamp-*-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 40
+    }
+  },
+
+  {
+    "ingredientPattern": "HI",
+    "width": 1,
+    "height": 2,
+    "ingredients": {
+      "H": {
+        "type": "item",
+        "code": "game:hammer-*",
+        "isTool": true,
+        "toolDurabilityCost": 8
+      },
+      "I": {
+        "type": "block",
+        "code": "electricityaddon:elamp_small-*-burned"
+      }
+    },
+    "output": {
+      "type": "item",
+      "code": "game:metalbit-iron",
+      "quantity": 10
+    }
   }
 
 ]

@@ -29,7 +29,7 @@
   ],
 
   "creativeinventory": {
-    "general": [ "*-melted-closed-north" ],
+    "general": [ "*-melted-closed-north", "*-burned-closed-north" ],
     "electricity": [ "*-melted-closed-north" ]
   },
 

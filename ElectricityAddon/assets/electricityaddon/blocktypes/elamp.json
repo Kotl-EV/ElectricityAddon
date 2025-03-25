@@ -39,7 +39,8 @@
 
   "creativeInventory": {
     "general": [
-      "*-disabled"
+      "*-disabled",
+      "*-burned",
     ],
     "electricity": [
       "*-disabled"

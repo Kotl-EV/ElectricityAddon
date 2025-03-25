@@ -44,7 +44,7 @@
   "blockMaterial": "Stone",
 
   "creativeinventory": {
-    "general": [ "*-disabled-south" ],
+    "general": [ "*-disabled-south", "*-burned-south" ],
     "electricity": [ "*-disabled-south" ]
   },
 

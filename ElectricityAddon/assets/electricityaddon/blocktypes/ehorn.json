@@ -35,7 +35,8 @@
 
   "creativeInventory": {
     "general": [
-      "*-disabled-south"
+      "*-disabled-south",
+      "*-burned-south"
     ],
     "electricity": [
       "*-disabled-south"

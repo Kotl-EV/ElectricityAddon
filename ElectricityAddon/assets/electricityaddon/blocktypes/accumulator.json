@@ -53,7 +53,8 @@
 
   "creativeInventory": {
     "general": [
-      "*-normal"
+      "*-normal",
+      "*-burned"
     ],
     "electricity": [
       "*-normal"

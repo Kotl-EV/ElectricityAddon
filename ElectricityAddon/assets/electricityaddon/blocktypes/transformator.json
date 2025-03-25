@@ -12,7 +12,8 @@
   ],
   "creativeInventory": {
     "general": [
-      "*-normal-south"
+      "*-normal-south",
+      "*-burned-south"
     ],
     "electricity": [
       "*-normal-south"

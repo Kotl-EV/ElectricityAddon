@@ -90,7 +90,8 @@
 
   "creativeInventory": {
     "general": [
-      "*-stator"
+      "*-stator",
+      "*-burned"
     ],
     "mechanics": [
       "*-stator"

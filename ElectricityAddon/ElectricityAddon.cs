@@ -21,7 +21,7 @@ using Vintagestory.API.Common;
     "electricityaddon",
     Website = "https://github.com/Kotl-EV/ElectricityAddon",
     Description = "Brings electricity into the game!",
-    Version = "0.0.18",
+    Version = "0.0.20",
     Authors = new[] {
         "Kotl"
     }
